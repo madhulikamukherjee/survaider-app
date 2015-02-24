@@ -1,0 +1,1 @@
+# Serves as the openshift setup
