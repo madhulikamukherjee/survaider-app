@@ -1,1 +1,1 @@
-from alpha import entry as application
+from alpha.entry import app as application
