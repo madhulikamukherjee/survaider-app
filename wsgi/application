@@ -1,18 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from flask import Flask, render_template
-import os
-
-try:
-   zvirtenv = os.path.join(os.environ['OPENSHIFT_HOMEDIR'], PYCART_DIR,
-                           'virtenv', 'bin', 'activate_this.py')
-   exec(compile(open(zvirtenv).read(), zvirtenv, 'exec'),
-        dict(__file__ = zvirtenv) )
-except:
-   pass
-
 #import config
 #import survaider
 
