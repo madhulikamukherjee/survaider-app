@@ -1,0 +1,1 @@
+from alpha import app as application
