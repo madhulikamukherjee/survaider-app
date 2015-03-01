@@ -6,7 +6,7 @@ from flask import Flask, render_template
 #import config
 #import survaider
 
-app = Flask(__name__)
+app = Flask("survaider")
 
 @app.route('/')
 def index():
