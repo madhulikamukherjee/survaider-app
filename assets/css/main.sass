@@ -1,3 +1,179 @@
 
-@import "bootstrap.scss"
 @import "bourbon/bourbon"
+@import "neat/neat"
+@import "fonts.scss"
+$source-sans: "Source Sans Pro"
+
+$nav-background: rgba(28, 31, 38, 0.95)
+$nav-border: #010712
+$nav-border-size: 2px
+$nav-color: #FFF
+$nav-height: 50px
+$nav-hover: #04518C
+$nav-hover-border: #00A1D9
+$nav-logo-width: 253px
+$nav-seperator: #2F2F2F
+
+html, body
+    font-family: $source-sans
+    height: 100%
+    margin: 0
+    position: relative
+
+.survaider
+    nav
+        @media (min-width: 768px)
+            background: $nav-background
+            border-bottom: $nav-border-size solid $nav-border
+            color: $nav-color
+            font-family: $source-sans
+            font-size: 18px
+            margin-top: 22px
+            position: fixed
+            width: 100%
+            z-index: 10
+            @include transform((translateZ(0)))
+
+            .wrapper
+                margin: 0 10%
+
+                .logo
+                    a
+                        font-size: 0
+
+                        img
+                            height: $nav-height
+                            max-width: 100%
+                            width: $nav-logo-width
+
+                        p
+                            position: absolute
+                            top: -100%
+
+                .hamburger
+                    display: none
+
+                ul
+                    list-style-type: none
+                    margin: 0 0 0 $nav-logo-width
+                    position: absolute
+                    padding: 0
+                    top: 0
+
+                    li
+                        cursor: pointer
+                        display: inline-box
+                        display: table-cell
+                        line-height: 18px
+                        padding: ($nav-height - 18px)/2 0
+                        @include transition((background 0.2s, border 0.2s))
+
+                        &:hover, &:active
+                            background: $nav-hover
+                            border-bottom: $nav-border-size solid $nav-hover-border
+                            a
+                                border-right: 1px solid transparent
+
+                        &:last-of-type
+                            a
+                                border-right: none
+
+                        a
+                            border-right: 1px solid $nav-seperator
+                            color: $nav-color
+                            font-size: 18px
+                            font-style: normal
+                            font-weight: 300
+                            padding: 0 15px
+                            text-decoration: none
+
+        @media (max-width: 1024px) and (min-width: 768px)
+            .wrapper
+                margin: 0 5%
+                ul
+                    li
+                        a
+                            font-size: 16px
+                            padding: 0 5px
+
+        @media (max-width: 767px)
+            background: $nav-background
+            color: $nav-color
+            font-family: $source-sans
+            font-size: 18px
+            position: fixed
+            top: 0
+            width: 100%
+            z-index: 10
+            @include transform((translateZ(0)))
+
+            .wrapper
+                margin: 0
+
+                .logo
+                    margin-left: $nav-height
+                    a
+                        font-size: 0
+
+                        img
+                            height: $nav-height
+                            max-width: 100%
+                            width: $nav-logo-width
+
+                        p
+                            position: absolute
+                            top: -100%
+
+                .hamburger
+                    cursor: pointer
+                    display: inline
+                    font-size: $nav-height / 2
+                    height: $nav-height
+                    left: 0
+                    line-height: $nav-height / 2
+                    padding: $nav-height / 5
+                    position: absolute
+                    width: $nav-height
+                    text-align: center
+                    @include transition((background 0.2s))
+                    top: 0
+
+                    &:hover, &:active, &.open
+                        background: $nav-hover
+
+                    p
+                        position: absolute
+                        top: -100%
+
+                ul
+                    background: $nav-background
+                    height: 100vh
+                    list-style-type: none
+                    margin-top: $nav-height
+                    overflow: scroll
+                    position: absolute
+                    padding: 0
+                    top: 0
+                    left: 0
+                    min-width: 240px
+                    @include transform(translate(-100%, 0))
+                    @include transition((transform 0.3s))
+
+                    &.open
+                        @include transform(translate(0, 0))
+
+                    li
+                        cursor: pointer
+                        line-height: 18px
+                        padding: ($nav-height - 18px)/2 ($nav-height/4)
+                        @include transition((background 0.2s, border 0.2s))
+
+                        &:hover, &:active
+                            background: $nav-hover
+
+                        a
+                            color: $nav-color
+                            font-size: 18px
+                            font-style: normal
+                            font-weight: 300
+                            text-decoration: none
