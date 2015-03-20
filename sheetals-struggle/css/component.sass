@@ -1,0 +1,502 @@
+//fonts
+$font_0: icomoon
+$font_1: Lora
+$font_2: serif
+
+@font-face 
+    font-weight: normal
+    font-style: normal
+    font-family: $font_0
+    src: url(../fonts/icomoon/icomoon.eot?-ee0u0f)
+    src: url(../fonts/icomoon/icomoon.eot?#iefix-ee0u0f) format('embedded-opentype'), url(../fonts/icomoon/icomoon.woff?-ee0u0f) format('woff'), url(../fonts/icomoon/icomoon.ttf?-ee0u0f) format('truetype'), url(../fonts/icomoon/icomoon.svg?-ee0u0f#icomoon) format('svg')
+
+.header 
+    position: relative
+    margin: 0 auto
+    min-height: 560px
+    width: 100%
+
+.bg-img 
+    position: absolute
+    //overflow: hidden
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    //vendor-prefix found
+    //-webkit-backface-visibility: hidden
+    //If you use compass, instead of the line below you could use +backface-visibility($visibility)
+    backface-visibility: hidden
+    img 
+        position: absolute
+        top: 0
+        left: 0
+        display: block
+        min-width: 100%
+        min-height: 100%
+
+
+.title 
+    z-index: 1000
+    margin: 0 auto
+    padding: 0 1.25em
+    width: 100%
+    text-align: center
+    position: absolute
+    top: 50%
+    left: 50%
+    //vendor-prefix found
+    //-webkit-transform: translateX(-50%) translateY(-50%)
+    //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+    transform: translateX(-50%) translateY(-50%)
+    h1 
+        padding: 0 0 0.2em
+        color: #000
+        font-weight: 800
+        font-size: 3.25em
+        margin: 0 auto
+        line-height: 1
+
+    p 
+        color: #000
+        padding: 0 0 0.6em
+        font-weight: 300
+        font-size: 0.85em
+        margin: 0 auto
+        &.subline 
+            line-height: 1
+            font-size: 1.75em
+
+.header
+    .title
+        h1, h2, h3, p
+            color: #fff
+
+
+
+button 
+    &.trigger 
+        position: fixed
+        bottom: 40px
+        left: 50%
+        z-index: 5000
+        display: block
+        margin-left: -0.5em
+        padding: 0
+        width: 1em
+        height: 1em
+        border: none
+        background: transparent
+        color: transparent
+        font-size: 2em
+        cursor: pointer
+        &:focus 
+            outline: none
+
+        span 
+            position: relative
+            display: block
+            overflow: hidden
+            width: 100%
+            height: 100%
+
+        span::before 
+            position: absolute
+            top: 0
+            left: 0
+            width: 100%
+            height: 100%
+            color: #fff
+            content: "\e097"
+            text-transform: none
+            font-weight: normal
+            font-style: normal
+            font-variant: normal
+            font-family: $font_0
+            line-height: 1
+            speak: none
+            //vendor-prefix found
+            //-webkit-font-smoothing: antialiased
+            //vendor-prefix found
+            //-moz-osx-font-smoothing: grayscale
+
+
+    &.trigger::before 
+        position: absolute
+        bottom: 100%
+        left: -100%
+        padding: 0.8em
+        width: 300%
+        color: #fff
+        content: attr(data-info)
+        font-size: 0.35em
+        //vendor-prefix found
+        //-webkit-backface-visibility: hidden
+        //If you use compass, instead of the line below you could use +backface-visibility($visibility)
+        backface-visibility: hidden
+
+
+.content 
+    color: #000
+    margin: 0 auto
+    padding: 0 0 3em
+    h3 
+        margin: 0
+        font-size: 1.4em
+
+    blockquote 
+        padding: 0.25em
+        font-style: italic
+        font-size: 1.65em
+        font-family: $font_1, $font_2
+        line-height: 1.4
+
+    blockquote::before 
+        content: '\201C'
+
+    blockquote::after 
+        content: '\201D'
+
+    > div:not(.title) 
+        margin: -80px auto 0
+        max-width: 900px
+        padding: 0 1.25em
+        p 
+            margin: 0 auto 1.5em auto
+            &:first-child 
+                font-size: 1.35em
+
+
+
+
+.intro-effect-fadeout 
+    .header 
+        overflow: hidden
+        p 
+            color: #514753
+            opacity: 0
+            &:nth-child(2) 
+                //vendor-prefix found
+                //-webkit-transform: translateX(150px)
+                //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+                transform: translateX(150px)
+
+            &:nth-child(3) 
+                //vendor-prefix found
+                //-webkit-transform: translateX(-150px)
+                //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+                transform: translateX(-150px)
+
+
+
+    &.modify 
+        .bg-img 
+            //vendor-prefix found
+            //-webkit-transform: translateY(-25%)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(-25%)
+
+        .bg-img::after 
+            opacity: 1
+
+        .header 
+            h1 
+                color: #514753
+
+            p 
+                &:nth-child(2) 
+                    opacity: 1
+                    //vendor-prefix found
+                    //-webkit-transform: translateX(0)
+                    //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+                    transform: translateX(0)
+
+                &:nth-child(3) 
+                    opacity: 1
+                    //vendor-prefix found
+                    //-webkit-transform: translateX(0)
+                    //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+                    transform: translateX(0)
+
+
+
+        .content > div 
+            opacity: 1
+            //vendor-prefix found
+            //-webkit-transform: translateY(0)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(0)
+
+
+    .bg-img::after 
+        content: ''
+        position: absolute
+        width: 100%
+        height: 101%
+        top: 0
+        left: 0
+        opacity: 0
+        pointer-events: none
+        //vendor-prefix found
+        //background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)
+        background: linear-gradient(to bottom, rgba(255,255,255,0) 0, rgba(255,255,255,1) 100%)
+
+    .title 
+        text-align: left
+        max-width: 900px
+
+    .content 
+        z-index: 1000
+        position: relative
+        > div 
+            opacity: 0
+            //vendor-prefix found
+            //-webkit-transform: translateY(350px)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(350px)
+
+
+    &:not(.notrans) 
+        .bg-img 
+            //vendor-prefix found
+            //-webkit-transition-property: -webkit-transform
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: transform
+            //vendor-prefix found
+            //-webkit-transition-duration: 0.5s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 0.5s
+
+        .bg-img::after 
+            //vendor-prefix found
+            //-webkit-transition-property: opacity
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: opacity
+            //vendor-prefix found
+            //-webkit-transition-duration: 0.5s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 0.5s
+
+        .header 
+            h1 
+                //vendor-prefix found
+                //-webkit-transition-property: color
+                //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+                transition-property: color
+                //vendor-prefix found
+                //-webkit-transition-duration: 0.5s
+                //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+                transition-duration: 0.5s
+
+            p 
+                //vendor-prefix found
+                //-webkit-transition-property: -webkit-transform, opacity
+                //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+                transition-property: transform, opacity
+                //vendor-prefix found
+                //-webkit-transition-duration: 0.5s
+                //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+                transition-duration: 0.5s
+
+
+        .content > div 
+            //vendor-prefix found
+            //-webkit-transition-property: -webkit-transform, opacity
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: transform, opacity
+            //vendor-prefix found
+            //-webkit-transition-duration: 0.5s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 0.5s
+
+
+
+.intro-effect-push 
+    .header 
+        position: absolute
+        z-index: 1500
+
+    &.modify 
+        .header 
+            opacity: 0
+            //vendor-prefix found
+            //-webkit-transform: translateY(-100%) scale(0.9)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(-100%) scale(0.9)
+
+        > .title 
+            //vendor-prefix found
+            //-webkit-transform: translateY(0)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(0)
+            opacity: 1
+
+        .content > div 
+            //vendor-prefix found
+            //-webkit-transform: translateY(0)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(0)
+            opacity: 1
+
+
+    &:not(.notrans) 
+        .header 
+            //vendor-prefix found
+            //-webkit-transition-property: opacity, -webkit-transform
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: opacity, transform
+            //vendor-prefix found
+            //-webkit-transition-duration: 1s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 1s
+            //vendor-prefix found
+            //-webkit-transition-timing-function: cubic-bezier(0.7,0,0.3,1)
+            //If you use compass, instead of the line below you could use +transition-timing-function($function-1, $function-2, $function-3, $function-4, $function-5, $function-6, $function-7, $function-8, $function-9, $function-10)
+            transition-timing-function: cubic-bezier(0.7,0,0.3,1)
+            //vendor-prefix found
+            //-webkit-transition-duration: 1.2s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 1.2s
+
+        > .title 
+            //vendor-prefix found
+            //-webkit-transition-property: opacity, -webkit-transform
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: opacity, transform
+            //vendor-prefix found
+            //-webkit-transition-duration: 1s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 1s
+
+        .content > div 
+            //vendor-prefix found
+            //-webkit-transition-property: opacity, -webkit-transform
+            //If you use compass, instead of the line below you could use +transition-property($property-1, $property-2, $property-3, $property-4, $property-5, $property-6, $property-7, $property-8, $property-9, $property-10)
+            transition-property: opacity, transform
+            //vendor-prefix found
+            //-webkit-transition-duration: 1s
+            //If you use compass, instead of the line below you could use +transition-duration($duration-1, $duration-2, $duration-3, $duration-4, $duration-5, $duration-6, $duration-7, $duration-8, $duration-9, $duration-10)
+            transition-duration: 1s
+
+
+    .codrops-demos a 
+        color: #108576
+
+    > .title 
+        position: relative
+        top: auto
+        left: auto
+        padding: 6em 1em 2em
+        //vendor-prefix found
+        //-webkit-transform: translateY(400px)
+        //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+        transform: translateY(400px)
+        opacity: 0
+
+    .content > div 
+        margin-top: 50px
+        //vendor-prefix found
+        //-webkit-transform: translateY(400px)
+        //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+        transform: translateY(400px)
+        opacity: 0
+
+
+@media screen and(max-width: 47em) 
+    .title 
+        font-size: 70%
+
+    .content 
+        font-size: 70%
+
+    .intro-effect-side 
+        .title 
+            width: 100%
+            padding: 0 1em
+            //vendor-prefix found
+            //-webkit-transform: translateY(-50%)
+            //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+            transform: translateY(-50%)
+
+        &.modify 
+            .bg-img::before 
+                //vendor-prefix found
+                //-webkit-transform: translateX(-100%)
+                //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+                transform: translateX(-100%)
+
+            .bg-img::after 
+                background: rgba(255,255,255,0.8)
+
+
+        .bg-img::after 
+            border-left-width: 0
+            border-right-width: 0
+            right: 0
+            left: 0
+            background: rgba(255,255,255,0.1)
+
+
+    .intro-effect-sidefixed 
+        .content 
+            width: 100%
+            margin-left: auto
+
+        .bg-img::after 
+            width: 95%
+
+
+    .codrops-demos a 
+        font-size: 80%
+
+
+@media screen and(max-width: 27em) 
+    .title 
+        font-size: 50%
+
+    .content 
+        font-size: 50%
+
+    .intro-effect-jam3 .content 
+        padding: 0 2em 5em
+
+    .intro-effect-grid .grid li h2 
+        display: none
+
+    .intro-effect-push .header .title 
+        top: 60px
+        //vendor-prefix found
+        //-webkit-transform: translateX(-50%)
+        //If you use compass, instead of the line below you could use +transform($scale, $rotate, $transx, $transy, $skewx, $skewy, $originx, $originy)
+        transform: translateX(-50%)
+
+    button.trigger::before 
+        display: none
+
+
+.container:not(.notrans) button.trigger 
+    //vendor-prefix found
+    //-webkit-transition: opacity 0.3s 0.5s
+    //If you use compass, instead of the line below you could use +transition($transition-1, $transition-2, $transition-3, $transition-4, $transition-5, $transition-6, $transition-7, $transition-8, $transition-9, $transition-10)
+    transition: opacity 0.3s 0.5s
+
+.container.modify:not(.notrans) button.trigger 
+    opacity: 0
+    pointer-events: none
+    //vendor-prefix found
+    //-webkit-transition-delay: 0s
+    //If you use compass, instead of the line below you could use +transition-delay($delay-1, $delay-2, $delay-3, $delay-4, $delay-5, $delay-6, $delay-7, $delay-8, $delay-9, $delay-10)
+    transition-delay: 0s
+
+.intro-effect-push.modify:not(.notrans) 
+    > .title 
+        //vendor-prefix found
+        //-webkit-transition-delay: 0.5s
+        //If you use compass, instead of the line below you could use +transition-delay($delay-1, $delay-2, $delay-3, $delay-4, $delay-5, $delay-6, $delay-7, $delay-8, $delay-9, $delay-10)
+        transition-delay: 0.5s
+
+    .content > div 
+        //vendor-prefix found
+        //-webkit-transition-delay: 0.6s
+        //If you use compass, instead of the line below you could use +transition-delay($delay-1, $delay-2, $delay-3, $delay-4, $delay-5, $delay-6, $delay-7, $delay-8, $delay-9, $delay-10)
+        transition-delay: 0.6s

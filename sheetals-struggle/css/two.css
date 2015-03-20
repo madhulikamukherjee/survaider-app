@@ -1,0 +1,21 @@
+html, body {
+  position: relative;
+  margin: 0;
+  width: 100%; }
+
+article {
+  height: 200px;
+  display: flex;
+  box-shadow: inset 0px 0px 30px 10px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  position: relative; }
+  article div {
+    position: absolute;
+    bottom: 0;
+    padding: 20px; }
+  article.blue {
+    background: blue; }
+  article.red {
+    background: #e74c3c; }
+
+/*# sourceMappingURL=two.css.map */
