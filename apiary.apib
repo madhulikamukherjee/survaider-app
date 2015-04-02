@@ -1,19 +1,15 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://survaider.apiblueprint.org/
 
-# begin
+# Survaider
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This file documents the Survaider REST API. The exposed endpoints are marked with `[exposed]`.
 
-# Polls API Root [/]
+# Survaider API Root [/v1/]
 
-This resource does not have any attributes. Instead it offers the initial
-API affordances in the form of the links in the JSON body.
+All the requests must prefix the API version as `/v*/`. Currently, the supported version in `/v1/`.
 
-It is recommend to follow the “url” link values,
-[Link](https://tools.ietf.org/html/rfc5988) or Location headers where
-applicable to retrieve resources. Instead of constructing your own URLs,
-to keep your client decoupled from implementation details.
+# User front [/v1/user/]
 
 ## Retrieve the Entry Point [GET]
 
