@@ -13,7 +13,14 @@ All the requests must prefix the API version as `/v*/`. Currently, the supported
 This entry point is responsible for user management, and profile management actions.
 A few of the end points require an admin access level.
 
-## Retrieve the Entry Point [GET]
+## Retrieve the List of Users [/page/{page_number}]
+Returns the list of all the Users registered.
+A valid user, identified through their `user_id` and `user_key`, having admin access level is required to access this end point.
+
+### Example [POST]
++ Parameters
+    + user_id (required, number, `1234`) ... The User ID of the Logged In user. Additionally, the user must be an admin.
+    + user_key (required, number, `12345678987654321`) ... The User Authentication token. This can be retrieved through the login method.
 
 + Response 200 (application/json)
 
