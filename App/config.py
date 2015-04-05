@@ -7,3 +7,7 @@ config = {
     'Database': "survaider",
     'DEBUG': True
 }
+
+game_config = {
+    'karma_multiplier': 10
+}
