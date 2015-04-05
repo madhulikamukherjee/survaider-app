@@ -9,5 +9,6 @@ config = {
 }
 
 game_config = {
-    'karma_multiplier': 10
+    'karma_multiplier': 10,
+    'max_life': 10
 }

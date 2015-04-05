@@ -12,5 +12,5 @@ game = Blueprint('game', __name__, template_folder='templates')
 @game.route('/')
 def get():
     pr = game_model.Points('pragya')
-    pr.karma = (2, "Test")
+    pr.add_life(2)
     return "Test"
