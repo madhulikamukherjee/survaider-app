@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-#from flask import Flask, Blueprint, render_template
-
-#user = Blueprint("user", __name__, template_folder = "view")
-
 # Global imports
 import bcrypt
 import datetime
@@ -102,6 +98,17 @@ class Instance(object):
             self._user_dat['status'] = value
         else:
             pass
+
+    @property
+    def game(self):
+        """Gets the Game Properties"""
+        return self._user_dat['game'] if 'game' in self._user_dat else {}
+
+    @game.setter
+    def game(self, value):
+        """Sets the Game Properties"""
+        self._updates.add('game')
+        self._user_dat['game'] = value
 
     def update(self):
         """Updates the DB with changes made to the User Instance."""
