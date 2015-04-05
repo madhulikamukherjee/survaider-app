@@ -2,8 +2,20 @@ FORMAT: 1A
 HOST: http://survaider.apiblueprint.org/
 
 # Survaider
-
 This file documents the Survaider REST API. The exposed endpoints are marked with `[exposed]`.
+
+# Authentication Flow [/v1/login]
+These endpoints handle login and session management.
+
+## Login [POST]
+Performs the Login. Fails if user supplied authentication information be incorrect.
+
++ Request
+    + Headers
+        user_id: The User ID of the Logged In user. Additionally, the user must be an admin.
+        user_key: The User Authentication token. This can be retrieved through the login method.
+
+
 
 # Survaider API Root [/v1/]
 
