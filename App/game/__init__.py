@@ -11,6 +11,5 @@ game = Blueprint('game', __name__, template_folder='templates')
 
 @game.route('/')
 def get():
-    pr = game_model.Points('pragya')
-    pr.add_life(2)
-    return "Test"
+    
+    return game_model._Utils.encode('prashant', 'test', 45)

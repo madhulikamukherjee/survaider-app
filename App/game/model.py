@@ -3,15 +3,18 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 # Global imports
-import bcrypt
+import json
 import datetime
+import uuid
+import base64
 from hashids import Hashids
 from functools import wraps
+from simplecrypt import encrypt, decrypt
 from flask import request, jsonify
 
 # Local imports
 import utils
-from config import game_config
+from config import game_config, encryption_keys
 from user import model as user_model
 
 class Points(object):
@@ -65,7 +68,6 @@ class Points(object):
         except ValueError:
             raise ValueError("Amount and Source must be passed in.")
 
-
     @property
     def _life(self):
         return self._game['life'] if 'life' in self._game else 0
@@ -101,3 +103,30 @@ class Points(object):
         "Removes life with 1, or the value."
         self._life = -value
         return True
+
+class _Utils(object):
+    def encode(user_name, target, points):
+        "Generates a validation key for karma, coin, and life increments or decrements."
+        entropy = str(uuid.uuid4())
+
+        data = {
+            'user_name': user_name,
+            'target': target,
+            'points': points,
+            'entropy': entropy
+        }
+
+        plain_text = json.dumps(data)
+
+        ciphertext = encrypt(encryption_keys['game_key'], plain_text)
+
+        return base64.b64encode(ciphertext).decode()
+        #return ciphertext
+
+    def decode(cipher):
+        "Decodes the validation key."
+        # Decryption
+        c_text = base64.b64decode(bytes(cipher, 'utf-8'))
+        json_str = decrypt(encryption_keys['game_key'], c_text).decode()
+
+        return json.loads(json_str)
