@@ -10,7 +10,19 @@ config = {
 
 game_config = {
     'karma_multiplier': 10,
-    'max_life': 10
+    'max_life': 10,
+    'levels': [
+        (0, "Beginner"),
+        (10, "Starter"),
+        (100, "Goes just fine"),
+        (500, "Now we're talking!"),
+        (1000, "Probably too much?"),
+        (1500, "Okay that's just too much."),
+        (3000, "Okay, you can stop."),
+        (5000, "STAHP, Bruh."),
+        (10000, "Dude? Are you okay?"),
+        (100000, "You the God.")
+    ]
 }
 
 encryption_keys = {

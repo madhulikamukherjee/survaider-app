@@ -104,6 +104,15 @@ class Points(object):
         self._life = -value
         return True
 
+    @property
+    def level(self):
+        return self._game['level'] if 'level' in self._game else 0
+
+    @level.setter
+    def level(self, value):
+        
+    
+
 class _Utils(object):
     def encode(user_name, target, points):
         "Generates a validation key for karma, coin, and life increments or decrements."
