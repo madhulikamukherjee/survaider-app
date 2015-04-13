@@ -21,8 +21,17 @@ game_config = {
         (3000, "Okay, you can stop."),
         (5000, "STAHP, Bruh."),
         (10000, "Dude? Are you okay?"),
-        (100000, "You the God.")
-    ]
+        (100000, "You have no life."),
+        (10000000, "You the God.")
+    ],
+    'medals': {
+        'ID1': "Identity One",
+        'ID2': "Identity Two"
+    },
+    'badges': {
+        'ID1': "No life badge",
+        'ID2': "Virginity badge"
+    }
 }
 
 encryption_keys = {

@@ -106,12 +106,44 @@ class Points(object):
 
     @property
     def level(self):
-        return self._game['level'] if 'level' in self._game else 0
+        kar_p = self.karma[0]
+        for level in game_config['levels']:
+            if level[0] >= kar_p:
+                return level[1]
 
-    @level.setter
-    def level(self, value):
-        
-    
+        return game_config['levels'][len(game_config['levels']) - 1][1]
+
+    @property
+    def medals(self):
+        return self._game['medals'] if 'medals' in self._game else []
+
+    @medals.setter
+    def medals(self, value):
+        old_value = self.medals
+        if value in game_config['medals']:
+            old_value.append((datetime.datetime.utcnow(), value))
+
+            old_game_value = self._usr.game
+            old_game_value['medals'] = old_value
+            self._usr.game = old_game_value
+        else:
+            raise ValueError("Medal Value is incorrect. Please check config.py.")
+
+    @property
+    def badges(self):
+        return self._game['badges'] if 'badges' in self._game else []
+
+    @badges.setter
+    def badges(self, value):
+        old_value = self.badges
+        if value in game_config['badges']:
+            old_value.append((datetime.datetime.utcnow(), value))
+
+            old_game_value = self._usr.game
+            old_game_value['badges'] = old_value
+            self._usr.game = old_game_value
+        else:
+            raise ValueError("Medal Value is incorrect. Please check config.py.")
 
 class _Utils(object):
     def encode(user_name, target, points):
