@@ -19,7 +19,13 @@ from user import model as user_model
 
 class Points(object):
     def __init__(self, user_name):
-        self._usr = user_model.Instance(user_name)
+        if type(user_name) is user_model.Instance:
+            self._usr = user_name
+        elif type(user_name) is str:
+            self._usr = user_model.Instance(user_name)
+        else:
+            raise ValueError("user_name must either be a string or User Instance.")
+
         if self._usr.k is True:
             self.k = True
             self._game = self._usr.game

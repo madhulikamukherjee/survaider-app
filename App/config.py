@@ -37,3 +37,16 @@ game_config = {
 encryption_keys = {
     'game_key': b'f657a11b6f1f73e374f13a5e950d4c2d36d82618716fef8a06e474f084795a27a2ba4f8b664e4f44736387a61ad92e92f977db9a678ccc0103995462e6ef658c',
 }
+
+# STAHP BRUH.
+# The followings are not generally "configuration" settings, for they
+# require the source code to be modified with decorators.
+# The reason they're here is just so that they can be enabled and disabled
+# as and when required.
+# NOT RECOMMENDED FOR MAINTAINERS AND REVIEWERS TO MODIFY BELOW THIS LINE.
+
+security_clearance_levels = {
+    'ADMIN': True,
+    'AUTHOR': True,
+    'VIRGINITYPROTECTOR': False
+}

@@ -11,4 +11,3 @@ class Manage(object):
 
     def modify():
         pass
-

@@ -25,3 +25,9 @@ class Database:
         Returns the User Database collection
         """
         return self.db['user']
+
+def return_error(message):
+    return {
+        'error': True,
+        'msg': message
+    }

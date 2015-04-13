@@ -15,6 +15,7 @@ from flask import request, jsonify
 
 # Local imports
 import utils
+from config import security_clearance_levels
 
 class Instance(object):
     """
@@ -109,6 +110,17 @@ class Instance(object):
         """Sets the Game Properties"""
         self._updates.add('game')
         self._user_dat['game'] = value
+
+    @property
+    def clearance(self):
+        """Gets the Security Clearance Properties"""
+        return self._user_dat['clearance'] if 'clearance' in self._user_dat else set()
+
+    @clearance.setter
+    def clearance(self, value):
+        """Sets the Security Clearance Properties"""
+        self._updates.add('clearance')
+        self._user_dat['clearance'] = value
 
     def update(self):
         """Updates the DB with changes made to the User Instance."""
@@ -275,7 +287,25 @@ class Session(object):
         ]) if user.k is True else False
 
 class Authorized(object):
-    pass
+    """
+    This takes in the user instance and manages the user tokens.
+    """
+
+    def add_token(user_instance, token):
+        if type(user_instance) is not Instance:
+            raise ValueError("user_instance requires to be a valid Instance.")
+        if any([
+            user_instance.k is not True,
+            token not in security_clearance_levels
+        ]):
+            "For security reasons, arbitrary security levels are not allowed."
+            return False
+
+        old_val = user_instance.clearance
+        new_val = old_val.add(token)
+        user_instance.clearance = new_val
+        return True
+
 
 class Password(object):
     """
