@@ -291,7 +291,7 @@ class Authorization(object):
     This takes in the user instance and manages the user tokens.
     """
 
-    def add_token(user_instance, token):
+    def acquire(user_instance, token):
         if any([
             user_instance.k is not True,
             token not in security_clearance_levels
@@ -307,10 +307,25 @@ class Authorization(object):
 
         return True
 
-    def check_token(user_instance, token):
+    def verify(user_instance, token):
         if user_instance.k is True:
             return token in user_instance.clearance
         return False
+
+    def revoke(user_instance, token):
+        if any([
+            user_instance.k is not True,
+            token not in security_clearance_levels
+        ]):
+            return False
+
+        val = user_instance.clearance
+
+        if token in val:
+            val.remove(token)
+            user_instance.clearance = val
+
+        return True
 
 class Password(object):
     """
