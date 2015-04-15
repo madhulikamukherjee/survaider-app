@@ -114,7 +114,7 @@ class Instance(object):
     @property
     def clearance(self):
         """Gets the Security Clearance Properties"""
-        return self._user_dat['clearance'] if 'clearance' in self._user_dat else set()
+        return self._user_dat['clearance'] if 'clearance' in self._user_dat else []
 
     @clearance.setter
     def clearance(self, value):
@@ -299,11 +299,12 @@ class Authorization(object):
             "For security reasons, arbitrary security levels are not allowed."
             return False
 
-        old_val = user_instance.clearance
-        print(old_val)
-        #old_val.add(token)
-        print(old_val)
-        user_instance.clearance = old_val
+        val = user_instance.clearance
+
+        if token not in val:
+            val.append(token)
+            user_instance.clearance = val
+
         return True
 
     def check_token(user_instance, token):
