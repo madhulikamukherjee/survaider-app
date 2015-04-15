@@ -286,14 +286,12 @@ class Session(object):
             user.session[session_key]['alive'] is True,
         ]) if user.k is True else False
 
-class Authorized(object):
+class Authorization(object):
     """
     This takes in the user instance and manages the user tokens.
     """
 
     def add_token(user_instance, token):
-        if type(user_instance) is not Instance:
-            raise ValueError("user_instance requires to be a valid Instance.")
         if any([
             user_instance.k is not True,
             token not in security_clearance_levels
@@ -302,10 +300,16 @@ class Authorized(object):
             return False
 
         old_val = user_instance.clearance
-        new_val = old_val.add(token)
-        user_instance.clearance = new_val
+        print(old_val)
+        #old_val.add(token)
+        print(old_val)
+        user_instance.clearance = old_val
         return True
 
+    def check_token(user_instance, token):
+        if user_instance.k is True:
+            return token in user_instance.clearance
+        return False
 
 class Password(object):
     """

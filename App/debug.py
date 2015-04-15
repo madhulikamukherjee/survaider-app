@@ -8,10 +8,5 @@ app = Flask(__name__)
 app.register_blueprint(usr, url_prefix = '/usr')
 app.register_blueprint(game, url_prefix = '/game')
 pr = user_model.Instance('pragya')
-pragya = game_model.Points(pr)
-#pragya.badges = "ID1"
-print(pragya.badges)
-#print(pragya.level)
-#pragya.karma = 1000, 'Tester'
-print(pragya.level)
-#print(pragya.karma)
+
+print(user_model.Authorization.add_token(pr, 'ADMIN'))
