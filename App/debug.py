@@ -9,4 +9,4 @@ app.register_blueprint(usr, url_prefix = '/usr')
 app.register_blueprint(game, url_prefix = '/game')
 pr = user_model.Instance('pragya')
 
-print(user_model.Authorization.check_token(pr, 'JJJ'))
+print(user_model.Authorization.revoke(pr, 'ADMIN'))
