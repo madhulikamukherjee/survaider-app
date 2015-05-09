@@ -26,6 +26,13 @@ class Database:
         """
         return self.db['user']
 
+    @property
+    def survey(self):
+        """
+        Returns the Survey Database collection
+        """
+        return self.db['survey']
+
 def return_error(message):
     return {
         'error': True,
