@@ -3,6 +3,7 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from bson.objectid import ObjectId
+from config import user_sexes as USER_SEXES
 
 class Instance(object):
     """
@@ -48,9 +49,20 @@ class Filter(object):
         return self._filters['age']
 
     @age.setter
-    def age(self, touple):
-        print(type(touple))
-        self._filters['age'] = touple
+    def age(self, age_rng):
+        self._filters['age'] = age_rng
+
+    @property
+    def sex(self):
+        return self._filters['sex']
+
+    @sex.setter #MUST. RESIST. Sex Joke.
+    def sex(self, values):
+        self._filters['sex'] = []
+        for string in values:
+            if string in USER_SEXES:
+                self._filters['sex'].append(string)
+    
 
 
 class _Utils(object):

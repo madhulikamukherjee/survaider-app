@@ -12,4 +12,4 @@ app.register_blueprint(survey, url_prefix = '/survey')
 
 a = survey_model.Filter()
 
-a.age = 90, 90
+a.age = range(11)
