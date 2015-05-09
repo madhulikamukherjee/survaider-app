@@ -31,6 +31,10 @@ class Instance(object):
                     multi = False)
             self._updates = set()
 
+    def __del__(self):
+        """Called when instance object moves out of scope."""
+        self.update();
+
 class _Utils(object):
     """
     Survey Management Utilities. Leverages repeated functions.
