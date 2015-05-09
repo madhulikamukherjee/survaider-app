@@ -9,3 +9,7 @@ app = Flask(__name__)
 app.register_blueprint(usr, url_prefix = '/usr')
 app.register_blueprint(game, url_prefix = '/game')
 app.register_blueprint(survey, url_prefix = '/survey')
+
+a = survey_model.Filter()
+
+a.age = 90, 90

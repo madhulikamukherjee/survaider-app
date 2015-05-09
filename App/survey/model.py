@@ -49,9 +49,9 @@ class Filter(object):
 
     @age.setter
     def age(self, touple):
-        print(touple)
+        print(type(touple))
         self._filters['age'] = touple
-    
+
 
 class _Utils(object):
     """
