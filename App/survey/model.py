@@ -35,6 +35,24 @@ class Instance(object):
         """Called when instance object moves out of scope."""
         self.update();
 
+class Manage(object):
+    def add(client, tags, target, survey, filters = None):
+        pass
+
+class Filter(object):
+    def __init__(self):
+        self._filters = {}
+
+    @property
+    def age(self):
+        return self._filters['age']
+
+    @age.setter
+    def age(self, touple):
+        print(touple)
+        self._filters['age'] = touple
+    
+
 class _Utils(object):
     """
     Survey Management Utilities. Leverages repeated functions.
