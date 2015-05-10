@@ -37,8 +37,19 @@ class Instance(object):
         self.update();
 
 class Manage(object):
-    def add(meta, tags, target, survey, filters = None):
-        pass
+    def add(scheme, tags, target, survey, filters):
+        push_data = {
+            'scheme': scheme(),
+            'tags': tags,
+            'target': target,
+            'survey': survey(),
+            'filters': filters(),
+            'meta': {
+                'added': datetime.datetime.utcnow()
+            }
+        }
+
+        return (True, utils.Database().survey.insert_one(push_data).inserted_id)
 
 class Filter(object):
     def __init__(self):
@@ -72,36 +83,42 @@ class Filter(object):
         self._filters['profession'] = []
         for string in values:
             self._filters['profession'].append(string)
+
+    def __call__(self):
+        return self._filters
     
-class Meta(object):
-    def __init__(self, meta_dat = None):
-        if meta_dat is not None:
-            self._meta = meta_dat
+class Scheme(object):
+    def __init__(self, scheme_dat = None):
+        if scheme_dat is not None:
+            self._scheme = scheme_dat
         else:
-            self._meta = {}
+            self._scheme = {}
 
     @property
     def client_name(self):
-        return self._meta['client_name'] if 'client_name' in self._meta else ''
+        return self._scheme['client_name'] if 'client_name' in self._scheme else ''
 
     @client_name.setter
     def client_name(self, value):
-        self._meta['client_name'] = value
+        self._scheme['client_name'] = value
 
     @property
     def description(self):
-        return self._meta['description'] if 'description' in self._meta else ''
+        return self._scheme['description'] if 'description' in self._scheme else ''
 
     @description.setter
     def description(self, value):
-        self._meta['description'] = value
+        self._scheme['description'] = value
 
     def __call__(self):
-        return self._meta
+        return self._scheme
 
 class Survey(object):
     def __init__(self):
         pass
+
+    def __call__(self):
+        return ["not", "implemented", "yet"]
 
 class _Utils(object):
     """
