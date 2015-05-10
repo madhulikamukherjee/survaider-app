@@ -63,7 +63,28 @@ class Filter(object):
             if string in USER_SEXES:
                 self._filters['sex'].append(string)
     
+class Meta(object):
+    def __init__(self, meta_dat = None):
+        if meta_dat is not None:
+            self._meta = meta_dat
+        else:
+            self._meta = {}
 
+    @property
+    def client_name(self):
+        return self._meta['client_name'] if 'client_name' in self._meta else ''
+
+    @client_name.setter
+    def client_name(self, value):
+        self._meta['client_name'] = value
+
+    @property
+    def description(self):
+        return self._meta['description'] if 'description' in self._meta else ''
+
+    @description.setter
+    def description(self, value):
+        self._meta['description'] = value
 
 class _Utils(object):
     """
