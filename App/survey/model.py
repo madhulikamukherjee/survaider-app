@@ -62,6 +62,17 @@ class Filter(object):
         for string in values:
             if string in USER_SEXES:
                 self._filters['sex'].append(string)
+
+    @property
+    def profession(self):
+        return self._filters['profession']
+
+    @profession.setter
+    def profession(self, values):
+        self._filters['profession'] = []
+        for string in values:
+            self._filters['profession'].append(string)
+    
     
 class Meta(object):
     def __init__(self, meta_dat = None):
