@@ -37,7 +37,7 @@ class Instance(object):
         self.update();
 
 class Manage(object):
-    def add(client, tags, target, survey, filters = None):
+    def add(meta, tags, target, survey, filters = None):
         pass
 
 class Filter(object):
@@ -73,7 +73,6 @@ class Filter(object):
         for string in values:
             self._filters['profession'].append(string)
     
-    
 class Meta(object):
     def __init__(self, meta_dat = None):
         if meta_dat is not None:
@@ -99,6 +98,10 @@ class Meta(object):
 
     def __call__(self):
         return self._meta
+
+class Survey(object):
+    def __init__(self):
+        pass
 
 class _Utils(object):
     """
