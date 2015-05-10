@@ -11,5 +11,12 @@ app.register_blueprint(game, url_prefix = '/game')
 app.register_blueprint(survey, url_prefix = '/survey')
 
 a = survey_model.Filter()
+a.age = range(0, 18)
+a.sex = ['MALE', 'FEMALE', 'NERD']
+a.profession = ['Does nothing', 'School Teacher']
+b = survey_model.Scheme()
+b.client_name = "Acme Inc."
+b.description = "How often do you see Woody here? Help. -coyote"
+c = survey_model.Survey()
 
-a.age = 90, 90
+print(survey_model.Manage.add(b, ['cartoon', 'humour'], 300, c, a))
