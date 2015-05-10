@@ -86,6 +86,9 @@ class Meta(object):
     def description(self, value):
         self._meta['description'] = value
 
+    def __call__(self):
+        return self._meta
+
 class _Utils(object):
     """
     Survey Management Utilities. Leverages repeated functions.

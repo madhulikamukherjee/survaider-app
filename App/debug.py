@@ -11,5 +11,7 @@ app.register_blueprint(game, url_prefix = '/game')
 app.register_blueprint(survey, url_prefix = '/survey')
 
 a = survey_model.Filter()
+b = survey_model.Meta()
+b.client_name = "Prashant"
 
-a.age = range(11)
+print(b())
