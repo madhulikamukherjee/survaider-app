@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
+import datetime
 from bson.objectid import ObjectId
 from config import user_sexes as USER_SEXES
+import utils
 
 class Instance(object):
     """
@@ -61,7 +63,7 @@ class Filter(object):
 
     @age.setter
     def age(self, age_rng):
-        self._filters['age'] = age_rng
+        self._filters['age'] = list(age_rng)
 
     @property
     def sex(self):
