@@ -27,7 +27,7 @@ def login():
             response = {
                 'error': False,
                 'user_id': res[1],
-                'user_token': res[2]
+                'user_key': res[2]
             }
             return jsonify(response), 200
         else:
