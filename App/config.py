@@ -42,8 +42,8 @@ encryption_keys = {
 user_sexes = ['MALE', 'FEMALE' 'OTHER', 'UNKNOWN', 'NERD', 'RAINBOWS']
 
 static_routes = {
-    'js': '//static.survaider.com/js_server/',
-    'css': '//static.survaider.com/css_server/',
+    'js': '//static.survaider.com/js/',
+    'css': '//static.survaider.com/js/',
     'img': '//img.survaider.com/'
 }
 
