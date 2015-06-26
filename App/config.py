@@ -41,11 +41,7 @@ encryption_keys = {
 
 user_sexes = ['MALE', 'FEMALE' 'OTHER', 'UNKNOWN', 'NERD', 'RAINBOWS']
 
-static_routes = {
-    'js': '//static.survaider.com/js_server/',
-    'css': '//static.survaider.com/css_server/',
-    'img': '//img.survaider.com/'
-}
+static_route_prefix = os.getenv('OPENSHIFT_NODEJS_PORT', '//localhost:99')
 
 # STAHP BRUH.
 # The followings are not generally "configuration" settings, for they
