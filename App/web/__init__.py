@@ -10,5 +10,5 @@ web = Blueprint('web', __name__, template_folder='templates')
 
 @web.route('/')
 def get():
-    return render_template("master_full.html", master = "test")
+    return render_template("master_partial.html", master = "test")
 
