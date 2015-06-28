@@ -12,9 +12,9 @@ usr = Blueprint('usr', __name__, template_folder='templates')
 def get():
     return "Test"
 
-@usr.route('/login', methods = ['POST'])
+@usr.route('/login/web', methods = ['POST'])
 @user_model.must_not_login
-def login():
+def login_web():
     if all([
         'user_name' in request.form,
         'password'  in request.form
@@ -23,7 +23,7 @@ def login():
         password = request.form['password']
         res = user_model.Session.login(user_name, pswd = password)
         if res[0] is True:
-            "Logged in, send the tokens back. Also, set the cookie."
+            "Logged in, send the tokens back. Also, set the cookie"
             response = {
                 'error': False,
                 'user_id': res[1],
@@ -34,7 +34,7 @@ def login():
             "Nope, couldnt login. Error."
             response = {
                 'error': True,
-                'message': "Authentication Error."
+                'message': "Authentication Error"
             }
             return jsonify(response), 401
 
@@ -43,6 +43,12 @@ def login():
         'message': "Missing `user_name` | `password`"
     }
     return jsonify(response), 400
+
+@usr.route('/login/social', methods = ['GET', 'POST'])
+@user_model.must_not_login
+def login_social():
+    response = {"message": "Ok"}
+    return jsonify(response), 200
 
 @usr.route('/logout', methods = ['GET'])
 @user_model.must_login

@@ -257,9 +257,13 @@ class Session(object):
                     }
                     user.session = prev_session
                     return (True, session_id, session_key)
-            elif all(['social' in kwargs, kwargs['social' is True]]):
-                print("Doing social login")
+            elif 'social' in kwargs:
+                print("Doing social login for signed up users")
                 pass
+
+        else:
+            if 'social' in kwargs:
+                print("Adding a new social user and logging in")
 
         return (False, None, None)
 
