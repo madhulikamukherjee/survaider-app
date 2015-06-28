@@ -231,6 +231,9 @@ class Manage(object):
             # 0 is a code for Deleted user.
             user.status = 0
 
+class Facebook(object):
+    pass
+
 class Session(object):
     """
     Manages the User Session and exposes Login, Verify and Logout methods.
