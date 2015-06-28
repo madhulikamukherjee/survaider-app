@@ -239,23 +239,27 @@ class Session(object):
     Manages the User Session and exposes Login, Verify and Logout methods.
     """
 
-    def login(user_name, pswd):
+    def login(user_name, **kwargs):
         """
         Logs in the user, and returns the Session Identification Information.
         """
         user = Instance(user_name)
         if user.k is True:
-            if Password.check_password(pswd, user.pswd) is True:
-                # create a session
-                session_id = codecs.encode(user_name, "rot-13")
-                session_key = Hashids().encode(int(uuid.uuid4()))
-                prev_session = user.session
-                prev_session[session_key] = {
-                    'start': datetime.datetime.utcnow(),
-                    'alive': True
-                }
-                user.session = prev_session
-                return (True, session_id, session_key)
+            if 'pswd' in kwargs:
+                if Password.check_password(kwargs['pswd'], user.pswd) is True:
+                    # create a session
+                    session_id = codecs.encode(user_name, "rot-13")
+                    session_key = Hashids().encode(int(uuid.uuid4()))
+                    prev_session = user.session
+                    prev_session[session_key] = {
+                        'start': datetime.datetime.utcnow(),
+                        'alive': True
+                    }
+                    user.session = prev_session
+                    return (True, session_id, session_key)
+            elif all(['social' in kwargs, kwargs['social' is True]]):
+                print("Doing social login")
+                pass
 
         return (False, None, None)
 
@@ -290,7 +294,12 @@ class Session(object):
         ]) if user.k is True else False
 
 class SocialProxy(object):
-    
+    def add_user():
+        pass
+
+    def create_session():
+        pass
+
 
 class Authorization(object):
     """

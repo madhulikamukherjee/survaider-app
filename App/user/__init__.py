@@ -21,7 +21,7 @@ def login():
     ]):
         user_name = request.form['user_name']
         password = request.form['password']
-        res = user_model.Session.login(user_name, password)
+        res = user_model.Session.login(user_name, pswd = password)
         if res[0] is True:
             "Logged in, send the tokens back. Also, set the cookie."
             response = {
