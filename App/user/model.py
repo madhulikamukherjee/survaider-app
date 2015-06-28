@@ -289,6 +289,9 @@ class Session(object):
             user.session[session_key]['alive'] is True,
         ]) if user.k is True else False
 
+class SocialProxy(object):
+    
+
 class Authorization(object):
     """
     This takes in the user instance and manages the user tokens.
