@@ -48,15 +48,15 @@ def login_web():
 @user_model.must_not_login
 def login_social():
     if all([
-        'user_id' in request.form,
-        'user_token' in request.form,
-        'scope' in request.form
+        'social_id' in request.form,
+        'social_token' in request.form,
+        'social_scope' in request.form
     ]):
         res = user_model.Session.login(
             social = True,
-            social_id = user_id,
-            social_token = user_token,
-            scope = scope
+            social_id = request.form['social_id'],
+            social_token = request.form['social_token'],
+            social_scope = request.form['social_scope']
         )
         if res[0] is True:
             response = {
