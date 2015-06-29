@@ -47,8 +47,28 @@ def login_web():
 @usr.route('/login/social', methods = ['GET', 'POST'])
 @user_model.must_not_login
 def login_social():
-    response = {"message": "Ok"}
-    return jsonify(response), 200
+    if all([
+        'user_id' in request.form,
+        'user_token' in request.form,
+        'scope' in request.form
+    ]):
+        res = user_model.Session.login(
+            social = True,
+            social_id = user_id,
+            social_token = user_token,
+            scope = scope
+        )
+        if res[0] is True:
+            response = {
+                'error': False,
+                'user_id': res[1],
+                'user_token': res[2]
+            }
+    response = {
+        'error': True,
+        'message': "Missing `user_id` | `user_token` | `scope`"
+    }
+    return jsonify(response), 400
 
 @usr.route('/logout', methods = ['GET'])
 @user_model.must_login
