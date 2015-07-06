@@ -122,3 +122,8 @@ def signup():
         'message': "Missing `user_name` | `password` | `confirm_password` | `email_id`"
     }
     return jsonify(response), 400
+
+@usr.route('/validate', methods = ['POST'])
+@user_model.must_login
+def validate_email():
+    pass
