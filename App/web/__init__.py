@@ -24,7 +24,7 @@ def email_connect():
     if request.method == 'GET':
         return render_template("email_validation.html",
             title = "Validate Email",
-            u_dat = {"name": "Prashant Sinha", "email": "prashant@ducic.ac.in"}
+            u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
         )
     elif request.method == 'POST':
         return "LOL"
