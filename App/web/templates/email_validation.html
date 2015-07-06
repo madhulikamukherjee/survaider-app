@@ -1,0 +1,46 @@
+{% extends "master_partial.html" %}
+
+{% block body %}
+    <div class="register-container full-height sm-p-t-30">
+      <div class="container-sm-height full-height">
+        <div class="row row-sm-height">
+          <div class="col-sm-12 col-sm-height col-middle">
+            <img alt="logo" 
+              src="{{ config.SRP }}/assets/img/logo.one.png"
+              data-src="{{ config.SRP }}/assets/img/logo.one.png"
+              data-src-retina="{{ config.SRP }}/assets/img/logo.one.png"
+              height="120">
+            <h3>Hi, <strong>{{ u_dat.name }}!</strong><br> We're glad to see you.</h3>
+            <p>You're one step away from accessing your Survaider account. We need to <strong>verify your email</strong>.</p>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group form-group-default">
+                  <label>Email</label>
+                  <input type="email" name="email" placeholder="We will send loging details to you" class="form-control" required>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-cons m-t-10" type="submit">Verify</button>
+            <div class="row m-t-10">
+              <div class="col-md-6">
+                <p>I agree to the <a href="#" class="text-info small">Pages Terms</a> and <a href="#" class="text-info small">Privacy</a>.</p>
+              </div>
+              <div class="col-md-6 text-right">
+                <a href="#" class="text-info small">Help? Contact Support</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class=" full-width">
+      <div class="register-container m-b-10 clearfix">
+        <div class="inline pull-left">
+          <img src="assets/img/demo/pages_icon.png" alt="" class="m-t-5 " data-src="assets/img/demo/pages_icon.png" data-src-retina="assets/img/demo/pages_icon_2x.png" width="60" height="60">
+        </div>
+        <div class="col-md-10 m-t-15">
+          <p class="hinted-text small inline ">No part of this website or any of its contents may be reproduced, copied, modified or adapted, without the prior written consent of the author, unless otherwise indicated for stand-alone materials.</p>
+        </div>
+      </div>
+    </div>
+{% endblock %}

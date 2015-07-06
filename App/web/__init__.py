@@ -18,3 +18,10 @@ def login_ui():
     return render_template("social_login.html",
         title = "Login"
     )
+
+@web.route('/connect/email')
+def email_connect():
+    return render_template("email_validation.html",
+        title = "Validate Email",
+        u_dat = {"name": "Prashant Sinha"}
+    )
