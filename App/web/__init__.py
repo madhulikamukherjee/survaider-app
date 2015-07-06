@@ -15,4 +15,6 @@ def get():
 
 @web.route('/login')
 def login_ui():
-    return render_template("login.html")
+    return render_template("social_login.html",
+        title = "Login"
+    )

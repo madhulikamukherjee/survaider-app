@@ -8,9 +8,9 @@ from . import model as user_model
 
 usr = Blueprint('usr', __name__, template_folder='templates')
 
-@usr.route('/')
-def get():
-    return "Test"
+@usr.route('/:name')
+def get(name):
+    return "Name" + name
 
 @usr.route('/login/web', methods = ['POST'])
 @user_model.must_not_login
