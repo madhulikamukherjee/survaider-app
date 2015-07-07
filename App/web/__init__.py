@@ -23,5 +23,5 @@ def login_ui():
 def email_connect():
     return render_template("email_validation.html",
         title = "Validate Email",
-        u_dat = {"name": "Prashant Sinha"}
+        u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
     )
