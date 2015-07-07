@@ -124,6 +124,12 @@ def signup():
     return jsonify(response), 400
 
 @usr.route('/validate/email', methods = ['GET', 'POST'])
-@user_model.must_login
+#@user_model.must_login
 def validate_email():
+    if request.method == 'GET':
+        "Check request data"
+        pass
+    elif request.method == 'POST':
+        "Initialize the validation process"
+        pass
     return jsonify(request.form), 200
