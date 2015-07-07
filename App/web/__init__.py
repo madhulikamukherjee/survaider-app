@@ -19,12 +19,9 @@ def login_ui():
         title = "Login"
     )
 
-@web.route('/connect/email', methods=['GET', 'POST'])
+@web.route('/connect/email')
 def email_connect():
-    if request.method == 'GET':
-        return render_template("email_validation.html",
-            title = "Validate Email",
-            u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
-        )
-    elif request.method == 'POST':
-        return "LOL"
+    return render_template("email_validation.html",
+        title = "Validate Email",
+        u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
+    )

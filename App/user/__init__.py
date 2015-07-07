@@ -123,7 +123,7 @@ def signup():
     }
     return jsonify(response), 400
 
-@usr.route('/validate', methods = ['POST'])
+@usr.route('/validate/email', methods = ['GET', 'POST'])
 @user_model.must_login
 def validate_email():
-    pass
+    return jsonify(request.form), 200
