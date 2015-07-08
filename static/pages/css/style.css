@@ -9,48 +9,48 @@
   top: 7px;
   right: 12px; }
 
-.profile .causes_bar {
+.causes .causes_bar {
   padding-top: 10px; }
-  .profile .causes_bar button.animal {
+  .causes .causes_bar button.animal {
     background-color: #E14A33;
     border-color: #E14A33;
     color: #FFFFFF; }
-    .profile .causes_bar button.animal:hover {
+    .causes .causes_bar button.animal:hover {
       background-color: #F68E63;
       border-color: #F68E63; }
-  .profile .causes_bar button.women {
+  .causes .causes_bar button.women {
     background-color: #ED437B;
     border-color: #ED437B;
     color: #FFFFFF; }
-    .profile .causes_bar button.women:hover {
+    .causes .causes_bar button.women:hover {
       background-color: #F26498;
       border-color: #F26498; }
-  .profile .causes_bar button.education {
+  .causes .causes_bar button.education {
     background-color: #3B1A50;
     border-color: #3B1A50;
     color: #FFFFFF; }
-    .profile .causes_bar button.education:hover {
+    .causes .causes_bar button.education:hover {
       background-color: #81509F;
       border-color: #81509F; }
-  .profile .causes_bar button.health {
+  .causes .causes_bar button.health {
     background-color: #174980;
     border-color: #174980;
     color: #FFFFFF; }
-    .profile .causes_bar button.health:hover {
+    .causes .causes_bar button.health:hover {
       background-color: #398EDF;
       border-color: #398EDF; }
-  .profile .causes_bar button.children {
+  .causes .causes_bar button.children {
     background-color: #F5862C;
     border-color: #F5862C;
     color: #FFFFFF; }
-    .profile .causes_bar button.children:hover {
+    .causes .causes_bar button.children:hover {
       background-color: #FBC028;
       border-color: #FBC028; }
-  .profile .causes_bar button.environment {
+  .causes .causes_bar button.environment {
     background-color: #409E48;
     border-color: #409E48;
     color: #FFFFFF; }
-    .profile .causes_bar button.environment:hover {
+    .causes .causes_bar button.environment:hover {
       background-color: #58D146;
       border-color: #58D146; }
 
