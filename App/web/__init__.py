@@ -25,3 +25,9 @@ def email_connect():
         title = "Validate Email",
         u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
     )
+
+@web.route('/dev/profile')
+def dev_profile():
+    return render_template("profile.html",
+        pg = {"title": "Profile"}
+    )

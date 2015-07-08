@@ -128,8 +128,16 @@ def signup():
 def validate_email():
     if request.method == 'GET':
         "Check request data"
+        if 'q' in request.args:
+            return "Proceed"
+        else:
+            return "NO"
         pass
     elif request.method == 'POST':
         "Initialize the validation process"
-        pass
-    return jsonify(request.form), 200
+        if all([
+            'email' in request.form
+        ]):
+            pass
+
+    return jsonify(request.args), 200
