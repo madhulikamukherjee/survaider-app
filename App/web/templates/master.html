@@ -23,6 +23,7 @@
     <link href="{{ config.SRP }}/assets/plugins/switchery/css/switchery.min.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="{{ config.SRP }}/pages/css/pages-icons.css" rel="stylesheet" type="text/css">
     <link class="main-stylesheet" href="{{ config.SRP }}/pages/css/pages.css" rel="stylesheet" type="text/css" />
+    <link class="main-stylesheet" href="{{ config.SRP }}/pages/css/style.css" rel="stylesheet" type="text/css" />
     <!--[if lte IE 9]>
             <link href="{{ config.SRP }}/pages/css/ie9.css" rel="stylesheet" type="text/css" />
     <![endif]-->
@@ -148,6 +149,7 @@
         </div>
         <div class="page-content-wrapper">
             <div class="content">
+                {% block main_content %}
                 <div class="jumbotron" data-pages="parallax">
                     <div class="container-fluid container-fixed-lg sm-p-l-20 sm-p-r-20">
                         <div class="inner">
@@ -160,6 +162,7 @@
                 </div>
                 <div class="container-fluid container-fixed-lg">
                 </div>
+                {% endblock %}
             </div>
             <div class="container-fluid container-fixed-lg footer">
                 <div class="copyright sm-text-center">
