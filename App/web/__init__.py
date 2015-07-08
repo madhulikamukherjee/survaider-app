@@ -26,6 +26,12 @@ def email_connect():
         u_dat = {"name": "Sherlock Holmes", "email": "prashant@ducic.ac.in"}
     )
 
+@web.route('/dev/causes')
+def dev_causes():
+    return render_template("causes.html",
+        pg = {"title": "Causes"}
+    )
+
 @web.route('/dev/profile')
 def dev_profile():
     return render_template("profile.html",
