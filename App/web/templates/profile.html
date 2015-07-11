@@ -9,27 +9,45 @@
 {% block main_content %}
 <div class="row intro">
     <div class="col-sm-5 text-center user">
-        <p class="display-picture"><img src="{{ config.SRP }}/demo/assets/img/profiles/c2x.jpg"></p>
         <p class="medal-banner">
-            <svg width="366px" height="55px" viewBox="0 0 366 55" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+            <svg width="259px" height="252px" viewBox="0 0 259 252" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+                <title>512</title>
+                <desc>Created with Sketch.</desc>
+                <defs>
+                    <radialGradient cx="50%" cy="0%" fx="50%" fy="0%" r="100%" id="radialGradient-1">
+                        <stop stop-color="#489CE1" offset="0%"></stop>
+                        <stop stop-color="#2E96A6" offset="100%"></stop>
+                    </radialGradient>
+                    <circle id="path-2" cx="84" cy="84" r="84"></circle>
+                </defs>
                 <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
                     <g id="512" sketch:type="MSArtboardGroup">
-                        <g id="Group" sketch:type="MSLayerGroup">
-                            <path d="M62,14 L62,53 L0.577164466,53 L20.0771645,33.5 L0.577164466,14 L62,14 Z" id="Rectangle-1-Copy" fill="#135393" sketch:type="MSShapeGroup"></path>
-                            <path d="M38,39 L62,53.0098778 L62,32.5200841 L38,39 Z" id="Path-2" fill="#1461AD" sketch:type="MSShapeGroup"></path>
-                            <path d="M365.422836,14 L365.422836,53 L304,53 L323.5,33.5 L304,14 L365.422836,14 Z" id="Rectangle-1-Copy" fill="#135393" sketch:type="MSShapeGroup" transform="translate(334.711418, 33.500000) scale(-1, 1) translate(-334.711418, -33.500000) "></path>
-                            <path d="M304,39 L328,53.0098778 L328,32.5200841 L304,39 Z" id="Path-2" fill="#1461AD" sketch:type="MSShapeGroup" transform="translate(316.000000, 42.764981) scale(-1, 1) translate(-316.000000, -42.764981) "></path>
-                            <rect id="Rectangle-1" fill="#1976D2" sketch:type="MSShapeGroup" x="38" y="0" width="290" height="39"></rect>
-                            <text id="Virginity-over-9000" sketch:type="MSTextLayer" font-size="23" font-weight="313" fill="#FFFFFF">
-                                <tspan x="83" y="25">{{ u_dat.medal_top }}</tspan>
+                        <g id="Bitmap" sketch:type="MSLayerGroup" transform="translate(42.000000, 6.000000)">
+                            <mask id="mask-3" sketch:name="Mask" fill="white">
+                                <use xlink:href="#path-2"></use>
+                            </mask>
+                            <use id="Mask" stroke="url(#radialGradient-1)" stroke-width="12" fill="#D8D8D8" sketch:type="MSShapeGroup" xlink:href="#path-2"></use>
+                            <image sketch:type="MSBitmapLayer" mask="url(#mask-3)" x="-7" y="-7" width="181" height="181" xlink:href="{{ config.SRP }}/demo/assets/img/profiles/c2x.jpg"></image>
+                        </g>
+                        <g id="Group" sketch:type="MSLayerGroup" transform="translate(0.000000, 134.000000)">
+                            <path d="M38.0909091,58.1818182 L0.419755975,61.5158955 L14.6015742,45.6406598 L0.419755975,33.1522592 L38.0909091,29.8181818 L38.0909091,58.1818182 Z" id="Rectangle-1-Copy" fill="#135393" sketch:type="MSShapeGroup"></path>
+                            <path d="M20.6363636,48 L38.0909091,58.189002 L38.0909091,43.2873339 L20.6363636,48 Z" id="Path-2-Copy" fill="#1461AD" sketch:type="MSShapeGroup"></path>
+                            <path d="M214.090909,39.1815937 L251.762062,34.7907366 L237.580244,22.3203619 L251.762062,6.42710027 L214.090909,10.8179573 L214.090909,39.1815937 Z" id="Rectangle-1-Copy-2" fill="#135393" sketch:type="MSShapeGroup"></path>
+                            <path d="M214.090909,28.9925916 L231.545455,39.1815937 L231.545455,24.2799255 L214.090909,28.9925916 Z" id="Path-2" fill="#1461AD" sketch:type="MSShapeGroup" transform="translate(222.818182, 31.730760) scale(-1, 1) translate(-222.818182, -31.730760) "></path>
+                            <path d="M231.545455,0.559851092 L231.545455,28.9234875 L20.6363636,48 L20.6363636,19.6363636 L231.545455,0.559851092 Z" id="Rectangle-1" fill="#19A4D2" sketch:type="MSShapeGroup"></path>
+                            <text id="Virginity-over-9000" sketch:type="MSTextLayer" transform="translate(126.090909, 27.518327) rotate(-5.000000) translate(-126.090909, -27.518327) " font-family="P22UndergroundBook" font-size="16.7272727" font-weight="313" sketch:alignment="middle" fill="#FFFFFF">
+                                <tspan x="53.6869091" y="29.3365091">{{ u_dat.medal_top }}</tspan>
                             </text>
                         </g>
+                        <text id="Sherlock-Holmes" sketch:type="MSTextLayer" font-family="P22UndergroundBook" font-size="26" font-weight="313" sketch:alignment="middle" fill="#000000">
+                            <tspan x="23.391" y="223.200035">{{ u_dat.name }}</tspan>
+                        </text>
                     </g>
                 </g>
             </svg>
         </p>
-        <p class="name">{{ u_dat.name }}</p>
+        <p class="name"></p>
     </div>
     <div class="col-sm-7">
         <ul>
