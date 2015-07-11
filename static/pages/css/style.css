@@ -54,4 +54,8 @@
       background-color: #58D146;
       border-color: #58D146; }
 
+.profile .intro .user .display-picture > img {
+  border-radius: 50%;
+  border: 5px solid red; }
+
 /*# sourceMappingURL=style.css.map */
