@@ -54,8 +54,18 @@
       background-color: #58D146;
       border-color: #58D146; }
 
-.profile .intro .user .display-picture > img {
-  border-radius: 50%;
-  border: 5px solid red; }
+.profile .intro .user {
+  padding: 10px; }
+  .profile .intro .user .display-picture > img {
+    border-radius: 50%;
+    border: 8px solid #135493;
+    width: 160px;
+    height: 160px; }
+  .profile .intro .user .name {
+    font-size: 28px; }
+  .profile .intro .user .medal-banner {
+    margin-top: -40px; }
+    .profile .intro .user .medal-banner svg {
+      max-width: 100%; }
 
 /*# sourceMappingURL=style.css.map */

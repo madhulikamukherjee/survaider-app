@@ -35,5 +35,6 @@ def dev_causes():
 @web.route('/dev/profile')
 def dev_profile():
     return render_template("profile.html",
-        pg = {"title": "Profile"}
+        pg = {"title": "Profile"},
+        u_dat = {"name": "Sherlock Holmes", "medal_top": "Virginity over 9000"}
     )

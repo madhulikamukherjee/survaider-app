@@ -8,13 +8,33 @@
 
 {% block main_content %}
 <div class="row intro">
-    <div class="col-sm-3 text-center user">
+    <div class="col-sm-5 text-center user">
         <p class="display-picture"><img src="{{ config.SRP }}/demo/assets/img/profiles/c2x.jpg"></p>
-        <p class="medal-banner">LEVEL</p>
-        <p>John Doe</p>
+        <p class="medal-banner">
+            <svg width="366px" height="55px" viewBox="0 0 366 55" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                    <g id="512" sketch:type="MSArtboardGroup">
+                        <g id="Group" sketch:type="MSLayerGroup">
+                            <path d="M62,14 L62,53 L0.577164466,53 L20.0771645,33.5 L0.577164466,14 L62,14 Z" id="Rectangle-1-Copy" fill="#135393" sketch:type="MSShapeGroup"></path>
+                            <path d="M38,39 L62,53.0098778 L62,32.5200841 L38,39 Z" id="Path-2" fill="#1461AD" sketch:type="MSShapeGroup"></path>
+                            <path d="M365.422836,14 L365.422836,53 L304,53 L323.5,33.5 L304,14 L365.422836,14 Z" id="Rectangle-1-Copy" fill="#135393" sketch:type="MSShapeGroup" transform="translate(334.711418, 33.500000) scale(-1, 1) translate(-334.711418, -33.500000) "></path>
+                            <path d="M304,39 L328,53.0098778 L328,32.5200841 L304,39 Z" id="Path-2" fill="#1461AD" sketch:type="MSShapeGroup" transform="translate(316.000000, 42.764981) scale(-1, 1) translate(-316.000000, -42.764981) "></path>
+                            <rect id="Rectangle-1" fill="#1976D2" sketch:type="MSShapeGroup" x="38" y="0" width="290" height="39"></rect>
+                            <text id="Virginity-over-9000" sketch:type="MSTextLayer" font-size="23" font-weight="313" fill="#FFFFFF">
+                                <tspan x="83" y="25">{{ u_dat.medal_top }}</tspan>
+                            </text>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </p>
+        <p class="name">{{ u_dat.name }}</p>
     </div>
-    <div class="col-sm-9">
-        MEDALS MEDALS MEDALSSSSS!!
+    <div class="col-sm-7">
+        <ul>
+            <li></li>
+        </ul>
     </div>
 </div>
 <div class="row">
