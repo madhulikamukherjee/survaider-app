@@ -65,5 +65,13 @@
     font-size: 28px; }
   .profile .intro .user .medal-banner svg {
     max-width: 100%; }
+.profile .intro .medals {
+  padding: 10px; }
+  .profile .intro .medals ul.inline {
+    list-style-type: none;
+    padding: 0;
+    display: inline-block; }
+    .profile .intro .medals ul.inline li {
+      display: inline; }
 
 /*# sourceMappingURL=style.css.map */
