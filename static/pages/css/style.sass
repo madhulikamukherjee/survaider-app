@@ -71,9 +71,34 @@ $women_lt: #F26498
                 background-color: $environment_lt
                 border-color: $environment_lt
 
-.profile
+body.profile
     .intro
         .user
+            padding: 10px
             .display-picture > img
                 border-radius: 50%
-                border: 5px solid red
+                border: 8px solid #135493
+                width: 160px
+                height: 160px
+            .name
+                font-size: 28px
+            .medal-banner
+                //margin-top: -40px
+                svg
+                    max-width: 100%
+        .medals
+            padding: 10px
+            ul.inline
+                list-style-type: none
+                padding: 0
+                display: inline-block
+                margin: 0
+
+                li
+                    display: inline-block
+                    margin: 10px
+                    width: 100px
+                    height: 100px
+                    background: red
+
+body.story
