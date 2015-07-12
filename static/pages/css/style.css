@@ -70,8 +70,12 @@
   .profile .intro .medals ul.inline {
     list-style-type: none;
     padding: 0;
-    display: inline-block; }
+    display: inline-block;
+    margin: 0; }
     .profile .intro .medals ul.inline li {
-      display: inline; }
+      display: inline-block;
+      margin: 10px;
+      width: 100px;
+      height: 100px; }
 
 /*# sourceMappingURL=style.css.map */
