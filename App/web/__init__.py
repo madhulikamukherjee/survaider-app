@@ -38,3 +38,10 @@ def dev_profile():
         pg = {"title": "Profile"},
         u_dat = {"name": "Sherlock Holmes", "medal_top": "Virginity over 9000"}
     )
+
+@web.route('/dev/story')
+def dev_story():
+    return render_template("story.html",
+        pg = {"title": "Story"},
+        u_dat = {"name": "Sherlock Holmes", "medal_top": "Virginity over 9000"}
+    )

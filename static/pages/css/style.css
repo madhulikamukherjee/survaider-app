@@ -54,28 +54,29 @@
       background-color: #58D146;
       border-color: #58D146; }
 
-.profile .intro .user {
+body.profile .intro .user {
   padding: 10px; }
-  .profile .intro .user .display-picture > img {
+  body.profile .intro .user .display-picture > img {
     border-radius: 50%;
     border: 8px solid #135493;
     width: 160px;
     height: 160px; }
-  .profile .intro .user .name {
+  body.profile .intro .user .name {
     font-size: 28px; }
-  .profile .intro .user .medal-banner svg {
+  body.profile .intro .user .medal-banner svg {
     max-width: 100%; }
-.profile .intro .medals {
+body.profile .intro .medals {
   padding: 10px; }
-  .profile .intro .medals ul.inline {
+  body.profile .intro .medals ul.inline {
     list-style-type: none;
     padding: 0;
     display: inline-block;
     margin: 0; }
-    .profile .intro .medals ul.inline li {
+    body.profile .intro .medals ul.inline li {
       display: inline-block;
       margin: 10px;
       width: 100px;
-      height: 100px; }
+      height: 100px;
+      background: red; }
 
 /*# sourceMappingURL=style.css.map */
