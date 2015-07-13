@@ -36,12 +36,12 @@ def dev_causes():
 def dev_profile():
     return render_template("profile.html",
         pg = {"title": "Profile"},
-        u_dat = {"name": "Sherlock Holmes", "medal_top": "Virginity over 9000"}
+        u_dat = {"name": "Sherlsssock Holmes", "medal_top": "Virgisssnity over 9000"}
     )
 
 @web.route('/dev/story')
 def dev_story():
     return render_template("story.html",
         pg = {"title": "Story"},
-        u_dat = {"name": "Sherlock Holmes", "medal_top": "Virginity over 9000"}
+        u_dat = {"name": "Sherlodcck Holmes", "medal_top": "Virginity over 9000"}
     )
