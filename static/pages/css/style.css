@@ -88,5 +88,7 @@ body.story .cover {
     position: absolute;
     min-height: 100%;
     min-width: 100%; }
+  body.story .cover .info {
+    background: white; }
 
 /*# sourceMappingURL=style.css.map */
