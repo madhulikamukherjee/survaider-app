@@ -45,3 +45,9 @@ def dev_story():
         pg = {"title": "Story"},
         u_dat = {"name": "Sherlodcck Holmes", "medal_top": "Virginity over 9000"}
     )
+
+@web.route('/dev/svg')
+def dev_test_svg():
+    return render_template("test_svg.html",
+        pg = {"title": "Story"},
+        )
