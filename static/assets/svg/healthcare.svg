@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="194px" height="252px" viewBox="0 0 194 252" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>healthcare</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path id="path-1" d="M32,25.2765119 L22.977,20.6565119 L22.977,7.86251187 L9.084,0.526511869 L9.084,13.5425119 L0.186,8.98651187 L0.186,24.6155119 L9.084,29.5195119 L9.084,43.2595119 L22.977,50.8185119 L22.977,37.1775119 L32,42.1505119 L32,25.2765119 Z"></path>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="healthcare" sketch:type="MSArtboardGroup">
+            <g id="Plus" sketch:type="MSLayerGroup" transform="translate(48.000000, 94.000000)">
+                <mask id="mask-2" sketch:name="SVGID_191_ Copy" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="SVGID_191_-Copy" fill="#BE1E2D" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+                <path d="M22.977,7.86251187 L22.977,20.6565119 L32,25.2765119 L32,38.0358182 L26.977,35.2674065 L22.977,37.1775119 L22.977,46.7320587 L13.084,41.3494065 L13.084,27.6094065 L4.186,22.7054065 L4.186,11.0346126 L9.084,13.5425119 L13.084,11.6324065 L13.084,2.63865467 L22.977,7.86251187 Z" id="SVGID_191_-Copy-3" fill="#EC1C24" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Stethoscope" sketch:type="MSLayerGroup" transform="translate(52.000000, 102.000000)">
+                <path d="M0.896,9.313 C0.896,9.313 10.17,53.831 21.3,17.792" id="Shape" stroke="#FFFFFF" stroke-width="1.5" sketch:type="MSShapeGroup"></path>
+                <path d="M0.896,10.372 C0.896,10.372 -0.958,0.567 3.811,1.893" id="Shape" stroke="#FFFFFF" stroke-width="0.75" sketch:type="MSShapeGroup"></path>
+                <path d="M21.324,18.115 C21.324,18.115 23.85,9.795 19.324,8.365" id="Shape" stroke="#FFFFFF" stroke-width="0.75" sketch:type="MSShapeGroup"></path>
+                <path d="M4.868,1.755 C5.021,0.767 3.173,0.52 2.577,1.721 C2.135,2.613 4.174,2.922 4.64,2.267 C4.772,2.08 4.845,1.908 4.868,1.755 L4.868,1.755 Z" id="Shape" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M20.784,9.166 C21.454,8.424 20.044,7.203 18.887,7.881 C18.029,8.385 19.564,9.762 20.313,9.469 C20.525,9.386 20.681,9.281 20.784,9.166 L20.784,9.166 Z" id="Shape" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M11.188,32.186 C11.877,37.034 10.398,39.721 9.43,44.035 C7.938,50.686 10.166,56.994 13.938,57.936" id="Shape" stroke="#FFFFFF" stroke-width="1.5" sketch:type="MSShapeGroup"></path>
+                <circle id="Oval" fill="#FFFFFF" sketch:type="MSShapeGroup" cx="14.438" cy="57.936" r="3.25"></circle>
+            </g>
+            <g id="Bed-1" sketch:type="MSLayerGroup" transform="translate(75.000000, 45.000000)">
+                <path d="M31.105,15.07 L31.105,5.358 C31.105,5.358 31.396,4.344 29.657,3.33 L24.584,0.72 C24.584,0.72 23.134,-0.585 23.134,2.75 L23.134,10.287" id="Shape" stroke="#A6A8AB" sketch:type="MSShapeGroup"></path>
+                <path d="M22.415,6.421 L31.908,8.879 L31.923,11.672 L9.311,23.754 L0.059,18.502 L0.155,15.666 L22.415,6.421 Z" id="Shape" fill="#E2E2E2" sketch:type="MSShapeGroup"></path>
+                <path d="M22.415,3.532 L31.923,8.785 L9.311,20.865 L0.059,15.613 L22.415,3.532 Z" id="Shape" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M8.205,27.246 L8.205,19.853 C8.205,19.853 8.493,18.548 5.305,16.954 L1.682,15.215 C1.682,15.215 0.232,13.91 0.232,17.244 L0.232,22.463" id="Shape" stroke="#A6A8AB" sketch:type="MSShapeGroup"></path>
+            </g>
+            <g id="Bed-2" sketch:type="MSLayerGroup" transform="translate(93.000000, 56.000000)">
+                <path d="M31.95,14.652 L31.95,4.939 C31.95,4.939 32.24,3.924 30.5,2.91 L25.427,0.302 C25.427,0.302 23.977,-1.003 23.977,2.332 L23.977,9.867" id="Shape" stroke="#A6A8AB" sketch:type="MSShapeGroup"></path>
+                <path d="M23.26,6.002 L32.751,8.459 L32.768,11.254 L10.154,23.335 L0.901,18.084 L0.999,15.248 L23.26,6.002 Z" id="Shape" fill="#E2E2E2" sketch:type="MSShapeGroup"></path>
+                <path d="M23.26,3.113 L32.768,8.367 L10.154,20.445 L0.901,15.194 L23.26,3.113 Z" id="Shape" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+                <path d="M9.047,26.828 L9.047,19.434 C9.047,19.434 9.338,18.13 6.149,16.536 L2.524,14.797 C2.524,14.797 1.076,13.491 1.076,16.826 L1.076,22.044" id="Shape" stroke="#A6A8AB" sketch:type="MSShapeGroup"></path>
+            </g>
+            <path d="M43.5,174.236267 L49.9016521,178.334 L52.2356521,175 L53.9016521,182 L58.2356521,173 L59.2356521,189 L61.9016521,179.334 L62.9016521,184 L65.2356521,182.334 L66.2356521,188.667 L67.2356521,192.334 L69.5686521,187.667 L71.9016521,193.334 L74.2356521,191.667 L84.5686521,198.334" id="Heart-Rhythm" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>
