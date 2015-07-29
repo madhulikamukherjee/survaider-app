@@ -1,3 +1,25 @@
+html, body {
+  height: 100%; }
 
+body.tour {
+  position: relative; }
+
+section.section-one, section.section-two {
+  position: relative;
+  background: #16a085;
+  height: 100%;
+  height: 100vh; }
+
+section.section-one {
+  background: #16a085; }
+
+section.section-two {
+  background: #2980b9; }
+
+.background-unblur {
+  background: url(//qsf.is.quoracdn.net/-2f32a993187981f4.png) fixed;
+  background-size: 1757px 845px;
+  background-repeat: no-repeat;
+  background-position: center top; }
 
 /*# sourceMappingURL=style.css.map */

@@ -50,4 +50,10 @@ def dev_story():
 def dev_test_svg():
     return render_template("test_svg.html",
         pg = {"title": "Story"},
-        )
+    )
+
+@web.route('/dev/tour')
+def dev_tour():
+    return render_template("tour.html",
+        pg = {"title": "Tour"},
+    )
