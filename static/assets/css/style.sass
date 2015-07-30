@@ -3,22 +3,42 @@ html, body
 
 body.tour
     position: relative
+    z-index: 0
+    .hero
+        position: fixed
+        left: 0
+        right: 0
+        top: 0
+        bottom: 0
+        width: 100%
+        width: 100vw
+        height: 100%
+        height: 100vh
+        background: #FFF
+        background-size: 1757px 845px
+        background-repeat: no-repeat
+        background-position: center top
+
+        &.bg-nrml
+            background-image: url(//localhost:99/assets/hero/tour-scribble-nrml.png)
+            z-index: -2
+
+        &.bg-blur
+            background-image: url(//localhost:99/assets/hero/tour-scribble-blur.png)
+            z-index: -1
+            opacity: 0
+
 
 section.section-one, section.section-two
     position: relative
-    background: #16a085
     height: 100%
     height: 100vh
 
 section.section-one
-    background: #16a085
+    //background: #16a085
 
 section.section-two
-    background: #2980b9
+    //background: #2980b9
 
-.background-unblur
-    background: url(//qsf.is.quoracdn.net/-2f32a993187981f4.png) fixed
-    background-size: 1757px 845px
+    background: url(//) fixed
 
-    background-repeat: no-repeat
-    background-position: center top

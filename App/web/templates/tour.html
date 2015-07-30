@@ -29,6 +29,8 @@
     {% endblock %}
 </head>
 <body class="tour">
+    <div class="hero bg-nrml"></div>
+    <div class="hero bg-blur"></div>
     <section class="section-one">
         <div class="left">
             <p>Survaider</p>
@@ -44,5 +46,39 @@
     <section class="section-two">
         LOL
     </section>
+    <script src="{{ config.SRP }}/assets/plugins/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    /**
+     * Calculates the appropriate transparency value for smooth transition.
+     * @param  float x Current distance (in px) from the top document.
+     * @param  float a Beginning pixel of the transition.
+     * @param  float b Ending pixel of the transition.
+     * @return float   The opacity value.
+     */
+    var calculate_opacity = function (x, a, b) {
+        "use strict";
+        if (x < a) {
+            return 0;
+        }
+        else if (x > b) {
+            return 1;
+        }
+        else {
+            var blur_value = (Math.sin((x * Math.PI) / (b - a) - (Math.PI * a) / (b - a) - 3 * Math.PI / 2) + 1) / 2;
+            return 1 - blur_value;
+        }
+    };
+
+    $(window).on("scroll", function() {
+        "use strict";
+        var scroll = $("body").scrollTop(),
+            start  = window.innerHeight * 0.1,
+            end    = window.innerHeight * 0.5,
+
+            opacity_value = calculate_opacity(scroll, start, end);
+
+        $(".bg-blur").css("opacity", opacity_value)
+    });
+    </script>
 </body>
 </html>
