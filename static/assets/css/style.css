@@ -25,13 +25,19 @@ body.tour {
       background-image: url(//localhost:99/assets/hero/tour-scribble-blur.png);
       z-index: -1;
       opacity: 0; }
-
-section.section-one, section.section-two {
-  position: relative;
-  height: 100%;
-  height: 100vh; }
-
-section.section-two {
-  background: url(//) fixed; }
+  body.tour section .row {
+    margin: 0;
+    height: 100%; }
+    body.tour section .row > div {
+      position: relative;
+      height: 100%; }
+      body.tour section .row > div div {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%); }
+  body.tour section.section-one, body.tour section.section-two {
+    position: relative;
+    height: 100%;
+    height: 100vh; }
 
 /*# sourceMappingURL=style.css.map */

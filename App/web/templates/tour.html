@@ -32,15 +32,20 @@
     <div class="hero bg-nrml"></div>
     <div class="hero bg-blur"></div>
     <section class="section-one">
-        <div class="left">
-            <p>Survaider</p>
-            <p>Want to contribute to a Social Cause?</p>
-            <p>Let’s Play a Game.</p>
-            <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
-            <button>Let's Get Started</button>
-        </div>
-        <div class="right">
-            BIG S
+        <div class="row">
+            <div class="col-md-6 vcenter outer">
+                <div class="vcenter inner">
+                    <h1>Survaider</h1>
+                    <h2>Want to contribute to a Social Cause?</h2>
+                    <h3>Let’s Play a Game.</h3>
+                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                    <button>Let's Get Started</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="rgow" id="drawing">
+                </div>
+            </div>
         </div>
     </section>
     <section class="section-two">
@@ -78,7 +83,12 @@
             opacity_value = calculate_opacity(scroll, start, end);
 
         $(".bg-blur").css("opacity", opacity_value)
+        $(".bg-nrml").css("opacity", 1 - opacity_value)
     });
     </script>
+<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.min.js"></script>
+<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.parser.js"></script>
+<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.import.min.js"></script>
+<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.survaider.js"></script>
 </body>
 </html>

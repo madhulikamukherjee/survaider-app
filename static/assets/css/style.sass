@@ -28,17 +28,27 @@ body.tour
             z-index: -1
             opacity: 0
 
+    section
+        .row
+            margin: 0
+            height: 100%
 
-section.section-one, section.section-two
-    position: relative
-    height: 100%
-    height: 100vh
+            & > div
+                position: relative
+                height: 100%
 
-section.section-one
-    //background: #16a085
+                div
+                    position: absolute
+                    top: 50%
+                    transform: translateY(-50%)
 
-section.section-two
-    //background: #2980b9
+    section.section-one, section.section-two
+        position: relative
+        height: 100%
+        height: 100vh
 
-    background: url(//) fixed
+    section.section-one
+        //background: #16a085
 
+    section.section-two
+        //background: #2980b9
