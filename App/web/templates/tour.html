@@ -56,7 +56,7 @@
                         <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
                             <img src="{{ config.SRP}}//assets/img/8490297580_702010d076_o.jpg">
                             <div class="dat">
-                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
+                                <h2>Lorem ipsum dolor set amit. Fuck all the people. He wants to go home and sleep. Help him.</h2>
                                 <p>Raised <strong>9k</strong> <span>5%</span></p>
                                 <div class="progress-fill">
                                     <div class="percentage" style="width:5%"></div>
@@ -66,7 +66,7 @@
                         <div class="card stack oovp" onclick="paginator.show_card(1)" data-class="card stack teal" id="two-card-two">
                             <img src="{{ config.SRP}}//assets/img/4224955744_59e06ed773_o.jpg">
                             <div class="dat">
-                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
+                                <h2>He's been looking towards you with sad eyes for a while now. Donate, heartless people.</h2>
                                 <p>Raised <strong>18k</strong> <span>30%</span></p>
                                 <div class="progress-fill">
                                     <div class="percentage" style="width:30%"></div>
@@ -145,6 +145,7 @@
                 ["far", "front", "farther"],
                 ["farther", "far", "front"]
             ],
+            last_update: 0,
             show_card: function (index) {
                 "use strict";
                 var i = 0;
@@ -161,12 +162,20 @@
                         element.attr("class", "");
                     }
                 }
+                last_update = index;
             }
         };
 
         $(function () {
-            paginator.show_card(0);
+            paginator.show_card(2);
         });
+
+        window.setInterval(function () {
+            var cycle = [1, 2, 0];
+            current = cycle[paginator.last_update];
+            paginator.last_update = current;
+            paginator.show_card(current);
+        }, 5000);
 
     </script>
 <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.min.js"></script>
