@@ -1,7 +1,9 @@
+@import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600);
 html, body {
   height: 100%; }
 
 body.tour {
+  font-family: "Work Sans", sans-serif;
   position: relative;
   z-index: 0; }
   body.tour .hero {
@@ -28,16 +30,96 @@ body.tour {
   body.tour section .row {
     margin: 0;
     height: 100%; }
-    body.tour section .row > div {
-      position: relative;
-      height: 100%; }
-      body.tour section .row > div div {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%); }
-  body.tour section.section-one, body.tour section.section-two {
+  body.tour section.slide {
     position: relative;
     height: 100%;
     height: 100vh; }
+    body.tour section.slide.one > div.row > div {
+      padding: 0 15% 0 8%;
+      height: 100%; }
+    body.tour section.slide.two > div.row > div {
+      height: 100%; }
+    body.tour section.slide.two .stack {
+      position: absolute;
+      transition: transform 0.5s ease, z-index 0.5s, ease; }
+      body.tour section.slide.two .stack.farther {
+        transform: translate(0px, 0px) scale(0.6);
+        z-index: 1; }
+      body.tour section.slide.two .stack.far {
+        transform: translate(40px, 0px) scale(0.8);
+        z-index: 2; }
+      body.tour section.slide.two .stack.front {
+        transform: translate(80px, 0);
+        z-index: 3; }
+  body.tour button.dark-outline, body.tour .button.dark-outline {
+    background: transparent;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    color: #000000;
+    padding: 5px 20px;
+    transition: 0.5s; }
+    body.tour button.dark-outline:hover, body.tour .button.dark-outline:hover {
+      background: #000000;
+      color: #FFFFFF; }
+  body.tour div.card {
+    width: 230px;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    border-radius: 5px;
+    background: #FFF; }
+    body.tour div.card > img {
+      height: 60%;
+      display: block;
+      margin: 0 auto; }
+    body.tour div.card > .dat {
+      width: 100%;
+      overflow: hidden;
+      position: absolute;
+      bottom: 0;
+      background: #FFF;
+      padding: 10px;
+      color: #FFF; }
+      body.tour div.card > .dat h2 {
+        font-size: 18px;
+        font-weight: 300;
+        line-height: 20px;
+        margin: 0; }
+      body.tour div.card > .dat p {
+        margin: 10px 0 0px 0; }
+        body.tour div.card > .dat p span {
+          float: right; }
+      body.tour div.card > .dat div.progress-fill {
+        background: #ED2355;
+        width: 100%;
+        height: 8px;
+        position: absolute;
+        left: 0;
+        bottom: 0; }
+        body.tour div.card > .dat div.progress-fill > div.percentage {
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background: #FCC013; }
+    body.tour div.card.green {
+      background: #009E47; }
+      body.tour div.card.green > .dat {
+        background: #009E47; }
+    body.tour div.card.teal {
+      background: #009D9E; }
+      body.tour div.card.teal > .dat {
+        background: #009D9E; }
+    body.tour div.card.blue {
+      background: #00769E; }
+      body.tour div.card.blue > .dat {
+        background: #00769E; }
+  body.tour .vcenter.outer {
+    position: relative; }
+  body.tour .vcenter.inner {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%); }
 
 /*# sourceMappingURL=style.css.map */

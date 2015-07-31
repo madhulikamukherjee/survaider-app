@@ -1,7 +1,9 @@
+@import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600)
 html, body
     height: 100%
 
 body.tour
+    font-family: 'Work Sans', sans-serif
     position: relative
     z-index: 0
     .hero
@@ -33,22 +35,118 @@ body.tour
             margin: 0
             height: 100%
 
-            & > div
-                position: relative
-                height: 100%
-
-                div
-                    position: absolute
-                    top: 50%
-                    transform: translateY(-50%)
-
-    section.section-one, section.section-two
+    section.slide
         position: relative
         height: 100%
         height: 100vh
 
-    section.section-one
-        //background: #16a085
+        &.one
+            & > div.row > div
+                padding: 0 15% 0 8%
 
-    section.section-two
-        //background: #2980b9
+                height: 100%
+        &.two
+            & > div.row > div
+                height: 100%
+
+            .stack
+                position: absolute
+                transition: transform 0.5s ease, z-index 0.5s, ease
+
+                &.farther
+                    transform: translate(0px, 0px) scale(0.6)
+                    z-index: 1
+
+                &.far
+                    transform: translate(40px, 0px) scale(0.8)
+                    z-index: 2
+
+                &.front
+                    transform: translate(80px, 0)
+                    z-index: 3
+
+    button, .button
+        &.dark-outline
+            background: transparent
+            border: 2px solid #000000
+            border-radius: 5px
+            color: #000000
+            padding: 5px 20px
+            transition: 0.5s
+
+            &:hover
+                background: #000000
+                color: #FFFFFF
+
+    div.card
+        width: 230px
+        height: 300px
+        position: relative
+        overflow: hidden
+        display: inline-block
+        border-radius: 5px
+        background: #FFF
+        & > img
+            //position: absolute
+            //width: 100%
+            height: 60%
+            display: block
+            margin: 0 auto
+
+        & > .dat
+            //height: 50%
+            width: 100%
+            overflow: hidden
+            position: absolute
+            bottom: 0
+            background: #FFF
+            padding: 10px
+            color: #FFF
+
+            h2
+                font-size: 18px
+                font-weight: 300
+                line-height: 20px
+                margin: 0
+
+            p
+                margin: 10px 0 0px 0
+
+                span
+                    float: right
+            div.progress-fill
+                background: #ED2355
+                width: 100%
+                height: 8px
+                position: absolute
+                left: 0
+                bottom: 0
+
+                & > div.percentage
+                    position: absolute
+                    left: 0
+                    top: 0
+                    height: 100%
+                    background: #FCC013
+
+        &.green
+            background: #009E47
+            & > .dat
+                background: #009E47
+        &.teal
+            background: #009D9E
+            & > .dat
+                background: #009D9E
+        &.blue
+            background: #00769E
+            & > .dat
+                background: #00769E
+
+    .vcenter
+        &.outer
+            position: relative
+        &.inner
+            position: relative
+            top: 50%
+            transform: translateY(-50%)
+
