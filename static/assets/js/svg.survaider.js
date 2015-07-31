@@ -44,8 +44,8 @@ var routine = {
         // Setting up the canvas
         this.draw = SVG('drawing').size(200, 300);
         // Drawing the bases
-        this.base.primary = this.draw.path(paths.s_primary_layer).opacity(1);
         this.base.highlight = this.draw.path(paths.s_highlight_layer).opacity(1);
+        this.base.primary = this.draw.path(paths.s_primary_layer).opacity(1);
         this.base.primary.animate(1000, '>', 0).attr({fill: colors.womenazi.primary});
         this.base.highlight.animate(1000, '>', 0).attr({fill: colors.womenazi.highlight});
 
