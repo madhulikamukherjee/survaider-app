@@ -51,8 +51,29 @@
     <section class="slide two">
         <div class="row">
             <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner" id="drawing">
-                        <div class="card stack green farther" id="two-card-one">
+                <div class="vcenter inner">
+                    <div class="cards-container">
+                        <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
+                            <img src="{{ config.SRP}}//assets/img/8490297580_702010d076_o.jpg">
+                            <div class="dat">
+                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
+                                <p>Raised <strong>9k</strong> <span>5%</span></p>
+                                <div class="progress-fill">
+                                    <div class="percentage" style="width:5%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card stack oovp" onclick="paginator.show_card(1)" data-class="card stack teal" id="two-card-two">
+                            <img src="{{ config.SRP}}//assets/img/4224955744_59e06ed773_o.jpg">
+                            <div class="dat">
+                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
+                                <p>Raised <strong>18k</strong> <span>30%</span></p>
+                                <div class="progress-fill">
+                                    <div class="percentage" style="width:30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card stack oovp" onclick="paginator.show_card(2)" data-class="card stack blue" id="two-card-three">
                             <img src="{{ config.SRP}}//assets/img/16757158727_6756291610_o.jpg">
                             <div class="dat">
                                 <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
@@ -62,26 +83,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card stack teal far" id="two-card-two">
-                            <img src="{{ config.SRP}}//assets/img/16757158727_6756291610_o.jpg">
-                            <div class="dat">
-                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
-                                <p>Raised <strong>69k</strong> <span>60%</span></p>
-                                <div class="progress-fill">
-                                    <div class="percentage" style="width:60%"></div>
-                                </div>
-                            </div>
+                        <div class="pagination">
+                            <button onclick="paginator.show_card(0)" id="two-card-pg-one">1</button>
+                            <button onclick="paginator.show_card(1)" id="two-card-pg-two">2</button>
+                            <button onclick="paginator.show_card(2)" id="two-card-pg-three">3</button>
                         </div>
-                        <div class="card stack blue front" id="two-card-three">
-                            <img src="{{ config.SRP}}//assets/img/16757158727_6756291610_o.jpg">
-                            <div class="dat">
-                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
-                                <p>Raised <strong>69k</strong> <span>60%</span></p>
-                                <div class="progress-fill">
-                                    <div class="percentage" style="width:60%"></div>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 vcenter outer right">
+                <div class="vcenter inner">
+                    <h2>There are many such stories around you.</h2>
+                    <h3>We could contribute to help them lead better lives!</h3>
+
+                    <p>With Survaider, you can earn coins by completing missions. Donate these coins, and play a part in the change happening in the world around you.</p>
+                    <button class="dark-outline">How?</button>
                 </div>
             </div>
         </div>
@@ -120,6 +136,38 @@
             $(".bg-blur").css("opacity", opacity_value)
             //$(".bg-nrml").css("opacity", 1 - opacity_value)
         });
+
+        var paginator = {
+            elements: ["#two-card-one", "#two-card-two", "#two-card-three"],
+            buttons: ["#two-card-pg-one", "#two-card-pg-two", "#two-card-pg-three"],
+            layout: [
+                ["front", "farther", "far"],
+                ["far", "front", "farther"],
+                ["farther", "far", "front"]
+            ],
+            show_card: function (index) {
+                "use strict";
+                var i = 0;
+                for (i = 0; i < 3; i += 1) {
+                    var element = $(this.elements[i]),
+                        prev_class = element.attr("data-class");
+                    element.attr("class", prev_class + " " + this.layout[index][i]);
+                }
+                for (i = 0; i < 3; i += 1) {
+                    var element = $(this.buttons[i]);
+                    if (i == index) {
+                        element.attr("class", "active");
+                    } else {
+                        element.attr("class", "");
+                    }
+                }
+            }
+        };
+
+        $(function () {
+            paginator.show_card(0);
+        });
+
     </script>
 <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.min.js"></script>
 <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.parser.js"></script>

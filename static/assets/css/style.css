@@ -39,18 +39,50 @@ body.tour {
       height: 100%; }
     body.tour section.slide.two > div.row > div {
       height: 100%; }
+    body.tour section.slide.two div.cards-container {
+      height: 380px;
+      position: relative;
+      margin: 0 0 0 30%; }
+      body.tour section.slide.two div.cards-container div.pagination {
+        position: absolute;
+        width: 100%;
+        bottom: 0px;
+        text-align: center; }
+        body.tour section.slide.two div.cards-container div.pagination button {
+          width: 14px !important;
+          height: 14px !important;
+          padding: 0;
+          line-height: 0;
+          font-size: 0;
+          border-radius: 50%;
+          border: 2px solid #ED2355;
+          background: transparent;
+          transition: background 0.2s ease; }
+          body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
+            background: #FCC013;
+            border: 2px solid #ED2355;
+            outline: none; }
+          body.tour section.slide.two div.cards-container div.pagination button:focus {
+            outline: none; }
     body.tour section.slide.two .stack {
       position: absolute;
-      transition: transform 0.5s ease, z-index 0.5s, ease; }
+      transition: transform 0.5s ease, z-index 0.1s ease; }
+      body.tour section.slide.two .stack.oovp {
+        transform: translate(-1000px, 0px) scale(0);
+        z-index: 0; }
       body.tour section.slide.two .stack.farther {
         transform: translate(0px, 0px) scale(0.6);
         z-index: 1; }
       body.tour section.slide.two .stack.far {
-        transform: translate(40px, 0px) scale(0.8);
+        transform: translate(30%, 0px) scale(0.8);
         z-index: 2; }
       body.tour section.slide.two .stack.front {
-        transform: translate(80px, 0);
+        transform: translate(70%, 0) scale(1);
         z-index: 3; }
+    body.tour section.slide.two .right .inner {
+      padding: 0 50% 0 0; }
+      body.tour section.slide.two .right .inner h2 {
+        margin-top: 0; }
   body.tour button.dark-outline, body.tour .button.dark-outline {
     background: transparent;
     border: 2px solid #000000;
@@ -68,7 +100,8 @@ body.tour {
     overflow: hidden;
     display: inline-block;
     border-radius: 5px;
-    background: #FFF; }
+    background: #FFF;
+    cursor: pointer; }
     body.tour div.card > img {
       height: 60%;
       display: block;

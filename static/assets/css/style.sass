@@ -49,21 +49,59 @@ body.tour
             & > div.row > div
                 height: 100%
 
+            div.cards-container
+                height: 380px
+                position: relative
+                margin: 0 0 0 30%
+
+                div.pagination
+                    position: absolute
+                    width: 100%
+                    bottom: 0px
+                    text-align: center
+                    button
+                        width: 14px !important
+                        height: 14px !important
+                        padding: 0
+                        line-height: 0
+                        font-size: 0
+                        border-radius: 50%
+                        border: 2px solid #ED2355
+                        background: transparent
+                        transition: background 0.2s ease
+
+                        &:hover, &.active
+                            background: #FCC013
+                            border: 2px solid #ED2355
+                            outline: none
+                        &:focus
+                            outline: none
+
             .stack
                 position: absolute
-                transition: transform 0.5s ease, z-index 0.5s, ease
+                transition: transform 0.5s ease, z-index 0.1s ease
+
+                &.oovp
+                    transform: translate(-1000px, 0px) scale(0)
+                    z-index: 0
 
                 &.farther
                     transform: translate(0px, 0px) scale(0.6)
                     z-index: 1
 
                 &.far
-                    transform: translate(40px, 0px) scale(0.8)
+                    transform: translate(30%, 0px) scale(0.8)
                     z-index: 2
 
                 &.front
-                    transform: translate(80px, 0)
+                    transform: translate(70%, 0) scale(1)
                     z-index: 3
+
+            .right
+                .inner
+                    padding: 0 50% 0 0
+                    h2
+                        margin-top: 0
 
     button, .button
         &.dark-outline
@@ -86,6 +124,7 @@ body.tour
         display: inline-block
         border-radius: 5px
         background: #FFF
+        cursor: pointer
         & > img
             //position: absolute
             //width: 100%
