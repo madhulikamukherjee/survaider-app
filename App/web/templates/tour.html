@@ -18,7 +18,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link href="{{ config.SRP }}/assets/plugins/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="{{ config.SRP }}/assets/plugins/boostrsapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="{{ config.SRP }}/assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
     <link href="{{ config.SRP }}/assets/css/style.css" rel="stylesheet" type="text/css">
 
@@ -33,112 +33,109 @@
     <div class="hero two"></div>
     <div class="hero three"></div>
     <div class="hero four"></div>
+    <div id="svg-link"></div>
     <section class="slide one">
-        <div class="row">
-            <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner">
-                    <h1><img src="{{ config.SRP }}/assets/img/survaider_dark_2x.png" alt="Survaider Logo" height="30px"></h1>
-                    <h2>Want to contribute to a Social Cause?</h2>
-                    <h3>Let’s Play a Game.</h3>
-                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
-                    <button class="dark-outline">Let's Get Started</button>
-                </div>
+        <div class="left vcenter outer">
+            <div class="vcenter inner">
+                <h1><img src="{{ config.SRP }}/assets/img/survaider_dark_2x.png" alt="Survaider Logo" height="30px"></h1>
+                <h2>Want to contribute to a Social Cause?</h2>
+                <h3>Let’s Play a Game.</h3>
+                <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                <button class="dark-outline">Let's Get Started</button>
             </div>
-            <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner" id="drawing">
-                </div>
+        </div>
+        <div class="right vcenter outer">
+            <div class="vcenter inner" id="drawing">
             </div>
         </div>
     </section>
     <section class="slide two">
-        <div class="row">
-            <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner">
-                    <div class="cards-container">
-                        <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
-                            <img src="{{ config.SRP}}//assets/img/8490297580_702010d076_o.jpg">
-                            <div class="dat">
-                                <h2>Lorem ipsum dolor set amit. Fuck all the people. He wants to go home and sleep. Help him.</h2>
-                                <p>Raised <strong>9k</strong> <span>5%</span></p>
-                                <div class="progress-fill">
-                                    <div class="percentage" style="width:5%"></div>
-                                </div>
+        <div class="left vcenter outer">
+            <div class="vcenter inner">
+                <div class="cards-container">
+                    <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
+                        <img src="{{ config.SRP}}//assets/img/8490297580_702010d076_o.jpg">
+                        <div class="dat">
+                            <h2>Lorem ipsum dolor set amit. Fuck all the people. He wants to go home and sleep. Help him.</h2>
+                            <p>Raised <strong>9k</strong> <span>5%</span></p>
+                            <div class="progress-fill">
+                                <div class="percentage" style="width:5%"></div>
                             </div>
                         </div>
-                        <div class="card stack oovp" onclick="paginator.show_card(1)" data-class="card stack teal" id="two-card-two">
-                            <img src="{{ config.SRP}}//assets/img/4224955744_59e06ed773_o.jpg">
-                            <div class="dat">
-                                <h2>He's been looking towards you with sad eyes for a while now. Donate, heartless people.</h2>
-                                <p>Raised <strong>18k</strong> <span>30%</span></p>
-                                <div class="progress-fill">
-                                    <div class="percentage" style="width:30%"></div>
-                                </div>
+                    </div>
+                    <div class="card stack oovp" onclick="paginator.show_card(1)" data-class="card stack teal" id="two-card-two">
+                        <img src="{{ config.SRP}}//assets/img/4224955744_59e06ed773_o.jpg">
+                        <div class="dat">
+                            <h2>He's been looking towards you with sad eyes for a while now. Donate, heartless people.</h2>
+                            <p>Raised <strong>18k</strong> <span>30%</span></p>
+                            <div class="progress-fill">
+                                <div class="percentage" style="width:30%"></div>
                             </div>
                         </div>
-                        <div class="card stack oovp" onclick="paginator.show_card(2)" data-class="card stack blue" id="two-card-three">
-                            <img src="{{ config.SRP}}//assets/img/16757158727_6756291610_o.jpg">
-                            <div class="dat">
-                                <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
-                                <p>Raised <strong>69k</strong> <span>60%</span></p>
-                                <div class="progress-fill">
-                                    <div class="percentage" style="width:60%"></div>
-                                </div>
+                    </div>
+                    <div class="card stack oovp" onclick="paginator.show_card(2)" data-class="card stack blue" id="two-card-three">
+                        <img src="{{ config.SRP}}//assets/img/16757158727_6756291610_o.jpg">
+                        <div class="dat">
+                            <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
+                            <p>Raised <strong>69k</strong> <span>60%</span></p>
+                            <div class="progress-fill">
+                                <div class="percentage" style="width:60%"></div>
                             </div>
                         </div>
-                        <div class="pagination">
-                            <button onclick="paginator.show_card(0)" id="two-card-pg-one">1</button>
-                            <button onclick="paginator.show_card(1)" id="two-card-pg-two">2</button>
-                            <button onclick="paginator.show_card(2)" id="two-card-pg-three">3</button>
-                        </div>
+                    </div>
+                    <div class="pagination">
+                        <button onclick="paginator.show_card(0)" id="two-card-pg-one">1</button>
+                        <button onclick="paginator.show_card(1)" id="two-card-pg-two">2</button>
+                        <button onclick="paginator.show_card(2)" id="two-card-pg-three">3</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 vcenter outer right">
-                <div class="vcenter inner">
-                    <h2>There are many such stories around you.</h2>
-                    <h3>We could contribute to help them lead better lives!</h3>
+        </div>
+        <div class="right vcenter outer right">
+            <div class="vcenter inner">
+                <h2>There are many such stories around you.</h2>
+                <h3>We could contribute to help them lead better lives!</h3>
 
-                    <p>With Survaider, you can earn coins by completing missions. Donate these coins, and play a part in the change happening in the world around you.</p>
-                    <button class="dark-outline">How?</button>
-                </div>
+                <p>With Survaider, you can earn coins by completing missions. Donate these coins, and play a part in the change happening in the world around you.</p>
+                <button class="dark-outline">How?</button>
             </div>
         </div>
     </section>
     <section class="slide three">
-        <div class="row">
-            <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner">
-                    <h2>Want to contribute to a Social Cause?</h2>
-                    <h3>Let’s Play a Game.</h3>
-                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
-                    <button class="light-outline">Let's Get Started</button>
-                </div>
+        <div class="left vcenter outer">
+            <div class="vcenter inner">
+                <h2>Want to contribute to a Social Cause?</h2>
+                <h3>Let’s Play a Game.</h3>
+                <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                <button class="light-outline">Let's Get Started</button>
             </div>
-            <div class="col-md-6 info vcenter outer">
-                <div class="vcenter inner">
-                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic" id="info-anchor-three">
-                </div>
+        </div>
+        <div class="right info vcenter outer">
+            <div class="vcenter inner">
+                <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic" id="info-anchor-three">
             </div>
         </div>
     </section>
     <section class="slide four">
-        <div class="row">
-            <div class="col-md-6 info vcenter outer">
-                <div class="vcenter inner">
-                    <img src="{{ config.SRP }}/assets/svg/slide-four-info.svg" alt="Survaider Infographic" id="info-anchor-four">
-                </div>
+        <div class="left info vcenter outer">
+            <div class="vcenter inner">
+                <img src="{{ config.SRP }}/assets/svg/slide-four-info.svg" alt="Survaider Infographic" id="info-anchor-four">
             </div>
-            <div class="col-md-6 vcenter outer">
-                <div class="vcenter inner">
-                    <h2>Want to contribute to a Social Cause?</h2>
-                    <h3>Let’s Play a Game.</h3>
-                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
-                    <button class="light-outline">Let's Get Started</button>
-                </div>
+        </div>
+        <div class="right vcenter outer">
+            <div class="vcenter inner">
+                <h2>Want to contribute to a Social Cause?</h2>
+                <h3>Let’s Play a Game.</h3>
+                <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                <button class="light-outline">Let's Get Started</button>
             </div>
         </div>
     </section>
     <script src="{{ config.SRP }}/assets/plugins/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.min.js"></script>
+    <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.parser.js"></script>
+    <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.import.min.js"></script>
+    <script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.survaider.js"></script>
     <script type="text/javascript">
         /**
          * Calculates the appropriate transparency value for smooth transition.
@@ -214,13 +211,9 @@
             }
         };
 
-        $(function () {
-            paginator.show_card(2);
-        });
-
         var draw_link = function () {
             var hook_id = ["#info-anchor-three", "#info-anchor-four"],
-                location_hooks = [
+                location_dat = [
                     {
                         x_obj: $(hook_id[0]).offset().left,
                         y_obj: $(hook_id[0]).offset().top,
@@ -228,8 +221,8 @@
                         y_len_obj: $(hook_id[0]).height(),
                         x_original: 466,
                         y_original: 706,
-                        x_nub_original: 350,
-                        y_nub_original: 596,
+                        x_nub_original: 10.87,
+                        y_nub_original: 232.21,
                         x_nub_len: 16,
                         y_nub_len: 16
                     },
@@ -240,13 +233,46 @@
                         y_len_obj: $(hook_id[1]).height(),
                         x_original: 466,
                         y_original: 706,
-                        x_nub_original: 10.87,
-                        y_nub_original: 232.21,
+                        x_nub_original: 350,
+                        y_nub_original: 596,
                         x_nub_len: 16,
                         y_nub_len: 16
                     }
-                ]
+                ],
+                location_hook = [
+                    {
+                        x: location_dat[0].x_obj + ((location_dat[0].x_nub_original + (location_dat[0].x_nub_len / 2)) / location_dat[0].x_original) * location_dat[0].x_len_obj,
+                        y: location_dat[0].y_obj + ((location_dat[0].y_nub_original + (location_dat[0].y_nub_len / 2)) / location_dat[0].y_original) * location_dat[0].y_len_obj,
+                    },
+                    {
+                        x: location_dat[1].x_obj + ((location_dat[1].x_nub_original + (location_dat[1].x_nub_len / 2)) / location_dat[1].x_original) * location_dat[1].x_len_obj,
+                        y: location_dat[1].y_obj + ((location_dat[1].y_nub_original + (location_dat[1].y_nub_len / 2)) / location_dat[1].y_original) * location_dat[1].y_len_obj,
+                    }
+                ],
+                x1 = location_hook[0].x,
+                y1 = location_hook[0].y,
+                x2 = location_hook[1].x,
+                y2 = location_hook[1].y;
+                xc = $(document).width() / 2,
+                c  = 10;
+
+            var path = "M" + x1 + "," + y1 + " " + "L" + (xc + c) + "," + y1 + " " + "C" + + (xc + c/2) + "," + y1 + " " + xc + "," + (y1 + c / 2) + " " + xc + "," + (y1 + c) + " " + " " + "L" + xc + "," + (y2 - c) + "C" + xc + "," + (y2 - c / 2) + " " + (xc - c / 2) + "," + y2 + " " + (xc - c) + "," + y2 + " " + "L" + x2 + "," + y2;
+
+            console.log(location_dat);
+
+            $('#svg-link').empty();
+            var draw = SVG('svg-link');
+            var line = draw.path(path).stroke({ width: 2, color: "#FFF" }).fill({opacity: 0});
         };
+
+        $(function () {
+            paginator.show_card(2);
+            draw_link();
+        });
+
+        $(window).on("resize", function () {
+            draw_link();
+        });
 
         window.setInterval(function () {
             var cycle = [1, 2, 0];
@@ -256,9 +282,5 @@
         }, 5000);
 
     </script>
-<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.min.js"></script>
-<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.parser.js"></script>
-<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.import.min.js"></script>
-<script type="text/javascript" src="{{ config.SRP }}/assets/js/svg.survaider.js"></script>
 </body>
 </html>

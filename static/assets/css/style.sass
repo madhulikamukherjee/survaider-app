@@ -1,11 +1,17 @@
 @import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600)
+
+$breakl: 480px
+$breaku: 481px
+
 html, body
     height: 100%
+    margin: 0
 
 body.tour
     font-family: 'Work Sans', sans-serif
     position: relative
     z-index: 0
+
     .hero
         position: fixed
         left: 0
@@ -40,15 +46,30 @@ body.tour
             z-index: -2
             opacity: 0
 
-    section
-        .row
-            margin: 0
-            height: 100%
+    #svg-link
+        width: 100%
+        height: 400%
+        height: 400vh
+        position: absolute
+        z-index: 0
 
     section.slide
-        position: relative
-        height: 100%
-        height: 100vh
+
+        @media (min-width: $breaku)
+            position: relative
+            height: 100%
+            height: 100vh
+
+            .left, .right
+                height: 100%
+
+            .left
+                float: left
+                width: 50%
+
+            .right
+                float: right
+                width: 50%
 
         &.one
             & > div.row > div

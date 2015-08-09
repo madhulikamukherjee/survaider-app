@@ -1,6 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600);
 html, body {
-  height: 100%; }
+  height: 100%;
+  margin: 0; }
 
 body.tour {
   font-family: "Work Sans", sans-serif;
@@ -35,84 +36,96 @@ body.tour {
       background-image: url(//localhost:99/assets/hero/hero-slide-four.png);
       z-index: -2;
       opacity: 0; }
-  body.tour section .row {
-    margin: 0;
-    height: 100%; }
-  body.tour section.slide {
-    position: relative;
-    height: 100%;
-    height: 100vh; }
-    body.tour section.slide.one > div.row > div {
-      padding: 0 15% 0 8%;
-      height: 100%; }
-    body.tour section.slide.two > div.row > div {
-      height: 100%; }
-    body.tour section.slide.two div.cards-container {
-      height: 380px;
+  body.tour #svg-link {
+    width: 100%;
+    height: 400%;
+    height: 400vh;
+    position: absolute;
+    z-index: 0; }
+  @media (min-width: 481px) {
+    body.tour section.slide {
       position: relative;
-      margin: 0 0 0 30%; }
-      body.tour section.slide.two div.cards-container div.pagination {
-        position: absolute;
-        width: 100%;
-        bottom: 0px;
-        text-align: center; }
-        body.tour section.slide.two div.cards-container div.pagination button {
-          width: 14px !important;
-          height: 14px !important;
-          padding: 0;
-          line-height: 0;
-          font-size: 0;
-          border-radius: 50%;
-          border: 2px solid #ED2355;
-          background: transparent;
-          transition: background 0.2s ease; }
-          body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
-            background: #FCC013;
-            border: 2px solid #ED2355;
-            outline: none; }
-          body.tour section.slide.two div.cards-container div.pagination button:focus {
-            outline: none; }
-    body.tour section.slide.two .stack {
+      height: 100%;
+      height: 100vh; }
+      body.tour section.slide .left, body.tour section.slide .right {
+        height: 100%; }
+      body.tour section.slide .left {
+        float: left;
+        width: 50%; }
+      body.tour section.slide .right {
+        float: right;
+        width: 50%; } }
+  body.tour section.slide.one > div.row > div {
+    padding: 0 15% 0 8%;
+    height: 100%; }
+  body.tour section.slide.two > div.row > div {
+    height: 100%; }
+  body.tour section.slide.two div.cards-container {
+    height: 380px;
+    position: relative;
+    margin: 0 0 0 30%; }
+    body.tour section.slide.two div.cards-container div.pagination {
       position: absolute;
-      transition: transform 0.5s ease, z-index 0.1s ease; }
-      body.tour section.slide.two .stack.oovp {
-        transform: translate(-1000px, 0px) scale(0);
-        z-index: 0; }
-      body.tour section.slide.two .stack.farther {
-        transform: translate(0px, 0px) scale(0.6);
-        z-index: 1; }
-      body.tour section.slide.two .stack.far {
-        transform: translate(30%, 0px) scale(0.8);
-        z-index: 2; }
-      body.tour section.slide.two .stack.front {
-        transform: translate(70%, 0) scale(1);
-        z-index: 3; }
-    body.tour section.slide.two .right .inner {
-      padding: 0 50% 0 0; }
-      body.tour section.slide.two .right .inner h2 {
-        margin-top: 0; }
-    body.tour section.slide.three > div.row > div {
-      padding: 0 15% 0 8%;
-      color: #FFFFFF;
+      width: 100%;
+      bottom: 0px;
+      text-align: center; }
+      body.tour section.slide.two div.cards-container div.pagination button {
+        width: 14px !important;
+        height: 14px !important;
+        padding: 0;
+        line-height: 0;
+        font-size: 0;
+        border-radius: 50%;
+        border: 2px solid #ED2355;
+        background: transparent;
+        transition: background 0.2s ease; }
+        body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
+          background: #FCC013;
+          border: 2px solid #ED2355;
+          outline: none; }
+        body.tour section.slide.two div.cards-container div.pagination button:focus {
+          outline: none; }
+  body.tour section.slide.two .stack {
+    position: absolute;
+    transition: transform 0.5s ease, z-index 0.1s ease; }
+    body.tour section.slide.two .stack.oovp {
+      transform: translate(-1000px, 0px) scale(0);
+      z-index: 0; }
+    body.tour section.slide.two .stack.farther {
+      transform: translate(0px, 0px) scale(0.6);
+      z-index: 1; }
+    body.tour section.slide.two .stack.far {
+      transform: translate(30%, 0px) scale(0.8);
+      z-index: 2; }
+    body.tour section.slide.two .stack.front {
+      transform: translate(70%, 0) scale(1);
+      z-index: 3; }
+  body.tour section.slide.two .right .inner {
+    padding: 0 50% 0 0; }
+    body.tour section.slide.two .right .inner h2 {
+      margin-top: 0; }
+  body.tour section.slide.three > div.row > div {
+    padding: 0 15% 0 8%;
+    color: #FFFFFF;
+    height: 100%; }
+  body.tour section.slide.three .info {
+    text-align: right; }
+    body.tour section.slide.three .info .inner {
       height: 100%; }
-    body.tour section.slide.three .info {
-      text-align: right; }
-      body.tour section.slide.three .info .inner {
-        height: 100%; }
-      body.tour section.slide.three .info img {
-        height: 650px;
-        max-height: 100%; }
-    body.tour section.slide.four > div.row > div {
-      padding: 0 15% 0 8%;
-      color: #FFF;
+    body.tour section.slide.three .info img {
+      height: 650px;
+      max-height: 100%; }
+  body.tour section.slide.four > div.row > div {
+    padding: 0 15% 0 8%;
+    color: #FFF;
+    height: 100%; }
+  body.tour section.slide.four .info {
+    text-align: left; }
+    body.tour section.slide.four .info .inner {
       height: 100%; }
-    body.tour section.slide.four .info {
-      text-align: left; }
-      body.tour section.slide.four .info .inner {
-        height: 100%; }
-      body.tour section.slide.four .info img {
-        height: 650px;
-        max-height: 100%; }
+    body.tour section.slide.four .info img {
+      height: 650px;
+      max-height: 100%; }
   body.tour button.dark-outline, body.tour button.light-outline, body.tour .button.dark-outline, body.tour .button.light-outline {
     background: transparent;
     border-radius: 5px;
