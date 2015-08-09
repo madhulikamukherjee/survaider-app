@@ -55,51 +55,75 @@ body.tour {
       body.tour section.slide .right {
         float: right;
         width: 50%; } }
-  body.tour section.slide.one > div.row > div {
-    padding: 0 15% 0 8%;
-    height: 100%; }
-  body.tour section.slide.two > div.row > div {
-    height: 100%; }
-  body.tour section.slide.two div.cards-container {
-    height: 380px;
-    position: relative;
-    margin: 0 0 0 30%; }
-    body.tour section.slide.two div.cards-container div.pagination {
-      position: absolute;
-      width: 100%;
-      bottom: 0px;
-      text-align: center; }
-      body.tour section.slide.two div.cards-container div.pagination button {
-        width: 14px !important;
-        height: 14px !important;
-        padding: 0;
-        line-height: 0;
-        font-size: 0;
-        border-radius: 50%;
+  @media (max-width: 480px) {
+    body.tour section.slide {
+      position: relative; }
+      body.tour section.slide .left, body.tour section.slide .right {
+        height: 100vh; }
+      body.tour section.slide .hide-small {
+        display: none; } }
+  body.tour section.slide.one .left > .inner {
+    padding: 0 15% 0 15%; }
+  @media (min-width: 481px) {
+    body.tour section.slide.two div.cards-container {
+      height: 380px;
+      position: relative;
+      text-align: right; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.two div.cards-container {
+      height: 380px;
+      position: relative;
+      margin: 0; } }
+  body.tour section.slide.two div.cards-container div.pagination {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    text-align: center; }
+    body.tour section.slide.two div.cards-container div.pagination button {
+      width: 14px !important;
+      height: 14px !important;
+      padding: 0;
+      line-height: 0;
+      font-size: 0;
+      border-radius: 50%;
+      border: 2px solid #ED2355;
+      background: transparent;
+      transition: background 0.2s ease; }
+      body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
+        background: #FCC013;
         border: 2px solid #ED2355;
-        background: transparent;
-        transition: background 0.2s ease; }
-        body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
-          background: #FCC013;
-          border: 2px solid #ED2355;
-          outline: none; }
-        body.tour section.slide.two div.cards-container div.pagination button:focus {
-          outline: none; }
+        outline: none; }
+      body.tour section.slide.two div.cards-container div.pagination button:focus {
+        outline: none; }
   body.tour section.slide.two .stack {
     position: absolute;
     transition: transform 0.5s ease, z-index 0.1s ease; }
-    body.tour section.slide.two .stack.oovp {
-      transform: translate(-1000px, 0px) scale(0);
-      z-index: 0; }
-    body.tour section.slide.two .stack.farther {
-      transform: translate(0px, 0px) scale(0.6);
-      z-index: 1; }
-    body.tour section.slide.two .stack.far {
-      transform: translate(30%, 0px) scale(0.8);
-      z-index: 2; }
-    body.tour section.slide.two .stack.front {
-      transform: translate(70%, 0) scale(1);
-      z-index: 3; }
+    @media (min-width: 481px) {
+      body.tour section.slide.two .stack.oovp {
+        transform: translate(-1000px, 0px) scale(0);
+        z-index: 0; }
+      body.tour section.slide.two .stack.farther {
+        transform: translate(-200%, 0px) scale(0.6);
+        z-index: 1; }
+      body.tour section.slide.two .stack.far {
+        transform: translate(-160%, 0px) scale(0.8);
+        z-index: 2; }
+      body.tour section.slide.two .stack.front {
+        transform: translate(-110%, 0) scale(1);
+        z-index: 3; } }
+    @media (max-width: 480px) {
+      body.tour section.slide.two .stack.oovp {
+        transform: translate(-1000px, 0px);
+        z-index: 0; }
+      body.tour section.slide.two .stack.farther {
+        transform: translate(-60%, 0px);
+        z-index: 1; }
+      body.tour section.slide.two .stack.far {
+        transform: translate(160%, 0px);
+        z-index: 2; }
+      body.tour section.slide.two .stack.front {
+        transform: translate(50%, 0);
+        z-index: 3; } }
   body.tour section.slide.two .right .inner {
     padding: 0 50% 0 0; }
     body.tour section.slide.two .right .inner h2 {
@@ -157,13 +181,13 @@ body.tour {
       display: block;
       margin: 0 auto; }
     body.tour div.card > .dat {
-      width: 100%;
       overflow: hidden;
       position: absolute;
       bottom: 0;
       background: #FFF;
       padding: 10px;
-      color: #FFF; }
+      color: #FFF;
+      text-align: left; }
       body.tour div.card > .dat h2 {
         font-size: 18px;
         font-weight: 300;

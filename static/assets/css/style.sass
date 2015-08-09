@@ -71,19 +71,30 @@ body.tour
                 float: right
                 width: 50%
 
+        @media (max-width: $breakl)
+            position: relative
+
+            .left, .right
+                height: 100vh
+
+            .hide-small
+                display: none
+
         &.one
-            & > div.row > div
-                padding: 0 15% 0 8%
+            .left > .inner
+                padding: 0 15% 0 15%
 
-                height: 100%
         &.two
-            & > div.row > div
-                height: 100%
-
             div.cards-container
-                height: 380px
-                position: relative
-                margin: 0 0 0 30%
+                @media (min-width: $breaku)
+                    height: 380px
+                    position: relative
+                    text-align: right
+
+                @media (max-width: $breakl)
+                    height: 380px
+                    position: relative
+                    margin: 0
 
                 div.pagination
                     position: absolute
@@ -112,21 +123,39 @@ body.tour
                 position: absolute
                 transition: transform 0.5s ease, z-index 0.1s ease
 
-                &.oovp
-                    transform: translate(-1000px, 0px) scale(0)
-                    z-index: 0
+                @media (min-width: $breaku)
+                    &.oovp
+                        transform: translate(-1000px, 0px) scale(0)
+                        z-index: 0
 
-                &.farther
-                    transform: translate(0px, 0px) scale(0.6)
-                    z-index: 1
+                    &.farther
+                        transform: translate(-200%, 0px) scale(0.6)
+                        z-index: 1
 
-                &.far
-                    transform: translate(30%, 0px) scale(0.8)
-                    z-index: 2
+                    &.far
+                        transform: translate(-160%, 0px) scale(0.8)
+                        z-index: 2
 
-                &.front
-                    transform: translate(70%, 0) scale(1)
-                    z-index: 3
+                    &.front
+                        transform: translate(-110%, 0) scale(1)
+                        z-index: 3
+
+                @media (max-width: $breakl)
+                    &.oovp
+                        transform: translate(-1000px, 0px)
+                        z-index: 0
+
+                    &.farther
+                        transform: translate(-60%, 0px)
+                        z-index: 1
+
+                    &.far
+                        transform: translate(160%, 0px)
+                        z-index: 2
+
+                    &.front
+                        transform: translate(50%, 0)
+                        z-index: 3
 
             .right
                 .inner
@@ -197,21 +226,18 @@ body.tour
         background: #FFF
         cursor: pointer
         & > img
-            //position: absolute
-            //width: 100%
             height: 60%
             display: block
             margin: 0 auto
 
         & > .dat
-            //height: 50%
-            width: 100%
             overflow: hidden
             position: absolute
             bottom: 0
             background: #FFF
             padding: 10px
             color: #FFF
+            text-align: left
 
             h2
                 font-size: 18px
