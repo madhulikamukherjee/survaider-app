@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600)
+@import "bourbon/bourbon"
 
 $breakl: 700px
 $breaku: 701px
@@ -26,7 +27,7 @@ body.tour
         background-size: 1440px 791px
         background-repeat: no-repeat
         background-position: center bottom
-        transition: opacity 0.5s ease
+        @include transition(opacity 0.5s ease)
 
         &.one
             background-image: url(//localhost:99/assets/hero/hero-slide-one.png)
@@ -141,7 +142,7 @@ body.tour
                         border-radius: 50%
                         border: 2px solid #ED2355
                         background: transparent
-                        transition: background 0.2s ease
+                        @include transition(background 0.2s ease)
 
                         &:hover, &.active
                             background: #FCC013
@@ -152,40 +153,40 @@ body.tour
 
             .stack
                 position: absolute
-                transition: transform 0.5s ease, z-index 0.1s ease
+                @include transition(transform 0.5s ease, z-index 0.1s ease)
 
                 @media (min-width: $breaku)
                     &.oovp
-                        transform: translate(-1000px, 0px) scale(0)
+                        @include transform(translate(-1000px, 0px) scale(0))
                         z-index: 0
 
                     &.farther
-                        transform: translate(-200%, 0px) scale(0.6)
+                        @include transform(translate(-200%, 0px) scale(0.6))
                         z-index: 1
 
                     &.far
-                        transform: translate(-160%, 0px) scale(0.8)
+                        @include transform(translate(-160%, 0px) scale(0.8))
                         z-index: 2
 
                     &.front
-                        transform: translate(-110%, 0) scale(1)
+                        @include transform(translate(-110%, 0) scale(1))
                         z-index: 3
 
                 @media (max-width: $breakl)
                     &.oovp
-                        transform: translate(-1000px, 0px)
+                        @include transform(translate(-1000px, 0px))
                         z-index: 0
 
                     &.farther
-                        transform: translate(-160%, 0px)
+                        @include transform(translate(-160%, 0px))
                         z-index: 1
 
                     &.far
-                        transform: translate(60%, 0px)
+                        @include transform(translate(60%, 0px))
                         z-index: 2
 
                     &.front
-                        transform: translate(-50%, 0)
+                        @include transform(translate(-50%, 0))
                         z-index: 3
 
             .right > .inner
@@ -199,7 +200,7 @@ body.tour
                 .vcenter.inner
                     position: relative
                     top: 0
-                    transform: none
+                    @include transform(none)
 
         &.three
             color: #FFFFFF
@@ -261,7 +262,7 @@ body.tour
             background: transparent
             border-radius: 5px
             padding: 5px 20px
-            transition: 0.5s
+            @include transition(background 0.5s, color 0.5s)
 
         &.dark-outline
             border: 2px solid #000000
@@ -369,4 +370,4 @@ body.tour
         &.inner
             position: relative
             top: 50%
-            transform: translateY(-50%)
+            @include transform(translateY(-50%))
