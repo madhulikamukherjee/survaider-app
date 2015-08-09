@@ -116,7 +116,7 @@
             </div>
             <div class="col-md-6 info vcenter outer">
                 <div class="vcenter inner">
-                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic">
+                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic" id="info-anchor-three">
                 </div>
             </div>
         </div>
@@ -125,7 +125,7 @@
         <div class="row">
             <div class="col-md-6 info vcenter outer">
                 <div class="vcenter inner">
-                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic">
+                    <img src="{{ config.SRP }}/assets/svg/slide-four-info.svg" alt="Survaider Infographic" id="info-anchor-four">
                 </div>
             </div>
             <div class="col-md-6 vcenter outer">
@@ -217,6 +217,36 @@
         $(function () {
             paginator.show_card(2);
         });
+
+        var draw_link = function () {
+            var hook_id = ["#info-anchor-three", "#info-anchor-four"],
+                location_hooks = [
+                    {
+                        x_obj: $(hook_id[0]).offset().left,
+                        y_obj: $(hook_id[0]).offset().top,
+                        x_len_obj: $(hook_id[0]).width(),
+                        y_len_obj: $(hook_id[0]).height(),
+                        x_original: 466,
+                        y_original: 706,
+                        x_nub_original: 350,
+                        y_nub_original: 596,
+                        x_nub_len: 16,
+                        y_nub_len: 16
+                    },
+                    {
+                        x_obj: $(hook_id[1]).offset().left,
+                        y_obj: $(hook_id[1]).offset().top,
+                        x_len_obj: $(hook_id[1]).width(),
+                        y_len_obj: $(hook_id[1]).height(),
+                        x_original: 466,
+                        y_original: 706,
+                        x_nub_original: 10.87,
+                        y_nub_original: 232.21,
+                        x_nub_len: 16,
+                        y_nub_len: 16
+                    }
+                ]
+        };
 
         window.setInterval(function () {
             var cycle = [1, 2, 0];
