@@ -17,15 +17,23 @@ body.tour {
     height: 100%;
     height: 100vh;
     background: #FFF;
-    background-size: 1757px 845px;
+    background-size: 1440px 791px;
     background-repeat: no-repeat;
-    background-position: center top; }
-    body.tour .hero.bg-nrml {
-      background-image: url(//localhost:99/assets/hero/tour-scribble-nrml.png);
-      z-index: -2; }
-    body.tour .hero.bg-blur {
-      background-image: url(//localhost:99/assets/hero/tour-scribble-blur.png);
-      z-index: -1;
+    background-position: center bottom; }
+    body.tour .hero.one {
+      background-image: url(//localhost:99/assets/hero/hero-slide-one.png);
+      z-index: -5; }
+    body.tour .hero.two {
+      background-image: url(//localhost:99/assets/hero/hero-slide-two.png);
+      z-index: -4;
+      opacity: 0; }
+    body.tour .hero.three {
+      background-image: url(//localhost:99/assets/hero/hero-slide-three.png);
+      z-index: -3;
+      opacity: 0; }
+    body.tour .hero.four {
+      background-image: url(//localhost:99/assets/hero/hero-slide-four.png);
+      z-index: -2;
       opacity: 0; }
   body.tour section .row {
     margin: 0;
@@ -83,6 +91,13 @@ body.tour {
       padding: 0 50% 0 0; }
       body.tour section.slide.two .right .inner h2 {
         margin-top: 0; }
+    body.tour section.slide.three > div.row > div {
+      padding: 0 15% 0 8%;
+      color: #FFFFFF;
+      height: 100%; }
+    body.tour section.slide.four > div.row > div {
+      padding: 0 15% 0 8%;
+      height: 100%; }
   body.tour button.dark-outline, body.tour .button.dark-outline {
     background: transparent;
     border: 2px solid #000000;

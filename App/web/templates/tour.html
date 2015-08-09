@@ -29,8 +29,10 @@
     {% endblock %}
 </head>
 <body class="tour">
-    <div class="hero bg-nrml"></div>
-    <div class="hero bg-blur"></div>
+    <div class="hero one"></div>
+    <div class="hero two"></div>
+    <div class="hero three"></div>
+    <div class="hero four"></div>
     <section class="slide one">
         <div class="row">
             <div class="col-md-6 vcenter outer">
@@ -102,6 +104,23 @@
             </div>
         </div>
     </section>
+    <section class="slide three">
+        <div class="row">
+            <div class="col-md-6 vcenter outer">
+                <div class="vcenter inner">
+                    <h2>Want to contribute to a Social Cause?</h2>
+                    <h3>Let’s Play a Game.</h3>
+                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                    <button class="dark-outline">Let's Get Started</button>
+                </div>
+            </div>
+            <div class="col-md-6 vcenter outer">
+                <div class="vcenter inner">
+                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg">
+                </div>
+            </div>
+        </div>
+    </section>
     <script src="{{ config.SRP }}/assets/plugins/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         /**
@@ -128,13 +147,21 @@
         $(window).on("scroll", function() {
             "use strict";
             var scroll = $("body").scrollTop(),
-                start  = window.innerHeight * 0.1,
-                end    = window.innerHeight * 0.5,
+                slide_two_top     = $(".slide.two")[0].getBoundingClientRect().top,
+                slide_two_start   = slide_two_top + (slide_two_top / 3),
+                slide_two_end     = slide_two_start + (slide_two_start / 2),
 
-                opacity_value = calculate_opacity(scroll, start, end);
+                slide_three_top   = $(".slide.three")[0].getBoundingClientRect().top,
+                slide_three_start = slide_three_top + (slide_three_top / 3),
+                slide_three_end   = slide_three_start + (slide_three_start / 2),
 
-            $(".bg-blur").css("opacity", opacity_value)
-            //$(".bg-nrml").css("opacity", 1 - opacity_value)
+                value_slide_two   = calculate_opacity(scroll, slide_two_start, slide_two_end),
+                value_slide_three = calculate_opacity(scroll, slide_three_start, slide_three_end);
+                //value_slide_four = calculate_opacity(scroll, slide_three_start, slide_three_end);
+
+            $(".hero.two").css("opacity",   value_slide_two);
+            $(".hero.three").css("opacity", value_slide_three);
+            //$(".hero.four").css("opacity",  value_slide_three);
         });
 
         var paginator = {
@@ -162,7 +189,7 @@
                         element.attr("class", "");
                     }
                 }
-                last_update = index;
+                this.last_update = index;
             }
         };
 
