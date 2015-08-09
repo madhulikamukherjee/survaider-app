@@ -83,6 +83,11 @@ body.tour {
       height: 200vh; } }
   body.tour section.slide.one .left > .inner {
     padding: 0 15% 0 15%; }
+  body.tour section.slide.one .right {
+    text-align: center; }
+    body.tour section.slide.one .right img {
+      width: 320px;
+      max-width: 100%; }
   body.tour section.slide.two div.cards-container {
     overflow: hidden; }
     @media (min-width: 701px) {
@@ -92,6 +97,7 @@ body.tour {
         text-align: right; } }
     @media (max-width: 700px) {
       body.tour section.slide.two div.cards-container {
+        text-align: center;
         height: 230px;
         position: relative;
         margin: 0; } }
@@ -137,20 +143,20 @@ body.tour {
         transform: translate(-1000px, 0px);
         z-index: 0; }
       body.tour section.slide.two .stack.farther {
-        transform: translate(-60%, 0px);
+        transform: translate(-160%, 0px);
         z-index: 1; }
       body.tour section.slide.two .stack.far {
-        transform: translate(160%, 0px);
+        transform: translate(60%, 0px);
         z-index: 2; }
       body.tour section.slide.two .stack.front {
-        transform: translate(50%, 0);
+        transform: translate(-50%, 0);
         z-index: 3; } }
   @media (min-width: 701px) {
     body.tour section.slide.two .right > .inner {
       margin: 0 15% 0 15%; } }
   @media (max-width: 700px) {
     body.tour section.slide.two .right > .inner {
-      margin: 10%; } }
+      margin: 10% 15%; } }
   @media (max-width: 700px) {
     body.tour section.slide.two .vcenter.inner {
       position: relative;
@@ -188,6 +194,14 @@ body.tour {
       body.tour section.slide.three .info img, body.tour section.slide.four .info img {
         max-height: 100%;
         max-width: 100%; } }
+  body.tour section.footer {
+    background: #212121;
+    padding: 10px 7.5% 20px 7.5%;
+    line-height: 25px;
+    color: #FFFFFF;
+    border-top: 2px solid #000; }
+    body.tour section.footer p {
+      margin: 0; }
   body.tour button, body.tour .button {
     cursor: pointer;
     font-size: 14px;

@@ -106,6 +106,12 @@ body.tour
             .left > .inner
                 padding: 0 15% 0 15%
 
+            .right
+                text-align: center
+                img
+                    width: 320px
+                    max-width: 100%
+
         &.two
             div.cards-container
                 overflow: hidden
@@ -116,6 +122,7 @@ body.tour
                     text-align: right
 
                 @media (max-width: $breakl)
+                    text-align: center
                     height: 230px
                     position: relative
                     margin: 0
@@ -170,15 +177,15 @@ body.tour
                         z-index: 0
 
                     &.farther
-                        transform: translate(-60%, 0px)
+                        transform: translate(-160%, 0px)
                         z-index: 1
 
                     &.far
-                        transform: translate(160%, 0px)
+                        transform: translate(60%, 0px)
                         z-index: 2
 
                     &.front
-                        transform: translate(50%, 0)
+                        transform: translate(-50%, 0)
                         z-index: 3
 
             .right > .inner
@@ -186,7 +193,7 @@ body.tour
                     margin: 0 15% 0 15%
 
                 @media (max-width: $breakl)
-                    margin: 10%
+                    margin: 10% 15%
 
             @media (max-width: $breakl)
                 .vcenter.inner
@@ -234,6 +241,16 @@ body.tour
                         //height: 650px
                         max-height: 100%
                         max-width: 100%
+
+    section.footer
+        background: #212121
+        padding: 10px 7.5% 20px 7.5%
+        line-height: 25px
+        color: #FFFFFF
+        border-top: 2px solid #000
+
+        p
+            margin: 0
 
     button, .button
         cursor: pointer
