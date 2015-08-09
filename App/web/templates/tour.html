@@ -49,8 +49,8 @@
             </div>
         </div>
     </section>
-    <section class="slide two">
-        <div class="left vcenter outer">
+    <section class="slide two sm-change">
+        <div class="left sm-top vcenter outer">
             <div class="vcenter inner">
                 <div class="cards-container">
                     <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
@@ -91,7 +91,7 @@
                 </div>
             </div>
         </div>
-        <div class="right vcenter outer right">
+        <div class="right sm-bot vcenter outer">
             <div class="vcenter inner">
                 <h2>There are many such stories around you.</h2>
                 <h3>We could contribute to help them lead better lives!</h3>
@@ -101,10 +101,10 @@
             </div>
         </div>
     </section>
-    <section class="slide three">
+    <section class="slide three sm-stack">
         <div class="left vcenter outer">
             <div class="vcenter inner">
-                <h2>Want to contribute to a Social Cause?</h2>
+                <h2>SLIDE THREE</h2>
                 <h3>Let’s Play a Game.</h3>
                 <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
                 <button class="light-outline">Let's Get Started</button>
@@ -124,7 +124,7 @@
         </div>
         <div class="right vcenter outer">
             <div class="vcenter inner">
-                <h2>Want to contribute to a Social Cause?</h2>
+                <h2>SLIDE FOUR</h2>
                 <h3>Let’s Play a Game.</h3>
                 <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
                 <button class="light-outline">Let's Get Started</button>
@@ -258,11 +258,12 @@
 
             var path = "M" + x1 + "," + y1 + " " + "L" + (xc + c) + "," + y1 + " " + "C" + + (xc + c/2) + "," + y1 + " " + xc + "," + (y1 + c / 2) + " " + xc + "," + (y1 + c) + " " + " " + "L" + xc + "," + (y2 - c) + "C" + xc + "," + (y2 - c / 2) + " " + (xc - c / 2) + "," + y2 + " " + (xc - c) + "," + y2 + " " + "L" + x2 + "," + y2;
 
-            console.log(location_dat);
-
             $('#svg-link').empty();
+            $('#svg-link').css({height: y2 + 16});
             var draw = SVG('svg-link');
             var line = draw.path(path).stroke({ width: 2, color: "#FFF" }).fill({opacity: 0});
+            var nub_one = draw.circle(16).move(x1 - 8, y1 - 8).fill({color: "#FFF"});
+            var nub_two = draw.circle(16).move(x2 - 8, y2 - 8).fill({color: "#FFF"});
         };
 
         $(function () {
@@ -278,7 +279,7 @@
             var cycle = [1, 2, 0];
             current = cycle[paginator.last_update];
             paginator.last_update = current;
-            //paginator.show_card(current);
+            paginator.show_card(current);
         }, 5000);
 
     </script>

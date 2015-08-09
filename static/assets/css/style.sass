@@ -48,13 +48,13 @@ body.tour
 
     #svg-link
         width: 100%
-        height: 400%
-        height: 400vh
         position: absolute
         z-index: 0
 
-    section.slide
+        @media (max-width: $breakl)
+            //display: none
 
+    section.slide
         @media (min-width: $breaku)
             position: relative
             height: 100%
@@ -73,12 +73,30 @@ body.tour
 
         @media (max-width: $breakl)
             position: relative
+            overflow: scroll
 
             .left, .right
                 height: 100vh
+                overflow: hidden
 
             .hide-small
                 display: none
+
+        &.sm-change
+            @media (max-width: $breakl)
+                position: relative
+                height: 100%
+                height: 100vh
+
+                .left, .right
+                    float: none
+                    height: auto
+
+        &.sm-stack
+            @media (max-width: $breakl)
+                position: relative
+                height: 200%
+                height: 200vh
 
         &.one
             .left > .inner
@@ -86,13 +104,15 @@ body.tour
 
         &.two
             div.cards-container
+                overflow: hidden
+
                 @media (min-width: $breaku)
-                    height: 380px
+                    height: 340px
                     position: relative
                     text-align: right
 
                 @media (max-width: $breakl)
-                    height: 380px
+                    height: 230px
                     position: relative
                     margin: 0
 
@@ -157,17 +177,23 @@ body.tour
                         transform: translate(50%, 0)
                         z-index: 3
 
-            .right
-                .inner
-                    padding: 0 50% 0 0
-                    h2
-                        margin-top: 0
+            .right > .inner
+                @media (min-width: $breaku)
+                    margin: 0 15% 0 15%
+
+                @media (max-width: $breakl)
+                    margin: 10%
+
+            @media (max-width: $breakl)
+                .vcenter.inner
+                    position: relative
+                    top: 0
+                    transform: none
 
         &.three
-            & > div.row > div
-                padding: 0 15% 0 8%
-                color: #FFFFFF
-                height: 100%
+            color: #FFFFFF
+            .left > .inner
+                padding: 0 15% 0 15%
 
             .info
                 text-align: right
@@ -175,15 +201,14 @@ body.tour
                 .inner
                     height: 100%
 
-                img
-                    height: 650px
-                    max-height: 100%
-
+            @media (max-width: $breakl)
+                .left
+                    position: absolute
+                    bottom: 0
         &.four
-            & > div.row > div
-                padding: 0 15% 0 8%
-                color: #FFF
-                height: 100%
+            color: #FFFFFF
+            .right > .inner
+                padding: 0 15% 0 15%
 
             .info
                 text-align: left
@@ -191,11 +216,25 @@ body.tour
                 .inner
                     height: 100%
 
-                img
-                    height: 650px
-                    max-height: 100%
+        &.three, &.four
+            .info
+                @media (min-width: $breaku)
+                    img
+                        height: 650px
+                        max-height: 100%
+
+                @media (max-width: $breakl)
+                    text-align: center
+                    img
+                        //height: 650px
+                        max-height: 100%
+                        max-width: 100%
 
     button, .button
+        cursor: pointer
+        font-size: 14px
+        font-family: "Work Sans"
+
         &.dark-outline, &.light-outline
             background: transparent
             border-radius: 5px
@@ -217,18 +256,30 @@ body.tour
                 color: #000000
 
     div.card
-        width: 230px
-        height: 300px
         position: relative
         overflow: hidden
         display: inline-block
         border-radius: 5px
         background: #FFF
         cursor: pointer
+
+        @media (min-width: $breaku)
+            width: 230px
+            height: 300px
+
+        @media (max-width: $breakl)
+            width: 230px
+            height: 200px
+
         & > img
-            height: 60%
             display: block
             margin: 0 auto
+
+            @media (min-width: $breaku)
+                height: 60%
+
+            @media (max-width: $breakl)
+                width: 100%
 
         & > .dat
             overflow: hidden
@@ -240,16 +291,28 @@ body.tour
             text-align: left
 
             h2
-                font-size: 18px
                 font-weight: 300
-                line-height: 20px
                 margin: 0
 
+                @media (min-width: $breaku)
+                    font-size: 18px
+                    line-height: 20px
+
+                @media (max-width: $breakl)
+                    font-size: 14px
+                    line-height: 16px
+
             p
-                margin: 10px 0 0px 0
+                @media (min-width: $breaku)
+                    margin: 10px 0 0px 0
+
+                @media (max-width: $breakl)
+                    font-size: 12px
+                    margin: 5px 0 0px 0
 
                 span
                     float: right
+
             div.progress-fill
                 background: #ED2355
                 width: 100%

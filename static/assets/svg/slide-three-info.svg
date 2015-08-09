@@ -452,7 +452,6 @@
                 <tspan x="144.591699" y="639.743902">Unlock</tspan>
                 <tspan x="116.543699" y="658.743902">Achievements</tspan>
             </text>
-            <circle id="Connection-Nub" fill="#FFFFFF" sketch:type="MSShapeGroup" cx="18.8684932" cy="240.206655" r="8"></circle>
         </g>
     </g>
 </svg>

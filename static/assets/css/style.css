@@ -38,8 +38,6 @@ body.tour {
       opacity: 0; }
   body.tour #svg-link {
     width: 100%;
-    height: 400%;
-    height: 400vh;
     position: absolute;
     z-index: 0; }
   @media (min-width: 481px) {
@@ -57,44 +55,61 @@ body.tour {
         width: 50%; } }
   @media (max-width: 480px) {
     body.tour section.slide {
-      position: relative; }
+      position: relative;
+      overflow: scroll; }
       body.tour section.slide .left, body.tour section.slide .right {
-        height: 100vh; }
+        height: 100vh;
+        overflow: hidden; }
       body.tour section.slide .hide-small {
         display: none; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.sm-change {
+      position: relative;
+      height: 100%;
+      height: 100vh; }
+      body.tour section.slide.sm-change .left, body.tour section.slide.sm-change .right {
+        float: none;
+        height: auto; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.sm-stack {
+      position: relative;
+      height: 200%;
+      height: 200vh; } }
   body.tour section.slide.one .left > .inner {
     padding: 0 15% 0 15%; }
-  @media (min-width: 481px) {
-    body.tour section.slide.two div.cards-container {
-      height: 380px;
-      position: relative;
-      text-align: right; } }
-  @media (max-width: 480px) {
-    body.tour section.slide.two div.cards-container {
-      height: 380px;
-      position: relative;
-      margin: 0; } }
-  body.tour section.slide.two div.cards-container div.pagination {
-    position: absolute;
-    width: 100%;
-    bottom: 0px;
-    text-align: center; }
-    body.tour section.slide.two div.cards-container div.pagination button {
-      width: 14px !important;
-      height: 14px !important;
-      padding: 0;
-      line-height: 0;
-      font-size: 0;
-      border-radius: 50%;
-      border: 2px solid #ED2355;
-      background: transparent;
-      transition: background 0.2s ease; }
-      body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
-        background: #FCC013;
+  body.tour section.slide.two div.cards-container {
+    overflow: hidden; }
+    @media (min-width: 481px) {
+      body.tour section.slide.two div.cards-container {
+        height: 340px;
+        position: relative;
+        text-align: right; } }
+    @media (max-width: 480px) {
+      body.tour section.slide.two div.cards-container {
+        height: 230px;
+        position: relative;
+        margin: 0; } }
+    body.tour section.slide.two div.cards-container div.pagination {
+      position: absolute;
+      width: 100%;
+      bottom: 0px;
+      text-align: center; }
+      body.tour section.slide.two div.cards-container div.pagination button {
+        width: 14px !important;
+        height: 14px !important;
+        padding: 0;
+        line-height: 0;
+        font-size: 0;
+        border-radius: 50%;
         border: 2px solid #ED2355;
-        outline: none; }
-      body.tour section.slide.two div.cards-container div.pagination button:focus {
-        outline: none; }
+        background: transparent;
+        transition: background 0.2s ease; }
+        body.tour section.slide.two div.cards-container div.pagination button:hover, body.tour section.slide.two div.cards-container div.pagination button.active {
+          background: #FCC013;
+          border: 2px solid #ED2355;
+          outline: none; }
+        body.tour section.slide.two div.cards-container div.pagination button:focus {
+          outline: none; }
   body.tour section.slide.two .stack {
     position: absolute;
     transition: transform 0.5s ease, z-index 0.1s ease; }
@@ -124,62 +139,92 @@ body.tour {
       body.tour section.slide.two .stack.front {
         transform: translate(50%, 0);
         z-index: 3; } }
-  body.tour section.slide.two .right .inner {
-    padding: 0 50% 0 0; }
-    body.tour section.slide.two .right .inner h2 {
-      margin-top: 0; }
-  body.tour section.slide.three > div.row > div {
-    padding: 0 15% 0 8%;
-    color: #FFFFFF;
-    height: 100%; }
-  body.tour section.slide.three .info {
-    text-align: right; }
-    body.tour section.slide.three .info .inner {
-      height: 100%; }
-    body.tour section.slide.three .info img {
-      height: 650px;
-      max-height: 100%; }
-  body.tour section.slide.four > div.row > div {
-    padding: 0 15% 0 8%;
-    color: #FFF;
-    height: 100%; }
-  body.tour section.slide.four .info {
-    text-align: left; }
-    body.tour section.slide.four .info .inner {
-      height: 100%; }
-    body.tour section.slide.four .info img {
-      height: 650px;
-      max-height: 100%; }
-  body.tour button.dark-outline, body.tour button.light-outline, body.tour .button.dark-outline, body.tour .button.light-outline {
-    background: transparent;
-    border-radius: 5px;
-    padding: 5px 20px;
-    transition: 0.5s; }
-  body.tour button.dark-outline, body.tour .button.dark-outline {
-    border: 2px solid #000000;
-    color: #000000; }
-    body.tour button.dark-outline:hover, body.tour .button.dark-outline:hover {
-      background: #000000;
-      color: #FFFFFF; }
-  body.tour button.light-outline, body.tour .button.light-outline {
-    border: 2px solid #FFFFFF;
+  @media (min-width: 481px) {
+    body.tour section.slide.two .right > .inner {
+      margin: 0 15% 0 15%; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.two .right > .inner {
+      margin: 10%; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.two .vcenter.inner {
+      position: relative;
+      top: 0;
+      transform: none; } }
+  body.tour section.slide.three {
     color: #FFFFFF; }
-    body.tour button.light-outline:hover, body.tour .button.light-outline:hover {
-      background: #FFFFFF;
+    body.tour section.slide.three .left > .inner {
+      padding: 0 15% 0 15%; }
+    body.tour section.slide.three .info {
+      text-align: right; }
+      body.tour section.slide.three .info .inner {
+        height: 100%; }
+    @media (max-width: 480px) {
+      body.tour section.slide.three .left {
+        position: absolute;
+        bottom: 0; } }
+  body.tour section.slide.four {
+    color: #FFFFFF; }
+    body.tour section.slide.four .right > .inner {
+      padding: 0 15% 0 15%; }
+    body.tour section.slide.four .info {
+      text-align: left; }
+      body.tour section.slide.four .info .inner {
+        height: 100%; }
+  @media (min-width: 481px) {
+    body.tour section.slide.three .info img, body.tour section.slide.four .info img {
+      height: 650px;
+      max-height: 100%; } }
+  @media (max-width: 480px) {
+    body.tour section.slide.three .info, body.tour section.slide.four .info {
+      text-align: center; }
+      body.tour section.slide.three .info img, body.tour section.slide.four .info img {
+        max-height: 100%;
+        max-width: 100%; } }
+  body.tour button, body.tour .button {
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Work Sans"; }
+    body.tour button.dark-outline, body.tour button.light-outline, body.tour .button.dark-outline, body.tour .button.light-outline {
+      background: transparent;
+      border-radius: 5px;
+      padding: 5px 20px;
+      transition: 0.5s; }
+    body.tour button.dark-outline, body.tour .button.dark-outline {
+      border: 2px solid #000000;
       color: #000000; }
+      body.tour button.dark-outline:hover, body.tour .button.dark-outline:hover {
+        background: #000000;
+        color: #FFFFFF; }
+    body.tour button.light-outline, body.tour .button.light-outline {
+      border: 2px solid #FFFFFF;
+      color: #FFFFFF; }
+      body.tour button.light-outline:hover, body.tour .button.light-outline:hover {
+        background: #FFFFFF;
+        color: #000000; }
   body.tour div.card {
-    width: 230px;
-    height: 300px;
     position: relative;
     overflow: hidden;
     display: inline-block;
     border-radius: 5px;
     background: #FFF;
     cursor: pointer; }
+    @media (min-width: 481px) {
+      body.tour div.card {
+        width: 230px;
+        height: 300px; } }
+    @media (max-width: 480px) {
+      body.tour div.card {
+        width: 230px;
+        height: 200px; } }
     body.tour div.card > img {
-      height: 60%;
       display: block;
       margin: 0 auto; }
+      @media (min-width: 481px) {
+        body.tour div.card > img {
+          height: 60%; } }
+      @media (max-width: 480px) {
+        body.tour div.card > img {
+          width: 100%; } }
     body.tour div.card > .dat {
       overflow: hidden;
       position: absolute;
@@ -189,14 +234,25 @@ body.tour {
       color: #FFF;
       text-align: left; }
       body.tour div.card > .dat h2 {
-        font-size: 18px;
         font-weight: 300;
-        line-height: 20px;
         margin: 0; }
-      body.tour div.card > .dat p {
-        margin: 10px 0 0px 0; }
-        body.tour div.card > .dat p span {
-          float: right; }
+        @media (min-width: 481px) {
+          body.tour div.card > .dat h2 {
+            font-size: 18px;
+            line-height: 20px; } }
+        @media (max-width: 480px) {
+          body.tour div.card > .dat h2 {
+            font-size: 14px;
+            line-height: 16px; } }
+      @media (min-width: 481px) {
+        body.tour div.card > .dat p {
+          margin: 10px 0 0px 0; } }
+      @media (max-width: 480px) {
+        body.tour div.card > .dat p {
+          font-size: 12px;
+          margin: 5px 0 0px 0; } }
+      body.tour div.card > .dat p span {
+        float: right; }
       body.tour div.card > .dat div.progress-fill {
         background: #ED2355;
         width: 100%;
