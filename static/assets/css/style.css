@@ -95,19 +95,37 @@ body.tour {
       padding: 0 15% 0 8%;
       color: #FFFFFF;
       height: 100%; }
+    body.tour section.slide.three .info {
+      text-align: right; }
+      body.tour section.slide.three .info img {
+        height: 650px;
+        max-height: 100%; }
     body.tour section.slide.four > div.row > div {
       padding: 0 15% 0 8%;
+      color: #FFF;
       height: 100%; }
-  body.tour button.dark-outline, body.tour .button.dark-outline {
+    body.tour section.slide.four .info {
+      text-align: left; }
+      body.tour section.slide.four .info img {
+        height: 650px;
+        max-height: 100%; }
+  body.tour button.dark-outline, body.tour button.light-outline, body.tour .button.dark-outline, body.tour .button.light-outline {
     background: transparent;
-    border: 2px solid #000000;
     border-radius: 5px;
-    color: #000000;
     padding: 5px 20px;
     transition: 0.5s; }
+  body.tour button.dark-outline, body.tour .button.dark-outline {
+    border: 2px solid #000000;
+    color: #000000; }
     body.tour button.dark-outline:hover, body.tour .button.dark-outline:hover {
       background: #000000;
       color: #FFFFFF; }
+  body.tour button.light-outline, body.tour .button.light-outline {
+    border: 2px solid #FFFFFF;
+    color: #FFFFFF; }
+    body.tour button.light-outline:hover, body.tour .button.light-outline:hover {
+      background: #FFFFFF;
+      color: #000000; }
   body.tour div.card {
     width: 230px;
     height: 300px;

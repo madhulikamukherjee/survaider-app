@@ -119,24 +119,44 @@ body.tour
                 color: #FFFFFF
                 height: 100%
 
+            .info
+                text-align: right
+                img
+                    height: 650px
+                    max-height: 100%
+
         &.four
             & > div.row > div
                 padding: 0 15% 0 8%
-
+                color: #FFF
                 height: 100%
 
+            .info
+                text-align: left
+                img
+                    height: 650px
+                    max-height: 100%
+
     button, .button
-        &.dark-outline
+        &.dark-outline, &.light-outline
             background: transparent
-            border: 2px solid #000000
             border-radius: 5px
-            color: #000000
             padding: 5px 20px
             transition: 0.5s
 
+        &.dark-outline
+            border: 2px solid #000000
+            color: #000000
             &:hover
                 background: #000000
                 color: #FFFFFF
+
+        &.light-outline
+            border: 2px solid #FFFFFF
+            color: #FFFFFF
+            &:hover
+                background: #FFFFFF
+                color: #000000
 
     div.card
         width: 230px

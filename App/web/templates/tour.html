@@ -111,12 +111,29 @@
                     <h2>Want to contribute to a Social Cause?</h2>
                     <h3>Let’s Play a Game.</h3>
                     <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
-                    <button class="dark-outline">Let's Get Started</button>
+                    <button class="light-outline">Let's Get Started</button>
+                </div>
+            </div>
+            <div class="col-md-6 info vcenter outer">
+                <div class="vcenter inner">
+                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic">
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="slide four">
+        <div class="row">
+            <div class="col-md-6 info vcenter outer">
+                <div class="vcenter inner">
+                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg" alt="Survaider Infographic">
                 </div>
             </div>
             <div class="col-md-6 vcenter outer">
                 <div class="vcenter inner">
-                    <img src="{{ config.SRP }}/assets/svg/slide-three-info.svg">
+                    <h2>Want to contribute to a Social Cause?</h2>
+                    <h3>Let’s Play a Game.</h3>
+                    <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                    <button class="light-outline">Let's Get Started</button>
                 </div>
             </div>
         </div>
@@ -155,13 +172,17 @@
                 slide_three_start = slide_three_top + (slide_three_top / 3),
                 slide_three_end   = slide_three_start + (slide_three_start / 2),
 
+                slide_four_top    = $(".slide.four")[0].getBoundingClientRect().top,
+                slide_four_start  = slide_four_top + (slide_four_top / 3),
+                slide_four_end    = slide_four_start + (slide_four_start / 2),
+
                 value_slide_two   = calculate_opacity(scroll, slide_two_start, slide_two_end),
-                value_slide_three = calculate_opacity(scroll, slide_three_start, slide_three_end);
-                //value_slide_four = calculate_opacity(scroll, slide_three_start, slide_three_end);
+                value_slide_three = calculate_opacity(scroll, slide_three_start, slide_three_end),
+                value_slide_four = calculate_opacity(scroll, slide_four_start, slide_four_end);
 
             $(".hero.two").css("opacity",   value_slide_two);
             $(".hero.three").css("opacity", value_slide_three);
-            //$(".hero.four").css("opacity",  value_slide_three);
+            $(".hero.four").css("opacity",  value_slide_four);
         });
 
         var paginator = {
