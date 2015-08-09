@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600)
 
-$breakl: 480px
-$breaku: 481px
+$breakl: 700px
+$breaku: 701px
 
 html, body
     height: 100%
@@ -26,6 +26,7 @@ body.tour
         background-size: 1440px 791px
         background-repeat: no-repeat
         background-position: center bottom
+        transition: opacity 0.5s ease
 
         &.one
             background-image: url(//localhost:99/assets/hero/hero-slide-one.png)
@@ -46,13 +47,16 @@ body.tour
             z-index: -2
             opacity: 0
 
+        &.visible
+            opacity: 1
+
     #svg-link
         width: 100%
         position: absolute
         z-index: 0
 
         @media (max-width: $breakl)
-            //display: none
+            display: none
 
     section.slide
         @media (min-width: $breaku)
@@ -219,6 +223,7 @@ body.tour
         &.three, &.four
             .info
                 @media (min-width: $breaku)
+                    text-align: center
                     img
                         height: 650px
                         max-height: 100%
