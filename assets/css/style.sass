@@ -3,6 +3,9 @@
 
 $breakl: 700px
 $breaku: 701px
+$break_link: 768px
+$bg_w: 1440px
+$section_panic: 1368px
 
 html, body
     height: 100%
@@ -23,28 +26,39 @@ body.tour
         width: 100vw
         height: 100%
         height: 100vh
-        background: #FFF
-        background-size: 1440px 791px
-        background-repeat: no-repeat
-        background-position: center bottom
+
         @include transition(opacity 0.5s ease)
 
+        img
+            min-width: $bg_w
+
+            width: 100%
+            height: auto
+
+            position: fixed
+            bottom: 0
+            left: 0
+
+            @media screen and (max-width: $bg_w)
+                left: 10%
+                margin-left: -0.1 * $bg_w
+
         &.one
-            background-image: url(//localhost:99/assets/hero/hero-slide-one.png)
+            background-color: #FFFFFF
             z-index: -5
 
         &.two
-            background-image: url(//localhost:99/assets/hero/hero-slide-two.png)
+            background-color: #C6E8EA
             z-index: -4
             opacity: 0
 
         &.three
-            background-image: url(//localhost:99/assets/hero/hero-slide-three.png)
+            background-color: #2E3A4E
             z-index: -3
             opacity: 0
 
         &.four
-            background-image: url(//localhost:99/assets/hero/hero-slide-four.png)
+            background-color: #4E2E43
             z-index: -2
             opacity: 0
 
@@ -56,8 +70,50 @@ body.tour
         position: absolute
         z-index: 0
 
-        @media (max-width: $breakl)
+        @media (max-width: $break_link)
             display: none
+
+    .modal
+        width: 500px
+        max-width: 80%
+        height: 200px
+        position: fixed
+        margin: auto
+        border: 2px solid #000
+        border-radius: 5px
+        background: #FFFFFF
+        height: auto
+        padding: 15px
+        z-index: 10
+        left: 0
+        right: 0
+        top: 20%
+        opacity: 0
+
+        @include transform(translate(0, -200%) scale(0.1))
+        @include transition(transform 0.5s ease, opacity 0.5s ease)
+
+        h1
+            margin-top: 0
+
+        .close
+            position: absolute
+            right: 0
+            top: 0
+            background: transparent
+            border: none
+
+        &.visible
+            @include transform(translate(0, 0) scale(1))
+            opacity: 1
+
+        &.move-top
+            @include transform(translate(0, -200%) scale(0.1))
+            opacity: 0
+
+        &.move-bottom
+            @include transform(translate(0, 200%) scale(0.1))
+            opacity: 0
 
     section.slide
         @media (min-width: $breaku)
@@ -87,11 +143,15 @@ body.tour
             .hide-small
                 display: none
 
+        @media (min-width: $section_panic)
+            width: $section_panic
+            margin: 0 auto
+
         &.sm-change
             @media (max-width: $breakl)
                 position: relative
-                height: 100%
-                height: 100vh
+                min-height: 100%
+                min-height: 100vh
 
                 .left, .right
                     float: none
@@ -105,7 +165,10 @@ body.tour
 
         &.one
             .left > .inner
+                $shadow: 0px 0px 10px #FFF
+
                 padding: 0 15% 0 15%
+                text-shadow: $shadow, $shadow, $shadow, $shadow, $shadow
 
             .right
                 text-align: center
@@ -115,12 +178,10 @@ body.tour
 
         &.two
             div.cards-container
-                overflow: hidden
-
                 @media (min-width: $breaku)
                     height: 340px
                     position: relative
-                    text-align: right
+                    text-align: center
 
                 @media (max-width: $breakl)
                     text-align: center
@@ -161,15 +222,15 @@ body.tour
                         z-index: 0
 
                     &.farther
-                        @include transform(translate(-200%, 0px) scale(0.6))
+                        @include transform(translate(-60%, 0px) scale(0.6))
                         z-index: 1
 
                     &.far
-                        @include transform(translate(-160%, 0px) scale(0.8))
+                        @include transform(translate(-30%, 0px) scale(0.8))
                         z-index: 2
 
                     &.front
-                        @include transform(translate(-110%, 0) scale(1))
+                        @include transform(translate(0%, 0) scale(1))
                         z-index: 3
 
                 @media (max-width: $breakl)
@@ -210,9 +271,6 @@ body.tour
             .info
                 text-align: right
 
-                .inner
-                    height: 100%
-
             @media (max-width: $breakl)
                 .left
                     position: absolute
@@ -225,19 +283,22 @@ body.tour
             .info
                 text-align: left
 
-                .inner
-                    height: 100%
-
         &.three, &.four
             .info
                 @media (min-width: $breaku)
                     text-align: center
+                    .inner
+                        max-height: 100%
                     img
                         height: 650px
                         max-height: 100%
+                        max-height: 100vh
 
                 @media (max-width: $breakl)
                     text-align: center
+                    .inner
+                        height: 100%
+                        padding: 10px
                     img
                         //height: 650px
                         max-height: 100%
@@ -252,6 +313,10 @@ body.tour
 
         p
             margin: 0
+
+            @media (min-width: $section_panic)
+                width: $section_panic
+                margin: 0 auto
 
     button, .button
         cursor: pointer
@@ -277,6 +342,23 @@ body.tour
             &:hover
                 background: #FFFFFF
                 color: #000000
+
+    input
+        font-size: 14px
+        font-family: "Work Sans"
+
+        &.dark-outline, &.light-outline
+            background: transparent
+            border-radius: 5px
+            padding: 5px 20px
+
+        &.dark-outline
+            border: 2px solid #000000
+            color: #000000
+
+        &.light-outline
+            border: 2px solid #FFFFFF
+            color: #FFFFFF
 
     div.card
         position: relative
