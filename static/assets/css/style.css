@@ -17,26 +17,33 @@ body.tour {
     width: 100vw;
     height: 100%;
     height: 100vh;
-    background: #FFF;
-    background-size: 1440px 791px;
-    background-repeat: no-repeat;
-    background-position: center bottom;
     -webkit-transition: opacity 0.5s ease;
     -moz-transition: opacity 0.5s ease;
     transition: opacity 0.5s ease; }
+    body.tour .hero img {
+      min-width: 1440px;
+      width: 100%;
+      height: auto;
+      position: fixed;
+      bottom: 0;
+      left: 0; }
+      @media screen and (max-width: 1440px) {
+        body.tour .hero img {
+          left: 10%;
+          margin-left: -144px; } }
     body.tour .hero.one {
-      background-image: url(//localhost:99/assets/hero/hero-slide-one.png);
+      background-color: #FFFFFF;
       z-index: -5; }
     body.tour .hero.two {
-      background-image: url(//localhost:99/assets/hero/hero-slide-two.png);
+      background-color: #C6E8EA;
       z-index: -4;
       opacity: 0; }
     body.tour .hero.three {
-      background-image: url(//localhost:99/assets/hero/hero-slide-three.png);
+      background-color: #2E3A4E;
       z-index: -3;
       opacity: 0; }
     body.tour .hero.four {
-      background-image: url(//localhost:99/assets/hero/hero-slide-four.png);
+      background-color: #4E2E43;
       z-index: -2;
       opacity: 0; }
     body.tour .hero.visible {
@@ -70,6 +77,10 @@ body.tour {
         overflow: hidden; }
       body.tour section.slide .hide-small {
         display: none; } }
+  @media (min-width: 1368px) {
+    body.tour section.slide {
+      width: 1368px;
+      margin: 0 auto; } }
   @media (max-width: 700px) {
     body.tour section.slide.sm-change {
       position: relative;
@@ -96,7 +107,7 @@ body.tour {
       body.tour section.slide.two div.cards-container {
         height: 340px;
         position: relative;
-        text-align: right; } }
+        text-align: center; } }
     @media (max-width: 700px) {
       body.tour section.slide.two div.cards-container {
         text-align: center;
@@ -140,25 +151,25 @@ body.tour {
         transform: translate(-1000px, 0px) scale(0);
         z-index: 0; }
       body.tour section.slide.two .stack.farther {
-        -webkit-transform: translate(-200%, 0px) scale(0.6);
-        -moz-transform: translate(-200%, 0px) scale(0.6);
-        -ms-transform: translate(-200%, 0px) scale(0.6);
-        -o-transform: translate(-200%, 0px) scale(0.6);
-        transform: translate(-200%, 0px) scale(0.6);
+        -webkit-transform: translate(-60%, 0px) scale(0.6);
+        -moz-transform: translate(-60%, 0px) scale(0.6);
+        -ms-transform: translate(-60%, 0px) scale(0.6);
+        -o-transform: translate(-60%, 0px) scale(0.6);
+        transform: translate(-60%, 0px) scale(0.6);
         z-index: 1; }
       body.tour section.slide.two .stack.far {
-        -webkit-transform: translate(-160%, 0px) scale(0.8);
-        -moz-transform: translate(-160%, 0px) scale(0.8);
-        -ms-transform: translate(-160%, 0px) scale(0.8);
-        -o-transform: translate(-160%, 0px) scale(0.8);
-        transform: translate(-160%, 0px) scale(0.8);
+        -webkit-transform: translate(-30%, 0px) scale(0.8);
+        -moz-transform: translate(-30%, 0px) scale(0.8);
+        -ms-transform: translate(-30%, 0px) scale(0.8);
+        -o-transform: translate(-30%, 0px) scale(0.8);
+        transform: translate(-30%, 0px) scale(0.8);
         z-index: 2; }
       body.tour section.slide.two .stack.front {
-        -webkit-transform: translate(-110%, 0) scale(1);
-        -moz-transform: translate(-110%, 0) scale(1);
-        -ms-transform: translate(-110%, 0) scale(1);
-        -o-transform: translate(-110%, 0) scale(1);
-        transform: translate(-110%, 0) scale(1);
+        -webkit-transform: translate(10%, 0) scale(1);
+        -moz-transform: translate(10%, 0) scale(1);
+        -ms-transform: translate(10%, 0) scale(1);
+        -o-transform: translate(10%, 0) scale(1);
+        transform: translate(10%, 0) scale(1);
         z-index: 3; } }
     @media (max-width: 700px) {
       body.tour section.slide.two .stack.oovp {
@@ -210,8 +221,6 @@ body.tour {
       padding: 0 15% 0 15%; }
     body.tour section.slide.three .info {
       text-align: right; }
-      body.tour section.slide.three .info .inner {
-        height: 100%; }
     @media (max-width: 700px) {
       body.tour section.slide.three .left {
         position: absolute;
@@ -222,14 +231,15 @@ body.tour {
       padding: 0 15% 0 15%; }
     body.tour section.slide.four .info {
       text-align: left; }
-      body.tour section.slide.four .info .inner {
-        height: 100%; }
   @media (min-width: 701px) {
     body.tour section.slide.three .info, body.tour section.slide.four .info {
       text-align: center; }
+      body.tour section.slide.three .info .inner, body.tour section.slide.four .info .inner {
+        max-height: 100%; }
       body.tour section.slide.three .info img, body.tour section.slide.four .info img {
         height: 650px;
-        max-height: 100%; } }
+        max-height: 100%;
+        max-height: 100vh; } }
   @media (max-width: 700px) {
     body.tour section.slide.three .info, body.tour section.slide.four .info {
       text-align: center; }
@@ -244,6 +254,10 @@ body.tour {
     border-top: 2px solid #000; }
     body.tour section.footer p {
       margin: 0; }
+      @media (min-width: 1368px) {
+        body.tour section.footer p {
+          width: 1368px;
+          margin: 0 auto; } }
   body.tour button, body.tour .button {
     cursor: pointer;
     font-size: 14px;
