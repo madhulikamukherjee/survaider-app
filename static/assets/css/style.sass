@@ -73,6 +73,37 @@ body.tour
         @media (max-width: $break_link)
             display: none
 
+    .modal
+        width: 380px
+        max-width: 80%
+        position: fixed
+        margin: auto
+        border: 2px solid #000
+        border-radius: 5px
+        background: #FFFFFF
+        height: auto
+        padding: 15px
+        z-index: 10
+        left: 0
+        right: 0
+        bottom: 50%
+        @include transform(translate(0, -200%) scale(0.1))
+        @include transition(transform 0.5s ease)
+
+        h1
+            margin-top: 0
+
+        .close
+            position: absolute
+            right: 0
+            top: 0
+            background: transparent
+            border: none
+
+        &.open
+            @include transform(translate(0, 0) scale(1))
+
+
     section.slide
         @media (min-width: $breaku)
             position: relative
@@ -256,6 +287,7 @@ body.tour
                     text-align: center
                     .inner
                         height: 100%
+                        padding: 10px
                     img
                         //height: 650px
                         max-height: 100%
@@ -299,6 +331,23 @@ body.tour
             &:hover
                 background: #FFFFFF
                 color: #000000
+
+    input
+        font-size: 14px
+        font-family: "Work Sans"
+
+        &.dark-outline, &.light-outline
+            background: transparent
+            border-radius: 5px
+            padding: 5px 20px
+
+        &.dark-outline
+            border: 2px solid #000000
+            color: #000000
+
+        &.light-outline
+            border: 2px solid #FFFFFF
+            color: #FFFFFF
 
     div.card
         position: relative

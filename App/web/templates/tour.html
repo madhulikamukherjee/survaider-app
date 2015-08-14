@@ -40,6 +40,13 @@
         <img src="{{ config.SRP }}/assets/hero/hero-slide-four.png" alt="Survaider Hero Background">
     </div>
     <div id="svg-link"></div>
+    <div class="modal" id="sign-up-modal">
+        <button class="close" onclick="modal.close()">close</button>
+        <h1>Sign Up for the Newsletter</h1>
+        <p>Please provide us your email ID to be the first to know when we're loosing our shit!</p>
+        <input type="email" class="dark-outline">
+        <button class="dark-outline">Proceed</button>
+    </div>
     <section class="slide one">
         <div class="left vcenter outer">
             <div class="vcenter inner">
@@ -138,7 +145,7 @@
         </div>
     </section>
     <section class="footer">
-        <p>Still hanging around, eh? Might as well <button class="light-outline">Sign Up</button> here.</p><br>
+        <p>Still hanging around, eh? Might as well <button class="light-outline" onclick="modal.open();">Sign Up</button> here.</p><br>
         <p>&copy; 2015 Survaider</p>
     </section>
     <script src="{{ config.SRP }}/assets/plugins/jquery/jquery-1.11.1.min.js" type="text/javascript"></script>
@@ -247,6 +254,16 @@
                 this.current = this.cycle[this.last_update];
                 this.last_update = this.current;
                 this.show_card(this.current);
+            }
+        };
+
+        var modal = {
+            hook_id: "#sign-up-modal",
+            open: function () {
+                $(this.hook_id).attr("class", "modal open");
+            },
+            close: function () {
+                $(this.hook_id).attr("class", "modal");
             }
         };
 
