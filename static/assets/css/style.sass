@@ -101,8 +101,8 @@ body.tour
             .hide-small
                 display: none
 
-        @media (min-width: 1368px)
-            width: 1368px
+        @media (min-width: $section_panic)
+            width: $section_panic
             margin: 0 auto
 
         &.sm-change
@@ -123,7 +123,10 @@ body.tour
 
         &.one
             .left > .inner
+                $shadow: 0px 0px 10px #FFF
+
                 padding: 0 15% 0 15%
+                text-shadow: $shadow, $shadow, $shadow, $shadow, $shadow
 
             .right
                 text-align: center
@@ -133,8 +136,6 @@ body.tour
 
         &.two
             div.cards-container
-                overflow: hidden
-
                 @media (min-width: $breaku)
                     height: 340px
                     position: relative
@@ -187,7 +188,7 @@ body.tour
                         z-index: 2
 
                     &.front
-                        @include transform(translate(10%, 0) scale(1))
+                        @include transform(translate(0%, 0) scale(1))
                         z-index: 3
 
                 @media (max-width: $breakl)
