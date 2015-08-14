@@ -74,8 +74,9 @@ body.tour
             display: none
 
     .modal
-        width: 380px
+        width: 500px
         max-width: 80%
+        height: 200px
         position: fixed
         margin: auto
         border: 2px solid #000
@@ -86,9 +87,11 @@ body.tour
         z-index: 10
         left: 0
         right: 0
-        bottom: 50%
+        top: 20%
+        opacity: 0
+
         @include transform(translate(0, -200%) scale(0.1))
-        @include transition(transform 0.5s ease)
+        @include transition(transform 0.5s ease, opacity 0.5s ease)
 
         h1
             margin-top: 0
@@ -100,9 +103,17 @@ body.tour
             background: transparent
             border: none
 
-        &.open
+        &.visible
             @include transform(translate(0, 0) scale(1))
+            opacity: 1
 
+        &.move-top
+            @include transform(translate(0, -200%) scale(0.1))
+            opacity: 0
+
+        &.move-bottom
+            @include transform(translate(0, 200%) scale(0.1))
+            opacity: 0
 
     section.slide
         @media (min-width: $breaku)

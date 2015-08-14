@@ -40,7 +40,7 @@
         <img src="{{ config.SRP }}/assets/hero/hero-slide-four.png" alt="Survaider Hero Background">
     </div>
     <div id="svg-link"></div>
-    <div class="modal" id="sign-up-modal">
+    <div class="modal move-top" id="sign-up-modal">
         <button class="close" onclick="modal.close()">close</button>
         <h1>Sign Up for the Newsletter</h1>
         <p>Please provide us your email ID to be the first to know when we're loosing our shit!</p>
@@ -260,10 +260,13 @@
         var modal = {
             hook_id: "#sign-up-modal",
             open: function () {
-                $(this.hook_id).attr("class", "modal open");
+                $(this.hook_id).attr("class", "modal visible");
             },
             close: function () {
-                $(this.hook_id).attr("class", "modal");
+                $(this.hook_id).attr("class", "modal move-bottom");
+                window.setTimeout(function () {
+                    $(modal.hook_id).attr("class", "modal move-top");
+                }, 500);
             }
         };
 
