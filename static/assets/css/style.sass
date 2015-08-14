@@ -3,6 +3,7 @@
 
 $breakl: 700px
 $breaku: 701px
+$break_link: 768px
 $bg_w: 1440px
 $section_panic: 1368px
 
@@ -29,7 +30,6 @@ body.tour
         @include transition(opacity 0.5s ease)
 
         img
-            //min-height: 100%
             min-width: $bg_w
 
             width: 100%
@@ -70,7 +70,7 @@ body.tour
         position: absolute
         z-index: 0
 
-        @media (max-width: $breakl)
+        @media (max-width: $break_link)
             display: none
 
     section.slide
@@ -108,8 +108,8 @@ body.tour
         &.sm-change
             @media (max-width: $breakl)
                 position: relative
-                height: 100%
-                height: 100vh
+                min-height: 100%
+                min-height: 100vh
 
                 .left, .right
                     float: none
@@ -253,6 +253,8 @@ body.tour
 
                 @media (max-width: $breakl)
                     text-align: center
+                    .inner
+                        height: 100%
                     img
                         //height: 650px
                         max-height: 100%

@@ -168,7 +168,9 @@
             }
         };
 
-        $(window).on("scroll", function() {
+        var active = 1;
+
+        var scroll_hook = function () {
             "use strict";
             var scroll = $("body").scrollTop(),
                 height = $(window).height() / 2,
@@ -181,23 +183,32 @@
                 slide_four_top    = $(".slide.four").offset().top,
                 slide_four_start  = slide_four_top - height;
 
+            active = 1;
+
             if (scroll >= slide_two_start) {
                 $(".hero.two").attr("class", "hero two visible");
+                active = 2;
             } else {
                 $(".hero.two").attr("class", "hero two");
             }
 
             if (scroll >= slide_three_start) {
                 $(".hero.three").attr("class", "hero three visible");
+                active = 3;
             } else {
                 $(".hero.three").attr("class", "hero three");
             }
 
             if (scroll >= slide_four_start) {
                 $(".hero.four").attr("class", "hero four visible");
+                active = 4;
             } else {
                 $(".hero.four").attr("class", "hero four");
             }
+        };
+
+        $(window).on("scroll", function() {
+            scroll_hook();
         });
 
         var paginator = {
@@ -209,6 +220,7 @@
                 ["farther", "far", "front"]
             ],
             last_update: 0,
+            cycle: [1, 2, 0],
             show_card: function (index) {
                 "use strict";
                 var i = 0;
@@ -226,6 +238,15 @@
                     }
                 }
                 this.last_update = index;
+            },
+            cycle_card: function () {
+                "use strict";
+                if (active != 2) {
+                    return;
+                }
+                this.current = this.cycle[this.last_update];
+                this.last_update = this.current;
+                this.show_card(this.current);
             }
         };
 
@@ -276,8 +297,14 @@
 
             var path = "M" + x1 + "," + y1 + " " + "L" + (xc + c) + "," + y1 + " " + "C" + + (xc + c/2) + "," + y1 + " " + xc + "," + (y1 + c / 2) + " " + xc + "," + (y1 + c) + " " + " " + "L" + xc + "," + (y2 - c) + "C" + xc + "," + (y2 - c / 2) + " " + (xc - c / 2) + "," + y2 + " " + (xc - c) + "," + y2 + " " + "L" + x2 + "," + y2;
 
-            $('#svg-link').empty();
-            $('#svg-link').css({height: y2 + 16});
+            var anchor = $('#svg-link');
+
+            if (anchor.css("display") == "none") {
+                return;
+            }
+
+            anchor.empty();
+            anchor.css({height: y2 + 16});
             var draw = SVG('svg-link');
             var line = draw.path(path).stroke({ width: 2, color: "#FFF" }).fill({opacity: 0});
             var nub_one = draw.circle(16).move(x1 - 8, y1 - 8).fill({color: "#FFF"});
@@ -287,6 +314,7 @@
         $(function () {
             paginator.show_card(2);
             draw_link();
+            scroll_hook();
         });
 
         $(document).on('click','.jump-btn', function(event) {
@@ -302,11 +330,9 @@
         });
 
         window.setInterval(function () {
-            var cycle = [1, 2, 0];
-            current = cycle[paginator.last_update];
-            paginator.last_update = current;
-            //paginator.show_card(current);
-        }, 5000);
+            draw_link();
+            paginator.cycle_card();
+        }, 3000);
 
     </script>
 </body>
