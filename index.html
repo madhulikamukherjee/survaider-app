@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,6 +29,7 @@
         <img src="/assets/hero/hero-slide-four.png" alt="Survaider Hero Background">
     </div>
     <div id="svg-link"></div>
+
     <div class="modal move-top" id="sign-up-modal">
         <button class="close" onclick="modal.close()">close</button>
         <h1>We want to keep in touch!</h1>
@@ -37,13 +37,14 @@
         <input type="email" class="dark-outline" id="email_signup">
         <button class="dark-outline" id="btn-sub" onclick="sign_up();">Proceed</button>
     </div>
+
     <section class="slide one">
         <div class="left vcenter outer">
             <div class="vcenter inner">
                 <h1><img src="/assets/img/survaider_dark_2x.png" alt="Survaider Logo" height="30px"></h1>
-                <h2>Want to contribute to a Social Cause?</h2>
-                <h3>Let’s Play a Game.</h3>
-                <p>Shoot, Jump and Slide to earn coins and donate to causes you support.</p>
+                <h2>Don't force your audience into giving responses</h2>
+                <h3>Make them <em>want</em> to!</h3>
+                 <p>Survaider Surveys is nothing short of magic. Create your questions, add logic, and see your mundane survey turning into an interesting game! Who knew survey filling could be made fun? (We did)</p>
                 <button class="dark-outline jump-btn" data-target=".slide.two">Let's Get Started</button>
                 <a href="//build.survaider.com" target="_blank"><button class="dark-outline">Try the Demo</button></a>
             </div>
@@ -54,87 +55,9 @@
             </div>
         </div>
     </section>
-    <section class="slide two sm-change">
-        <div class="left sm-top vcenter outer">
-            <div class="vcenter inner">
-                <div class="cards-container">
-                    <div class="card stack oovp" onclick="paginator.show_card(0)" data-class="card stack green" id="two-card-one">
-                        <img src="/assets/img/8490297580_702010d076_o.jpg">
-                        <div class="dat">
-                            <h2>He toiled and slaved to raise his kids. Now they don’t want to have anything to do with him.</h2>
-                            <p>Raised <strong>9k</strong> <span>5%</span></p>
-                            <div class="progress-fill">
-                                <div class="percentage" style="width:5%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card stack oovp" onclick="paginator.show_card(1)" data-class="card stack teal" id="two-card-two">
-                        <img src="/assets/img/4224955744_59e06ed773_o.jpg">
-                        <div class="dat">
-                            <h2>Hard work has only gotten him so far, but his lack of resources have trampled his dreams.</h2>
-                            <p>Raised <strong>18k</strong> <span>30%</span></p>
-                            <div class="progress-fill">
-                                <div class="percentage" style="width:30%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card stack oovp" onclick="paginator.show_card(2)" data-class="card stack blue" id="two-card-three">
-                        <img src="/assets/img/16757158727_6756291610_o.jpg">
-                        <div class="dat">
-                            <h2>Topping her class isn’t the toughest part, arranging a meal a day for her family is.</h2>
-                            <p>Raised <strong>69k</strong> <span>60%</span></p>
-                            <div class="progress-fill">
-                                <div class="percentage" style="width:60%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pagination">
-                        <button onclick="paginator.show_card(0)" id="two-card-pg-one">1</button>
-                        <button onclick="paginator.show_card(1)" id="two-card-pg-two">2</button>
-                        <button onclick="paginator.show_card(2)" id="two-card-pg-three">3</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="right sm-bot vcenter outer">
-            <div class="vcenter inner">
-                <h2>There are many such stories around you.</h2>
-                <h3>We could contribute to help them lead better lives!</h3>
 
-                <p>With Survaider, you can earn coins by completing missions. Donate these coins, and play a part in the change happening in the world around you.</p>
-                <button class="dark-outline jump-btn" data-target=".slide.three">How?</button>
-            </div>
-        </div>
-    </section>
-    <section class="slide three sm-stack">
-        <div class="left vcenter outer">
-            <div class="vcenter inner">
-                <h2>Play Games and Make a Difference</h2>
-                <h3>Complete missions by playing surveys-turned-games!</h3>
-                <p>Shoot balls and slide through tunnels to fill surveys, and unlock new levels. Compete with friends and donate to stories. Become the Guradian Angel of The Month or Donor of the Day!</p>
-                <button class="light-outline jump-btn" data-target=".slide.four">Behind the Scenes</button>
-            </div>
-        </div>
-        <div class="right info vcenter outer">
-            <div class="vcenter inner">
-                <img src="/assets/svg/slide-three-info.png" alt="Survaider Infographic" id="info-anchor-three">
-            </div>
-        </div>
-    </section>
-    <section class="slide four">
-        <div class="left info vcenter outer">
-            <div class="vcenter inner">
-                <img src="/assets/svg/slide-four-info.png" alt="Survaider Infographic" id="info-anchor-four">
-            </div>
-        </div>
-        <div class="right vcenter outer">
-            <div class="vcenter inner">
-                <h2>Don't force your audience into giving responses</h2>
-                <h3>Make them <em>want</em> to!</h3>
-                <p>Survaider Surveys is nothing short of magic. Create your questions, add logic, and see your mundane survey turning into an interesting game! Who knew survey filling could be made fun? (We did)</p>
-            </div>
-        </div>
-    </section>
+   
+    
     <section class="footer">
         <p>Still hanging around, eh? Might as well <button class="light-outline" onclick="modal.open();">Sign Up</button> here.</p><br>
         <p>&copy; 2015 Survaider</p>
