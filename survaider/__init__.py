@@ -19,7 +19,7 @@ def create_app():
 
 @app.route('/')
 def home():
-    return "LOL"
+    return render_template("index.html")
 
 if __name__ == '__main__':
     create_app()

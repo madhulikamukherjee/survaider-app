@@ -1,0 +1,11 @@
+{
+  "name": "survaider-frontend",
+  "version": "0.0.1",
+  "description": "Frontend Assets for Survaider.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Prashant Sinha",
+  "license": "MIT"
+}

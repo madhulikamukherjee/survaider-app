@@ -1,0 +1,17 @@
+{
+  "name": "Survaider Frontend",
+  "version": "0.0.1",
+  "homepage": "https://github.com/PrashntS/survaider-app",
+  "authors": [
+    "Prashant Sinha <prashant@ducic.ac.in>"
+  ],
+  "description": "Frontend Assets for Survaider.",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

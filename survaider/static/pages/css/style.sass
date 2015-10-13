@@ -1,0 +1,117 @@
+/* Validation, Login, Email Verification, Sign Up */
+
+$animal_dk: #E14A33
+$animal_lt: #F68E63
+$environment_dk: #409E48
+$environment_lt: #58D146
+$education_dk: #3B1A50
+$education_lt: #81509F
+$health_dk: #174980
+$health_lt: #398EDF
+$children_dk: #F5862C
+$children_lt: #FBC028
+$women_dk: #ED437B
+$women_lt: #F26498
+
+
+
+.progress-text-area
+    background: url('../img/progress/progress.svg') no-repeat top left
+    width: 30px
+    height: 30px
+    background-size: 100% auto
+    margin: 0 auto
+    position: absolute
+    top: 7px
+    right: 12px
+
+.causes
+    .causes_bar
+        padding-top: 10px
+        button.animal
+            background-color: $animal_dk
+            border-color: $animal_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $animal_lt
+                border-color: $animal_lt
+        button.women
+            background-color: $women_dk
+            border-color: $women_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $women_lt
+                border-color: $women_lt
+        button.education
+            background-color: $education_dk
+            border-color: $education_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $education_lt
+                border-color: $education_lt
+        button.health
+            background-color: $health_dk
+            border-color: $health_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $health_lt
+                border-color: $health_lt
+        button.children
+            background-color: $children_dk
+            border-color: $children_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $children_lt
+                border-color: $children_lt
+        button.environment
+            background-color: $environment_dk
+            border-color: $environment_dk
+            color: #FFFFFF
+            &:hover
+                background-color: $environment_lt
+                border-color: $environment_lt
+
+body.profile
+    .intro
+        .user
+            padding: 10px
+            .display-picture > img
+                border-radius: 50%
+                border: 8px solid #135493
+                width: 160px
+                height: 160px
+            .name
+                font-size: 28px
+            .medal-banner
+                //margin-top: -40px
+                svg
+                    max-width: 100%
+        .medals
+            padding: 10px
+            ul.inline
+                list-style-type: none
+                padding: 0
+                display: inline-block
+                margin: 0
+
+                li
+                    display: inline-block
+                    margin: 10px
+                    width: 100px
+                    height: 100px
+                    background: red
+
+body.story
+    .cover
+        height: 70vh
+        background: #33DDFF
+        position: relative
+        overflow: hidden
+        img
+            position: absolute
+            min-height: 100%
+            min-width: 100%
+        .intro
+
+        .info
+            background: white
