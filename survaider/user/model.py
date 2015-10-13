@@ -9,8 +9,6 @@ from flask.ext.security import UserMixin, RoleMixin
 from survaider import db
 
 class Role(db.Document, RoleMixin):
-    #: Fine user permission control.
-    # id          = db.StringField()
     name        = db.StringField(max_length = 80, unique = True)
     description = db.StringField(max_length = 255)
 
@@ -26,3 +24,6 @@ class User(db.Document, UserMixin):
     added           = db.DateTimeField(default = datetime.datetime.now)
     confirmed_at    = db.DateTimeField()
     roles           = db.ListField(db.ReferenceField(Role), default=[])
+
+    def __unicode__(self):
+        return self.username
