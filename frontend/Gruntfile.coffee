@@ -27,7 +27,7 @@ module.exports = (grunt) ->
             'bower_components/jquery/dist/jquery.js'
             'bower_components/modernizer/modernizer.js'
             'bower_components/bootstrap/dist/js/bootstrap.js'
-            'bower_components/pages/js/pages.js'
+            'pages/js/pages.js'
           ]
 
     cssmin:
@@ -40,6 +40,7 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.css'
             'bower_components/select2-bootstrap-css/select2-bootstrap.css'
             'bower_components/switchery/dist/switchery.css'
+            'pages/css/pages.css'
           ]
 
     uglify:
