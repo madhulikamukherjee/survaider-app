@@ -1,12 +1,55 @@
+{% extends 'master.html' %}
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+{% block body %}
 {% include "security/_messages.html" %}
-<h1>Login</h1>
-<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-  {{ login_user_form.hidden_tag() }}
-  {{ render_field_with_errors(login_user_form.email) }}
-  {{ render_field_with_errors(login_user_form.password) }}
-  {{ render_field_with_errors(login_user_form.remember) }}
-  {{ render_field(login_user_form.next) }}
-  {{ render_field(login_user_form.submit) }}
-</form>
-{% include "security/_menu.html" %}
+    <div class="login-wrapper ">
+      <div class="bg-pic">
+        <img src="assets/img/demo/new-york-city-buildings-sunrise-morning-hd-wallpaper.jpg" data-src="assets/img/demo/new-york-city-buildings-sunrise-morning-hd-wallpaper.jpg" data-src-retina="assets/img/demo/new-york-city-buildings-sunrise-morning-hd-wallpaper.jpg" alt="" class="lazy">
+        <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
+          <h2 class="semi-bold text-white">
+                    Pages make it easy to enjoy what matters the most in the life</h2>
+          <p class="small">
+            images Displayed are solely for representation purposes only, All work copyright of respective owner, otherwise © 2013-2014 REVOX.
+          </p>
+        </div>
+      </div>
+      <div class="login-container bg-white">
+        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+          <img src="/static/img/logo.png" alt="logo" data-src="/static/img/logo.png" data-src-retina="/static/img/logo_2x.png" width="78" height="22">
+          <p class="p-t-35">Sign into your Survaider Account</p>
+
+          <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" id="form-login" class="p-t-15" role="form" >
+
+            {{ login_user_form.hidden_tag() }}
+            {{ render_field_with_errors(login_user_form.email,placeholder="johndoe@example.com") }}
+            {{ render_field_with_errors(login_user_form.password, placeholder="...") }}
+
+            <div class="row">
+              <div class="col-md-6 no-padding">
+                <div class="checkbox ">
+                  {{ login_user_form.remember()|safe }}
+                  {{ login_user_form.remember.label }}
+                </div>
+              </div>
+            </div>
+            {{ login_user_form.next }}
+            {{ login_user_form.submit(class="btn btn-primary btn-cons m-t-10") }}
+          </form>
+          <div class="pull-bottom sm-pull-bottom">
+            <div class="m-b-30 p-r-80 sm-m-t-20 sm-p-r-15 sm-p-b-20 clearfix">
+              <div class="col-sm-3 col-md-2 no-padding">
+                <img alt="" class="m-t-5" data-src="assets/img/demo/pages_icon.png" data-src-retina="assets/img/demo/pages_icon_2x.png" height="60" src="assets/img/demo/pages_icon.png" width="60">
+              </div>
+              <div class="col-sm-9 no-padding m-t-10">
+                <p><small>
+                        Create a pages account. If you have a facebook account, log into it for this process. Sign in with <a href="#" class="text-info">Facebook</a> or <a href="#" class="text-info">Google</a></small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
