@@ -5,9 +5,9 @@
 from flask.ext.security import Security, MongoEngineUserDatastore
 from flask_admin import helpers as admin_helpers
 
-from entry import app, db
-from user.model import User, Role
-from admin.controller import admin
+from survaider import app, db
+from survaider.user.model import User, Role
+from survaider.admin.controller import admin
 
 user_datastore = MongoEngineUserDatastore(db, User, Role)
 security = Security(app, user_datastore)

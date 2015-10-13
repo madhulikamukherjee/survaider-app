@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-from entry import db
+from survaider import db
 
 class Survey(db.Document):
     s_id        = db.StringField()

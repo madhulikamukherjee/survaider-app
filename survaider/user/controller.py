@@ -3,7 +3,7 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from flask import Flask, Blueprint, render_template, request, jsonify
-from user.model import Role, User
+from survaider.user.model import Role, User
 
 usr = Blueprint('usr', __name__, template_folder='templates')
 

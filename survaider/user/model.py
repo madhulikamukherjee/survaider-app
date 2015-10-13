@@ -6,7 +6,7 @@ import datetime
 import uuid
 
 from flask.ext.security import UserMixin, RoleMixin
-from entry import db
+from survaider import db
 
 class Role(db.Document, RoleMixin):
     #: Fine user permission control.

@@ -6,10 +6,10 @@ from flask_admin import Admin
 from flask_admin.contrib.mongoengine import ModelView
 from flask_admin import helpers as admin_helpers
 
-from user.model import Role, User
-from admin.model import BaseView
+from survaider.user.model import Role, User
+from survaider.admin.model import BaseView
 
-from entry import app
+from survaider import app
 
 admin = Admin(app, name='BioDB Admin', template_mode='bootstrap3', base_template='my_master.html')
 
