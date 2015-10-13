@@ -14,6 +14,9 @@ class Role(db.Document, RoleMixin):
     name        = db.StringField(max_length = 80, unique = True)
     description = db.StringField(max_length = 255)
 
+    def __unicode__(self):
+        return self.name
+
 class User(db.Document, UserMixin):
     # id              = db.StringField()
     username        = db.StringField(max_length = 40, unique = True, default = str(uuid.uuid4()))
