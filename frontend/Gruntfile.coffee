@@ -2,6 +2,8 @@ ALL_TASKS = [
   'concat:all'
   'cssmin:dist'
   'uglify:dist'
+  'copy:fontsfa'
+  'copy:fontspages'
 ]
 
 module.exports = (grunt) ->
@@ -13,6 +15,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-contrib-sass')
   grunt.loadNpmTasks('grunt-contrib-uglify')
   grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-copy')
 
   grunt.initConfig
 
@@ -42,6 +45,7 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.css'
             'bower_components/select2-bootstrap-css/select2-bootstrap.css'
             'bower_components/switchery/dist/switchery.css'
+            'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]
 
@@ -49,6 +53,18 @@ module.exports = (grunt) ->
       dist:
         files:
           '<%= build %>/js/survaider.min.js': '<%= build %>/js/survaider.js'
+
+    copy:
+      fontsfa:
+        expand: true
+        cwd: 'bower_components/font-awesome/fonts'
+        src: '*'
+        dest: '<%= build %>/fonts'
+      fontspages:
+        expand: true
+        cwd: 'pages/fonts'
+        src: '**/*'
+        dest: '<%= build %>/fonts'
 
     # sass:
     #   all:
