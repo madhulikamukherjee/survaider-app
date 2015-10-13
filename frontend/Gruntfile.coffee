@@ -21,12 +21,14 @@ module.exports = (grunt) ->
 
     concat:
       all:
+        sourceMap: true
         files:
           '<%= build %>/js/survaider.js': [
             'bower_components/PACE/pace.js'
             'bower_components/jquery/dist/jquery.js'
-            'bower_components/modernizer/modernizer.js'
+            'bower_components/modernizer/modernizr.js'
             'bower_components/bootstrap/dist/js/bootstrap.js'
+            'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'pages/js/pages.js'
           ]
 
