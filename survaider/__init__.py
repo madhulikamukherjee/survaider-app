@@ -19,7 +19,7 @@ def create_app():
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("nav.container.html")
 
 if __name__ == '__main__':
     create_app()

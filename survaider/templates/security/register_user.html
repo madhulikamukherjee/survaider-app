@@ -1,53 +1,52 @@
 {% extends 'master.html' %}
 {% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% from 'macros.html' import footer_text %}
 
 {% block pgbody %}
 {% include "security/_messages.html" %}
 
+<div class="register-container full-height sm-p-t-30">
+  <div class="container-sm-height full-height">
+    <div class="row row-sm-height">
+      <div class="col-sm-12 col-sm-height col-middle">
+        <img src="/static/img/logo.png" alt="logo" data-src="/static/img/logo.png" data-src-retina="/static/img/logo_2x.png" height="22">
+        <h3>Pages makes it easy to enjoy what matters the most in your life</h3>
+        <p>
+        <small>
+            Create a pages account. If you have a facebook account, log into it for this process. Sign in with <a href="#" class="text-info">Facebook</a> or <a href="#" class="text-info">Google</a>
+        </small>
+        </p>
+        <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form" class="p-t-15" >
 
-    <div class="register-container full-height sm-p-t-30">
-      <div class="container-sm-height full-height">
-        <div class="row row-sm-height">
-          <div class="col-sm-12 col-sm-height col-middle">
-            <img src="assets/img/logo.png" alt="logo" data-src="assets/img/logo.png" data-src-retina="assets/img/logo_2x.png" width="78" height="22">
-            <h3>Pages makes it easy to enjoy what matters the most in your life</h3>
-            <p>
-              <small>
-        Create a pages account. If you have a facebook account, log into it for this process. Sign in with <a href="#" class="text-info">Facebook</a> or <a href="#" class="text-info">Google</a>
-    </small>
-            </p>
-<form action="{{ url_for_security('register') }}" method="POST" name="register_user_form" class="p-t-15" >
-              <div class="row">
+          {{ register_user_form.hidden_tag() }}
+          {{ render_field_with_errors(register_user_form.email) }}
+          {{ render_field_with_errors(register_user_form.password) }}
+          {% if register_user_form.password_confirm %}
+            {{ render_field_with_errors(register_user_form.password_confirm) }}
+          {% endif %}
 
-  {{ register_user_form.hidden_tag() }}
-  {{ render_field_with_errors(register_user_form.email) }}
-  {{ render_field_with_errors(register_user_form.password) }}
-  {% if register_user_form.password_confirm %}
-    {{ render_field_with_errors(register_user_form.password_confirm) }}
-  {% endif %}
-
-              <div class="row m-t-10">
-                <div class="col-md-6">
-                  <p>I agree to the <a href="#" class="text-info small">Pages Terms</a> and <a href="#" class="text-info small">Privacy</a>.</p>
-                </div>
-                <div class="col-md-6 text-right">
-                  <a href="#" class="text-info small">Help? Contact Support</a>
-                </div>
-              </div>
-  {{ render_field(register_user_form.submit, class="btn btn-primary btn-cons m-t-10") }}
-            </form>
+          <div class="row m-t-10">
+            <div class="col-md-6">
+              <p>I agree to the <a href="#" class="text-info small">Pages Terms</a> and <a href="#" class="text-info small">Privacy</a>.</p>
+            </div>
+            <div class="col-md-6 text-right">
+              <a href="#" class="text-info small">Help? Contact Support</a>
+            </div>
           </div>
-        </div>
+
+          {{ render_field(register_user_form.submit, class="btn btn-primary btn-cons m-t-10") }}
+        </form>
       </div>
+
     </div>
-    <div class=" full-width">
-      <div class="register-container m-b-10 clearfix">
-        <div class="inline pull-left">
-          <img src="assets/img/demo/pages_icon.png" alt="" class="m-t-5 " data-src="assets/img/demo/pages_icon.png" data-src-retina="assets/img/demo/pages_icon_2x.png" width="60" height="60">
-        </div>
-        <div class="col-md-10 m-t-15">
-          <p class="hinted-text small inline ">No part of this website or any of its contents may be reproduced, copied, modified or adapted, without the prior written consent of the author, unless otherwise indicated for stand-alone materials.</p>
-        </div>
-      </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8 col-middle col-sm-offset-2">
+    {{ footer_text() }}
     </div>
+  </div>
+</div>
+
 {% endblock %}
