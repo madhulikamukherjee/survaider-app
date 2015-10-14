@@ -1,4 +1,4 @@
-{% extends 'admin/master.html' %}
+{% extends 'admin/base.html' %}
 {% import 'admin/lib.html' as lib with context %}
 {% import 'admin/static.html' as admin_static with context%}
 {% import 'admin/model/layout.html' as model_layout with context %}
@@ -11,7 +11,9 @@
 
 {% block body %}
     {% block model_menu_bar %}
-    <ul class="nav nav-tabs actions-nav">
+
+
+    <ul class="nav nav-tabs nav-tabs-simple" role="tablist">
         <li class="active">
             <a href="javascript:void(0)">{{ _gettext('List') }}{% if count %} ({{ count }}){% endif %}</a>
         </li>
