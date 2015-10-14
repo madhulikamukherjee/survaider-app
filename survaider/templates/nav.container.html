@@ -38,6 +38,10 @@
 
   <div class="sidebar-menu">
     <div class="scroll-wrapper menu-items" style="position: relative;"><ul class="menu-items scroll-content" style="margin-bottom: 0px; margin-right: 0px;">
+
+      {% block nav_admin %}
+      {% endblock %}
+
       <li class="m-t-30 ">
         <a href="index.html" class="detailed">
           <span class="title">Dashboard</span>
@@ -411,34 +415,17 @@
       <!-- END User Info-->
     </div>
   </div>
-  <!-- END HEADER -->
-  <!-- START PAGE CONTENT WRAPPER -->
   <div class="page-content-wrapper">
-    <!-- START PAGE CONTENT -->
     <div class="content">
+      {% block content_head %}
+      {% endblock %}
+
       {% block content %}
       {% endblock %}
-      <!-- START JUMBOTRON -->
-      <div class="jumbotron" data-pages="parallax">
-        <div class="container-fluid container-fixed-lg sm-p-l-20 sm-p-r-20">
-          <div class="inner" style="transform: translateY(0px); opacity: 1;">
-            <!-- START BREADCRUMB -->
-            <ul class="breadcrumb">
-              <li>
-                <p>Extras</p>
-              </li>
-              <li><a href="#" class="active">Blank template</a>
-              </li>
-            </ul>
-            <!-- END BREADCRUMB -->
-          </div>
-        </div>
-      </div>
-      <!-- END JUMBOTRON -->
+
     </div>
-    <!-- END PAGE CONTENT -->
-    <!-- START COPYRIGHT -->
-    <!-- START CONTAINER FLUID -->
+
+
     <div class="container-fluid container-fixed-lg footer">
       <div class="copyright sm-text-center">
         <p class="small no-margin pull-left sm-pull-reset">
