@@ -16,45 +16,16 @@
         Create a pages account. If you have a facebook account, log into it for this process. Sign in with <a href="#" class="text-info">Facebook</a> or <a href="#" class="text-info">Google</a>
     </small>
             </p>
-            <form id="form-register" class="p-t-15" role="form" action="index.html">
+<form action="{{ url_for_security('register') }}" method="POST" name="register_user_form" class="p-t-15" >
               <div class="row">
-                <div class="col-sm-6">
-                  <div class="form-group form-group-default">
-                    <label>First Name</label>
-                    <input type="text" name="fname" placeholder="John" class="form-control" required>
-                  </div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="form-group form-group-default">
-                    <label>Last Names</label>
-                    <input type="text" name="lname" placeholder="Smith" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="form-group form-group-default">
-                    <label>Pages User name</label>
-                    <input type="text" name="uname" placeholder="yourname.pages.com (this can be changed later)" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="form-group form-group-default">
-                    <label>Password</label>
-                    <input type="password" name="pass" placeholder="Minimum of 4 Charactors" class="form-control" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="form-group form-group-default">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="We will send loging details to you" class="form-control" required>
-                  </div>
-                </div>
-              </div>
+
+  {{ register_user_form.hidden_tag() }}
+  {{ render_field_with_errors(register_user_form.email) }}
+  {{ render_field_with_errors(register_user_form.password) }}
+  {% if register_user_form.password_confirm %}
+    {{ render_field_with_errors(register_user_form.password_confirm) }}
+  {% endif %}
+
               <div class="row m-t-10">
                 <div class="col-md-6">
                   <p>I agree to the <a href="#" class="text-info small">Pages Terms</a> and <a href="#" class="text-info small">Privacy</a>.</p>
@@ -63,7 +34,7 @@
                   <a href="#" class="text-info small">Help? Contact Support</a>
                 </div>
               </div>
-              <button class="btn btn-primary btn-cons m-t-10" type="submit">Create a new account</button>
+  {{ render_field(register_user_form.submit, class="btn btn-primary btn-cons m-t-10") }}
             </form>
           </div>
         </div>
@@ -79,18 +50,4 @@
         </div>
       </div>
     </div>
-
-
-
-<h1>Register</h1>
-<form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
-  {{ register_user_form.hidden_tag() }}
-  {{ render_field_with_errors(register_user_form.email) }}
-  {{ render_field_with_errors(register_user_form.password) }}
-  {% if register_user_form.password_confirm %}
-    {{ render_field_with_errors(register_user_form.password_confirm) }}
-  {% endif %}
-  {{ render_field(register_user_form.submit) }}
-</form>
-{% include "security/_menu.html" %}
 {% endblock %}
