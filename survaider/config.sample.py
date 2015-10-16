@@ -16,6 +16,3 @@ SECURITY_PASSWORD_SALT  = 'SUPER!'
 SECURITY_REGISTERABLE   = True
 SECURITY_CONFIRMABLE    = False
 # SECURITY_RECOVERABLE    = True
-
-# IMPORTANT! Security tokens, salts.
-HASHIDS_SALT            = '708ffe47-b119-d1c5-b5c5-ab9eca777fcb'

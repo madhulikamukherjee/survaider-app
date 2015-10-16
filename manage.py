@@ -21,7 +21,7 @@ def create_admin():
 
     def add_user():
         email    = click.prompt('Email?', type = str)
-        password = click.prompt('Password?', type = str, hide_input=True, confirmation_prompt=True)
+        password = click.prompt('Password?', type = str, hide_input = True, confirmation_prompt = True)
         r = user_datastore.find_or_create_role("admin")
         u = user_datastore.create_user(email = email, password = password)
         user_datastore.add_role_to_user(u, "admin")

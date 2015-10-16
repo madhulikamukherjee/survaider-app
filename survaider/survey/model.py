@@ -5,27 +5,28 @@
 import datetime
 import uuid
 
-from hashids import Hashids
-
+from survaider.minions.helpers import HashId
+from survaider.user.model import User
 from survaider import db
 
 class Survey(db.Document):
-    s_id        = db.StringField(unique = True, default = str(uuid.uuid4()))
+    survey_id   = db.StringField(unique = True, default = str(uuid.uuid4()))
     added       = db.DateTimeField(default = datetime.datetime.now)
 
+    metadata    = db.DictField()
     structure   = db.DictField()
 
-    name        = db.StringField(max_length = 80)
-    description = db.StringField(max_length = 255)
+    created_by  = db.ListField(db.ReferenceField(User), default = [])
 
     def __unicode__(self):
-        return self.s_id
+        return HashId.encode(self.survey_id)
 
 class Response(db.Document):
-    r_id        = db.StringField(unique = True, default = str(uuid.uuid4()))
-    s_id        = db.ReferenceField(Survey)
+    response_id = db.StringField(unique = True, default = str(uuid.uuid4()))
+    survey_id   = db.ReferenceField(Survey)
 
+    metadata    = db.DictField()
     responses   = db.DictField()
 
     def __unicode__(self):
-        return self.r_id
+        return HashId.encode(self.response_id)

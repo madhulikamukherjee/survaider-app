@@ -24,7 +24,6 @@ def create_app():
 
 @app.before_request
 def do_important_stuff():
-    print(dir(current_user))
     g.user = current_user
 
 @app.route('/')

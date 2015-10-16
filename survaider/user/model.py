@@ -6,24 +6,33 @@ import datetime
 import uuid
 
 from flask.ext.security import UserMixin, RoleMixin
+from survaider.minions.helpers import HashId
 from survaider import db
 
 class Role(db.Document, RoleMixin):
-    name        = db.StringField(max_length = 80, unique = True)
-    description = db.StringField(max_length = 255)
+    role_id     = db.StringField(default = str(uuid.uuid4()))
+
+    name        = db.StringField(unique = True)
+    description = db.StringField()
+
+    metadata    = db.DictField()
 
     def __unicode__(self):
         return self.name
 
 class User(db.Document, UserMixin):
-    # id              = db.StringField()
-    username        = db.StringField(max_length = 40, unique = True, default = str(uuid.uuid4()))
-    email           = db.EmailField(max_length = 255, unique = True, required = True)
-    password        = db.StringField(max_length = 255, required = True)
+    user_id         = db.StringField(default = str(uuid.uuid4()))
+
+    email           = db.EmailField(unique = True, required = True)
+    password        = db.StringField(required = True)
+
+    metadata    = db.DictField()
+
     active          = db.BooleanField(default = True)
     added           = db.DateTimeField(default = datetime.datetime.now)
     confirmed_at    = db.DateTimeField()
-    roles           = db.ListField(db.ReferenceField(Role), default=[])
+
+    roles           = db.ListField(db.ReferenceField(Role), default = [])
 
     def __unicode__(self):
-        return self.username
+        return HashId.encode(self.u_id)

@@ -8,6 +8,7 @@ REST API End Points
 
 from flask_restful import Resource
 
+from survaider.minions.helpers import HashId
 from survaider.survey.model import Survey, Response
 
 class Survey(Resource):

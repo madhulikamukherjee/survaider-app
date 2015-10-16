@@ -61,3 +61,4 @@ static/.DS_Store
 .DS_Store
 bower_components
 node_modules
+config.py
