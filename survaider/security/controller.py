@@ -3,7 +3,6 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from flask.ext.security import Security, MongoEngineUserDatastore
-from flask_admin import helpers as admin_helpers
 
 from survaider import app, db
 from survaider.user.model import User, Role

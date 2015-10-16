@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-from flask import Flask, render_template
+from flask import Flask, render_template, g
 from flask.ext.mongoengine import MongoEngine
+from flask.ext.security import current_user
 
 app = Flask(__name__, template_folder='templates')
 app.config.from_pyfile('config.py')
@@ -18,6 +19,12 @@ def create_app():
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')
+
+
+@app.before_request
+def do_important_stuff():
+    print(dir(current_user))
+    g.user = current_user
 
 @app.route('/')
 def home():

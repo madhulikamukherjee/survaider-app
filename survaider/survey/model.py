@@ -5,6 +5,8 @@
 import datetime
 import uuid
 
+from hashids import Hashids
+
 from survaider import db
 
 class Survey(db.Document):
@@ -24,3 +26,6 @@ class Response(db.Document):
     s_id        = db.ReferenceField(Survey)
 
     responses   = db.DictField()
+
+    def __unicode__(self):
+        return self.r_id
