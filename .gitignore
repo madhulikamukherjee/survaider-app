@@ -62,3 +62,5 @@ static/.DS_Store
 bower_components
 node_modules
 config.py
+
+survaider/config.py
