@@ -26,7 +26,7 @@ class User(db.Document, UserMixin):
     email           = db.EmailField(unique = True, required = True)
     password        = db.StringField(required = True)
 
-    metadata    = db.DictField()
+    metadata        = db.DictField()
 
     active          = db.BooleanField(default = True)
     added           = db.DateTimeField(default = datetime.datetime.now)
@@ -35,4 +35,4 @@ class User(db.Document, UserMixin):
     roles           = db.ListField(db.ReferenceField(Role), default = [])
 
     def __unicode__(self):
-        return HashId.encode(self.u_id)
+        return  "{0} - ({1})".format(HashId.encode(self.user_id), self.email)

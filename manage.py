@@ -34,5 +34,14 @@ def create_admin():
         except:
             click.echo("Possible Error: Email Invalid or Exists.")
 
+@manager.command
+def setup_db():
+    from pymongo import MongoClient
+    from survaider.config import MONGODB_DB, MONGODB_HOST, MONGODB_PORT
+    client = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    client.drop_database(MONGODB_DB)
+
+    create_admin()
+
 if __name__ == "__main__":
     manager.run()
