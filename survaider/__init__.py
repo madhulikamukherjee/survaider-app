@@ -16,6 +16,7 @@ def create_app():
     from .security.controller import security
     from .admin.controller import admin
     from .dashboard.controller import dashboard
+    from .REST.controller import api
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')

@@ -8,11 +8,11 @@ REST API End Points
 
 from flask_restful import Resource
 
-from survey.model import Survey, Response
+from survaider.survey.model import Survey, Response
 
 class Survey(Resource):
     def get(self):
-        return {}
+        return {'lol':1123}
 
     def put(self):
         return
