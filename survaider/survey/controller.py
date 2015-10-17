@@ -9,7 +9,7 @@ REST API End Points
 from bson.objectid import ObjectId
 from flask import request
 from flask_restful import Resource, reqparse
-from flask.ext.security import current_user
+from flask.ext.security import current_user, login_required
 
 from survaider.minions.helpers import HashId
 from survaider.survey.model import Survey, Response, ResponseSession
@@ -26,16 +26,30 @@ class SurveyController(Resource):
         return
 
     def post(self):
-        return
+        if current_user.is_authenticated():
+            args = self.post_args()
+            svey = Survey(created_by = [current_user])
+            svey.metadata['name'] = args['s_name']
+            svey.metadata['desc'] = args['s_desc']
+            svey.save()
+            return str(svey), 200
+        else:
+            return "NOPE!", 401
 
 class SurveyMetaController(Resource):
-    def get(self):
+
+    def get(self, survey_id):
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+            return str(svey)
+        except Exception:
+            raise
+
+    def put(self, survey_id):
         pass
 
-    def put(self):
-        pass
-
-    def delete(self):
+    def delete(self, survey_id):
         pass
 
 class ResponseController(Resource):
