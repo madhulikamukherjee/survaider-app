@@ -28,13 +28,34 @@ class SurveyController(Resource):
         return
 
 class ResponseController(Resource):
-    def _args(self):
+    def post_args(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('q_id',  type = str)
-        parser.add_argument('q_res', type = str)
+        parser.add_argument('q_id',  type = str, required = True)
+        parser.add_argument('q_res', type = str, required = True)
+        return parser.parse_args()
+
+    def get_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('new',  type = bool)
         return parser.parse_args()
 
     def get(self, survey_id):
+        try:
+            args = self.get_args()
+            args['responses_exist'] = ResponseSession.is_running(survey_id)
+
+            if args['responses_exist']:
+                "End The Existing Survey."
+                if args['new']:
+                    ResponseSession.finish_running(survey_id)
+                    args['will_accept_response'] = False
+
+            return args, 201
+
+        except Exception:
+            raise Exception
+
+    def post(self, survey_id):
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
@@ -51,7 +72,12 @@ class ResponseController(Resource):
                 resp.save()
                 ResponseSession.start(str(svey), str(resp))
 
-            args = self._args()
+            args = self.post_args()
+
+            # if args['q_id'] in svey.struct : TO BE IMPLEMENTED.
+
+            if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
+                raise Exception
 
             resp.responses[args['q_id']] = args['q_res']
             resp.save()
@@ -60,15 +86,3 @@ class ResponseController(Resource):
 
         except Exception:
             raise Exception
-
-    def put(self, survey_id):
-        if 'resp_id' in request.cookies:
-            pass
-        return
-
-    def post(self, survey_id):
-        return
-
-    def delete(self, survey_id):
-        return
-

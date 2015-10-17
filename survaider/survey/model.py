@@ -55,6 +55,7 @@ class ResponseSession():
     @staticmethod
     def is_running(survey_id):
         #: Check if survey_id in user's payload.
+        print(g.SRPL, survey_id)
         if survey_id in g.SRPL:
             return all([
                 dateutil.parser.parse(g.SRPL[survey_id][0]) > datetime.datetime.now(),
@@ -66,4 +67,5 @@ class ResponseSession():
     @staticmethod
     def finish_running(survey_id):
         if survey_id in g.SRPL:
-            g.SRPL.pop(survey_id)
+            del g.SRPL[survey_id]
+            print(g.SRPL)
