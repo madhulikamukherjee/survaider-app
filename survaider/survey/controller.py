@@ -12,6 +12,7 @@ from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
 from survaider.minions.helpers import HashId
+from survaider.user.model import User
 from survaider.survey.model import Survey, Response, ResponseSession
 
 class SurveyController(Resource):
@@ -28,9 +29,11 @@ class SurveyController(Resource):
     def post(self):
         if current_user.is_authenticated():
             args = self.post_args()
-            svey = Survey(created_by = [current_user])
+            svey = Survey()
+            usr  = User.objects(id = current_user.id).first()
             svey.metadata['name'] = args['s_name']
             svey.metadata['desc'] = args['s_desc']
+            svey.created_by.append(usr)
             svey.save()
             return str(svey), 200
         else:
@@ -42,7 +45,7 @@ class SurveyMetaController(Resource):
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
-            return str(svey)
+            return svey.structure
         except Exception:
             raise
 

@@ -1,41 +1,47 @@
 {% macro menu() %}
-  {%- for item in admin_view.admin.menu() %}
-    {%- if item.is_category() -%}
-      {% set children = item.get_children() %}
-      {%- if children %}
-        {% set class_name = item.get_class_name() %}
-        {%- if item.is_active(admin_view) %}
-        <li class="active dropdown">
-        {% else -%}
-        <li class="dropdown">
-        {%- endif %}
-          <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
-            {% if item.class_name %}<span class="{{ item.class_name }}"></span> {% endif %}{{ item.name }}vgh<b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-          {%- for child in children -%}
-            {% set class_name = child.get_class_name() %}
-            {%- if child.is_active(admin_view) %}
-            <li class="active{% if class_name %} {{class_name}}{% endif %}">
-            {% else %}
-            <li{% if class_name %} class="{{class_name}}"{% endif %}>
+  <li class="active">
+    <a href="#">Administration<span class="arrow open"></span></a>
+    <span class="icon-thumbnail"><i class="pg-grid"></i></span>
+    <ul class="sub-menu">
+      {%- for item in admin_view.admin.menu() %}
+        {%- if item.is_category() -%}
+          {% set children = item.get_children() %}
+          {%- if children %}
+            {% set class_name = item.get_class_name() %}
+            {%- if item.is_active(admin_view) %}
+            <li class="active dropdown">
+            {% else -%}
+            <li class="dropdown">
             {%- endif %}
-              <a href="{{ child.get_url() }}">{{ menu_icon(child) }}{{ child.name }}gbh</a>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+                {% if item.class_name %}<span class="{{ item.class_name }}"></span> {% endif %}{{ item.name }}vgh<b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+              {%- for child in children -%}
+                {% set class_name = child.get_class_name() %}
+                {%- if child.is_active(admin_view) %}
+                <li class="active{% if class_name %} {{class_name}}{% endif %}">
+                {% else %}
+                <li{% if class_name %} class="{{class_name}}"{% endif %}>
+                {%- endif %}
+                  <a href="{{ child.get_url() }}">{{ menu_icon(child) }}{{ child.name }}gbh</a>
+                </li>
+              {%- endfor %}
+              </ul>
             </li>
-          {%- endfor %}
-          </ul>
-        </li>
-      {% endif %}
-    {%- else %}
-      {%- if item.is_accessible() and item.is_visible() -%}
+          {% endif %}
+        {%- else %}
+          {%- if item.is_accessible() and item.is_visible() -%}
 
-      <li class="{% if item.is_active(admin_view) %}active{% endif %}">
-        <a href="{{ item.get_url() }}"><span class="title">{{ item.name }}</span></a>
-        <span class="icon-thumbnail">{{ item.name|truncate(1, True, "")|lower }}</span>
-      </li>
-      {%- endif -%}
-    {% endif -%}
-  {% endfor %}
+          <li class="{% if item.is_active(admin_view) %}active{% endif %}">
+            <a href="{{ item.get_url() }}"><span class="title">{{ item.name }}</span></a>
+            <span class="icon-thumbnail">{{ item.name|truncate(1, True, "")|lower }}</span>
+          </li>
+          {%- endif -%}
+        {% endif -%}
+      {% endfor %}
+    </ul>
+  </li>
 {% endmacro %}
 
 {% macro menu_links() %}

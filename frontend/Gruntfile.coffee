@@ -28,9 +28,16 @@ module.exports = (grunt) ->
         files:
           '<%= build %>/js/survaider.js': [
             'bower_components/PACE/pace.js'
-            'bower_components/jquery/dist/jquery.js'
+            'bower_components/jquery/jquery.js'
             'bower_components/modernizer/modernizr.js'
+            'bower_components/jquery-ui/jquery-ui.js'
             'bower_components/bootstrap/dist/js/bootstrap.js'
+            'bower_components/jquery.easing/js/jquery.easing.js'
+            'bower_components/jquery-unveil/jquery.unveil.js'
+            'bower_components/jquery-bez/jquery.bez.min.js'
+            'bower_components/ioslist/dist/json/jquery.ioslist.js'
+            'bower_components/imagesloaded/imagesloaded.pkgd.js'
+            'bower_components/jquery.actual/jquery.actual.js'
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'pages/js/pages.js'
           ]
@@ -77,3 +84,4 @@ module.exports = (grunt) ->
     #       '<%= distFolder %>/formbuilder.css': '<%= srcFolder %>/styles/formbuilder.sass'
 
   grunt.registerTask 'default', ALL_TASKS
+
