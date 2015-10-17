@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import current_user
 

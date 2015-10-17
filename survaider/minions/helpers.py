@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-from flask import current_app
-
+from bson.objectid import ObjectId
 from hashids import Hashids
+
+from flask import current_app
 
 class HashId(object):
     hashids = Hashids(salt = current_app.config.get('HASHIDS_SALT'))
@@ -14,7 +15,7 @@ class HashId(object):
         """
         Encodes a UUID String to Hashid.
         """
-        w = '0x' + uid[0:8] + uid[9:13] + uid[14:18] + uid[19:23] + uid[24:]
+        w = str(ObjectId(uid))
         return HashId.hashids.encode(int(w, 16))
 
     @staticmethod
