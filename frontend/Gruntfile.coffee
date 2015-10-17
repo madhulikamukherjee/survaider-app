@@ -59,6 +59,10 @@ module.exports = (grunt) ->
             'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]
+          '<%= build %>/css/builder.css': [
+            'bower_components/survaider-builder/vendor/css/vendor.css',
+            'bower_components/survaider-builder/dist/formbuilder.css'
+          ]
 
     uglify:
       dist:
