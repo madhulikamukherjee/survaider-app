@@ -5,3 +5,4 @@ flask-mongoengine == 0.7.1
 Flask-MongoRest == 0.1.1
 hashids == 1.1.0
 flask-restful == 0.3.4
+simple-crypt == 4.1.7

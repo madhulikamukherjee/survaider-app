@@ -6,6 +6,8 @@ from flask import Flask, render_template, g, request
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import current_user
 
+from .minions.helpers import Routines
+
 app = Flask(__name__, template_folder='templates')
 app.config.from_pyfile('config.py')
 
@@ -25,6 +27,12 @@ def create_app():
 @app.before_request
 def do_important_stuff():
     g.user = current_user
+    g.SRPL = Routines.gather_obfuscated_cookie('SRPL')
+
+@app.after_request
+def do_more_important_stuff(response):
+    response.set_cookie('SRPL', Routines.update_obfuscated_cookie('SRPL'))
+    pass
 
 @app.route('/')
 def home():

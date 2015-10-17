@@ -6,12 +6,13 @@
 REST API End Points
 """
 
+from bson.objectid import ObjectId
 from flask import request
 from flask_restful import Resource
 from flask.ext.security import current_user
 
 from survaider.minions.helpers import HashId
-from survaider.survey.model import Survey, Response
+from survaider.survey.model import Survey, Response, ResponseSession
 
 class SurveyController(Resource):
     def get(self):
@@ -28,10 +29,11 @@ class SurveyController(Resource):
 
 class ResponseController(Resource):
     def get(self, survey_id):
-        s_id = HashId.decode(survey_id)
-        svey = Survey.objects(survey_id = s_id).first()
+        if ResponseSession.is_running(survey_id):
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
 
-        resp = Response(survey_id = svey)
+        resp = Response(parent_survey = svey)
         resp.responses['c1'] = 'SOME ANSWER'
 
         resp.save()

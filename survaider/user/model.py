@@ -21,8 +21,6 @@ class Role(db.Document, RoleMixin):
         return self.name
 
 class User(db.Document, UserMixin):
-    user_name       = db.StringField()
-
     email           = db.EmailField(unique = True, required = True)
     password        = db.StringField(required = True)
 

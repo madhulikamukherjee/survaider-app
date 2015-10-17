@@ -10,4 +10,4 @@ from survaider.survey.controller import SurveyController, ResponseController
 api = Api(app, prefix = '/api')
 
 api.add_resource(SurveyController,   '/survey')
-api.add_resource(ResponseController, '/survey/response/<string:survey_id>')
+api.add_resource(ResponseController, '/survey/<string:survey_id>/response')
