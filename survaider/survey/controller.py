@@ -15,17 +15,28 @@ from survaider.minions.helpers import HashId
 from survaider.survey.model import Survey, Response, ResponseSession
 
 class SurveyController(Resource):
-    def get(self):
-        return {'lol':1123}
 
-    def put(self):
+    def post_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('s_name', type = str, required = True)
+        parser.add_argument('s_desc', type = str)
+        return parser.parse_args()
+
+    def get(self):
         return
 
     def post(self):
         return
 
+class SurveyMetaController(Resource):
+    def get(self):
+        pass
+
+    def put(self):
+        pass
+
     def delete(self):
-        return
+        pass
 
 class ResponseController(Resource):
     """
