@@ -20,7 +20,7 @@
                 <h3>Welcome {{ g.user.email }}!</h3>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 <br>
-<button class="btn btn-primary btn-cons m-b-10" type="button"><i class="pg-form"></i> <span class="bold">Build a Survaider</span></button>
+                <button class="btn btn-primary btn-cons m-b-10" type="button" onclick="$('#myModal').modal('show')"><i class="pg-form"></i> <span class="bold">Build a Survaider</span></button>
               </div>
             </div>
             <!-- END PANEL -->
@@ -29,7 +29,6 @@
             <div class="row">
               <div class="col-sm-6 m-b-10">
                 <div class="ar-2-1">
-                  <!-- START WIDGET -->
                   <div class="widget-4 panel no-border  no-margin widget-loader-bar">
                     <div class="container-sm-height full-height">
                       <div class="widget-16-header padding-20">
@@ -59,7 +58,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- END WIDGET -->
                 </div>
               </div>
               <div class="col-sm-6 m-b-10">
@@ -106,7 +104,58 @@
 {% block content %}
 <div class="container">
 
+</div>
+{% endblock %}
 
+{% block modal %}
+<div class="modal fade stick-up" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header clearfix text-left">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+        </button>
+        <h5>Survey <span class="semi-bold">Information</span></h5>
+        <p>You're one step away from creating a new Survaider! Please fill-in the following information to get started.</p>
+      </div>
+      <div class="modal-body">
+        <form role="form">
+          <div class="form-group-attached">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group form-group-default">
+                  <label>Name</label>
+                  <input type="email" class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group form-group-default">
+                  <label>Description</label>
+                  <input type="email" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="p-t-20 clearfix p-l-10 p-r-10">
+              <div class="pull-left">
 
+                <p><span class="bold font-montserrat text-uppercase">Next:</span> Survey Structure</p>
+              </div>
+              <div class="pull-right">
+                <p class="bold font-montserrat text-uppercase"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 m-t-10 sm-m-t-10">
+            <button type="button" class="btn btn-primary btn-block m-t-5">Proceed</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
