@@ -41,6 +41,10 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'pages/js/pages.js'
           ]
+          '<%= build%>/js/builder.js': [
+            'bower_components/survaider-builder/vendor/js/vendor.sans.jquery.js',
+            'bower_components/survaider-builder/dist/formbuilder.js'
+          ]
 
     cssmin:
       dist:
@@ -60,6 +64,7 @@ module.exports = (grunt) ->
       dist:
         files:
           '<%= build %>/js/survaider.min.js': '<%= build %>/js/survaider.js'
+          '<%= build %>/js/builder.min.js': '<%= build %>/js/builder.js'
 
     copy:
       fontsfa:
