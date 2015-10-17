@@ -28,6 +28,10 @@ class SurveyController(Resource):
         return
 
 class ResponseController(Resource):
+    """
+    REST Api Endpoint Controller for Response Collections.
+    """
+
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('q_id',  type = str, required = True)
@@ -40,6 +44,20 @@ class ResponseController(Resource):
         return parser.parse_args()
 
     def get(self, survey_id):
+        """
+        GET /api/survey/<survey_id>/response
+        Returns whether any valid response object for the <survey_id> exists
+        in the Collection.
+        It is up to the Client Code to implement saving of the responses so that
+        the survey can be continued even after it is terminated pre-maturely.
+        For security, the responses are NOT returned.
+
+        Args:
+            new (bool): Send a True GET parameter in URL to end the currently
+                        running response.
+                        Example: GET /api/survey/<survey_id>/response?new=true
+        """
+
         try:
             args = self.get_args()
             args['responses_exist'] = ResponseSession.is_running(survey_id)
@@ -56,6 +74,22 @@ class ResponseController(Resource):
             raise Exception
 
     def post(self, survey_id):
+        """
+        POST /api/survey/<survey_id>/response
+        Saves the Question Responses. The responses are saved atomically.
+        Aggregate saving of the responses is NOT implemented yet, since the
+        game requires atomic response storage.
+
+        TODO: Aggregate response handelling.
+
+        Appends to the existing response document if it exists, otherwise
+        creats a new document.
+
+        Args:
+            q_id (str):  Question ID, as generated in the survey structure.
+            q_res (str): Response.
+        """
+
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
