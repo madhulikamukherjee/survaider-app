@@ -8,7 +8,7 @@ REST API End Points
 
 from bson.objectid import ObjectId
 from flask import request
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from flask.ext.security import current_user
 
 from survaider.minions.helpers import HashId
@@ -28,17 +28,38 @@ class SurveyController(Resource):
         return
 
 class ResponseController(Resource):
+    def _args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('q_id',  type = str)
+        parser.add_argument('q_res', type = str)
+        return parser.parse_args()
+
     def get(self, survey_id):
-        if ResponseSession.is_running(survey_id):
+        try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
 
-        resp = Response(parent_survey = svey)
-        resp.responses['c1'] = 'SOME ANSWER'
+            resp = None
 
-        resp.save()
+            if ResponseSession.is_running(str(svey)):
+                "Uses existing Response Session."
+                resp_id = ResponseSession.get_running_id(str(svey))
+                resp = Response.objects(id = resp_id).first()
+            else:
+                "Creates a New Response Session."
+                resp = Response(parent_survey = svey)
+                resp.save()
+                ResponseSession.start(str(svey), str(resp))
 
-        return {}
+            args = self._args()
+
+            resp.responses[args['q_id']] = args['q_res']
+            resp.save()
+
+            return args, 200
+
+        except Exception:
+            raise Exception
 
     def put(self, survey_id):
         if 'resp_id' in request.cookies:

@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
+import json
+
 from bson.objectid import ObjectId
 from hashids import Hashids
 from binascii import hexlify, unhexlify
@@ -71,5 +73,5 @@ class Routines(object):
             dat = Obfuscate.encode(json.dumps(payload))
             return dat
         except Exception:
-            pass
+            return "NA"
 
