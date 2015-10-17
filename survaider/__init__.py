@@ -16,11 +16,13 @@ def create_app():
     from .security.controller import security
     from .admin.controller import admin
     from .dashboard.controller import dashboard
+    from .survey.controller import srvy
     from .REST.controller import api
     from .minions.helpers import Routines
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')
+    app.register_blueprint(srvy, url_prefix = '/survey')
 
     @app.before_request
     def do_important_stuff():

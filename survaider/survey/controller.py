@@ -7,7 +7,7 @@ REST API End Points
 """
 
 from bson.objectid import ObjectId
-from flask import request
+from flask import request, Blueprint, render_template
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
@@ -148,3 +148,10 @@ class ResponseController(Resource):
 
         except Exception:
             raise Exception
+
+srvy = Blueprint('srvy', __name__, template_folder = 'templates')
+
+@srvy.route('/')
+def get_index():
+    return render_template('srvy.index.html')
+
