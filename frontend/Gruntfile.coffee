@@ -7,6 +7,10 @@ ALL_TASKS = [
   'copy:fontspages'
 ]
 
+PROXY_TASKS = [
+  'watch:proxy'
+]
+
 module.exports = (grunt) ->
   path = require('path')
   exec = require('child_process').exec
@@ -82,6 +86,17 @@ module.exports = (grunt) ->
         src: '**/*'
         dest: '<%= build %>/fonts'
 
+      proxy_main:
+        expand: true
+        cwd: '../../survaider-builder/dist'
+        src: '*'
+        dest: '<%= build %>/dev'
+      proxy_vendor:
+        expand: true
+        cwd: '../../survaider-builder/vendor/js'
+        src: '*'
+        dest: '<%= build %>/dev'
+
     sass:
       all:
         options:
@@ -101,4 +116,19 @@ module.exports = (grunt) ->
             host: 'localhost'
             port: 35729
 
+      proxy:
+        files: [
+          '../../survaider-builder/dist/*.{css, js}'
+          '../../survaider-builder/vendor/js/*.js'
+        ]
+        tasks: [
+          'copy:proxy_main'
+          'copy:proxy_vendor'
+        ]
+        options:
+          livereload:
+            host: 'localhost'
+            port: 35729
+
   grunt.registerTask 'default', ALL_TASKS
+  grunt.registerTask 'proxy_task', PROXY_TASKS
