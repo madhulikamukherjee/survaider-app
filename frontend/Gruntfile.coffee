@@ -2,6 +2,7 @@ ALL_TASKS = [
   'concat:all'
   'cssmin:dist'
   'uglify:dist'
+  'sass:all'
   'copy:fontsfa'
   'copy:fontspages'
 ]
@@ -59,9 +60,8 @@ module.exports = (grunt) ->
             'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]
-          '<%= build %>/css/builder.css': [
-            'bower_components/survaider-builder/vendor/css/vendor.css',
-            'bower_components/survaider-builder/dist/formbuilder.css'
+          '<%= build %>/css/builder.vendor.css': [
+            'bower_components/survaider-builder/vendor/css/vendor.css'
           ]
 
     uglify:
@@ -82,15 +82,19 @@ module.exports = (grunt) ->
         src: '**/*'
         dest: '<%= build %>/fonts'
 
-    # sass:
-    #   all:
-    #     options:
-    #       quiet: false
-    #       trace:true
-    #       style: 'expanded'
+    sass:
+      all:
+        options:
+          quiet: false
+          trace:true
+          style: 'expanded'
 
-    #     files:
-    #       '<%= distFolder %>/formbuilder.css': '<%= srcFolder %>/styles/formbuilder.sass'
+        files:
+          '<%= build %>/css/builder.main.css': 'assets/css/formbuilder.sass'
+
+    watch:
+      all:
+        files: ['assets/css/*.{sass}']
+        tasks: ['sass:all']
 
   grunt.registerTask 'default', ALL_TASKS
-

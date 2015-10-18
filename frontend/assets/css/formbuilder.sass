@@ -1,0 +1,687 @@
+@import url(//fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600)
+
+@import "bourbon/bourbon"
+//colors
+$color_niagara_approx: #16a085
+$white: #fff
+$color_mountain_meadow_approx: #19b394
+$color_alto_approx: #ddd
+$color_celeste_approx: #ccc
+$color_tapa_approx: #777
+$color_mountain_mist_approx: #999
+$color_athens_gray_approx: #ecf0f1
+$color_geyser_approx: #d9e1e3
+$color_emerald_approx: #2ecc71
+$color_cinnabar_approx: #e74c3c
+$color_gallery_approx: #eee
+$red: #f00
+$color_storm_dust_approx: #666
+
+
+$font_0: 'Source Sans Pro'
+$font_1: 'Open Sans'
+$font_2: 'Tahoma'
+$font_3: 'Source Sans Pro'
+$font_4: 'sans-serif'
+$font: 'Work Sans', sans-serif
+
+body
+    margin: 0
+    background-color: #2E3A4E
+    position: relative
+
+    &.shepherd-active
+        .sb-left
+            .header, .content, .footer
+                background-color: #3C474D
+        .sb-right
+            .sb-response-fields, .sb-survey-description
+                background-color: #3C474D
+*
+    box-sizing: border-box
+
+.sb-button
+    font-family: 'Work Sans', sans-serif
+    margin: 0px 0px 10px 0px
+    position: relative
+    padding: 5px 15px 5px 40px
+    border: 2px solid #000000
+    border-radius: 5px
+    background: #FFFFFF
+    color: #000000
+    text-decoration: none
+    font-size: 16px
+    cursor: pointer
+    display: block
+    width: 200px
+
+    @include transition(background-color 0.2s, color 0.2s)
+
+    span
+        position: absolute
+        left: 0
+        top: 0
+        height: 100%
+        width: 33px
+        background: #000000
+        padding-top: 8px
+        text-align: center
+        color: #FFF
+
+    &:hover
+        background-color: #000000
+        color: #FFFFFF
+
+.sb-clear
+    clear: both
+
+.sb-main
+    width: 80%
+    margin: 0 auto
+    position: relative
+    padding: 0
+    font-family: $font
+
+    .sb-left
+        width: 30%
+        height: 100%
+        float: left
+        position: relative
+        margin-top: 20px
+        margin-bottom: 20px
+        border-radius: 4px 0 0 5px
+
+        .sb-field-options
+            padding-bottom: 40px
+            position: fixed
+            top: 50%
+            left: 12%
+            width: 20%
+            background: #FFFFFF
+            border: 2px solid #000000
+            border-radius: 5px
+            font-family: $font
+            max-height: 70%
+            opacity: 0
+            @include transform(translate(120%, -50%))
+            @include transition(transform 0.2s ease, opacity 0.1s)
+
+            &.active
+                opacity: 1
+                @include transform(translate(0, -50%))
+
+            .sb-edit-field-wrapper
+                height: 100%
+                overflow: auto
+                padding: 10px 20px 20px 20px
+
+                .edit-response-field
+                    .sb-edit-section-header
+                        border-bottom: 1px solid $color_alto_approx
+                        margin-top: 25px
+                        margin-bottom: 10px
+                        padding-bottom: 5px
+                        clear: both
+                        font-weight: 700
+
+                    .sb-label-description
+                        input
+                            border-radius: 5px
+                            width: 100%
+
+                    .option
+                        position: relative
+                        margin-bottom: 5px
+
+                        input
+                            margin: 0
+                            padding-right: 30px
+                            border-radius: 5px
+                            width: 100%
+
+                        .js-remove-option
+                            position: absolute
+                            right: 0
+                            top: 0
+                            width: 30px
+                            height: 30px
+                            font-size: 16px
+                            padding: 5px 7px
+                            cursor: pointer
+                            margin-left: -2px
+                            color: #e74c3c
+                            text-align: right
+                            display: flex
+                            overflow: hidden
+
+                            .fa
+                                line-height: auto
+                                font-size: 18px
+
+                            @include transition(all 0.5s ease)
+
+                            &:hover
+                                color: #000000
+
+                            &.err
+                                color: #FFFFFF
+                                width: 100%
+                                background: #000
+                                border-radius: 5px
+
+                                &:after
+                                    content: "Minimum 2 options!"
+                                    margin-left: 5px
+
+                                &:hover
+                                    color: #FFFFFF
+
+                    .js-add-option
+                        cursor: pointer
+                        color: #000000
+                        border: 2px solid transparent
+                        width: 100%
+                        height: 33px
+                        padding: 5px 10px
+                        border-radius: 5px
+                        display: block
+                        margin-top: 5px
+                        overflow: hidden
+
+                        @include transition(all 0.5s ease)
+
+                        &.err
+                            background-color: #000000
+                            border-color: #000000
+                            height: 60px
+                            color: #FFFFFF
+
+                            &:hover
+                                color: #FFFFFF
+
+                        &:hover
+                            color: #3B479D
+
+                    .sb-bottom-add
+                        margin-top: 8px
+
+                    .sb-nah-bro
+                        background: #000
+                        opacity: 0
+                        color: #FFFFFF
+                        visibility: hidden
+                        @include animation(flash 10s ease)
+
+                    @include keyframes(flash)
+                        0%, 100%
+                            opacity: 0
+                        10%, 90%
+                            opacity: 1
+
+                    input, .button
+                        border: 2px solid #000000
+                        padding: 5px 10px
+                        font-size: 14px
+                        font-family: $font
+                        height: auto
+                        vertical-align: middle
+
+            .sb-field-options-done
+                background-color: #D8D8D8
+                position: absolute
+                left: 0
+                bottom: 0
+                width: 100%
+                height: 40px
+                padding: 6px 20px
+
+                button
+                    background-color: #119462
+                    border-radius: 5px
+                    border: 2px solid #000
+                    color: #FFFFFF
+                    font-family: $font
+                    text-decoration: none
+                    text-align: center
+                    font-size: 14px
+                    padding: 5px 10px
+                    @include transition(background-color 0.2s ease)
+
+                    &:hover
+                        outline: none
+                        background-color: #000
+
+                    &:focus
+                        outline: none
+
+        .header
+            background-color: #CCD7DD
+            border-radius: 5px 0 0 0
+            border: 2px solid #000000
+            margin-right: -2px
+            padding: 20px 10px 5px 20px
+
+            h2
+                margin: 0 0 10px 0
+
+            button
+                font-family: $font
+                padding: 5px 20px
+                font-size: 14px
+                border: 2px solid
+                border-radius: 5px
+                margin: 5px 0
+                width: 120px
+                color: #FFFFFF
+                background-color: #119462
+                border-color: #000000
+                @include transition(background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease)
+
+                &:hover
+                    background-color: #000000
+
+                &[disabled]
+                    background-color: #599D74
+                    border-color: #637079
+                    color: #637079
+
+                &.play-now
+                    background-color: #2165AE
+                    &:hover
+                        background-color: #000000
+
+        .content
+            background-color: #E0E7ED
+            padding: 20px 10px 5px 20px
+            margin-right: -2px
+            border: 2px solid #000000
+            border-top: none
+            border-bottom: none
+
+            h1, h2, h3, h4
+                margin-top: 0px
+                font-weight: 300
+
+        .footer
+            background-color: #3C474D
+            padding: 5px 20px
+            border: 2px solid #000000
+            margin-right: -2px
+            border-radius: 0 0 0 5px
+            height: 80px
+
+            a, p
+                color: #FFFFFF
+
+            img
+                float: left
+                height: 60px
+                margin-right: 20px
+
+            p
+                margin: 0
+
+        .header, .content, .footer
+            @include transition(background-color 0.5s ease)
+
+    .sb-right
+        float: right
+        width: 70%
+        display: block
+        min-height: 100%
+        //overflow: hidden
+        position: relative
+        z-index: 5
+
+        #svg-canvas
+            position: absolute
+            left: 0
+            right: 22px
+            top: 0
+            bottom: 0
+            @include filter(blur(0px))
+            @include transition(all 0.2s ease)
+
+            &.blur
+                @include filter(blur(9px))
+
+        .sb-survey-description
+            position: relative
+            z-index: 2
+            background-color: #3B479D
+            padding: 10px 30px 20px 30px
+            border: 2px solid
+
+            &.header
+                margin: 20px 20px 0 0
+                border-bottom-width: 0
+                border-radius: 0 5px 0 0
+
+                button.target_O
+                    bottom: -12px
+
+            &.footer
+                margin: 0 20px 20px 0
+                border-top-width: 0
+                border-radius: 0 0 5px 0
+
+                button.target_O
+                    top: -12px
+
+            p.section
+                margin-bottom: 0
+                color: #FFFFFF
+                margin-left: 30px
+                font-weight: 300
+
+            input
+                font-size: 30px
+                margin: 0 10px 0 0
+                color: #FFF
+                margin-bottom: 10px
+
+            textarea
+                resize: none
+                font-size: 20px
+                color: #FFFFFF
+                font-weight: 300
+                max-width: 100%
+                min-width: 100%
+                min-height: 60px
+                max-height: 60px
+                margin: 0px
+
+            input, textarea
+                display: block
+                border-radius: 5px
+                padding: 5px 30px
+                width: 100%
+                font-family: $font
+                background-color: transparent
+                border: 2px solid transparent
+                @include transition(background-color 0.2s, border-color 0.2s, color 0.2s)
+
+                &:hover, &:focus
+                    background-color: #FFFFFF
+                    border-color: #000000
+                    color: #000000
+                    outline: none
+
+            button.target_O
+                position: absolute
+                width: 2.5em
+                height: 2.5em
+                border-radius: 50%
+                border: 2px solid #000
+                font-size: 0.1em
+                cursor: pointer
+                right: 40px
+                background-color: #3B479D
+
+                @include transition(background 0.2s ease)
+
+                &:focus, &:hover
+                    outline: none
+
+                &:hover
+                    background: #000
+
+        .sb-response-fields
+            margin: 0 20px 0 0
+            border: 2px solid #000
+            border-radius: 0
+            background-color: #FFFFFF
+            min-height: 200px
+            padding: 20px 0 0 20px
+
+            a.sortable-placeholder
+                display: block
+                border: 2px dashed #000000
+                border-radius: 5px
+                min-height: 80px
+                height: 80px
+                width: 374px
+
+            .sb-field-wrapper
+                cursor: move
+                position: relative
+                margin-bottom: 10px
+                display: table
+
+                &:empty
+                    margin: 0
+
+                &:hover
+                    .actions-wrapper
+                        opacity: 1
+                        visibility: visible
+
+                    .subtemplate-wrapper
+                        border-color: #000000
+
+                &.editing
+                    .actions-wrapper
+                        opacity: 1
+                        visibility: visible
+
+                    .field-card .meta
+                        background-color: #00B6B9
+
+                    .field-card.blur
+                        @include filter(blur(0px))
+
+                .actions-wrapper
+                    visibility: hidden
+                    position: absolute
+                    bottom: -12px
+                    right: 10px
+                    z-index: 3
+                    opacity: 0
+                    @include transition(opacity 0.2s ease)
+
+                    a
+                        cursor: pointer
+                        display: inline-block
+                        padding: 2px 4px
+                        text-align: center
+                        background-color: #FFFFFF
+                        color: #FFFFFF
+                        border: 2px solid #000
+                        border-radius: 5px
+                        height: 25px
+                        width: auto
+                        font-size: 14px
+                        @include transition(background-color 0.2s ease)
+
+                        &.js-duplicate
+                            background-color: $color_emerald_approx
+
+                        &.js-clear
+                            background-color: $color_cinnabar_approx
+
+                        &:hover
+                            background-color: #000000
+
+                .subtemplate-wrapper
+
+                    border: 2px dashed transparent
+                    border-radius: 8px
+                    padding: 12px
+                    position: relative
+
+                    @include transition(border-color 0.2s ease)
+                    .cover
+                        position: absolute
+                        top: 0
+                        left: 0
+                        height: 100%
+                        width: 100%
+                        z-index: 2
+
+                div.field-card
+                    width: 350px
+                    border: 2px solid #000000
+                    border-radius: 8px
+                    font-family: 'Work Sans', sans-serif
+                    position: relative
+                    background: #FFFFFF
+
+                    $meta-bg: #3B479D
+
+                    &.blur
+                        @include filter(blur(5px))
+
+                    .meta
+                        background: $meta-bg
+                        border-radius: 5px 5px 0 0
+                        color: #FFFFFF
+                        padding: 10px 30px
+
+                        @include transition(background-color 0.2s ease)
+
+                        p
+                            margin: 0
+
+                            &.section
+                                font-size: 0.8em
+                                font-weight: 200
+
+                            &.title
+                                font-size: 1.5em
+                                &:empty
+                                    &:after
+                                        content: "Untitled Question"
+                                        color: #FFFFFF
+
+                            &.type
+                                text-transform: capitalize
+
+                        button.target
+                            right: -1.25em
+                            top: 25px
+                            background: $meta-bg
+
+                    .logic
+                        padding: 10px 0 10px 30px
+                        position: relative
+
+                        p
+                            margin: 0
+
+                            &.section
+                                font-size: 0.8em
+                                font-weight: 200
+
+                        .line
+                            padding-right: 30px
+                            position: relative
+                            margin: 10px 0
+
+                            p
+                                display: inline-block
+                                border: 2px solid
+                                padding: 2px 10px
+                                border-radius: 5px
+                                background: #FFF
+                                position: relative
+
+                                i
+                                    &.fa-star
+                                        color: #FEC84E
+                                        margin-top: 10px
+
+                                span.digit
+                                    background-color: #3C474D
+                                    //margin-top: 10px
+                                    color: #FFFFFF
+                                    width: 20px
+                                    height: 20px
+                                    font-size: 14px
+                                    border-radius: 50%
+                                    padding: 2px
+                                    text-align: center
+                                    display: inline-block
+
+                                    &.up
+                                        //background-color: #14B37D
+
+                                    &.down, &.up
+                                        background-color: #7F74B6
+
+                                    &.spacer
+                                        width: 25px
+                                        border-radius: 5px
+                                &:empty
+                                    &:after
+                                        content: "Option"
+                                        color: #e74c3c
+
+                            span.link
+                                width: 100%
+                                height: 2px
+                                background-color: #000
+                                position: absolute
+                                top: 50%
+                                transform: translateY(-50%)
+
+                            button.target
+                                right: -1.25em
+                                top: 50%
+                                @include transform(translateY(-50%))
+
+                        button.target.hanging
+                            right: -1.25em
+                            top: 50%
+                            @include transform(translateY(-50%))
+
+                        button.add-logic
+                            border: 2px solid #000000
+                            padding: 2px 10px
+                            border-radius: 5px
+                            background: #FFFFFF
+                            font-size: 1em
+                            font-family: 'Work Sans', sans-serif
+                            margin-top: 15px
+                            cursor: pointer
+                            @include transition(background 0.2s ease, color 0.2s ease)
+
+                            &:hover
+                                background: #000000
+                                color: #FFFFFF
+
+                            &:hover, &:focus
+                                outline: none
+
+                    button.target
+                        position: absolute
+                        width: 2.5em
+                        height: 2.5em
+                        border-radius: 50%
+                        border: 2px solid #000
+                        font-size: 0.1em
+                        cursor: pointer
+                        background: #FFFFFF
+
+                        &:focus, &:hover
+                            outline: none
+
+                        &:hover
+                            background: #000
+
+        .sb-response-fields, .sb-survey-description
+            @include transition(background-color 0.5s ease)
+
+.shepherd-step
+    z-index: 100
+    width: 300px
+    font-family: $font
+
+    .btn-close
+        background: #AAAAAA !important
+
+.response-field-draggable-helper
+    border: 2px dashed #000000
+    background: transparent
+    border-radius: 5px
+    width: 374px
+    z-index: 10
