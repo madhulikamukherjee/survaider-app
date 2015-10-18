@@ -30,6 +30,7 @@
     "jquery.actual": "~1.0.16",
     "modernizer": "~2.8.2",
     "jquery-ui": "~1.11.4",
-    "survaider-builder": "https://github.com/PrashntS/survaider-builder.git#~0.1.3"
+    "survaider-builder": "https://github.com/PrashntS/survaider-builder.git#~0.1.3",
+    "autosize": "~3.0.13"
   }
 }

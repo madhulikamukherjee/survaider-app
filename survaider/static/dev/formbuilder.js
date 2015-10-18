@@ -970,12 +970,12 @@ $(function () {
       $responseFieldEl.addClass('editing').siblings('.sb-field-wrapper').removeClass('editing');
       if (this.editView) {
         if (this.editView.model.cid === model.cid) {
-          this.$el.find(".sb-tabs a[data-target=\"#editField\"]").click();
           this.scrollLeftWrapper($responseFieldEl);
           return;
         }
         this.editView.remove();
-        $("#editField").removeClass("active");
+        $('#sb_edit_model').modal('hide');
+        $responseFieldEl.removeClass('editing');
       }
       this.editView = new EditFieldView({
         model: model,
@@ -983,7 +983,7 @@ $(function () {
       });
       $newEditEl = this.editView.render().$el;
       this.$el.find(".sb-edit-field-wrapper").html($newEditEl);
-      $("#editField").addClass("active");
+      $('#sb_edit_model').modal('show');
       this.scrollLeftWrapper($responseFieldEl);
       return this;
     };
@@ -1538,11 +1538,11 @@ this["Formbuilder"]["templates"]["page"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class="row no-margin">\n    <div class="col-sm-3 bg-info-darker fixed">\n        <!--' +
+__p += '<div class="row no-margin">\n    <div class="col-sm-3 fixed">\n        <!--' +
 ((__t = ( Formbuilder.templates['partials/left_side']() )) == null ? '' : __t) +
 '-->\n        <button class=\'btn btn-success js-save-form\'></button>\n        ' +
 ((__t = ( Formbuilder.templates['partials/add_field']() )) == null ? '' : __t) +
-'\n        <a href="#" onclick="$(\'#modalSlideLeft\').modal(\'show\')">sss</a>\n    </div>\n    <div class="col-sm-9 no-padding">\n        ' +
+'\n        <p onclick="$(\'#modalSlideLeft\').modal(\'show\')">sss</p>\n    </div>\n    <div class="col-sm-9 no-padding">\n        ' +
 ((__t = ( Formbuilder.templates['partials/right_side']() )) == null ? '' : __t) +
 '\n    </div>\n</div>\n' +
 ((__t = ( Formbuilder.templates['partials/edit_field']() )) == null ? '' : __t) +
@@ -1585,7 +1585,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n\n<div class="modal fade slide-right" id="modalSlideLeft" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle text-center   ">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <!-- /.modal-content -->\n  </div>\n</div>\n';
+__p += '\n\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle text-center   ">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <!-- /.modal-content -->\n  </div>\n</div>\n';
 
 }
 return __p
