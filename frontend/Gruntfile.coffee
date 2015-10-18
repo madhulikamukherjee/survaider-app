@@ -94,7 +94,11 @@ module.exports = (grunt) ->
 
     watch:
       all:
-        files: ['assets/css/*.{sass}']
+        files: ['assets/css/*.sass']
         tasks: ['sass:all']
+        options:
+          livereload:
+            host: 'localhost'
+            port: 35729
 
   grunt.registerTask 'default', ALL_TASKS

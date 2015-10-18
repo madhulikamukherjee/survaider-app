@@ -1,20 +1,4 @@
 @import url(//fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600);
-body {
-  margin: 0;
-  background-color: #2E3A4E;
-  position: relative;
-}
-body.shepherd-active .sb-left .header, body.shepherd-active .sb-left .content, body.shepherd-active .sb-left .footer {
-  background-color: #3C474D;
-}
-body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-right .sb-survey-description {
-  background-color: #3C474D;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 .sb-button {
   font-family: "Work Sans", sans-serif;
   margin: 0px 0px 10px 0px;
@@ -54,7 +38,6 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 
 .sb-main {
-  width: 80%;
   margin: 0 auto;
   position: relative;
   padding: 0;
