@@ -1,11 +1,4 @@
 @import url(//fonts.googleapis.com/css?family=Work+Sans:400,100,200,300,500,600);
-body.shepherd-active .sb-left .header, body.shepherd-active .sb-left .content, body.shepherd-active .sb-left .footer {
-  background-color: #3C474D;
-}
-body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-right .sb-survey-description {
-  background-color: #3C474D;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -51,7 +44,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 .sb-main {
   position: relative;
   padding: 0;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 .sb-main .sb-left {
   width: 30%;
@@ -71,7 +64,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   background: #FFFFFF;
   border: 2px solid #000000;
   border-radius: 5px;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   max-height: 70%;
   opacity: 0;
   -webkit-transform: translate(120%, -50%);
@@ -223,7 +216,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   border: 2px solid #000000;
   padding: 5px 10px;
   font-size: 14px;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   height: auto;
   vertical-align: middle;
 }
@@ -241,7 +234,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   border-radius: 5px;
   border: 2px solid #000;
   color: #FFFFFF;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   text-decoration: none;
   text-align: center;
   font-size: 14px;
@@ -268,7 +261,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   margin: 0 0 10px 0;
 }
 .sb-main .sb-left .header button {
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   padding: 5px 20px;
   font-size: 14px;
   border: 2px solid;
@@ -334,13 +327,11 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right {
   display: block;
-  min-height: 100%;
-  z-index: 5;
 }
 .sb-main .sb-right #svg-canvas {
   position: absolute;
   left: 0;
-  right: 22px;
+  right: 0;
   top: 0;
   bottom: 0;
   -webkit-filter: blur(0px);
@@ -355,26 +346,14 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-survey-description {
   position: relative;
-  z-index: 2;
   background-color: #3B479D;
   padding: 10px 30px 20px 30px;
-  border: 2px solid;
 }
-.sb-main .sb-right .sb-survey-description.header {
-  margin: 20px 20px 0 0;
-  border-bottom-width: 0;
-  border-radius: 0 5px 0 0;
+.sb-main .sb-right .sb-survey-description.above button.target_O {
+  bottom: -10px;
 }
-.sb-main .sb-right .sb-survey-description.header button.target_O {
-  bottom: -12px;
-}
-.sb-main .sb-right .sb-survey-description.footer {
-  margin: 0 20px 20px 0;
-  border-top-width: 0;
-  border-radius: 0 0 5px 0;
-}
-.sb-main .sb-right .sb-survey-description.footer button.target_O {
-  top: -12px;
+.sb-main .sb-right .sb-survey-description.below button.target_O {
+  top: -10px;
 }
 .sb-main .sb-right .sb-survey-description p.section {
   margin-bottom: 0;
@@ -384,6 +363,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-survey-description input {
   font-size: 30px;
+  font-weight: 100;
   margin: 0 10px 0 0;
   color: #FFF;
   margin-bottom: 10px;
@@ -392,7 +372,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   resize: none;
   font-size: 20px;
   color: #FFFFFF;
-  font-weight: 300;
+  font-weight: 100;
   max-width: 100%;
   min-width: 100%;
   min-height: 60px;
@@ -401,12 +381,12 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-survey-description input, .sb-main .sb-right .sb-survey-description textarea {
   display: block;
-  border-radius: 5px;
+  border-radius: 3px;
   padding: 5px 30px;
   width: 100%;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   background-color: transparent;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   -webkit-transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   -moz-transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
@@ -419,11 +399,11 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-survey-description button.target_O {
   position: absolute;
-  width: 2.5em;
-  height: 2.5em;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 2px solid #000;
-  font-size: 0.1em;
+  border: 1px solid #000;
+  font-size: 1px;
   cursor: pointer;
   right: 40px;
   background-color: #3B479D;
@@ -438,7 +418,6 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   background: #000;
 }
 .sb-main .sb-right .sb-response-fields {
-  margin: 0 20px 0 0;
   border-radius: 0;
   background-color: #FFFFFF;
   min-height: 200px;
@@ -493,12 +472,12 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper .actions-wrapper a {
   cursor: pointer;
   display: inline-block;
-  padding: 2px 4px;
+  padding: 2px 10px;
   text-align: center;
   background-color: #FFFFFF;
   color: #FFFFFF;
-  border: 2px solid #000;
-  border-radius: 5px;
+  border: 1px solid #000;
+  border-radius: 3px;
   height: 25px;
   width: auto;
   font-size: 14px;
@@ -507,17 +486,17 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   transition: background-color 0.2s ease;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper .actions-wrapper a.js-duplicate {
-  background-color: #2ecc71;
+  background-color: #6D5CAE;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper .actions-wrapper a.js-clear {
-  background-color: #e74c3c;
+  background-color: #48B0F7;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper .actions-wrapper a:hover {
   background-color: #000000;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper .subtemplate-wrapper {
-  border: 2px dashed transparent;
-  border-radius: 8px;
+  border: 1px dashed transparent;
+  border-radius: 10px;
   padding: 12px;
   position: relative;
   -webkit-transition: border-color 0.2s ease;
@@ -534,9 +513,9 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card {
   width: 350px;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   border-radius: 8px;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
   position: relative;
   background: #FFFFFF;
 }
@@ -546,7 +525,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta {
   background: #3B479D;
-  border-radius: 5px 5px 0 0;
+  border-radius: 7px 7px 0 0;
   color: #FFFFFF;
   padding: 10px 30px;
   -webkit-transition: background-color 0.2s ease;
@@ -557,11 +536,11 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   margin: 0;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.section {
-  font-size: 0.8em;
-  font-weight: 200;
+  font-size: 14px;
+  font-weight: 300;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.title {
-  font-size: 1.5em;
+  font-size: 20px;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.title:empty:after {
   content: "Untitled Question";
@@ -571,7 +550,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   text-transform: capitalize;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta button.target {
-  right: -1.25em;
+  right: -10px;
   top: 25px;
   background: #3B479D;
 }
@@ -583,8 +562,8 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   margin: 0;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic p.section {
-  font-size: 0.8em;
-  font-weight: 200;
+  font-size: 14px;
+  font-weight: 300;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line {
   padding-right: 30px;
@@ -593,10 +572,12 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line p {
   display: inline-block;
-  border: 2px solid;
+  border: 1px solid;
   padding: 2px 10px;
-  border-radius: 5px;
+  border-radius: 3px;
   background: #FFF;
+  font-size: 14px;
+  font-weight: 400;
   position: relative;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line p i.fa-star {
@@ -606,8 +587,8 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line p span.digit {
   background-color: #3C474D;
   color: #FFFFFF;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   font-size: 14px;
   border-radius: 50%;
   padding: 2px;
@@ -627,14 +608,14 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line span.link {
   width: 100%;
-  height: 2px;
+  height: 1px;
   background-color: #000;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic .line button.target {
-  right: -1.25em;
+  right: -10px;
   top: 50%;
   -webkit-transform: translateY(-50%);
   -moz-transform: translateY(-50%);
@@ -643,7 +624,7 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   transform: translateY(-50%);
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .logic button.target.hanging {
-  right: -1.25em;
+  right: -10px;
   top: 50%;
   -webkit-transform: translateY(-50%);
   -moz-transform: translateY(-50%);
@@ -656,7 +637,8 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
   padding: 2px 10px;
   border-radius: 5px;
   background: #FFFFFF;
-  font-size: 1em;
+  font-size: 16px;
+  font-weight: 400;
   font-family: "Work Sans", sans-serif;
   margin-top: 15px;
   cursor: pointer;
@@ -673,11 +655,11 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card button.target {
   position: absolute;
-  width: 2.5em;
-  height: 2.5em;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 2px solid #000;
-  font-size: 0.1em;
+  border: 1px solid #000;
+  font-size: 1px;
   cursor: pointer;
   background: #FFFFFF;
 }
@@ -696,14 +678,14 @@ body.shepherd-active .sb-right .sb-response-fields, body.shepherd-active .sb-rig
 .shepherd-step {
   z-index: 100;
   width: 300px;
-  font-family: "Work Sans", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 .shepherd-step .btn-close {
   background: #AAAAAA !important;
 }
 
 .response-field-draggable-helper {
-  border: 2px dashed #000000;
+  border: 1px dashed #000000;
   background: transparent;
   border-radius: 5px;
   width: 374px;
