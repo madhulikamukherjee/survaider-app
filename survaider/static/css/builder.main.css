@@ -38,7 +38,6 @@
 }
 
 .sb-main {
-  margin: 0 auto;
   position: relative;
   padding: 0;
   font-family: "Work Sans", sans-serif;
@@ -47,7 +46,7 @@
   width: 30%;
   height: 100%;
   float: left;
-  position: relative;
+  position: relative !important;
   margin-top: 20px;
   margin-bottom: 20px;
   border-radius: 4px 0 0 5px;
@@ -253,6 +252,7 @@
   border: 2px solid #000000;
   margin-right: -2px;
   padding: 20px 10px 5px 20px;
+  position: relative;
 }
 .sb-main .sb-left .header h2 {
   margin: 0 0 10px 0;
