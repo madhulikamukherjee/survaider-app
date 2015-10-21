@@ -558,6 +558,11 @@ $(function () {
       return ViewFieldView.__super__.constructor.apply(this, arguments);
     }
 
+
+    /*
+    The question cards.
+     */
+
     ViewFieldView.prototype.className = "sb-field-wrapper";
 
     ViewFieldView.prototype.events = {
@@ -577,11 +582,11 @@ $(function () {
         rf: this.model
       }));
       Links.reload();
+      Formbuilder.proxy.addTargetAndSources();
       return this;
     };
 
     ViewFieldView.prototype.focusEditView = function() {
-      $("#editField").addClass("active");
       return this.parentView.createAndShowEditView(this.model);
     };
 
@@ -667,7 +672,7 @@ $(function () {
     };
 
     EditFieldView.prototype.addOption = function(e) {
-      var $el, field_type, i, newOption, new_val, ol_val, op_len, options;
+      var $el, field_type, i, newOption, op_len, options;
       $el = $(e.currentTarget);
       i = this.$el.find('.option').index($el.closest('.option'));
       options = this.model.get(Formbuilder.options.mappings.OPTIONS) || [];
@@ -678,14 +683,7 @@ $(function () {
       op_len = $el.parent().parent().find('.option').length;
       field_type = this.model.get(Formbuilder.options.mappings.FIELD_TYPE);
       if (Formbuilder.options.limit_map[field_type] && op_len >= Formbuilder.options.limit_map[field_type].max) {
-        ol_val = $el.eq(0).html();
-        new_val = ol_val + "<br>No more than " + op_len + " options!";
-        $el.eq(0).html(new_val);
-        $el.eq(0).addClass("err");
-        setTimeout((function() {
-          $el.eq(0).html(ol_val);
-          return $el.eq(0).removeClass("err");
-        }), 2500);
+        sweetAlert("", "This question only supports three options." + field_type, "error");
         return;
       }
       if (i > -1) {
@@ -705,10 +703,7 @@ $(function () {
       op_len = $el.parent().parent().find('.option').length;
       field_type = this.model.get(Formbuilder.options.mappings.FIELD_TYPE);
       if (Formbuilder.options.limit_map[field_type] && op_len <= Formbuilder.options.limit_map[field_type].min) {
-        $el.eq(0).addClass("err");
-        setTimeout((function() {
-          return $el.eq(0).removeClass("err");
-        }), 2500);
+        sweetAlert("", "This question only supports three options." + field_type, "error");
         return;
       }
       options = this.model.get(Formbuilder.options.mappings.OPTIONS);
@@ -755,10 +750,10 @@ $(function () {
 
     BuilderView.prototype.events = {
       'click .js-save-form': 'saveForm',
-      'click .sb-tabs a': 'showTab',
       'click .sb-add-field-types a': 'addField',
       'mouseover .sb-add-field-types': 'lockLeftWrapper',
-      'mouseout .sb-add-field-types': 'unlockLeftWrapper'
+      'mouseout .sb-add-field-types': 'unlockLeftWrapper',
+      'hide.bs.modal #sb_edit_model': 'deSelectField'
     };
 
     BuilderView.prototype.initialize = function(options) {
@@ -843,20 +838,6 @@ $(function () {
           });
         };
       })(this));
-    };
-
-    BuilderView.prototype.showTab = function(e) {
-      var $el, first_model, target;
-      $el = $(e.currentTarget);
-      target = $el.data('target');
-      if (target !== '#editField') {
-        this.unlockLeftWrapper();
-      }
-      if (target === '#editField' && !this.editView && (first_model = this.collection.models[0])) {
-        return this.createAndShowEditView(first_model);
-      } else {
-        return Links.reload();
-      }
     };
 
     BuilderView.prototype.addOne = function(responseField, _, options) {
@@ -968,15 +949,6 @@ $(function () {
         return $(this).data('cid') === model.cid;
       });
       $responseFieldEl.addClass('editing').siblings('.sb-field-wrapper').removeClass('editing');
-      if (this.editView) {
-        if (this.editView.model.cid === model.cid) {
-          this.scrollLeftWrapper($responseFieldEl);
-          return;
-        }
-        this.editView.remove();
-        $('#sb_edit_model').modal('hide');
-        $responseFieldEl.removeClass('editing');
-      }
       this.editView = new EditFieldView({
         model: model,
         parentView: this
@@ -986,6 +958,10 @@ $(function () {
       $('#sb_edit_model').modal('show');
       this.scrollLeftWrapper($responseFieldEl);
       return this;
+    };
+
+    BuilderView.prototype.deSelectField = function(model) {
+      return this.$el.find(".sb-field-wrapper").removeClass('editing');
     };
 
     BuilderView.prototype.ensureEditViewScrolled = function() {
@@ -1015,7 +991,7 @@ $(function () {
       return this.$fbLeft.data('locked', false);
     };
 
-    BuilderView.prototype.handleFormUpdate = function() {
+    BuilderView.prototype.handleFormUpdate = function(e) {
       if (this.updatingBatch) {
         return;
       }
@@ -1153,6 +1129,12 @@ $(function () {
       }
     };
 
+    Formbuilder.proxy = {
+      addTargetAndSources: function() {
+        return console.log("Fired.");
+      }
+    };
+
     Formbuilder.fields = {};
 
     Formbuilder.inputFields = {};
@@ -1205,7 +1187,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('group_rating', {
     order: 8,
-    view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n          <br>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n      </p>\n    </label>\n  </div>\n<% } %>\n<button class=\"target hanging\"\n        data-target = \"out\"\n        data-target-index = \"0\"\n></button>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n          <br>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n      </p>\n    </label>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
     edit: "<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-star\"></span></span> Group Rating",
     defaultAttributes: function(attrs) {
@@ -1227,7 +1209,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('multiple_choice', {
     order: 5,
-    view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div class=\"line\">\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n  </div>\n<% } %>\n<button class=\"target hanging\"\n        data-target = \"out\"\n        data-target-index = \"0\"\n></button>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
     edit: "<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-square-o\"></span></span> Multiple Choice",
     defaultAttributes: function(attrs) {
@@ -1249,7 +1231,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('long_text', {
     order: 1,
-    view: "<div class=\"line\">\n    <p>Any Response</p>\n    <button class=\"target\" data-target=\"out\"></button>\n</div>",
+    view: "<div class=\"line\">\n    <p>Any Response</p>\n    <button class=\"target\"\n            data-target = \"out\"\n            id = \"<%= rf.cid %>_0\"\n            data-target-index = \"0\"\n            data-target-value = \"\"\n    ></button>\n</div>",
     edit2: "<%= Formbuilder.templates['edit/size']() %>\n<%= Formbuilder.templates['edit/min_max_length']() %>",
     edit: "",
     addButton: "<span class=\"symbol\">&#182;</span> Long Text"
@@ -1260,7 +1242,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('ranking', {
     order: 6,
-    view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <span class=\"digit up\"><i class=\"fa fa-arrow-up\"></i></span><span class=\"digit down\"><i class=\"fa fa-arrow-down\"></i></span>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n      </p>\n    </label>\n  </div>\n<% } %>\n<button class=\"target hanging\"\n        data-target = \"out\"\n        data-target-index = \"0\"\n></button>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <span class=\"digit up\"><i class=\"fa fa-arrow-up\"></i></span><span class=\"digit down\"><i class=\"fa fa-arrow-down\"></i></span>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n      </p>\n    </label>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
     edit: "<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-bars\"></span></span> Ranking",
     defaultAttributes: function(attrs) {
@@ -1282,7 +1264,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('rating', {
     order: 7,
-    view: "<div class=\"line\">\n  <label class='sb-option'>\n    <p>\n          <span class=\"digit\">1</span>\n          <span class=\"digit\">2</span>\n          <span class=\"digit\">3</span>\n          <span class=\"digit\">4</span>\n          <span class=\"digit spacer\">...</span>\n          <span class=\"digit\">8</span>\n          <span class=\"digit\">9</span>\n          <span class=\"digit\">10</span>\n    </p>\n  </label>\n</div>\n<button class=\"target hanging\"\n        data-target = \"out\"\n        data-target-index = \"0\"\n></button>",
+    view: "<div class=\"line\">\n  <label class='sb-option'>\n    <p>\n          <span class=\"digit\">1</span>\n          <span class=\"digit\">2</span>\n          <span class=\"digit\">3</span>\n          <span class=\"digit\">4</span>\n          <span class=\"digit spacer\">...</span>\n          <span class=\"digit\">8</span>\n          <span class=\"digit\">9</span>\n          <span class=\"digit\">10</span>\n    </p>\n  </label>\n</div>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
     edit: "",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-star\"></span></span> Rating"
   });
@@ -1292,7 +1274,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('short_text', {
     order: 0,
-    view: "<div class=\"line\">\n    <p>Any Response</p>\n    <button class=\"target\" data-target=\"out\"></button>\n</div>",
+    view: "<div class=\"line\">\n    <p>Any Response</p>\n    <button class=\"target hanging\"\n            data-target = \"out\"\n            id = \"<%= rf.cid %>_0\"\n    ></button>\n</div>",
     edit: "",
     ed: "<%= Formbuilder.templates['edit/min_max_length']() %>",
     addButton: "<span class='symbol'><span class='fa fa-font'></span></span> Short Text"
@@ -1303,7 +1285,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('single_choice', {
     order: 4,
-    view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
     edit: "<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-circle-o\"></span></span> Single Choice",
     defaultAttributes: function(attrs) {
@@ -1325,7 +1307,7 @@ $(function () {
 (function() {
   Formbuilder.registerField('yes_no', {
     order: 2,
-    view: "<% for (i in (rf.get(Formbuilder.options.mappings.OPTIONS) || [])) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
     edit: "<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"symbol\"><span class=\"fa fa-dot-circle-o\"></span></span> Yes \/ No",
     defaultAttributes: function(attrs) {
@@ -1605,7 +1587,7 @@ this["Formbuilder"]["templates"]["partials/right_side"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <input type="text" placeholder="Survey Title" value="Facebook Market Research" id="survey_title">\n      <textarea id="survey_description">Play to answer questions about your most beloved social networking website - Facebook. Help us in making a better product for you. :)</textarea>\n      <button class="target_O"\n              data-target = "top_out"\n              data-target-index = "0"\n      ></button>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you">Thank you for contributing!</textarea>\n      <button class="target_O"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
+__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <input type="text" placeholder="Survey Title" value="Facebook Market Research" id="survey_title">\n      <textarea id="survey_description">Play to answer questions about your most beloved social networking website - Facebook. Help us in making a better product for you. :)</textarea>\n      <button class="target_O"\n              id = "i"\n              data-target = "top_out"\n              data-target-index = "0"\n      ></button>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you">Thank you for contributing!</textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
 
 }
 return __p
@@ -1627,9 +1609,11 @@ this["Formbuilder"]["templates"]["view/base"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'subtemplate-wrapper\'>\n    <div class=\'cover\'></div>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question</p>\n\n            ' +
+__p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question</p>\n\n            ' +
 ((__t = ( Formbuilder.templates['view/label']({rf: rf}) )) == null ? '' : __t) +
-'\n\n            <button class="target" data-target="in"></button>\n        </div>\n        <div class="logic">\n            <p class="section">Options</p>\n            ' +
+'\n\n            <button class="target" data-target="in" id="' +
+((__t = ( rf.cid )) == null ? '' : __t) +
+'" ></button>\n        </div>\n        <div class="logic">\n            <p class="section">Options</p>\n            ' +
 ((__t = ( Formbuilder.fields[rf.get(Formbuilder.options.mappings.FIELD_TYPE)].view({rf: rf}) )) == null ? '' : __t) +
 '\n        </div>\n        ' +
 ((__t = ( Formbuilder.templates['view/duplicate_remove']({rf: rf}) )) == null ? '' : __t) +
@@ -1688,7 +1672,7 @@ __p += '\n    Required\n    ';
  } else { ;
 __p += '\n    Optional\n    ';
  } ;
-__p += '\n    -->\n</p>';
+__p += '\n    -->\n</p>\n';
 
 }
 return __p

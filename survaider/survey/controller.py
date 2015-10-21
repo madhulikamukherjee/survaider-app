@@ -88,6 +88,7 @@ class ResponseController(Resource):
 
         try:
             args = self.get_args()
+            print(args)
             args['responses_exist'] = ResponseSession.is_running(survey_id)
 
             if args['responses_exist']:
