@@ -61,8 +61,8 @@ class SurveyController(Resource):
 
             ret = {
                 'id': str(svey),
-                'uri': '/survey/{0}'.format(str(svey)),
-                'uri_edit': '/survey/{0}/edit'.format(str(svey)),
+                'uri': '/survey/s:{0}'.format(str(svey)),
+                'uri_edit': '/survey/s:{0}/edit'.format(str(svey)),
             }
 
             return ret, 200
