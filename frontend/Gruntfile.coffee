@@ -45,6 +45,7 @@ module.exports = (grunt) ->
             'bower_components/jquery.actual/jquery.actual.js'
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'bower_components/datatables/media/js/jquery.dataTables.js'
+            'bower_components/uri-template.js/dist/uri-template.js'
             'pages/js/pages.js'
           ]
           '<%= build%>/js/builder.js': [

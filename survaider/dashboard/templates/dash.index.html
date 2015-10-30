@@ -184,6 +184,14 @@
               { "data": "id" },
               { "data": "uri" },
               { "data": "uri_edit" },
+          ],
+          "columnDefs": [
+              {
+                  "render": function ( data, type, row ) {
+                      return "<a href=\"" + data + "\" target = \"_blank\">" + data + "</a>";
+                  },
+                  "targets": 2//[1, 2]
+              }
           ]
       } );
   } );
