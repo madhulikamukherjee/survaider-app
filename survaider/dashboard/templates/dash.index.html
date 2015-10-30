@@ -112,7 +112,8 @@
                   <thead>
                     <tr>
                       <th>id</th>
-                      <th>uri</th>
+                      <th>name</th>
+                      <th>simple survey uri</th>
                       <th>edit_uri</th>
                     </tr>
                   </thead>
@@ -214,6 +215,7 @@
           "ajax": '/api/survey',
           "columns": [
               { "data": "id" },
+              { "data": "name" },
               { "data": "uri" },
               { "data": "uri_edit" },
           ],
@@ -222,7 +224,7 @@
                   "render": function ( data, type, row ) {
                       return "<a href=\"" + data + "\" target = \"_blank\">" + data + "</a>";
                   },
-                  "targets": 2//[1, 2]
+                  "targets": [2, 3]
               }
           ]
       } );

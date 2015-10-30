@@ -35,7 +35,8 @@ class SurveyController(Resource):
             for sv in svey:
                 survey_list.append({
                     'id': str(sv),
-                    'uri': '/survey/s:{0}'.format(str(sv)),
+                    'name': sv.metadata['name'],
+                    'uri': '/survey/s:{0}/simple'.format(str(sv)),
                     'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
                 })
 
