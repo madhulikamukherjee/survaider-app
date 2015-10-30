@@ -133,13 +133,13 @@
         <p>You're one step away from creating a new Survaider! Please fill-in the following information to get started.</p>
       </div>
       <div class="modal-body">
-        <form role="form">
+        <form role="form" id="survaider_form">
           <div class="form-group-attached">
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group form-group-default">
                   <label>Name</label>
-                  <input type="email" class="form-control">
+                  <input type="text" class="form-control" name="s_name">
                 </div>
               </div>
             </div>
@@ -147,7 +147,7 @@
               <div class="col-sm-12">
                 <div class="form-group form-group-default">
                   <label>Description</label>
-                  <input type="email" class="form-control">
+                  <input type="text" class="form-control" name="s_desc">
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@
             </div>
           </div>
           <div class="col-sm-4 m-t-10 sm-m-t-10">
-            <button type="button" class="btn btn-primary btn-block m-t-5">Proceed</button>
+            <button type="button" class="btn btn-primary btn-block m-t-5" id="exec_create_survaider" onclick="DashboardHelper.create_survey();">Proceed</button>
           </div>
         </div>
       </div>
@@ -177,6 +177,38 @@
 
 {% block additionaljs%}
 <script type="text/javascript">
+
+  var DashboardHelper = {
+    create_survey: function () {
+      "use strict";
+      //: Get the form data.
+      var dat = $("#survaider_form").serialize();
+      //: Disable the submit button.
+      $("#exec_create_survaider").attr("disabled", true).text("Processing");
+      $.ajax({
+        type: 'POST',
+        url: '/api/survey',
+        data: dat
+      }).done(function(data) {
+        //: Render the New URI and Redirect.
+
+        swal({
+          title: "Built!",
+          text:  "Proceed to adding the stuff.",
+          type:  "success",
+          confirmButtonText: "Edit Structure!",
+          closeOnConfirm: true
+        }, function () {
+          window.open(data.uri_edit, '_blank');
+        });
+
+      }).fail(function(data) {
+        //: Render SweetAlert alert.
+        console.log(data);
+      });
+    }
+  };
+
   $(document).ready(function() {
       $('#tableWithSearch').DataTable( {
           "ajax": '/api/survey',
