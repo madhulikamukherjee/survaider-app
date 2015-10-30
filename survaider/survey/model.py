@@ -15,10 +15,42 @@ from survaider.user.model import User
 from survaider import db
 
 class Survey(db.Document):
+    default_struct = {
+        'fields': [
+            {
+                'required': True,
+                'field_options': {},
+                'label': 'What is your name?',
+                'cid': 'c2',
+                'field_type': 'short_text',
+            }, {
+                'required': True,
+                'field_options': {'options': [{'label': 'Yes', 'checked': False},
+                                  {'label': 'No', 'checked': False}]},
+                'label': 'Have you gone on Facebook ever before?',
+                'cid': 'c6',
+                'field_type': 'yes_no',
+            }, {
+                'required': True,
+                'field_options': {'options': [{'label': 'Reading about friends',
+                                  'checked': False},
+                                  {'label': 'Chatting with friends',
+                                  'checked': False}, {'label': 'Finding new people'
+                                  , 'checked': False},
+                                  {'label': 'Reading (news, articles)',
+                                  'checked': False}, {'label': 'Shopping',
+                                  'checked': False}]},
+                'label': 'What do you primarily use Facebook for?',
+                'cid': 'c10',
+                'field_type': 'multiple_choice',
+            }
+        ]
+    }
+
     added       = db.DateTimeField(default = datetime.datetime.now)
 
     metadata    = db.DictField()
-    structure   = db.DictField()
+    structure   = db.DictField(default = default_struct)
 
     created_by  = db.ListField(db.ReferenceField(User))
 

@@ -44,6 +44,7 @@ module.exports = (grunt) ->
             'bower_components/imagesloaded/imagesloaded.pkgd.js'
             'bower_components/jquery.actual/jquery.actual.js'
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
+            'bower_components/datatables/media/js/jquery.dataTables.js'
             'pages/js/pages.js'
           ]
           '<%= build%>/js/builder.js': [
@@ -61,6 +62,7 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.css'
             'bower_components/select2-bootstrap-css/select2-bootstrap.css'
             'bower_components/switchery/dist/switchery.css'
+            'bower_components/datatables/media/css/jquery.dataTables.css'
             'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]

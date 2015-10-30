@@ -24,7 +24,27 @@ class SurveyController(Resource):
         return parser.parse_args()
 
     def get(self):
-        return
+        if current_user.is_authenticated():
+            svey = Survey.objects(created_by = current_user.id)
+
+            survey_list = []
+
+            for sv in svey:
+                survey_list.append({
+                    'id': str(sv),
+                    'uri': '/survey/{0}'.format(str(sv)),
+                    'uri_edit': '/survey/{0}/edit'.format(str(sv)),
+                })
+
+            ret = {
+                "data": survey_list,
+                "owner": str(current_user.id),
+                "survey_count": len(survey_list)
+            }
+
+            return ret, 200
+        else:
+            return "NOPE!", 401
 
     def post(self):
         if current_user.is_authenticated():
@@ -35,7 +55,14 @@ class SurveyController(Resource):
             svey.metadata['desc'] = args['s_desc']
             svey.created_by.append(usr)
             svey.save()
-            return str(svey), 200
+
+            ret = {
+                'id': str(svey),
+                'uri': '/survey/{0}'.format(str(svey)),
+                'uri_edit': '/survey/{0}/edit'.format(str(svey)),
+            }
+
+            return ret, 200
         else:
             return "NOPE!", 401
 
@@ -152,7 +179,11 @@ class ResponseController(Resource):
 
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
-@srvy.route('/')
-def get_index():
+@srvy.route('/s:<survey_id>/edit')
+def get_index(survey_id):
+    print(survey_id)
     return render_template('srvy.index.html')
 
+@srvy.route('/s:<survey_id>/simple')
+def get_simple_survey(survey_id):
+    return render_template('srvy.index.html')
