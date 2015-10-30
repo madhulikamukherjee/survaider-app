@@ -6,6 +6,8 @@
 REST API End Points
 """
 
+import json
+
 from bson.objectid import ObjectId
 from flask import request, Blueprint, render_template
 from flask_restful import Resource, reqparse
@@ -68,6 +70,11 @@ class SurveyController(Resource):
 
 class SurveyMetaController(Resource):
 
+    def post_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('struct', type = str, required = True)
+        return parser.parse_args()
+
     def get(self, survey_id):
         try:
             s_id = HashId.decode(survey_id)
@@ -76,8 +83,25 @@ class SurveyMetaController(Resource):
         except Exception:
             raise
 
-    def put(self, survey_id):
-        pass
+    def post(self, survey_id):
+        try:
+            if current_user.is_authenticated():
+                s_id = HashId.decode(survey_id)
+                svey = Survey.objects(id = s_id).first()
+                args = self.post_args()
+                svey.structure = json.loads(args['struct'])
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'saved': True,
+                }
+
+                return ret, 200
+            else:
+                return "NOPE!", 401
+        except Exception:
+            raise
 
     def delete(self, survey_id):
         pass
@@ -181,7 +205,6 @@ srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
 @srvy.route('/s:<survey_id>/edit')
 def get_index(survey_id):
-    print(survey_id)
     return render_template('srvy.index.html')
 
 @srvy.route('/s:<survey_id>/simple')
