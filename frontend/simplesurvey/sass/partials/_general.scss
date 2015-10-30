@@ -1,0 +1,64 @@
+@import "../bourbon/bourbon";
+@import "typography";
+@import "mixins";
+
+/*---------------------------------------------------*/
+// General
+/*---------------------------------------------------*/
+
+*,
+*:after,
+*:before{
+  @include box-sizing(border-box);
+}
+
+html{
+  font-family: 'Raleway-Light', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, ul{
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, a{
+  letter-spacing: 1px;
+  word-spacing: 1px;
+}
+
+a{
+  text-decoration: none;
+  outline: none;
+}
+
+ul{
+  list-style: none;
+}
+
+button{
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
+.sn-right{
+  float: right;
+}
+
+.sn-left{
+  float: left;
+}
+
+input[type="text"],
+textarea,
+button{
+  outline: none;
+  border: none;
+  background: none;
+}
+
+textarea{
+  resize: none;
+}

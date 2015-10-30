@@ -1,0 +1,174 @@
+{
+  "fields": [
+
+    {
+      "label": "Were you overall satisfied with your stay at Oyo rooms?",
+      "field_type": "yes_no",
+      "required": true,
+      "field_options": [
+        "Yes",
+        "No"
+      ],
+      "cid": "c4",
+      "next": {
+        "1": "c6",
+        "2": "c5"
+      },
+      "gametype": "happy_or_sad"
+    },
+    {
+      "label": "Oh! Please tell us why?",
+      "field_type": "long_text",
+      "required": true,
+      "field_options": [
+      ],
+      "cid": "c5",
+      "next": {
+        "va": "c6"
+      },
+      "gametype": "suggestions_multiple"
+    },
+    {
+      "label": "How would you rate your experience of staying with us?",
+      "field_type": "rating",
+      "required": true,
+      "field_options": [
+      ],
+      "cid": "c6",
+      "next": {
+        "va": "c7"
+      },
+      "gametype": "scroll_scene"
+    },
+    {
+      "label": "Was the room clean and up to your expectations?",
+      "field_type": "single_choices",
+      "required": true,
+      "field_options": [
+        "It was clean and tidy",
+        "It was worse than my expectations!"
+      ],
+      "cid": "c7",
+      "next": {
+        "1": "c9",
+        "2": "c8"
+      },
+      "gametype": "bird_tunnel"
+    },
+    {
+      "label": "We apologise. Which of these weren't clean?",
+      "field_type": "multiple_choices",
+      "required": true,
+      "field_options": [
+        "Linen and bedding",
+        "Glasses and cutlery",
+        "Floors and cupboards",
+        "Toilet"
+      ],
+      "cid": "c8",
+      "next": {
+        "va": "c9"
+      },
+      "gametype": "balloon"
+    },
+    {
+      "label": "Was the staff helpful and courteous?",
+      "field_type": "single_choices",
+      "required": true,
+      "field_options": [
+        "I am really not satisfied",
+        "It was okay",
+        "They were rude and not helpful",
+        "Yes, the service was excellent"
+      ],
+      "cid": "c9",
+      "next": {
+        "va": "c10"
+      },
+      "gametype": "catapult"
+    },
+    {
+      "label": "Rate each of the following out of 5 stars!",
+      "field_type": "group_rating",
+      "required": true,
+      "field_options": [
+        "Rooms",
+        "Hotel services",
+        "Facilities"
+      ],
+      "cid": "c10",
+      "next": {
+        "va": "c11"
+      },
+      "gametype": "star_game"
+    },
+    {
+      "label": "Did rooms have all the amenities as shown on the website?",
+      "field_type": "single_choices",
+      "required": true,
+      "field_options": [
+        "Yes",
+        "Nope!"
+
+      ],
+      "cid": "c11",
+      "next": {
+        "1": "c13",
+        "2": "c12"
+      },
+      "gametype": "happy_or_sad"
+    },
+    {
+      "label": "Which of the following were promised but not present in the room?",
+      "field_type": "multiple_choices",
+      "required": true,
+      "field_options": [
+        "AC",
+        "Internet",
+        "TV",
+        "Swimming",
+        "Geyser",
+        "Card payment"
+      ],
+      "cid": "c12",
+      "next": {
+        "va": "c13"
+      },
+      "gametype": "fish_scene_two"
+    },
+    {
+      "label": "Thank you! Lastly, any other feedback you want us to note?",
+      "field_type": "long_text",
+      "required": true,
+      "field_options": [
+      ],
+      "cid": "c13",
+      "next": {
+        "va": "c30"
+      },
+      "gametype": "suggestions"
+    },
+    {
+       "label":"What Influences your buying decision, please rank them accordingly!",
+       "field_type":"ranking",
+       "required":true,
+       "field_options":[
+          "Post from a friend",
+          "Facebook ad",
+          "Google ad",
+          "Sponsored post",
+          "Friend's like on a product",
+          "Celebrity post"
+       ],
+       "cid":"c30",
+       "next": {
+         "va": "end"
+       },
+       "gametype":"stairs"
+    }
+
+  ],
+    "game_title": "How was your stay?",
+    "game_description": "Let us know about your stay at OYO Rooms and help us serve you better. Hey, also if you score the highest, there is special gift for you!",
+    "game_footer": "Thank you, your feedback will help us improve our services and hope to host you again :)"
+}

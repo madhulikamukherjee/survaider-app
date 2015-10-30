@@ -1,0 +1,20 @@
+@mixin absoluteCenter($xy:xy){
+  @if $xy == xy {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    @include transform(translate(-50%, -50%));
+  }
+
+  @if $xy == y {
+    position: absolute;
+    top: 50%;
+    @include transform(translate(0, -50%));
+  }
+
+  @if $xy == x {
+    position: absolute;
+    left: 50%;
+    @include transform(translate(-50%, 0));
+  }
+}

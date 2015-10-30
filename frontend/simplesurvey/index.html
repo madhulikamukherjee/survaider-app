@@ -1,0 +1,307 @@
+<!doctype html>
+<html class="no-js" lang="" ng-app="SurvaiderForms">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/vendor/jquery-ui.min.css">
+        <link rel="stylesheet" href="css/vendor/jquery-ui.structure.min.css">
+        <link rel="stylesheet" href="css/vendor/jquery-ui.theme.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <main ng-controller="FormController">
+
+          <section class="sv-page-ontop sv-header-page sv-page sv-page-1 sv-page-current" id="header-slide">
+            <h1 class="sv-game-title" ng-bind="game_title"></h1>
+            <h3 class="sv-game-description" ng-bind="game_description"></h3>
+            <button type="button" class="sv-button sv-button-large" ng-click="moveHeaderSlide()">Start Survey</button>
+          </section>
+
+          <!-- <div class="sv-questions-container" id="questions-container"> -->
+
+            <!-- Begin Loop on Questions -->
+
+            <section class="sv-page sv-page-{{$index+2}} sv-question-wrapper" ng-repeat="question in questions" ng-init="$questionIndex = $index" sv-question-directive  id="question-{{question.id}}">
+
+              <!-- Begin Question -->
+
+              <div class="sv-question sv-{{question.type}}">
+
+                <!-- Begin Question Header -->
+
+                <header class="sv-question-header">
+                  <span class="sv-question-index" ng-bind="$index+1"></span>
+                  <h1 ng-bind="question.label" class="sv-question-title"></h1>
+                </header>
+
+                <!-- End Question Header -->
+
+                <!-- Begin Question Input (Using Switch for the question types we can use different templates) -->
+
+                <div class="sv-question-input" ng-switch on="question.type">
+
+                  <!-- Template 1 (Short-Text, Input Type Text) -->
+
+                  <div class="sv-question-switch" ng-switch-when="short_text">
+
+                    <div class="sv-short-text-input">
+
+                      <span class="input input--madoka">
+              					<input class="input__field input__field--madoka" type="text" id="input-31" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
+              					<label class="input__label input__label--madoka" for="input-31">
+              						<svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
+              							<path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
+              						</svg>
+              					</label>
+              				</span>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Template 2 (Long-Text, Textarea) -->
+
+                  <div class="sv-question-switch" ng-switch-when="long_text">
+
+                    <div class="sv-long-text-input">
+                      <textarea ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" rows="5" name="question-{{question.id}}-long_text" placeholder="Enter Here"></textarea>
+                    </div>
+
+                  </div>
+
+                  <!-- Template 3 (Yes-No, Two Radio Buttons with same name) -->
+
+                  <div class="sv-question-switch" ng-switch-when="yes_no">
+
+                    <div class="sv-question-yes-no-input">
+                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-yes_no" value="1" id="question-{{question.id}}-yes_no-yes">
+                      <label for="question-{{question.id}}-yes_no-yes">Yes</label>
+                    </div>
+
+                    <div class="sv-question-yes-no-input">
+                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-yes_no" value="2" id="question-{{question.id}}-yes_no-no">
+                      <label for="question-{{question.id}}-yes_no-no">No</label>
+                    </div>
+
+                  </div>
+
+                  <!-- Template 4 (Multiple-Choice, Checkboxes for multiple responses) -->
+
+                  <div class="sv-question-switch" ng-switch-when="multiple_choices">
+
+                    <div class="sv-question-multiple-choice-input" ng-repeat="option in question.choices">
+                      <input ng-click="changeInQuestion($questionIndex, question.id)" ng-model="option.checked" type="checkbox" name="question-{{question.id}}-multiple_choice-{{$index}}" value="{{$index}}" id="question-{{question.id}}-multiple_choice-{{$index}}">
+                      <label for="question-{{question.id}}-multiple_choice-{{$index}}">{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ option.label }}</label>
+                    </div>
+
+                  </div>
+
+                  <!-- Template 5 (Single-Choice, Radio Buttons for a single response) -->
+
+                  <div class="sv-question-switch" ng-switch-when="single_choices">
+
+                    <div class="sv-question-single-choice-input" ng-repeat="option in question.options">
+                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-single_choice" value="{{$index+1}}" id="question-{{question.id}}-single_choice-{{$index}}">
+                      <label for="question-{{question.id}}-single_choice-{{$index}}" ng-bind="option"></label>
+                    </div>
+
+                  </div>
+
+                  <!-- Template 6 (Rating, 5 Radio Buttons for a single response) -->
+
+                  <div class="sv-question-switch" ng-switch-when="rating">
+
+                    <div class="sv-rating-radio-group">
+
+                      <div class="sv-question-rating-input" ng-repeat="n in [1,2,3,4,5]">
+                        <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-rating" value="{{n}}" id="question-{{question.id}}-rating-{{$index}}">
+                        <label ng-class="{ 'active' : $index+1 <= question.response }" for="question-{{question.id}}-rating-{{$index}}"></label>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <!-- Template 7 (Group-Rating, For every Sub-Part 5 Radio Buttons for a single response) -->
+
+                  <div class="sv-question-switch" ng-switch-when="group_rating">
+
+                    <div class="sv-question-group-rating-input" ng-repeat="option in question.subparts">
+
+                      <!-- Begin Subpart -->
+
+                      <div class="sv-group-rating-option">
+
+                        <header class="sv-question-subpart-header">
+
+                          <!-- Defined a variable $optionIndex to access the index of the sub-part in the nested loop using ng-init directive -->
+                          <span class="sv-group-rating-option-index" ng-init="$optionIndex = $index" ng-bind="$index | numberToAlphabet"></span>
+                          <h3 class="sv-group-rating-option-title" ng-bind="option.label"></h3>
+
+                        </header>
+
+                        <!-- Begin Subpart Input -->
+
+                        <div class="sv-group-rating-subpart-radio-group">
+
+                          <div class="sv-group-rating-option-input" ng-repeat="n in [1,2,3,4,5]">
+                            <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="option.rating" type="radio" name="question-{{question.id}}-option-{{$optionIndex}}-rating" value="{{n}}" id="question-{{question.id}}-subpart-{{$optionIndex}}-option-{{$index}}">
+                            <label ng-class="{ 'active' : $index+1 <= option.rating }" for="question-{{question.id}}-subpart-{{$optionIndex}}-option-{{$index}}"></label>
+                          </div>
+
+                        </div>
+
+                        <!-- End Subpart Input -->
+
+                      </div>
+
+                      <!-- End Subpart -->
+
+                    </div>
+
+                  </div>
+
+                  <!-- Template 8 (Ranking, For n Sub-Parts n Radio Buttons for a single response for every Sub-Part) -->
+
+                  <div class="sv-question-switch" ng-switch-when="ranking">
+
+                    <div class="sv-ranking-group">
+                      <div class="sv-question-ranking-input-subparts-group" ui-sortable="sortableOptions" ng-model="question.subparts">
+                        <!-- Defined a variable $numberOfOptions to create 'n' number of radio buttons in nested loop for ranking using ng-init directive -->
+                        <div class="sv-question-ranking-input" ng-init="$numberOfOptions = question.subparts.length" ng-repeat="option in question.subparts">
+
+                          <!-- Begin Subpart -->
+
+                          <div class="sv-ranking-option">
+
+                            <header class="sv-question-subpart-header">
+
+                              <!-- Defined a variable $optionIndex to access the index of the sub-part in the nested loop using ng-init directive -->
+                              <h3 class="sv-ranking-option-title" ng-bind="option.label"></h3>
+
+                            </header>
+
+                          </div>
+
+                          <!-- End Subpart -->
+
+                        </div>
+                      </div>
+
+                      <div class="sv-ranking-ranks">
+                        <header ng-repeat="n in array | makeArray : question.subparts.length"><h3 ng-bind="n"></h3></header>
+                      </div>
+                    </div>
+
+                    <div class="sv-input-done">
+                      <button class="sv-button sv-button-medium" id="question-{{question.id}}-yes_no-done" ng-click="moveToNext(question)">Done</button>
+                    </div>
+
+                  </div>
+
+                  <!-- Default Template - Empty -->
+
+                  <div class="sv-question-switch" ng-switch-when="default">
+
+                  </div>
+
+                  <div class="sv-input-done" ng-if="question.type != 'ranking'">
+                    <button class="sv-button sv-button-medium" id="question-{{question.id}}-yes_no-done" ng-click="moveToNext(question)" ng-show="question.isCompleted">Done</button>
+                  </div>
+
+                </div>
+
+                <!-- End Question Input -->
+
+              </div>
+
+              <!-- End Question -->
+
+            </section>
+
+            <!-- End Loop on Questions -->
+          <!-- </div> -->
+
+          <section class="sv-footer-page sv-page sv-page-13" id="footer-slide">
+            <button type="submit" class="sv-button sv-button-medium" ng-click="formSubmit()">Submit</button>
+            <h3 class="sv-game-footer" ng-bind="game_footer"></h3>
+          </section>
+
+          <section class="pagination">
+            <ul>
+              <li ng-repeat="question in questions" ng-class="{ 'done' : question.isCompleted, 'active' : activeSlide.question.id == question.id, 'disabled' : question.isDisabled }" ng-click="paginate(question)" ng-disabled="question.isDisabled"></li>
+            </ul>
+          </section>
+
+          <!-- Begin Page Sidebar -->
+
+          <div class="sv-sidebar-wrapper">
+            <div class="sv-sidebar">
+              <!-- <div class="flash-message" ng-hide="!isThereAFlashMessage" >
+                <h3 ng-bind="flashMessage"></h3>
+              </div> -->
+              <div class="current-message">
+                <h3 ng-bind="updateSidebar(activeSlide.question.type)"></h3>
+              </div>
+              <div class="always-message">
+                <p ng-if="!formEnabled">
+                  {{numberOfQuestionsRemaining}} questions are remaining
+                </p>
+                <a ng-if="formEnabled" href="#" ng-click="moveToSubmit()">Submit Form</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- End Page Sidebar -->
+
+          <div class="sv-logger">
+            <p>
+
+            </p>
+            <button type="button" name="button" class="sv-button sv-button-small">Close</button>
+          </div>
+
+        </main>
+
+        <!-- jQuery -->
+        <script src="js/vendor/jquery.js"></script>
+        <script src="js/vendor/jquery-ui.min.js"></script>
+
+        <!-- angular -->
+        <script src="js/vendor/angular-1.4.7/angular.js"></script>
+        <script src="js/vendor/angular-1.4.7/angular-animate.js"></script>
+
+        <!-- extra -->
+        <script src="js/vendor/sortable.js"></script>
+        <script src="js/vendor/waypoints.js"></script>
+        <script src="js/vendor/classie.js"></script>
+
+        <!-- models -->
+        <script src="js/app/models/Question.js"></script>
+        <script src="js/app/models/ShortTextQuestion.js"></script>
+        <script src="js/app/models/YesNoQuestion.js"></script>
+        <script src="js/app/models/SingleChoiceQuestion.js"></script>
+        <script src="js/app/models/GroupRatingQuestion.js"></script>
+        <script src="js/app/models/RankingQuestion.js"></script>
+        <script src="js/app/models/RatingQuestion.js"></script>
+        <script src="js/app/models/MultipleChoiceQuestion.js"></script>
+        <script src="js/app/models/LongTextQuestion.js"></script>
+
+        <!-- main application -->
+        <script src="js/main.js"></script>
+
+    </body>
+</html>
