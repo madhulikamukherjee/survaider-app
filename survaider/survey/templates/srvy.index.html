@@ -19,7 +19,7 @@
 
   $(document).ready(function() {
     var s_id = UriTemplate.extract("/survey/s:{s_id}/edit", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}", {s_id: s_id}),
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}?editing", {s_id: s_id}),
         payload_update_uri = UriTemplate.expand("/api/survey/{s_id}", {s_id: s_id});
 
     $.getJSON(json_uri, function (data) {

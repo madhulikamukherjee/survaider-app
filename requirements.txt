@@ -6,3 +6,4 @@ Flask-MongoRest == 0.1.1
 hashids == 1.1.0
 flask-restful == 0.3.4
 simple-crypt == 4.1.7
+schema == 0.4.0

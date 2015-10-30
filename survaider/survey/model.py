@@ -5,6 +5,7 @@
 import datetime
 import dateutil.parser
 import uuid
+import random
 import json
 
 from flask import request, g
@@ -101,3 +102,72 @@ class ResponseSession():
         if survey_id in g.SRPL:
             del g.SRPL[survey_id]
             print(g.SRPL)
+
+class Helper(object):
+
+    @staticmethod
+    def process_render_json(struct):
+        game_map = {
+            'short_text': {
+                'text_scene': [0, 0]
+            },
+            'long_text': {
+                'suggestions': [0, 0]
+            },
+            'yes_no': {
+                'car': [2, 2],
+                'happy_or_sad': [3, 3]
+            },
+            'single_choice': {
+                'catapult': [2, 4],
+                'fish_scene_one': [2, 5],
+                'bird_tunnel': [2, 4]
+            },
+            'multiple_choice': {
+                'balloon': [2, 5],
+                'fish_scene_two': [2, 5]
+            },
+            'ranking': {
+                'stairs': [2, 6]
+            },
+            'rating': {
+                'scroll_scene': [0, 0]
+            },
+            'group_rating': {
+                'star_game': [2, 3]
+            }
+        }
+
+        rt = {}
+        cp = struct['fields']
+
+        def field_options(opt):
+            options = []
+            if 'options' in opt:
+                for op in opt['options']:
+                    options.append(op['label'])
+            return options
+        def logic(id_next):
+            return {
+                'va': id_next
+            }
+        def game(field):
+            typ = field['field_type']
+            if typ in game_map:
+                op_len = len(field['field_options'])
+                games = []
+
+                for game, constr in game_map[typ].items():
+                    if constr[0] <= op_len <= constr[1]:
+                        games.append(game)
+
+                return random.choice(games)
+
+
+        for i in range(len(cp)):
+            cp[i]['field_options'] = field_options(cp[i]['field_options'])
+            cp[i]['gametype'] = game(cp[i])
+            cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
+
+        rt['fields'] = cp
+        return rt

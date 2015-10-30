@@ -1,10 +1,13 @@
 ALL_TASKS = [
   'concat:all'
+  'concat:simplesurvey'
   'cssmin:dist'
+  'cssmin:simplesurvey'
   'uglify:dist'
   'sass:all'
   'copy:fontsfa'
   'copy:fontspages'
+  'copy:simplesurvey'
 ]
 
 PROXY_TASKS = [
@@ -26,6 +29,7 @@ module.exports = (grunt) ->
 
     pkg: '<json:package.json>'
     build: '../survaider/static'
+    templates: '../survaider/templates'
 
     concat:
       all:
@@ -53,6 +57,33 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/dist/formbuilder.js'
           ]
 
+      simplesurvey:
+        # sourceMap: true
+        options:
+          separator: ';\n'
+        files:
+          '<%= build%>/js/simplesurvey.js': [
+            'simplesurvey/js/vendor/modernizr-2.8.3.min.js'
+            'simplesurvey/js/vendor/jquery.js'
+            'simplesurvey/js/vendor/jquery-ui.min.js'
+            'simplesurvey/js/vendor/angular-1.4.7/angular.js'
+            'simplesurvey/js/vendor/angular-1.4.7/angular-animate.js'
+            'simplesurvey/js/vendor/sortable.js'
+            'simplesurvey/js/vendor/waypoints.js'
+            'simplesurvey/js/vendor/classie.js'
+            'bower_components/uri-template.js/dist/uri-template.js'
+            'simplesurvey/js/app/models/Question.js'
+            'simplesurvey/js/app/models/ShortTextQuestion.js'
+            'simplesurvey/js/app/models/YesNoQuestion.js'
+            'simplesurvey/js/app/models/SingleChoiceQuestion.js'
+            'simplesurvey/js/app/models/GroupRatingQuestion.js'
+            'simplesurvey/js/app/models/RankingQuestion.js'
+            'simplesurvey/js/app/models/RatingQuestion.js'
+            'simplesurvey/js/app/models/MultipleChoiceQuestion.js'
+            'simplesurvey/js/app/models/LongTextQuestion.js'
+            'simplesurvey/js/main.js'
+          ]
+
     cssmin:
       dist:
         files:
@@ -70,12 +101,23 @@ module.exports = (grunt) ->
           '<%= build %>/css/builder.vendor.css': [
             'bower_components/survaider-builder/vendor/css/vendor.css'
           ]
+      simplesurvey:
+        files:
+          '<%= build %>/css/simplesurvey.css': [
+            'simplesurvey/css/normalize.css'
+            'simplesurvey/css/main.css'
+            'simplesurvey/css/vendor/jquery-ui.min.css'
+            'simplesurvey/css/vendor/jquery-ui.structure.min.css'
+            'simplesurvey/css/vendor/jquery-ui.theme.min.css'
+            'simplesurvey/css/style.css'
+          ]
 
     uglify:
       dist:
         files:
           '<%= build %>/js/survaider.min.js': '<%= build %>/js/survaider.js'
           '<%= build %>/js/builder.min.js': '<%= build %>/js/builder.js'
+          '<%= build %>/js/simplesurvey.min.js': '<%= build %>/js/simplesurvey.js'
 
     copy:
       fontsfa:
@@ -88,6 +130,10 @@ module.exports = (grunt) ->
         cwd: 'pages/fonts'
         src: '**/*'
         dest: '<%= build %>/fonts'
+      simplesurvey:
+        expand: true
+        src: 'simplesurvey/index.simplesurvey.html'
+        dest: '<%= build %>'
 
       proxy_main:
         expand: true

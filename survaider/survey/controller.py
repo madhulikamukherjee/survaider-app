@@ -13,9 +13,10 @@ from flask import request, Blueprint, render_template
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
+from survaider import app
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response, ResponseSession
+from survaider.survey.model import Survey, Response, ResponseSession, Helper
 
 class SurveyController(Resource):
 
@@ -75,20 +76,31 @@ class SurveyMetaController(Resource):
         parser.add_argument('struct', type = str, required = True)
         return parser.parse_args()
 
+    def get_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('editing')
+        return parser.parse_args()
+
     def get(self, survey_id):
         try:
+            args = self.get_args()
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
-            return svey.structure
+
+            if args['editing'] is not None:
+                return svey.structure
+
+            return Helper.process_render_json(svey.structure)
+
         except Exception:
             raise
 
     def post(self, survey_id):
         try:
             if current_user.is_authenticated():
+                args = self.post_args()
                 s_id = HashId.decode(survey_id)
                 svey = Survey.objects(id = s_id).first()
-                args = self.post_args()
                 svey.structure = json.loads(args['struct'])
                 svey.save()
 
@@ -209,4 +221,5 @@ def get_index(survey_id):
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
-    return render_template('srvy.index.html')
+    print(dir(app))
+    return app.send_static_file('simplesurvey/index.simplesurvey.html')
