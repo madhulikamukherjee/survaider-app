@@ -74,34 +74,34 @@ class ResponseSession():
         #: Payload: [Survey ID, Start Time, End Time, Finished?]
         expires = datetime.datetime.now() + datetime.timedelta(days=1)
         payload = {
-            survey_id: [expires.isoformat(), response_id, False]
+            str(survey_id): [expires.isoformat(), str(response_id), False]
         }
 
         g.SRPL.update(payload)
 
     @staticmethod
     def get_running_id(survey_id):
-        if survey_id in g.SRPL:
-            res_id = HashId.decode(g.SRPL[survey_id][1])
+        s_id = str(survey_id)
+        if s_id in g.SRPL:
+            res_id = g.SRPL[s_id][1]
             return res_id
 
     @staticmethod
     def is_running(survey_id):
-        #: Check if survey_id in user's payload.
-        print(g.SRPL, survey_id)
-        if survey_id in g.SRPL:
+        s_id = str(survey_id)
+        if s_id in g.SRPL:
             return all([
-                dateutil.parser.parse(g.SRPL[survey_id][0]) > datetime.datetime.now(),
-                g.SRPL[survey_id][2] is False
+                dateutil.parser.parse(g.SRPL[s_id][0]) > datetime.datetime.now(),
+                g.SRPL[s_id][2] is False
             ])
 
         return False
 
     @staticmethod
     def finish_running(survey_id):
-        if survey_id in g.SRPL:
-            del g.SRPL[survey_id]
-            print(g.SRPL)
+        s_id = str(survey_id)
+        if s_id in g.SRPL:
+            del g.SRPL[s_id]
 
 class Helper(object):
 

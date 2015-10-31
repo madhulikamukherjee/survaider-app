@@ -79,7 +79,7 @@ class SurveyMetaController(Resource):
 
     def get_args(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('editing')
+        parser.add_argument('editing', type = bool)
         return parser.parse_args()
 
     def get(self, survey_id):
@@ -87,8 +87,9 @@ class SurveyMetaController(Resource):
             args = self.get_args()
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
+            print(args)
 
-            if args['editing'] is not None:
+            if args['editing']:
                 return svey.structure
 
             return Helper.process_render_json(svey.structure)
@@ -151,17 +152,25 @@ class ResponseController(Resource):
         """
 
         try:
+            s_id = HashId.decode(survey_id)
             args = self.get_args()
-            print(args)
-            args['responses_exist'] = ResponseSession.is_running(survey_id)
+            is_running = ResponseSession.is_running(s_id)
 
-            if args['responses_exist']:
+            ret = {
+                "response_session_running": is_running,
+                "will_accept_response": True,
+                "will_end_session": False
+            }
+
+            if is_running:
                 "End The Existing Survey."
+                print(args)
                 if args['new']:
-                    ResponseSession.finish_running(survey_id)
-                    args['will_accept_response'] = False
+                    ResponseSession.finish_running(s_id)
+                    ret['will_accept_response'] = False
+                    ret['will_end_session'] = True
 
-            return args, 201
+            return ret, 201
 
         except Exception:
             raise Exception
@@ -189,27 +198,34 @@ class ResponseController(Resource):
 
             resp = None
 
-            if ResponseSession.is_running(str(svey)):
+            ret = {
+                "existing_response_session": False,
+                "new_response_session": False,
+                "will_add_id": None,
+            }
+
+            if ResponseSession.is_running(svey.id):
                 "Uses existing Response Session."
-                resp_id = ResponseSession.get_running_id(str(svey))
+                ret['existing_response_session'] = True
+                resp_id = ResponseSession.get_running_id(s_id)
                 resp = Response.objects(id = resp_id).first()
             else:
                 "Creates a New Response Session."
+                ret['new_response_session'] = True
                 resp = Response(parent_survey = svey)
                 resp.save()
-                ResponseSession.start(str(svey), str(resp))
+                ResponseSession.start(s_id, resp.id)
 
             args = self.post_args()
-
-            # if args['q_id'] in svey.struct : TO BE IMPLEMENTED.
 
             if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
                 raise Exception
 
             resp.responses[args['q_id']] = args['q_res']
+            ret['will_add_id'] = args['q_id']
             resp.save()
 
-            return args, 200
+            return ret, 200
 
         except Exception:
             raise Exception
