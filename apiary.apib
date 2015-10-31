@@ -72,17 +72,17 @@ Creates a new Survaider. Authentication Required.
 Provides access to the Survey Resources.
 
 + Parameters
-    + survey_id (string)
+    + survey_id: 8NNaDvdGm3J1qwzDLbd (string)
     
-        Survey ID.
-    
-    + editing (string, optional)
-    
-        Specify this parameter to get Survaider Builder compatible JSON.
-
-    
+        Survey ID
 
 ## Retrieve Survey Structure [GET]
+
++ Parameters
+
+    + editing: true (string, optional)
+    
+        Specify `true` to get Survaider Builder compatible JSON.
 
 + Response 200 (application/json)
 
@@ -137,3 +137,84 @@ Provides access to the Survey Resources.
             "survey_id": "8NNaDvdGm3J1qwzDLbd"
         }
 
++ Response 404 (application/json)
+
+        {
+            "error": true,
+            "message": "Survey does not Exists"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "error": true,
+            "message": "Authentication Required"
+        }
+
+## Update Survey Structure [POST]
+Use this endpoint to update the survey structure. Note that it overwrites any common parameter. Authentication Required.
+
++ Request (application/json)
+
+        {
+            "struct": "JSON String"
+        }
+
++ Response 200 (application/json)
+
+        {
+            id: "8NNaDvdGm3J1qwzDLbd",
+            "saved": true
+        }
+
++ Response 400 (application/json)
+
+        {
+            "error": true,
+            "message": "Authentication Required"
+        }
+
+# Responses [/api/survey/{survey_id}/response{?new}]
+Provides response collection endpoints.
+
++ Parameters
+    + survey_id: 8NNaDvdGm3J1qwzDLbd (string)
+    
+        Survey ID.
+
+## Finish, or Check the status of Response Session [GET]
+
++ Parameters
+
+    + new: true (string, optional)
+    
+        Specify `true` to Finish the currently running Response Session.
+
++ Response 201 (application/json)
+
+            {
+                "response_session_running": false,
+                "will_accept_response": true,
+                "will_end_session": false
+            }
+
+## Append to the Response [POST]
+
+Use this endpoint to append to Response Session. If a Response session does not exists, it'd be automatically generated.
+More responses can kept on being added, and it'll be appended to the existing response document.
+See `GET` request with `new` parameter to learn about how to finish the running response session.
+
++ Request (application/json)
+
+            {
+                "q_id": "Question ID",
+                "q_res": "Response to the question"
+            }
+
++ Response 200 (application/json)
+
+            {
+                existing_response_session: true,
+                new_response_session: false,
+                will_add_id: "New Survey"
+            }
