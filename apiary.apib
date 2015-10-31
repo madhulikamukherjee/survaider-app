@@ -43,11 +43,28 @@ Returns all the Surveys created by the user.
             "message": "Authentication Required"
         }
 
-## Update a Message [PUT]
-`Update a message` - nice and simple naming is the best way to go.
+## Create a new Survaider [POST]
+Creates a new Survaider. Authentication Required.
 
-+ Request (text/plain)
++ Request (application/json)
 
-        All your base are belong to us.
+        {
+            "s_name": "Demo Survey Name",
+            "s_desc": "Demo Survey Description"
+        }
 
-+ Response 204
++ Response 200
+
+        {
+            id: "8NNaDvdGm3J1qwzDLbd"
+            uri: "/survey/s:8NNaDvdGm3J1qwzDLbd"
+            uri_edit: "/survey/s:8NNaDvdGm3J1qwzDLbd/edit"
+        }
+
++ Response 400 (application/json)
+
+        {
+            "error": true,
+            "message": "Authentication Required"
+        }
+
