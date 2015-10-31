@@ -3,11 +3,13 @@ FORMAT: 1A
 # Survaider
 Survaider REST API documentation for survey and responses endpoints.
 
+# Group Survey and Responses
+
 # Surveys [/api/survey]
 Authentication is required to access this endpoint.
 
 ## Retrieve List of Surveys [GET]
-Returns all the Surveys created by the user.
+Returns all the Surveys created by the logged-in user.
 
 + Response 200 (application/json)
 
@@ -44,7 +46,7 @@ Returns all the Surveys created by the user.
         }
 
 ## Create a new Survaider [POST]
-Creates a new Survaider. Authentication Required.
+Creates a new Survaider.
 
 + Request (application/json)
 
@@ -77,6 +79,8 @@ Provides access to the Survey Resources.
         Survey ID
 
 ## Retrieve Survey Structure [GET]
+Use this to get the Survey structure JSON. Note that there're two kinds of Survey Structures, one for the Game and Simple Survey, and the other one is for Survaider Builder.
+Parameter `editing` is used to retrieve either.
 
 + Parameters
 
