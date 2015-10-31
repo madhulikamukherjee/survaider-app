@@ -175,7 +175,7 @@ Use this endpoint to update the survey structure. Note that it overwrites any co
         }
 
 # Responses [/api/survey/{survey_id}/response{?new}]
-Provides response collection endpoints.
+Provides survey responses endpoints.
 
 + Parameters
     + survey_id: 8NNaDvdGm3J1qwzDLbd (string)
@@ -183,6 +183,8 @@ Provides response collection endpoints.
         Survey ID.
 
 ## Finish, or Check the status of Response Session [GET]
+
+Use this endpoint to check the status of Response Session. The same endpoint may be used to end the response session by specifying `new` parameter in `GET` parameters.
 
 + Parameters
 
@@ -201,7 +203,7 @@ Provides response collection endpoints.
 ## Append to the Response [POST]
 
 Use this endpoint to append to Response Session. If a Response session does not exists, it'd be automatically generated.
-More responses can kept on being added, and it'll be appended to the existing response document.
+More responses can kept on being added, and those'll be appended to the existing response document until either timeout occurs, or survey finishes.
 See `GET` request with `new` parameter to learn about how to finish the running response session.
 
 + Request (application/json)
