@@ -53,7 +53,7 @@ Creates a new Survaider. Authentication Required.
             "s_desc": "Demo Survey Description"
         }
 
-+ Response 200
++ Response 200 (application/json)
 
         {
             id: "8NNaDvdGm3J1qwzDLbd"
@@ -68,6 +68,72 @@ Creates a new Survaider. Authentication Required.
             "message": "Authentication Required"
         }
 
-# Survey [/api/survey/{survey_id}]
-Authentication is general
+# Survey [/api/survey/{survey_id}{?editing}]
+Provides access to the Survey Resources.
+
++ Parameters
+    + survey_id (string)
+    
+        Survey ID.
+    
+    + editing (string, optional)
+    
+        Specify this parameter to get Survaider Builder compatible JSON.
+
+    
+
+## Retrieve Survey Structure [GET]
+
++ Response 200 (application/json)
+
+        {
+            "fields": [
+                {
+                    "cid": "c2",
+                    "field_options": [],
+                    "field_type": "short_text",
+                    "gametype": "text_scene",
+                    "label": "What is your name?",
+                    "next": {
+                        "va": "c6"
+                    },
+                    "required": true
+                },
+                {
+                    "cid": "c6",
+                    "field_options": [
+                        "Yes",
+                        "No"
+                    ],
+                    "field_type": "yes_no",
+                    "gametype": "car",
+                    "label": "Have you gone on Facebook ever before?",
+                    "next": {
+                        "va": "c10"
+                    },
+                    "required": true
+                },
+                {
+                    "cid": "c10",
+                    "field_options": [
+                        "Reading about friends",
+                        "Chatting with friends",
+                        "Finding new people",
+                        "Reading (news, articles)",
+                        "Shopping"
+                    ],
+                    "field_type": "multiple_choice",
+                    "gametype": "balloon",
+                    "label": "What do you primarily use Facebook for?",
+                    "next": {
+                        "va": "end"
+                    },
+                    "required": true
+                }
+            ],
+            "game_title": "Demo Survey",
+            "game_description": "Demo Description",
+            "game_footer": "Demo Footer",
+            "survey_id": "8NNaDvdGm3J1qwzDLbd"
+        }
 
