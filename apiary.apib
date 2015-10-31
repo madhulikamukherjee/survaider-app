@@ -3,15 +3,45 @@ FORMAT: 1A
 # Survaider
 Survaider REST API documentation for survey and responses endpoints.
 
-# My Message [/message]
-OK, `My Message` probably isn't the best name for our resource but it will do for now. Note the URI `/message` is enclosed in square brackets.
+# Survey [/api/survey]
+Authentication is required to access this endpoint.
 
-## Retrieve a Message [GET]
-Now this is informative! No extra explanation needed here. This action clearly retrieves the message.
+## Retrieve List of Surveys [GET]
+Returns all the Surveys created by the user.
 
-+ Response 200 (text/plain)
++ Response 200 (application/json)
 
-        Hello World!
+        {
+            "data": [
+                {
+                    "id": "r88Wnmz8NJOm2q61ZM4",
+                    "name": "Demo 1",
+                    "uri": "/survey/s:r88Wnmz8NJOm2q61ZM4/simple",
+                    "uri_edit": "/survey/s:r88Wnmz8NJOm2q61ZM4/edit"
+                },
+                {
+                    "id": "OLL8rLJvgzlQ38oMwdo",
+                    "name": "Demo 2",
+                    "uri": "/survey/s:OLL8rLJvgzlQ38oMwdo/simple",
+                    "uri_edit": "/survey/s:OLL8rLJvgzlQ38oMwdo/edit"
+                },
+                {
+                    "id": "YzzA2vJ5XA4X49Qpj4M",
+                    "name": "Demo 3",
+                    "uri": "/survey/s:YzzA2vJ5XA4X49Qpj4M/simple",
+                    "uri_edit": "/survey/s:YzzA2vJ5XA4X49Qpj4M/edit"
+                },
+            ],
+            "owner": "5621fdd6da1dd241bfc4db3c",
+            "survey_count": 3
+        }
+
++ Response 400 (application/json)
+
+        {
+            "error": true,
+            "message": "Authentication Required"
+        }
 
 ## Update a Message [PUT]
 `Update a message` - nice and simple naming is the best way to go.
