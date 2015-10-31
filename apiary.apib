@@ -1,9 +1,18 @@
 FORMAT: 1A
 
 # Survaider
-Survaider REST API documentation for survey and responses endpoints.
+Survaider REST API documentation.
 
 # Group Survey and Responses
+## Basic Concepts
+### Data Model
+Both Surveys, and Responses are stored as MongoDB documents. The Surveys are linked with the User, or Users who own the survey.
+
+Each survey document has a `survey_id` which is MongoDB document id encoded using HashIDs for obfuscation.
+
+The Response documents are linked to the Survey via `Survey.id`. The responses are recorded in the documents asynchroniously (**forced**, can't put the whole survey data in a go).
+
+## API Docs
 
 # Surveys [/api/survey]
 Authentication is required to access this endpoint.
