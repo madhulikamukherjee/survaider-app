@@ -93,9 +93,11 @@ Parameter `editing` is used to retrieve either.
 
 + Parameters
 
-    + editing: true (string, optional)
+    + editing: true (bool, optional)
     
         Specify `true` to get Survaider Builder compatible JSON.
+        
+        + Default: false
 
 + Response 200 (application/json)
 
@@ -202,6 +204,12 @@ Provides survey responses endpoints.
 ## Finish, or Check the status of Response Session [GET]
 
 Use this endpoint to check the status of Response Session. The same endpoint may be used to end the response session by specifying `new` parameter in `GET` parameters.
+
++ Parameters
+
+    + new: true (string, optional)
+    
+        Specify `true` to Finish the currently running Response Session.
 
 + Response 201 (application/json)
 
