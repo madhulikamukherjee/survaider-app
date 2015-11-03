@@ -5,6 +5,7 @@
 from flask import Flask, render_template, g, request
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import current_user
+from flask.ext.security.views import login as security_login
 
 app = Flask(__name__, template_folder='templates')
 app.config.from_pyfile('config.py')
@@ -15,7 +16,7 @@ def create_app():
     from .user.controller import usr
     from .security.controller import security
     from .admin.controller import admin
-    from .dashboard.controller import dashboard
+    from .dashboard.controller import dashboard, dashboard_home
     from .survey.controller import srvy
     from .REST.controller import api
     from .minions.helpers import Routines
@@ -36,7 +37,10 @@ def create_app():
 
     @app.route('/')
     def home():
-        return render_template("nav.container.html")
+        if current_user.is_authenticated():
+            "Load the dashboard"
+            return dashboard_home()
+        return security_login()
 
 if __name__ == '__main__':
     create_app()
