@@ -67,7 +67,7 @@ class Response(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
-class ResponseSession():
+class ResponseSession(object):
 
     @staticmethod
     def start(survey_id, response_id):
@@ -102,6 +102,10 @@ class ResponseSession():
         s_id = str(survey_id)
         if s_id in g.SRPL:
             del g.SRPL[s_id]
+
+class ResponseAggregation(object):
+    def __init__():
+        pass
 
 class Helper(object):
 

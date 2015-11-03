@@ -12,3 +12,4 @@ Flask-Social == 1.6.2
 Flask-SSLify == 0.1.4
 Flask-WTF == 0.9.5
 oauth2 == 1.9.0.post1
+http://github.com/pythonforfacebook/facebook-sdk/tarball/master == 1.0.0a0

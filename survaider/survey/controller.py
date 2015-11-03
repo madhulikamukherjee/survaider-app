@@ -230,6 +230,24 @@ class ResponseController(Resource):
         except Exception:
             raise Exception
 
+class ResponseAggregationController(Resource):
+
+    def get(self, survey_id):
+
+        try:
+            s_id = HashId.decode(survey_id)
+
+            ret = {
+                "response_session_running": False,
+                "will_accept_response": True,
+                "will_end_session": False
+            }
+
+            return ret, 201
+
+        except Exception:
+            raise Exception
+
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
 @srvy.route('/s:<survey_id>/edit')
