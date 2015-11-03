@@ -16,7 +16,7 @@ from flask.ext.security import current_user, login_required
 from survaider import app
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response, ResponseSession, Helper
+from survaider.survey.model import Survey, Response, ResponseSession, Helper, ResponseAggregation
 
 class SurveyController(Resource):
 
@@ -236,14 +236,11 @@ class ResponseAggregationController(Resource):
 
         try:
             s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
 
-            ret = {
-                "response_session_running": False,
-                "will_accept_response": True,
-                "will_end_session": False
-            }
+            responses = ResponseAggregation(svey)
 
-            return ret, 201
+            return responses.get(), 201
 
         except Exception:
             raise Exception

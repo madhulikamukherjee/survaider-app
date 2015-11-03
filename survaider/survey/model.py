@@ -104,8 +104,38 @@ class ResponseSession(object):
             del g.SRPL[s_id]
 
 class ResponseAggregation(object):
-    def __init__():
-        pass
+    def __init__(self, survey):
+        self.survey = survey
+        # self.cols   =
+
+    def get(self, page = 0):
+        limit = 10
+        skip = page * limit
+        responses = Response.objects[skip:limit](parent_survey = self.survey)
+
+        qcol = self._squeeze_cols()
+        cols = ["response_id"] + qcol
+
+        rows = []
+
+        for response in responses:
+            row = [str(response)]
+            for qid in qcol:
+                if qid in response.responses:
+                    row.append(response.responses[qid])
+                else:
+                    row.append(None)
+            rows.append(row)
+
+        return {
+            "page": page,
+            "columns": cols,
+            "rows": rows,
+            "survey_id": str(self.survey)
+        }
+
+    def _squeeze_cols(self):
+        return [_['cid'] for _ in self.survey.structure['fields']]
 
 class Helper(object):
 
