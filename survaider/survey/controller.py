@@ -7,6 +7,7 @@ REST API End Points
 """
 
 import datetime
+import dateutil.parser
 import json
 
 from bson.objectid import ObjectId
@@ -42,13 +43,14 @@ class SurveyController(Resource):
                     'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
                     'is_paused': sv.paused,
                     'is_active': sv.active,
+                    'is_expired': sv.expires <= datetime.datetime.now(),
                     'expires': str(sv.expires),
                 })
 
             ret = {
                 "data": survey_list,
                 "owner": str(current_user.id),
-                "survey_count": len(survey_list)
+                "survey_count": len(survey_list),
             }
 
             return ret, 200
@@ -120,11 +122,32 @@ class SurveyMetaController(Resource):
                 return ret, 200
 
             elif action == 'expires':
-                pass
+                dat = args['swag']
+                svey.expires = dateutil.parser.parse(dat)
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+                return ret, 200
 
             elif action == 'paused':
-                pass
+                dat = json.loads(args['swag'])
+                if type(dat) is bool:
+                    svey.paused = dat
+                    svey.save()
 
+                    ret = {
+                        'id': str(svey),
+                        'field': action,
+                        'saved': True,
+                    }
+                    return ret, 200
+                raise Exception("TypeError")
+
+            raise Exception("Unauthorized User")
         else:
             return "NOPE!", 401
 
@@ -169,8 +192,9 @@ class ResponseController(Resource):
 
         ret = {
             'response_session_running': is_running,
-            'will_accept_response': True,
+            'will_accept_response': svey.active,
             'will_end_session': False,
+            'is_expired': svey.expires <= datetime.datetime.now(),
             'is_paused': svey.paused,
             'is_active': svey.active,
             'expires': str(svey.expires),
@@ -202,6 +226,9 @@ class ResponseController(Resource):
 
         s_id = HashId.decode(survey_id)
         svey = Survey.objects(id = s_id).first()
+
+        if not svey.active:
+            raise Exception("Inactive")
 
         resp = None
 

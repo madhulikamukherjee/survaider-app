@@ -68,7 +68,7 @@ class Survey(db.Document):
 
     @expires.setter
     def expires(self, value):
-        self.metadata = value
+        self.metadata['expires'] = value
 
     @property
     def active(self):
