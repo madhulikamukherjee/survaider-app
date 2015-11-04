@@ -254,7 +254,7 @@ class ResponseController(Resource):
         args = self.post_args()
 
         if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
-            raise Exception
+            raise Exception("Input data not valid.")
 
         resp.add(args['q_id'], args['q_res'])
         ret['will_add_id'] = args['q_id']
