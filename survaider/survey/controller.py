@@ -192,43 +192,38 @@ class ResponseController(Resource):
             q_res (str): Response.
         """
 
-        try:
-            s_id = HashId.decode(survey_id)
-            svey = Survey.objects(id = s_id).first()
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
 
-            resp = None
+        resp = None
 
-            ret = {
-                "existing_response_session": False,
-                "new_response_session": False,
-                "will_add_id": None,
-            }
+        ret = {
+            "existing_response_session": False,
+            "new_response_session": False,
+            "will_add_id": None,
+        }
 
-            if ResponseSession.is_running(svey.id):
-                "Uses existing Response Session."
-                ret['existing_response_session'] = True
-                resp_id = ResponseSession.get_running_id(s_id)
-                resp = Response.objects(id = resp_id).first()
-            else:
-                "Creates a New Response Session."
-                ret['new_response_session'] = True
-                resp = Response(parent_survey = svey)
-                resp.save()
-                ResponseSession.start(s_id, resp.id)
-
-            args = self.post_args()
-
-            if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
-                raise Exception
-
-            resp.responses[args['q_id']] = args['q_res']
-            ret['will_add_id'] = args['q_id']
+        if ResponseSession.is_running(svey.id):
+            "Uses existing Response Session."
+            ret['existing_response_session'] = True
+            resp_id = ResponseSession.get_running_id(s_id)
+            resp = Response.objects(id = resp_id).first()
+        else:
+            "Creates a New Response Session."
+            ret['new_response_session'] = True
+            resp = Response(parent_survey = svey)
             resp.save()
+            ResponseSession.start(s_id, resp.id)
 
-            return ret, 200
+        args = self.post_args()
 
-        except Exception:
+        if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
             raise Exception
+
+        resp.add(args['q_id'], args['q_res'])
+        ret['will_add_id'] = args['q_id']
+
+        return ret, 200
 
 class ResponseAggregationController(Resource):
 

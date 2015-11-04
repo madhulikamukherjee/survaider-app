@@ -58,6 +58,9 @@ class Survey(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
+    def cols(self):
+        return [_['cid'] for _ in self.structure['fields']]
+
 class Response(db.Document):
     parent_survey   = db.ReferenceField(Survey)
 
@@ -66,6 +69,13 @@ class Response(db.Document):
 
     def __unicode__(self):
         return HashId.encode(self.id)
+
+    def add(self, qid, qres):
+        if qid in self.parent_survey.cols():
+            self.responses[qid] = qres
+            self.save()
+        else:
+            raise Exception
 
 class ResponseSession(object):
 
@@ -113,7 +123,7 @@ class ResponseAggregation(object):
         skip = page * limit
         responses = Response.objects[skip:limit](parent_survey = self.survey)
 
-        qcol = self._squeeze_cols()
+        qcol = self.survey.cols()
         cols = ["response_id"] + qcol
 
         rows = []
@@ -133,9 +143,6 @@ class ResponseAggregation(object):
             "rows": rows,
             "survey_id": str(self.survey)
         }
-
-    def _squeeze_cols(self):
-        return [_['cid'] for _ in self.survey.structure['fields']]
 
 class Helper(object):
 
