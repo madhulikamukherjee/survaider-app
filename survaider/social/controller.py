@@ -13,25 +13,21 @@ from survaider.minions.signals import Social as Signal_Social
 social = Social(app, MongoEngineConnectionDatastore(db, Connection))
 
 @connection_created.connect_via(app)
-def on_connection_created(sender, **kwargs):
+def on_connection_created(**kwargs):
     app.logger.debug('Connection Created')
 
 @connection_failed.connect_via(app)
-def on_login_failed1(sender, provider, oauth_response):
-    app.logger.debug('Social Login Failed via %s; '
-                     '&oauth_response=%s' % (provider.name, oauth_response))
+def on_connection_failed(**kwargs):
+    app.logger.debug('Connection Failed')
 
 @connection_removed.connect_via(app)
-def on_login_failed4(sender, provider, oauth_response):
-    app.logger.debug('Social Login Failed via %s; '
-                     '&oauth_response=%s' % (provider.name, oauth_response))
+def on_connection_removed(**kwargs):
+    app.logger.debug('Connection Removed')
 
 @login_failed.connect_via(app)
-def on_login_failed3(sender, provider, oauth_response):
-    app.logger.debug('Social Login Failed via %s; '
-                     '&oauth_response=%s' % (provider.name, oauth_response))
+def on_login_failed(**kwargs):
+    app.logger.debug('Login Failed')
 
 @login_completed.connect_via(app)
-def on_login_failed33(sender, provider, oauth_response):
-    app.logger.debug('Social Login Failed via %s; '
-                     '&oauth_response=%s' % (provider.name, oauth_response))
+def on_login_completed(**kwargs):
+    app.logger.debug('Login Complete')
