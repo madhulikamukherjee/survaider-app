@@ -40,6 +40,9 @@ class SurveyController(Resource):
                     'uri': '/survey/s:{0}/simple'.format(str(sv)),
                     'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
                     'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
+                    'is_paused': sv.paused,
+                    'is_active': sv.active,
+                    'expires': str(sv.expires),
                 })
 
             ret = {
@@ -76,36 +79,37 @@ class SurveyMetaController(Resource):
 
     def post_args(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('struct', type = str, required = True)
+        parser.add_argument('swag', type = str, required = True)
         return parser.parse_args()
 
     def get_args(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('editing', type = bool)
+        parser.add_argument('editing', type = str)
         return parser.parse_args()
 
-    def get(self, survey_id):
-        try:
-            args = self.get_args()
-            s_id = HashId.decode(survey_id)
-            svey = Survey.objects(id = s_id).first()
-            print(args)
+    def get(self, survey_id, action):
+        args = self.get_args()
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
 
-            if args['editing']:
+        if action == 'json':
+            if args['editing'] == 'true':
                 return svey.structure
-
             return Helper.process_render_json(svey.structure)
 
-        except Exception:
-            raise
+        elif action == 'paused':
+            pass
 
-    def post(self, survey_id):
-        try:
-            if current_user.is_authenticated():
-                args = self.post_args()
-                s_id = HashId.decode(survey_id)
-                svey = Survey.objects(id = s_id).first()
-                svey.structure = json.loads(args['struct'])
+        return "No action"
+
+    def post(self, survey_id, action):
+        if current_user.is_authenticated():
+            args = self.post_args()
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if action == 'struct':
+                svey.structure = json.loads(args['swag'])
                 svey.save()
 
                 ret = {
@@ -114,10 +118,15 @@ class SurveyMetaController(Resource):
                 }
 
                 return ret, 200
-            else:
-                return "NOPE!", 401
-        except Exception:
-            raise
+
+            elif action == 'expires':
+                pass
+
+            elif action == 'paused':
+                pass
+
+        else:
+            return "NOPE!", 401
 
     def delete(self, survey_id):
         pass
@@ -153,28 +162,24 @@ class ResponseController(Resource):
                         Example: GET /api/survey/<survey_id>/response?new=true
         """
 
-        try:
-            s_id = HashId.decode(survey_id)
-            args = self.get_args()
-            is_running = ResponseSession.is_running(s_id)
+        s_id = HashId.decode(survey_id)
+        args = self.get_args()
+        is_running = ResponseSession.is_running(s_id)
 
-            ret = {
-                "response_session_running": is_running,
-                "will_accept_response": True,
-                "will_end_session": False
-            }
+        ret = {
+            "response_session_running": is_running,
+            "will_accept_response": True,
+            "will_end_session": False
+        }
 
-            if is_running:
-                "End The Existing Survey."
-                if args['new']:
-                    ResponseSession.finish_running(s_id)
-                    ret['will_accept_response'] = False
-                    ret['will_end_session'] = True
+        if is_running:
+            "End The Existing Survey."
+            if args['new']:
+                ResponseSession.finish_running(s_id)
+                ret['will_accept_response'] = False
+                ret['will_end_session'] = True
 
-            return ret, 201
-
-        except Exception:
-            raise Exception
+        return ret, 201
 
     def post(self, survey_id):
         """
@@ -228,17 +233,12 @@ class ResponseController(Resource):
 class ResponseAggregationController(Resource):
 
     def get(self, survey_id):
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
 
-        try:
-            s_id = HashId.decode(survey_id)
-            svey = Survey.objects(id = s_id).first()
+        responses = ResponseAggregation(svey)
 
-            responses = ResponseAggregation(svey)
-
-            return responses.get(), 201
-
-        except Exception:
-            raise Exception
+        return responses.get(), 201
 
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 

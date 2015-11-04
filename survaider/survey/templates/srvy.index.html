@@ -19,8 +19,8 @@
 
   $(document).ready(function() {
     var s_id = UriTemplate.extract("/survey/s:{s_id}/edit", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}?editing=true", {s_id: s_id}),
-        payload_update_uri = UriTemplate.expand("/api/survey/{s_id}", {s_id: s_id});
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/json?editing=true", {s_id: s_id}),
+        payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/struct", {s_id: s_id});
 
     $.getJSON(json_uri, function (data) {
 
@@ -30,8 +30,7 @@
       });
 
       fb.on('save', function(payload){
-        console.log(payload);
-        $.post(payload_update_uri, {struct: JSON.stringify({fields: payload})}, function (data) {
+        $.post(payload_update_uri, {swag: JSON.stringify({fields: payload})}, function (data) {
           console.log(data);
         });
       });

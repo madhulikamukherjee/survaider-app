@@ -58,8 +58,30 @@ class Survey(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
+    @property
     def cols(self):
         return [_['cid'] for _ in self.structure['fields']]
+
+    @property
+    def expires(self):
+        return self.metadata['expires'] if 'expires' in self.metadata else datetime.datetime.max
+
+    @expires.setter
+    def expires(self, value):
+        self.metadata = value
+
+    @property
+    def active(self):
+        time_now = datetime.datetime.now()
+        return all([time_now <= self.expires, not self.paused])
+
+    @property
+    def paused(self):
+        return self.metadata['paused'] if 'paused' in self.metadata else False
+
+    @paused.setter
+    def paused(self, value):
+        self.metadata['paused'] = value
 
 class Response(db.Document):
     parent_survey   = db.ReferenceField(Survey)
@@ -71,7 +93,7 @@ class Response(db.Document):
         return HashId.encode(self.id)
 
     def add(self, qid, qres):
-        if qid in self.parent_survey.cols():
+        if qid in self.parent_survey.cols:
             self.responses[qid] = qres
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
@@ -123,14 +145,13 @@ class ResponseAggregation(object):
         skip = page * limit
         responses = Response.objects[skip:limit](parent_survey = self.survey)
 
-        qcol = self.survey.cols()
-        cols = ["response_id"] + qcol
+        cols = ["response_id"] + self.survey.cols
 
         rows = []
 
         for response in responses:
             row = [str(response)]
-            for qid in qcol:
+            for qid in self.survey.cols:
                 if qid in response.responses:
                     row.append(response.responses[qid])
                 else:
@@ -143,6 +164,9 @@ class ResponseAggregation(object):
             "rows": rows,
             "survey_id": str(self.survey)
         }
+
+    def count(self):
+        pass
 
 class Helper(object):
 
