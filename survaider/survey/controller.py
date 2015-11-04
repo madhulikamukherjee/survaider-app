@@ -163,13 +163,17 @@ class ResponseController(Resource):
         """
 
         s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
         args = self.get_args()
         is_running = ResponseSession.is_running(s_id)
 
         ret = {
-            "response_session_running": is_running,
-            "will_accept_response": True,
-            "will_end_session": False
+            'response_session_running': is_running,
+            'will_accept_response': True,
+            'will_end_session': False,
+            'is_paused': svey.paused,
+            'is_active': svey.active,
+            'expires': str(svey.expires),
         }
 
         if is_running:
