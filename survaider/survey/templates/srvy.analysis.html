@@ -1,0 +1,77 @@
+{% extends 'nav.container.html' %}
+
+{% block content_head %}
+<div class="jumbotron page-cover" data-pages="parallax">
+  <div class="container-fluid container-fixed-lg">
+    <div class="inner" style="transform: translateY(0px); opacity: 1;">
+      <div class="container-md-height m-b-20">
+        <div class="row row-md-height">
+          <div class="col-lg-5 col-md-height col-md-6 col-top">
+            <!-- START PANEL -->
+            <div class="panel panel-transparent">
+              <div class="panel-body">
+                <h3>{{ dat.id }}</h3>
+                <p></p>
+                <br>
+              </div>
+            </div>
+            <!-- END PANEL -->
+          </div>
+          <div class="col-lg-7 col-md-6 col-sm-height col-middle">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="panel panel-transparent">
+    <div class="panel-heading">
+      <div class="panel-title">Responses
+      </div>
+      <div class="pull-right">
+        <div class="col-xs-12">
+          <input type="text" id="search-table" class="form-control pull-right" placeholder="Search">
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+      <table class="table table-hover demo-table-search" id="tableWithSearch">
+        <thead>
+          <tr>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modal %}
+{% endblock %}
+
+{% block additionaljs%}
+<script type="text/javascript">
+  $(document).ready(function() {
+    var s_id = UriTemplate.extract("/survey/s:{s_id}/edit", window.location.pathname).s_id;
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/response/aggregate", {s_id: s_id});
+
+    $.getJSON(json_uri, function (data) {
+      "use strict";
+      //: Render the Table Head.
+      for (var i = 0; i < data.columns.length; i++) {
+        $("#tableWithSearch thead tr").append("<th>" + data.columns[i] + "</th>");
+      };
+
+      $('#tableWithSearch').DataTable({
+        // "ajax": '/api/survey',
+        "data": data.rows
+      });
+    });
+  });
+</script>
+{% endblock %}

@@ -38,6 +38,7 @@ class SurveyController(Resource):
                     'name': sv.metadata['name'],
                     'uri': '/survey/s:{0}/simple'.format(str(sv)),
                     'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
+                    'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
                 })
 
             ret = {
@@ -245,6 +246,13 @@ srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 @srvy.route('/s:<survey_id>/edit')
 def get_index(survey_id):
     return render_template('srvy.index.html')
+
+@srvy.route('/s:<survey_id>/analysis')
+def get_analysis_page(survey_id):
+    render_dat = {
+        'id': survey_id
+    }
+    return render_template('srvy.analysis.html', dat = render_dat)
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):

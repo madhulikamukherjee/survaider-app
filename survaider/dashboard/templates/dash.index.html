@@ -115,6 +115,7 @@
                       <th>name</th>
                       <th>simple survey uri</th>
                       <th>edit_uri</th>
+                      <th>responses_uri</th>
                     </tr>
                   </thead>
                 </table>
@@ -218,13 +219,14 @@
               { "data": "name" },
               { "data": "uri" },
               { "data": "uri_edit" },
+              { "data": "uri_responses" },
           ],
           "columnDefs": [
               {
                   "render": function ( data, type, row ) {
                       return "<a href=\"" + data + "\" target = \"_blank\">" + data + "</a>";
                   },
-                  "targets": [2, 3]
+                  "targets": [2, 3, 4]
               }
           ]
       } );
