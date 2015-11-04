@@ -7,6 +7,7 @@ import dateutil.parser
 import uuid
 import random
 import json
+import math
 
 from flask import request, g
 from bson.objectid import ObjectId
@@ -73,7 +74,7 @@ class Survey(db.Document):
     @property
     def active(self):
         time_now = datetime.datetime.now()
-        return all([time_now <= self.expires, not self.paused])
+        return all([time_now <= self.expires, not self.paused, self.response_cap >= self.obtained_responses])
 
     @property
     def paused(self):
@@ -82,6 +83,18 @@ class Survey(db.Document):
     @paused.setter
     def paused(self, value):
         self.metadata['paused'] = value
+
+    @property
+    def response_cap(self):
+        return self.metadata['response_cap'] if 'response_cap' in self.metadata else math.inf
+
+    @property
+    def obtained_responses(self):
+        return ResponseAggregation(self).count
+
+    @response_cap.setter
+    def response_cap(self, value):
+        self.metadata['response_cap'] = value
 
 class Response(db.Document):
     parent_survey   = db.ReferenceField(Survey)
@@ -166,11 +179,13 @@ class ResponseAggregation(object):
             "page": page,
             "columns": cols,
             "rows": rows,
+            "len": self.count,
             "survey_id": str(self.survey)
         }
 
+    @property
     def count(self):
-        pass
+        return Response.objects(parent_survey = self.survey).count()
 
 class Helper(object):
 

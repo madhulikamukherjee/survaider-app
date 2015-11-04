@@ -43,6 +43,8 @@ class SurveyController(Resource):
                     'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
                     'is_paused': sv.paused,
                     'is_active': sv.active,
+                    'has_response_cap': sv.response_cap,
+                    'has_obtained_responses': sv.obtained_responses,
                     'is_expired': sv.expires <= datetime.datetime.now(),
                     'expires': str(sv.expires),
                 })
@@ -137,6 +139,20 @@ class SurveyMetaController(Resource):
                 dat = json.loads(args['swag'])
                 if type(dat) is bool:
                     svey.paused = dat
+                    svey.save()
+
+                    ret = {
+                        'id': str(svey),
+                        'field': action,
+                        'saved': True,
+                    }
+                    return ret, 200
+                raise Exception("TypeError")
+
+            elif action == 'response_cap':
+                dat = json.loads(args['swag'])
+                if type(dat) is int:
+                    svey.response_cap = dat
                     svey.save()
 
                     ret = {
