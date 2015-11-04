@@ -15,6 +15,7 @@ db = MongoEngine(app)
 def create_app():
     from .user.controller import usr
     from .security.controller import security
+    from .social.controller import social
     from .admin.controller import admin
     from .dashboard.controller import dashboard, dashboard_home
     from .survey.controller import srvy
