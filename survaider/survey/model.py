@@ -100,6 +100,10 @@ class Response(db.Document):
         else:
             raise Exception
 
+    @property
+    def added(self):
+        return self.metadata['started'] if 'started' in self.metadata else datetime.datetime.min
+
 class ResponseSession(object):
 
     @staticmethod
@@ -145,12 +149,12 @@ class ResponseAggregation(object):
         skip = page * limit
         responses = Response.objects[skip:limit](parent_survey = self.survey)
 
-        cols = ["response_id"] + self.survey.cols
+        cols = ["response_id", "added"] + self.survey.cols
 
         rows = []
 
         for response in responses:
-            row = [str(response)]
+            row = [str(response), str(response.added)]
             for qid in self.survey.cols:
                 if qid in response.responses:
                     row.append(response.responses[qid])
