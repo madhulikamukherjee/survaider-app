@@ -49,6 +49,8 @@ module.exports = (grunt) ->
             'bower_components/jquery.actual/jquery.actual.js'
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'bower_components/datatables/media/js/jquery.dataTables.js'
+            'bower_components/datatables-buttons/js/dataTables.buttons.js'
+            'bower_components/pdfmake/build/pdfmake.js'
             'bower_components/uri-template.js/dist/uri-template.js'
             'bower_components/sweetalert/dist/sweetalert.min.js'
             'pages/js/pages.js'

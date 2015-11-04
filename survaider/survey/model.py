@@ -73,6 +73,7 @@ class Response(db.Document):
     def add(self, qid, qres):
         if qid in self.parent_survey.cols():
             self.responses[qid] = qres
+            self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
             raise Exception
@@ -116,7 +117,6 @@ class ResponseSession(object):
 class ResponseAggregation(object):
     def __init__(self, survey):
         self.survey = survey
-        # self.cols   =
 
     def get(self, page = 0):
         limit = 10

@@ -69,7 +69,12 @@
 
       $('#tableWithSearch').DataTable({
         // "ajax": '/api/survey',
-        "data": data.rows
+        "data": data.rows,
+        dom: 'Blfrtip',
+        buttons: [
+            'copy',
+            // 'pdf'
+        ]
       });
     });
   });

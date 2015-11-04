@@ -6,6 +6,7 @@
 REST API End Points
 """
 
+import datetime
 import json
 
 from bson.objectid import ObjectId
@@ -165,7 +166,6 @@ class ResponseController(Resource):
 
             if is_running:
                 "End The Existing Survey."
-                print(args)
                 if args['new']:
                     ResponseSession.finish_running(s_id)
                     ret['will_accept_response'] = False
@@ -182,8 +182,6 @@ class ResponseController(Resource):
         Saves the Question Responses. The responses are saved atomically.
         Aggregate saving of the responses is NOT implemented yet, since the
         game requires atomic response storage.
-
-        TODO: Aggregate response handelling.
 
         Appends to the existing response document if it exists, otherwise
         creats a new document.
@@ -213,6 +211,7 @@ class ResponseController(Resource):
             "Creates a New Response Session."
             ret['new_response_session'] = True
             resp = Response(parent_survey = svey)
+            resp.metadata['started'] = datetime.datetime.now()
             resp.save()
             ResponseSession.start(s_id, resp.id)
 
