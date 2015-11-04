@@ -8,6 +8,7 @@ from flask_admin import helpers as admin_helpers
 
 from survaider.user.model import Role, User
 from survaider.survey.model import Survey, Response
+from survaider.social.model import Connection
 from survaider.admin.model import BaseView
 
 from survaider import app
@@ -25,5 +26,6 @@ class SurveyView(BaseView):
 
 admin.add_view(UserView(User))
 admin.add_view(BaseView(Role))
+admin.add_view(BaseView(Connection))
 admin.add_view(SurveyView(Survey))
 admin.add_view(BaseView(Response))
