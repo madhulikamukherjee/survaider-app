@@ -86,7 +86,7 @@ class Survey(db.Document):
 
     @property
     def response_cap(self):
-        return self.metadata['response_cap'] if 'response_cap' in self.metadata else math.inf
+        return self.metadata['response_cap'] if 'response_cap' in self.metadata else 2**32
 
     @property
     def obtained_responses(self):
