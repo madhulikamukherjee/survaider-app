@@ -38,7 +38,6 @@ class Routines(object):
         from survaider.security.controller import user_datastore
 
         reg_dat = get_connection_values_from_oauth_response(kwargs['provider'], kwargs['oauth_response'])
-        print(reg_dat)
 
         user = user_datastore.create_user(email = reg_dat['email'], password = str(uuid.uuid4()))
         user.metadata['full_name'] = reg_dat['full_name'] if 'full_name' in reg_dat else reg_dat['display_name'] if 'display_name' in reg_dat else None
