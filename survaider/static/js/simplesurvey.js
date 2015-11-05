@@ -32850,6 +32850,14 @@ angular.module('ngAnimate', [])
 
 })(window, window.angular);
 ;
+/*!
+ * angular-loading-bar v0.8.0
+ * https://chieffancypants.github.io/angular-loading-bar
+ * Copyright (c) 2015 Wes Cruver
+ * License: MIT
+ */
+!function(){"use strict";angular.module("angular-loading-bar",["cfp.loadingBarInterceptor"]),angular.module("chieffancypants.loadingBar",["cfp.loadingBarInterceptor"]),angular.module("cfp.loadingBarInterceptor",["cfp.loadingBar"]).config(["$httpProvider",function(a){var b=["$q","$cacheFactory","$timeout","$rootScope","$log","cfpLoadingBar",function(b,c,d,e,f,g){function h(){d.cancel(j),g.complete(),l=0,k=0}function i(b){var d,e=c.get("$http"),f=a.defaults;!b.cache&&!f.cache||b.cache===!1||"GET"!==b.method&&"JSONP"!==b.method||(d=angular.isObject(b.cache)?b.cache:angular.isObject(f.cache)?f.cache:e);var g=void 0!==d?void 0!==d.get(b.url):!1;return void 0!==b.cached&&g!==b.cached?b.cached:(b.cached=g,g)}var j,k=0,l=0,m=g.latencyThreshold;return{request:function(a){return a.ignoreLoadingBar||i(a)||(e.$broadcast("cfpLoadingBar:loading",{url:a.url}),0===k&&(j=d(function(){g.start()},m)),k++,g.set(l/k)),a},response:function(a){return a&&a.config?(a.config.ignoreLoadingBar||i(a.config)||(l++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url,result:a}),l>=k?h():g.set(l/k)),a):(f.error("Broken interceptor detected: Config object not supplied in response:\n https://github.com/chieffancypants/angular-loading-bar/pull/50"),a)},responseError:function(a){return a&&a.config?(a.config.ignoreLoadingBar||i(a.config)||(l++,e.$broadcast("cfpLoadingBar:loaded",{url:a.config.url,result:a}),l>=k?h():g.set(l/k)),b.reject(a)):(f.error("Broken interceptor detected: Config object not supplied in rejection:\n https://github.com/chieffancypants/angular-loading-bar/pull/50"),b.reject(a))}}}];a.interceptors.push(b)}]),angular.module("cfp.loadingBar",[]).provider("cfpLoadingBar",function(){this.autoIncrement=!0,this.includeSpinner=!0,this.includeBar=!0,this.latencyThreshold=100,this.startSize=.02,this.parentSelector="body",this.spinnerTemplate='<div id="loading-bar-spinner"><div class="spinner-icon"></div></div>',this.loadingBarTemplate='<div id="loading-bar"><div class="bar"><div class="peg"></div></div></div>',this.$get=["$injector","$document","$timeout","$rootScope",function(a,b,c,d){function e(){k||(k=a.get("$animate"));var e=b.find(n).eq(0);c.cancel(m),r||(d.$broadcast("cfpLoadingBar:started"),r=!0,v&&k.enter(o,e,angular.element(e[0].lastChild)),u&&k.enter(q,e,angular.element(e[0].lastChild)),f(w))}function f(a){if(r){var b=100*a+"%";p.css("width",b),s=a,t&&(c.cancel(l),l=c(function(){g()},250))}}function g(){if(!(h()>=1)){var a=0,b=h();a=b>=0&&.25>b?(3*Math.random()+3)/100:b>=.25&&.65>b?3*Math.random()/100:b>=.65&&.9>b?2*Math.random()/100:b>=.9&&.99>b?.005:0;var c=h()+a;f(c)}}function h(){return s}function i(){s=0,r=!1}function j(){k||(k=a.get("$animate")),d.$broadcast("cfpLoadingBar:completed"),f(1),c.cancel(m),m=c(function(){var a=k.leave(o,i);a&&a.then&&a.then(i),k.leave(q)},500)}var k,l,m,n=this.parentSelector,o=angular.element(this.loadingBarTemplate),p=o.find("div").eq(0),q=angular.element(this.spinnerTemplate),r=!1,s=0,t=this.autoIncrement,u=this.includeSpinner,v=this.includeBar,w=this.startSize;return{start:e,set:f,status:h,inc:g,complete:j,autoIncrement:this.autoIncrement,includeSpinner:this.includeSpinner,latencyThreshold:this.latencyThreshold,parentSelector:this.parentSelector,startSize:this.startSize}}]})}();
+;
 /*
  jQuery UI Sortable plugin wrapper
 
@@ -41204,19 +41212,13 @@ LongTextQuestion.prototype.generateResponse = function(){
   }
 }
 ;
-(function(angular, Waypoint, $, window){
+(function(angular, Waypoint, $, window, UriTemplate){
 
   'use strict';
 
-  var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
-  var json_uri = UriTemplate.expand("/api/survey/{s_id}", {s_id: s_id}),
-      payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/hh", {s_id: s_id});
+  var $app = angular.module('SurvaiderForms', ['ui.sortable', 'angular-loading-bar', 'ngAnimate']);
 
-  var $app = angular.module('SurvaiderForms', ['ui.sortable', 'ngAnimate']);
-
-  $app.controller('FormController', function($scope, $http){
-
-    $scope.formEnabled = false;
+  $app.controller('FormController', function($scope, $http, $rootScope){
 
     $scope.activeSlides = [];
 
@@ -41269,21 +41271,6 @@ LongTextQuestion.prototype.generateResponse = function(){
           inPage.element = $('#question-' + inPage.question.id);
 
       movePages('down', outPage.element, inPage.element);
-    }
-
-    function moveToPrevPage(){
-
-      var inPage = new Slide();
-      inPage.slideType = 'header';
-      // inPage.question = $scope.questions[0];
-      inPage.element = $('#header-slide');
-
-      var outPage = new Slide();
-          outPage.slideType = 'question';
-          outPage.question = $scope.questions[0];
-          outPage.element = $('#question-' + outPage.question.id);
-
-      movePages('up', outPage.element, inPage.element);
     }
 
     function movePages(direction, outPage, inPage){
@@ -41423,12 +41410,11 @@ LongTextQuestion.prototype.generateResponse = function(){
       }
 
       //Post a request to server for every question that is answered
-      $http.post('/', JSON.stringify(question.generateResponse()));
-      console.log(question.generateResponse());
+      $http.post(payload_update_uri, JSON.stringify(question.generateResponse()));
 
       var index = -1;
 
-      if (question.type == 'single_choices' || question.type == 'yes_no') {
+      if (question.type == 'single_choice' || question.type == 'yes_no') {
         if (!("va" in question.next)) {
           var next = question.next[question.response];
           index = next;
@@ -41528,7 +41514,8 @@ LongTextQuestion.prototype.generateResponse = function(){
             }
 
             else{
-              thereIsAKeyPress(event.keyCode)
+              thereIsAKeyPress(event.keyCode);
+              checkTheNumberOfRemainingQuestions();
             }
 
         });
@@ -41541,7 +41528,7 @@ LongTextQuestion.prototype.generateResponse = function(){
         var q = $scope.activeSlide.question;
 
         switch (q.type) {
-          case 'single_choices':
+          case 'single_choice':
 
             var numberOfOptions = q.options.length,
                 number = (keyCode-64);
@@ -41560,7 +41547,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
             break;
 
-          case 'multiple_choices':
+          case 'multiple_choice':
 
             var numberOfOptions = q.choices.length,
                 number = keyCode-64,
@@ -41620,59 +41607,11 @@ LongTextQuestion.prototype.generateResponse = function(){
       }
     }
 
-    $scope.moveToPrev = function(question){
 
-      var index = -1;
-
-      if (question.type == 'single_choice' || question.type == 'yes_no') {
-        var next = question.next[question.response];
-        if (!next || next === '') {
-          index = question.next[1];
-        }
-        else{
-          index = next;
-        }
-      }
-      else{
-        index = question.next[1];
-      }
-
-
-
-      if (index == 'end') {
-        index = '#footer-slide';
-        changeIsOnQuestion(false);
-        var newSlide = $(index);
-        movePages('down', $('#question-' + question.id), newSlide);
-        changeActiveSlideType('footer');
-        changeActiveSlideQuestion(null);
-        changeActiveSlideElement(newSlide);
-        return;
-      }
-      else{
-        index = "#question-" + index;
-        changeIsOnQuestion(true);
-      }
-
-
-      var newSlide = $(index);
-
-      if (index != '#footer-slide') {
-        // $scope.activeSlides.push(newSlide);
-      }
-
-      movePages('down', $('#question-' + question.id), newSlide);
-
-      changeActiveSlideElement(newSlide);
-
-
-      $scope.questions.find(function(element){
-        if (element.id == question.next[1]) {
-          changeActiveSlideQuestion(element);
-        }
-      });
-    }
-
+    // REQUEST MARK
+    var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/json", {s_id: s_id}),
+        payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
          .success(function(data, status, header, config){
@@ -41706,7 +41645,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
                  break;
 
-               case "multiple_choices":
+               case "multiple_choice":
                  var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
 
                  for (var i = 0; i < question.field_options.length; i++) {
@@ -41716,7 +41655,7 @@ LongTextQuestion.prototype.generateResponse = function(){
                  $scope.questions.push(tempQuestion);
 
                  break;
-               case "single_choices":
+               case "single_choice":
                  var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
                  tempQuestion.options = question.field_options;
 
@@ -41760,6 +41699,15 @@ LongTextQuestion.prototype.generateResponse = function(){
 
          });
 
+         //Send a get request in beginning to start a session
+         $http.get(payload_update_uri + '?new=true')
+              .success(function(data, status, header, config){
+
+                  console.log(data);
+
+              }
+          );
+
          $scope.$on('changeSidebar', function(event, index){
           updateSidebar(index);
          });
@@ -41776,11 +41724,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                messageEl.html('Minimum 40 Charaters');
                break;
 
-             case 'single_choices':
+             case 'single_choice':
                messageEl.html('Select one choice');
                break;
 
-             case 'multiple_choices':
+             case 'multiple_choice':
                messageEl.html('Select as many as you want');
                break;
 
@@ -41832,27 +41780,18 @@ LongTextQuestion.prototype.generateResponse = function(){
              }
            });
            $scope.numberOfQuestionsRemaining = numberOfQuestionsRemaining;
-
-           if (numberOfQuestionsRemaining == 0) {
-             $scope.formEnabled = true;
-           }
          }
 
          $scope.formSubmit = function(){
            checkTheNumberOfRemainingQuestions();
            var json = generateTheJSON();
-           window.response_json  = json;
-           console.log(json);
-           console.log(JSON.stringify(json));
 
-           $('.sv-logger p').html(JSON.stringify(json));
+           $('.sv-logger pre').text(JSON.stringify(json, null, '\t'));
            $('.sv-logger').addClass('is-active');
            $('.sv-logger button').click(function(){
              $('.sv-logger').removeClass('is-active');
            });
 
-
-            //  location.reload();
          }
 
          function generateTheJSON(){
@@ -41897,4 +41836,20 @@ LongTextQuestion.prototype.generateResponse = function(){
     }
   });
 
-})(angular, Waypoint, $, window);
+  $('#fullscreen-trigger').click(function(ev){
+    ev.preventDefault();
+
+    var elem = document.getElementsByTagName("main")[0];
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+
+  });
+
+})(angular, Waypoint, $, window, UriTemplate);
