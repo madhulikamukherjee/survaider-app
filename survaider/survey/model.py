@@ -111,7 +111,7 @@ class Response(db.Document):
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
-            raise Exception("Invalid Question ID")
+            raise TypeError("Question ID is invalid")
 
     @property
     def added(self):

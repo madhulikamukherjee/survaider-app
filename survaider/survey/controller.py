@@ -16,6 +16,7 @@ from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
 from survaider import app
+from survaider.minions.exceptions import APIException, ViewException
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response, ResponseSession, Helper, ResponseAggregation
@@ -57,7 +58,7 @@ class SurveyController(Resource):
 
             return ret, 200
         else:
-            return "NOPE!", 401
+            raise APIException("Login Required", 401)
 
     def post(self):
         if current_user.is_authenticated():
@@ -77,7 +78,7 @@ class SurveyController(Resource):
 
             return ret, 200
         else:
-            return "NOPE!", 401
+            raise APIException("Login Required", 401)
 
 class SurveyMetaController(Resource):
 
@@ -93,8 +94,16 @@ class SurveyMetaController(Resource):
 
     def get(self, survey_id, action):
         args = self.get_args()
-        s_id = HashId.decode(survey_id)
-        svey = Survey.objects(id = s_id).first()
+
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if svey is None:
+                raise TypeError
+
+        except TypeError:
+            raise APIException("Invalid Survey ID", 404)
 
         if action == 'json':
             if args['editing'] == 'true':
@@ -104,13 +113,21 @@ class SurveyMetaController(Resource):
         elif action == 'paused':
             pass
 
-        return "No action"
+        raise APIException("Must specify a valid option", 400)
 
     def post(self, survey_id, action):
         if current_user.is_authenticated():
             args = self.post_args()
-            s_id = HashId.decode(survey_id)
-            svey = Survey.objects(id = s_id).first()
+
+            try:
+                s_id = HashId.decode(survey_id)
+                svey = Survey.objects(id = s_id).first()
+
+                if svey is None:
+                    raise TypeError
+
+            except TypeError:
+                raise APIException("Invalid Survey ID", 404)
 
             if action == 'struct':
                 svey.structure = json.loads(args['swag'])
@@ -163,9 +180,9 @@ class SurveyMetaController(Resource):
                     return ret, 200
                 raise Exception("TypeError")
 
-            raise Exception("Unauthorized User")
+            raise APIException("Must specify a valid option", 400)
         else:
-            return "NOPE!", 401
+            raise APIException("Login Required", 401)
 
     def delete(self, survey_id):
         pass
@@ -201,8 +218,16 @@ class ResponseController(Resource):
                         Example: GET /api/survey/<survey_id>/response?new=true
         """
 
-        s_id = HashId.decode(survey_id)
-        svey = Survey.objects(id = s_id).first()
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if svey is None:
+                raise TypeError
+
+        except TypeError:
+            raise APIException("Invalid Survey ID", 404)
+
         args = self.get_args()
         is_running = ResponseSession.is_running(s_id)
 
@@ -240,11 +265,18 @@ class ResponseController(Resource):
             q_res (str): Response.
         """
 
-        s_id = HashId.decode(survey_id)
-        svey = Survey.objects(id = s_id).first()
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if svey is None:
+                raise TypeError
+
+        except TypeError:
+            raise APIException("Invalid Survey ID", 404)
 
         if not svey.active:
-            raise Exception("Inactive")
+            raise APIException("This Survey is Inactive or is not accepting responses anymore.", 403)
 
         resp = None
 
@@ -269,19 +301,26 @@ class ResponseController(Resource):
 
         args = self.post_args()
 
-        if any([len(args['q_id']) < 1, len(args['q_res']) < 1]):
-            raise Exception("Input data not valid.")
-
-        resp.add(args['q_id'], args['q_res'])
-        ret['will_add_id'] = args['q_id']
+        try:
+            resp.add(args['q_id'], args['q_res'])
+            ret['will_add_id'] = args['q_id']
+        except TypeError as te:
+            raise APIException(str(te), 400)
 
         return ret, 200
 
 class ResponseAggregationController(Resource):
 
     def get(self, survey_id):
-        s_id = HashId.decode(survey_id)
-        svey = Survey.objects(id = s_id).first()
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if svey is None:
+                raise TypeError
+
+        except TypeError:
+            raise APIException("Invalid Survey ID", 404)
 
         responses = ResponseAggregation(svey)
 
@@ -302,5 +341,4 @@ def get_analysis_page(survey_id):
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
-    print(dir(app))
     return app.send_static_file('simplesurvey/index.simplesurvey.html')
