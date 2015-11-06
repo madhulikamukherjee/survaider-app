@@ -330,7 +330,7 @@ srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
 @srvy.route('/s:<survey_id>/edit')
 def get_index(survey_id):
-    return render_template('srvy.index.html')
+    return render_template('srvy.index.html', template = "Editing Survaider")
 
 @srvy.route('/s:<survey_id>/analysis')
 def get_analysis_page(survey_id):
