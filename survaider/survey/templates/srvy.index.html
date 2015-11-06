@@ -27,11 +27,12 @@
       fb = new Formbuilder({
         selector: '.sb-main',
         bootstrapData: data.fields,
-        screens: ['One', 'Two', 'Three'],
+        screens: data.screens,
       });
 
       fb.on('save', function(payload){
-        $.post(payload_update_uri, {swag: JSON.stringify({fields: payload})}, function (data) {
+        console.log(payload);
+        $.post(payload_update_uri, {swag: payload}, function (data) {
           console.log(data);
         });
       });

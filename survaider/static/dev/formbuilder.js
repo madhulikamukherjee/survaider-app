@@ -571,7 +571,7 @@ var Boner = {
       if (Formbuilder.options.HTTP_ENDPOINT) {
         this.doAjaxSave(payload);
       }
-      return this.formBuilder.trigger('save', this.collection.toJSON());
+      return this.formBuilder.trigger('save', payload);
     };
 
     BuilderView.prototype.doForceSave = function() {

@@ -107,8 +107,8 @@ class SurveyMetaController(Resource):
 
         if action == 'json':
             if args['editing'] == 'true':
-                return svey.structure
-            return Helper.process_render_json(svey.structure)
+                return svey.struct
+            return Helper.process_render_json(svey.struct)
 
         elif action == 'paused':
             pass
@@ -130,7 +130,7 @@ class SurveyMetaController(Resource):
                 raise APIException("Invalid Survey ID", 404)
 
             if action == 'struct':
-                svey.structure = json.loads(args['swag'])
+                svey.struct = json.loads(args['swag'])
                 svey.save()
 
                 ret = {
