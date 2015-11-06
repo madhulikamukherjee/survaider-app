@@ -34,6 +34,9 @@ def create_app():
     @app.after_request
     def do_more_important_stuff(response):
         response.set_cookie('SRPL', Routines.update_obfuscated_cookie('SRPL'))
+        if 'gzip' in g:
+            response.headers.add('Content-Type', 'application/javascript')
+            response.headers.add('Content-Encoding', 'gzip')
         return response
 
     @app.route('/')

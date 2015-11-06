@@ -11,7 +11,7 @@ import dateutil.parser
 import json
 
 from bson.objectid import ObjectId
-from flask import request, Blueprint, render_template
+from flask import request, Blueprint, render_template, g
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
@@ -352,3 +352,15 @@ def get_analysis_page(survey_id):
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
     return app.send_static_file('simplesurvey/index.simplesurvey.html')
+
+@srvy.route('/s:<survey_id>/gamified')
+def get_gamified_survey(survey_id):
+    return app.send_static_file('gamified/index.html')
+
+@srvy.route('/s:<survey_id>/Release/<filename>')
+def gamified_assets(survey_id, filename):
+    new_path = 'gamified/Compressed/{0}gz'.format(filename)
+    print(new_path)
+    g.gzip = True
+    return app.send_static_file(new_path)
+
