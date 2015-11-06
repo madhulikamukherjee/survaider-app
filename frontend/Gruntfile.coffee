@@ -159,8 +159,7 @@ module.exports = (grunt) ->
           style: 'expanded'
 
         files:
-          '<%= build %>/css/builder.main.css': 'assets/css/formbuilder.sass'
-          '<%= build %>/css/survaider.css': 'assets/css/survaider.sass'
+          '<%= build %>/css/survaider.styles.css': 'assets/css/survaider.sass'
 
     watch:
       all:

@@ -1,456 +1,6 @@
-var Links = {
-    hook_id: "svg-canvas",
-    target_hook: "button.target",
-    max_draw: 0,
-
-    init: function () {
-        "use strict";
-        this.draw = SVG(this.hook_id);
-        this.vp_o_x = $("#" + this.hook_id).offset().left;
-        this.vp_o_y = $("#" + this.hook_id).offset().top;
-        this.sub();
-    },
-    update_height: function (height) {
-        "use strict";
-        $("#" + this.hook_id).css({height: this.max_draw});
-    },
-
-    sub: function () {
-        if (!String.prototype.format) {
-          String.prototype.format = function() {
-            var args = arguments;
-            return this.replace(/{(\d+)}/g, function(match, number) {
-              return typeof args[number] != 'undefined'
-                ? args[number]
-                : match
-              ;
-            });
-          };
-        }
-    },
-
-    grid_lines: {
-        lines: [],
-        style: {
-            width: 1,
-            color: "#BBB"
-        },
-
-        /**
-         * Finds the buttons with classes "target" and draws a reference
-         * grid-line on canvas.
-         */
-        draw_horizontal: function () {
-            "use strict";
-            // Find the "target buttons" and draw lines.
-            var targets = $(Links.target_hook),
-                i = 0,
-                pos_x = 0,
-                pos_y = 0,
-                offset = 0,
-                max_x = Links.draw.width();
-
-            for (i = 0; i < targets.length; i += 1) {
-                offset = targets.eq(i).outerHeight() / 2;
-
-                pos_x = targets.eq(i).offset().left + offset - Links.vp_o_x;
-                pos_y = targets.eq(i).offset().top  + offset - Links.vp_o_y;
-
-                this.lines[i] = Links.draw.line(pos_x, pos_y, max_x, pos_y).stroke(this.style);
-            }
-        },
-
-        /**
-         * Draws a link between `origin` and `target` buttons.
-         * Although we're assuming the elements are buttons, they can be any
-         * element in DOM. The widths are calculated in real time.
-         * @param  {string} origin Element ID of the origin.
-         * @param  {string} target Element ID of the target.
-         */
-        draw_link: function (target, origin, grid_space) {
-            "use strict";
-            var origin_el = origin,
-                target_el = target,
-                offset    = {
-                    origin: origin_el.outerHeight() / 2,
-                    target: target_el.outerHeight() / 2
-                },
-                origin_mt = {
-                    x: origin_el.offset().left + offset.origin - Links.vp_o_x,
-                    y: origin_el.offset().top  + offset.origin - Links.vp_o_y
-                },
-                target_mt = {
-                    x: target_el.offset().left + offset.target - Links.vp_o_x,
-                    y: target_el.offset().top + offset.target - Links.vp_o_y
-                };
-
-            var path = "M{0},{1} L{2},{3} L{4},{5} L{6},{7}".format(
-                origin_mt.x,
-                origin_mt.y,
-                origin_mt.x + grid_space,
-                origin_mt.y,
-                origin_mt.x + grid_space,
-                target_mt.y - grid_space,
-                target_mt.x,
-                target_mt.y
-            );
-
-            Links.draw.path(path).stroke({width: 2}).fill({color: "transparent"});
-        },
-
-        link_routine: function () {
-            "use strict";
-            var cards = $("div[data-cid]");
-            var card_num = cards.length;
-
-            for (var i = 0; i < card_num; i += 1) {
-                cards.eq(i);
-            }
-        }
-    },
-
-    reload: function() {
-        "use strict";
-        $("#" + Links.hook_id).html("");
-        Links.init();
-        Links.grid_lines.draw_horizontal();
-        Links.un_blur();
-    },
-
-    blur: function () {
-        "use strict";
-        $("#" + Links.hook_id).attr("class", "blur");
-    },
-
-    un_blur: function () {
-        "use strict";
-        $("#" + Links.hook_id).attr("class", "");
-    }
-
+var Boner = {
+    //
 };
-
-
-// Links.grid_lines.draw_link($("div[data-cid] button[data-target=in]").eq(1), $("div[data-cid] button[data-target=out]").eq(1), 40)
-
-
-var Router = {
-
-    /**
-     * Mapping between field_type and games.
-     * @type {Object}
-     */
-    GameMap: {
-        short_text: {
-            text_scene: [0, 0]
-        },
-        long_text: {
-            suggestions: [0, 0]
-        },
-        yes_no: {
-            car: [2, 2],
-            happy_or_sad: [3, 3]
-        },
-        single_choice: {
-            catapult: [2, 4],
-            fish_scene_one: [2, 5],
-            bird_tunnel: [2, 4]
-        },
-        multiple_choice: {
-            balloon: [2, 5],
-            fish_scene_two: [2, 5]
-        },
-        ranking: {
-            stairs: [2, 6]
-        },
-        rating: {
-            scroll_scene: [0, 0]
-        },
-        group_rating: {
-            star_game: [2, 3]
-        }
-    },
-
-    /**
-     * Schema for the Translated data.
-     * @type {Schema}
-     */
-    DataSchema: schema({
-        fields: Array.of(1, 50, {
-            label: String,
-            field_type: String,
-            required: Boolean,
-            field_options: Array.of(0, 6, String),
-            cid: String,
-            next: {
-                va: String
-            },
-            gametype: String
-        }),
-        game_title: String,
-        game_footer: String,
-
-    }),
-
-    /**
-     * Schema for Incoming data.
-     * @type {Schema}
-     */
-    RawSchema: schema(Array.of(1, 50, {
-        cid: String,
-        field_options: Object,
-        field_type: String,
-        label: String,
-        required: Boolean
-    })),
-
-    /**
-     * Processes the input data, and stores in `dat` global variable.
-     * IMPORTANT: Always check the Router.ok flag.
-     * KNOWN VULNERABILITIES: Race Around Condition exists. However, there's no exposed API in the Formbuilder Base as of now to circumvent this.
-     * @param  {Object} dat  Object of Fields
-     * @return {Boolean}     Object Translation Results.
-     */
-    translate: function(dat) {
-        "use strict";
-
-        if (Router.RawSchema(dat)) {
-            var cp = dat, i = 0, rt = {};
-            for (i; i < dat.length; i += 1) {
-                cp[i].field_options = Router.Process.field_options(dat[i].field_options);
-                cp[i].next = Router.Process.logic(dat[i + 1]);
-                cp[i].gametype = Router.Process.game(dat[i])
-            }
-
-            rt.fields           = cp;
-            rt.game_title       = $("#survey_title").val();
-            rt.game_description = $("#survey_description").val();
-            rt.game_footer      = $("#survey_thank_you").val();
-
-            if (Router.DataSchema(rt)) {
-                Router.dat = rt;
-                Router.ok  = true;
-                return true;
-            }
-
-        }
-
-        Router.ok  = false;
-        return false;
-    },
-
-    /**
-     * Helper functions.
-     * @type {Object}
-     */
-    Process: {
-        /**
-         * Flattens the field_option attribute.
-         * @param  {object} opt field_options object.
-         * @return {Array}      Flattened options.
-         */
-        field_options: function (opt) {
-            "use strict";
-
-            var options = []
-            if (opt.options) {
-                for (var i = 0; i < opt.options.length; i += 1) {
-                    options.push(opt.options[i].label);
-                }
-            }
-            return options;
-        },
-
-        /**
-         * Assigns logical "next" hop from the question.
-         * @param  {Object} id_next Next object to get the ID from.
-         * @return {Object}         Logical Jump
-         * **TODO** Not fully implemented.
-         */
-        logic: function (id_next) {
-            "use strict";
-
-            if (id_next) {
-                return {
-                    va: id_next.cid
-                };
-            } else {
-                return {
-                    va: "end"
-                };
-            }
-        },
-
-        /**
-         * Assigns games on the basis of field_type.
-         * @param  {Object} field Field contents.
-         * @return {String}       Game ID.
-         */
-        game: function (field) {
-            "use strict";
-
-            if (Router.GameMap[field.field_type]) {
-                var type = field.field_type,
-                    len  = field.field_options.length,
-                    games = [];
-                for (var game in Router.GameMap[type]) {
-                    if (Router.GameMap[type].hasOwnProperty(game)) {
-                        if (Router.Helper.between(len, Router.GameMap[type][game])) {
-                            games.push(game);
-                        }
-                    }
-                }
-                return games[Math.floor(Math.random() * games.length)];
-            }
-        }
-    },
-
-    /**
-     * Other Helper functions.
-     * @type {Object}
-     */
-    Helper: {
-        /**
-         * If the number is 
-         * @param  {[type]} number [description]
-         * @param  {[type]} list   [description]
-         * @return {[type]}        [description]
-         */
-        between: function (number, list) {
-            "use strict";
-
-            if (list[0] == list[1]) {
-                if (number == list[0]) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            else if (number >= list[0] && number <= list[1]) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    },
-
-    get: function () {
-        "use strict";
-
-    },
-    play: function() {
-        "use strict";
-
-        swal({
-            title: "Ready for the Magic?!",
-            text: "Click on Build to build your Survey. If you wish to make more changes, click on Cancel.",
-            type: "info",
-            confirmButtonText: "Build",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true,
-        }, function() {
-
-            $.ajax({
-                type: "POST",
-                url:  "https://api.github.com/gists",
-                data: JSON.stringify({
-                    files: {
-                        json_dat: {
-                            content: JSON.stringify(Router.get())
-                        }
-                    }
-                }),
-                contentType: 'application/json'
-            }).done(function (data) {
-                swal({
-                    title: "Built!",
-                    text:  "Your game has been built. Click Play Now!",
-                    type:  "success",
-                    confirmButtonText: "Play Now!",
-                    closeOnConfirm: true
-                }, function () {
-                    window.open('//play.survaider.com?json=' + data.files.json_dat.raw_url, '_blank');
-                });
-            }).fail(function (data) {
-                console.log(data);
-                swal({
-                    title: "We're Sorry!",
-                    text:  "There's been some problem with the Server. Please try again in a little while.",
-                    type:  "error",
-                    closeOnConfirm: true
-                });
-            });
-
-        });
-    }
-};
-
-var tour;
-
-tour = new Shepherd.Tour({
-  defaults: {
-    classes: 'shepherd-theme-arrows',
-    scrollTo: false
-  }
-});
-
-tour.addStep('add-question', {
-  title: 'Adding the Survey Questions',
-  text: 'You can drag and drop the questions to add them to your survey.',
-  attachTo: '.sb-add-field-types right',
-  buttons: [
-    {
-      text: '&times;',
-      classes: 'btn-close',
-      action: tour.cancel
-    },
-    {
-      text: 'Next',
-      action: tour.next
-    }
-  ]
-});
-
-tour.addStep('add-question', {
-  title: 'Your survey is built in this area',
-  text: 'Go ahead, re arrange your questions, or click on them to customize them.',
-  attachTo: '.sb-field-wrapper left',
-  buttons: [
-    {
-      text: '&times;',
-      classes: 'btn-close',
-      action: tour.cancel
-    },
-    {
-      text: 'Next',
-      action: tour.next
-    }
-  ]
-});
-
-tour.addStep('add-question', {
-  title: 'Time for the Magic to happen!',
-  text: "Once you're done, watch your survey turning into a game!",
-  attachTo: '.play-now bottom',
-  buttons: [
-    {
-      text: '&times;',
-      classes: 'btn-close',
-      action: tour.cancel
-    },
-    {
-      text: 'Next',
-      action: tour.next
-    }
-  ]
-});
-
-$(function () {
-  setTimeout(function () {
-    //tour.start();
-  }, 1000);
-});
 
 (function() {
   rivets.binders.input = {
@@ -495,7 +45,7 @@ $(function () {
 }).call(this);
 
 (function() {
-  var BuilderView, EditFieldView, Formbuilder, FormbuilderCollection, FormbuilderModel, ViewFieldView,
+  var BuilderView, EditFieldView, Formbuilder, FormbuilderCollection, FormbuilderModel, ScreenCollection, ScreenModel, ScreenView, ViewFieldView,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -523,6 +73,27 @@ $(function () {
     };
 
     return FormbuilderModel;
+
+  })(Backbone.DeepModel);
+
+  ScreenModel = (function(superClass) {
+    extend(ScreenModel, superClass);
+
+    function ScreenModel() {
+      return ScreenModel.__super__.constructor.apply(this, arguments);
+    }
+
+    ScreenModel.prototype.screens = {
+      intro: {
+        title: 'Default Title',
+        description: 'Default Description'
+      },
+      end: {
+        title: 'Default Ending'
+      }
+    };
+
+    return ScreenModel;
 
   })(Backbone.DeepModel);
 
@@ -993,12 +564,19 @@ $(function () {
       this.saveFormButton.attr('disabled', true).text(Formbuilder.options.dict.ALL_CHANGES_SAVED);
       this.collection.sort();
       payload = JSON.stringify({
-        fields: this.collection.toJSON()
+        fields: this.collection.toJSON(),
+        screens: this.formBuilder.screenView.toJSON()
       });
+      console.log(payload);
       if (Formbuilder.options.HTTP_ENDPOINT) {
         this.doAjaxSave(payload);
       }
       return this.formBuilder.trigger('save', this.collection.toJSON());
+    };
+
+    BuilderView.prototype.doForceSave = function() {
+      this.formSaved = false;
+      return this.saveForm();
     };
 
     BuilderView.prototype.doAjaxSave = function(payload) {
@@ -1027,6 +605,63 @@ $(function () {
     };
 
     return BuilderView;
+
+  })(Backbone.View);
+
+  ScreenCollection = (function(superClass) {
+    extend(ScreenCollection, superClass);
+
+    function ScreenCollection() {
+      return ScreenCollection.__super__.constructor.apply(this, arguments);
+    }
+
+    ScreenCollection.prototype.initialize = function() {};
+
+    ScreenCollection.prototype.model = ScreenModel;
+
+    return ScreenCollection;
+
+  })(Backbone.Collection);
+
+  ScreenView = (function(superClass) {
+    extend(ScreenView, superClass);
+
+    function ScreenView() {
+      return ScreenView.__super__.constructor.apply(this, arguments);
+    }
+
+    ScreenView.prototype.events = {
+      'input #survey_title': 'update',
+      'input #survey_description': 'update',
+      'input #survey_thank_you': 'update'
+    };
+
+    ScreenView.prototype.initialize = function(options) {
+      var screens, selector;
+      selector = options.selector, this.formBuilder = options.formBuilder, screens = options.screens;
+      if (selector != null) {
+        this.setElement($(selector));
+      }
+      this.dat = screens;
+      return this.render(screens);
+    };
+
+    ScreenView.prototype.update = _.debounce(function() {
+      this.dat = [$('#survey_title').val(), $('#survey_description').val(), $('#survey_thank_you').val()];
+      return this.formBuilder.mainView.doForceSave();
+    }, 500);
+
+    ScreenView.prototype.toJSON = function() {
+      return this.dat;
+    };
+
+    ScreenView.prototype.render = function(dat) {
+      $('#survey_title').val(dat[0]);
+      $('#survey_description').val(dat[1]);
+      return $('#survey_thank_you').val(dat[2]);
+    };
+
+    return ScreenView;
 
   })(Backbone.View);
 
@@ -1152,6 +787,7 @@ $(function () {
         formBuilder: this
       });
       this.mainView = new BuilderView(args);
+      this.screenView = new ScreenView(args);
     }
 
     return Formbuilder;
@@ -1571,7 +1207,7 @@ this["Formbuilder"]["templates"]["partials/right_side"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <input type="text" placeholder="Survey Title" value="Facebook Market Research" id="survey_title">\n      <textarea id="survey_description">Play to answer questions about your most beloved social networking website - Facebook. Help us in making a better product for you. :)</textarea>\n      <button class="target_O"\n              id = "i"\n              data-target = "top_out"\n              data-target-index = "0"\n      ></button>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you">Thank you for contributing!</textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
+__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you">Thank you for contributing!</textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
 
 }
 return __p

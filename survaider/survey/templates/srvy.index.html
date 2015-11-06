@@ -26,7 +26,8 @@
 
       fb = new Formbuilder({
         selector: '.sb-main',
-        bootstrapData: data.fields
+        bootstrapData: data.fields,
+        screens: ['One', 'Two', 'Three'],
       });
 
       fb.on('save', function(payload){
