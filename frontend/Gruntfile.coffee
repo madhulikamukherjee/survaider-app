@@ -50,9 +50,14 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
             'bower_components/datatables/media/js/jquery.dataTables.js'
             'bower_components/datatables-buttons/js/dataTables.buttons.js'
+            'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js'
+            'bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js'
             'bower_components/pdfmake/build/pdfmake.js'
+            'bower_components/switchery/dist/switchery.js'
             'bower_components/uri-template.js/dist/uri-template.js'
             'bower_components/sweetalert/dist/sweetalert.min.js'
+            'bower_components/ladda/dist/spin.min.js'
+            'bower_components/ladda/dist/ladda.min.js'
             'pages/js/pages.js'
           ]
           '<%= build%>/js/builder.js': [
@@ -100,6 +105,8 @@ module.exports = (grunt) ->
             'bower_components/switchery/dist/switchery.css'
             'bower_components/datatables/media/css/jquery.dataTables.css'
             'bower_components/sweetalert/dist/sweetalert.css'
+            'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css'
+            'bower_components/ladda/dist/ladda-themeless.min.css'
             'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]

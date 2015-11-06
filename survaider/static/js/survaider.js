@@ -47215,6 +47215,3097 @@ else if ( jQuery && !jQuery.fn.dataTable.Buttons ) {
 })(window, document);
 
 
+/*!
+ * Datepicker for Bootstrap v1.5.0 (https://github.com/eternicode/bootstrap-datepicker)
+ *
+ * Copyright 2012 Stefan Petre
+ * Improvements by Andrew Rowls
+ * Licensed under the Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */(function(factory){
+    if (typeof define === "function" && define.amd) {
+        define(["jquery"], factory);
+    } else if (typeof exports === 'object') {
+        factory(require('jquery'));
+    } else {
+        factory(jQuery);
+    }
+}(function($, undefined){
+
+	function UTCDate(){
+		return new Date(Date.UTC.apply(Date, arguments));
+	}
+	function UTCToday(){
+		var today = new Date();
+		return UTCDate(today.getFullYear(), today.getMonth(), today.getDate());
+	}
+	function isUTCEquals(date1, date2) {
+		return (
+			date1.getUTCFullYear() === date2.getUTCFullYear() &&
+			date1.getUTCMonth() === date2.getUTCMonth() &&
+			date1.getUTCDate() === date2.getUTCDate()
+		);
+	}
+	function alias(method){
+		return function(){
+			return this[method].apply(this, arguments);
+		};
+	}
+	function isValidDate(d) {
+		return d && !isNaN(d.getTime());
+	}
+
+	var DateArray = (function(){
+		var extras = {
+			get: function(i){
+				return this.slice(i)[0];
+			},
+			contains: function(d){
+				// Array.indexOf is not cross-browser;
+				// $.inArray doesn't work with Dates
+				var val = d && d.valueOf();
+				for (var i=0, l=this.length; i < l; i++)
+					if (this[i].valueOf() === val)
+						return i;
+				return -1;
+			},
+			remove: function(i){
+				this.splice(i,1);
+			},
+			replace: function(new_array){
+				if (!new_array)
+					return;
+				if (!$.isArray(new_array))
+					new_array = [new_array];
+				this.clear();
+				this.push.apply(this, new_array);
+			},
+			clear: function(){
+				this.length = 0;
+			},
+			copy: function(){
+				var a = new DateArray();
+				a.replace(this);
+				return a;
+			}
+		};
+
+		return function(){
+			var a = [];
+			a.push.apply(a, arguments);
+			$.extend(a, extras);
+			return a;
+		};
+	})();
+
+
+	// Picker object
+
+	var Datepicker = function(element, options){
+		this._process_options(options);
+
+		this.dates = new DateArray();
+		this.viewDate = this.o.defaultViewDate;
+		this.focusDate = null;
+
+		this.element = $(element);
+		this.isInline = false;
+		this.isInput = this.element.is('input');
+		this.component = this.element.hasClass('date') ? this.element.find('.add-on, .input-group-addon, .btn') : false;
+		this.hasInput = this.component && this.element.find('input').length;
+		if (this.component && this.component.length === 0)
+			this.component = false;
+
+		this.picker = $(DPGlobal.template);
+		this._buildEvents();
+		this._attachEvents();
+
+		if (this.isInline){
+			this.picker.addClass('datepicker-inline').appendTo(this.element);
+		}
+		else {
+			this.picker.addClass('datepicker-dropdown dropdown-menu');
+		}
+
+		if (this.o.rtl){
+			this.picker.addClass('datepicker-rtl');
+		}
+
+		this.viewMode = this.o.startView;
+
+		if (this.o.calendarWeeks)
+			this.picker.find('tfoot .today, tfoot .clear')
+						.attr('colspan', function(i, val){
+							return parseInt(val) + 1;
+						});
+
+		this._allow_update = false;
+
+		this.setStartDate(this._o.startDate);
+		this.setEndDate(this._o.endDate);
+		this.setDaysOfWeekDisabled(this.o.daysOfWeekDisabled);
+		this.setDaysOfWeekHighlighted(this.o.daysOfWeekHighlighted);
+		this.setDatesDisabled(this.o.datesDisabled);
+
+		this.fillDow();
+		this.fillMonths();
+
+		this._allow_update = true;
+
+		this.update();
+		this.showMode();
+
+		if (this.isInline){
+			this.show();
+		}
+	};
+
+	Datepicker.prototype = {
+		constructor: Datepicker,
+
+		_process_options: function(opts){
+			// Store raw options for reference
+			this._o = $.extend({}, this._o, opts);
+			// Processed options
+			var o = this.o = $.extend({}, this._o);
+
+			// Check if "de-DE" style date is available, if not language should
+			// fallback to 2 letter code eg "de"
+			var lang = o.language;
+			if (!dates[lang]){
+				lang = lang.split('-')[0];
+				if (!dates[lang])
+					lang = defaults.language;
+			}
+			o.language = lang;
+
+			switch (o.startView){
+				case 2:
+				case 'decade':
+					o.startView = 2;
+					break;
+				case 1:
+				case 'year':
+					o.startView = 1;
+					break;
+				default:
+					o.startView = 0;
+			}
+
+			switch (o.minViewMode){
+				case 1:
+				case 'months':
+					o.minViewMode = 1;
+					break;
+				case 2:
+				case 'years':
+					o.minViewMode = 2;
+					break;
+				default:
+					o.minViewMode = 0;
+			}
+
+			switch (o.maxViewMode) {
+				case 0:
+				case 'days':
+					o.maxViewMode = 0;
+					break;
+				case 1:
+				case 'months':
+					o.maxViewMode = 1;
+					break;
+				default:
+					o.maxViewMode = 2;
+			}
+
+			o.startView = Math.min(o.startView, o.maxViewMode);
+			o.startView = Math.max(o.startView, o.minViewMode);
+
+			// true, false, or Number > 0
+			if (o.multidate !== true){
+				o.multidate = Number(o.multidate) || false;
+				if (o.multidate !== false)
+					o.multidate = Math.max(0, o.multidate);
+			}
+			o.multidateSeparator = String(o.multidateSeparator);
+
+			o.weekStart %= 7;
+			o.weekEnd = ((o.weekStart + 6) % 7);
+
+			var format = DPGlobal.parseFormat(o.format);
+			if (o.startDate !== -Infinity){
+				if (!!o.startDate){
+					if (o.startDate instanceof Date)
+						o.startDate = this._local_to_utc(this._zero_time(o.startDate));
+					else
+						o.startDate = DPGlobal.parseDate(o.startDate, format, o.language);
+				}
+				else {
+					o.startDate = -Infinity;
+				}
+			}
+			if (o.endDate !== Infinity){
+				if (!!o.endDate){
+					if (o.endDate instanceof Date)
+						o.endDate = this._local_to_utc(this._zero_time(o.endDate));
+					else
+						o.endDate = DPGlobal.parseDate(o.endDate, format, o.language);
+				}
+				else {
+					o.endDate = Infinity;
+				}
+			}
+
+			o.daysOfWeekDisabled = o.daysOfWeekDisabled||[];
+			if (!$.isArray(o.daysOfWeekDisabled))
+				o.daysOfWeekDisabled = o.daysOfWeekDisabled.split(/[,\s]*/);
+			o.daysOfWeekDisabled = $.map(o.daysOfWeekDisabled, function(d){
+				return parseInt(d, 10);
+			});
+
+			o.daysOfWeekHighlighted = o.daysOfWeekHighlighted||[];
+			if (!$.isArray(o.daysOfWeekHighlighted))
+				o.daysOfWeekHighlighted = o.daysOfWeekHighlighted.split(/[,\s]*/);
+			o.daysOfWeekHighlighted = $.map(o.daysOfWeekHighlighted, function(d){
+				return parseInt(d, 10);
+			});
+
+			o.datesDisabled = o.datesDisabled||[];
+			if (!$.isArray(o.datesDisabled)) {
+				var datesDisabled = [];
+				datesDisabled.push(DPGlobal.parseDate(o.datesDisabled, format, o.language));
+				o.datesDisabled = datesDisabled;
+			}
+			o.datesDisabled = $.map(o.datesDisabled,function(d){
+				return DPGlobal.parseDate(d, format, o.language);
+			});
+
+			var plc = String(o.orientation).toLowerCase().split(/\s+/g),
+				_plc = o.orientation.toLowerCase();
+			plc = $.grep(plc, function(word){
+				return /^auto|left|right|top|bottom$/.test(word);
+			});
+			o.orientation = {x: 'auto', y: 'auto'};
+			if (!_plc || _plc === 'auto')
+				; // no action
+			else if (plc.length === 1){
+				switch (plc[0]){
+					case 'top':
+					case 'bottom':
+						o.orientation.y = plc[0];
+						break;
+					case 'left':
+					case 'right':
+						o.orientation.x = plc[0];
+						break;
+				}
+			}
+			else {
+				_plc = $.grep(plc, function(word){
+					return /^left|right$/.test(word);
+				});
+				o.orientation.x = _plc[0] || 'auto';
+
+				_plc = $.grep(plc, function(word){
+					return /^top|bottom$/.test(word);
+				});
+				o.orientation.y = _plc[0] || 'auto';
+			}
+			if (o.defaultViewDate) {
+				var year = o.defaultViewDate.year || new Date().getFullYear();
+				var month = o.defaultViewDate.month || 0;
+				var day = o.defaultViewDate.day || 1;
+				o.defaultViewDate = UTCDate(year, month, day);
+			} else {
+				o.defaultViewDate = UTCToday();
+			}
+			o.showOnFocus = o.showOnFocus !== undefined ? o.showOnFocus : true;
+			o.zIndexOffset = o.zIndexOffset !== undefined ? o.zIndexOffset : 10;
+		},
+		_events: [],
+		_secondaryEvents: [],
+		_applyEvents: function(evs){
+			for (var i=0, el, ch, ev; i < evs.length; i++){
+				el = evs[i][0];
+				if (evs[i].length === 2){
+					ch = undefined;
+					ev = evs[i][1];
+				}
+				else if (evs[i].length === 3){
+					ch = evs[i][1];
+					ev = evs[i][2];
+				}
+				el.on(ev, ch);
+			}
+		},
+		_unapplyEvents: function(evs){
+			for (var i=0, el, ev, ch; i < evs.length; i++){
+				el = evs[i][0];
+				if (evs[i].length === 2){
+					ch = undefined;
+					ev = evs[i][1];
+				}
+				else if (evs[i].length === 3){
+					ch = evs[i][1];
+					ev = evs[i][2];
+				}
+				el.off(ev, ch);
+			}
+		},
+		_buildEvents: function(){
+            var events = {
+                keyup: $.proxy(function(e){
+                    if ($.inArray(e.keyCode, [27, 37, 39, 38, 40, 32, 13, 9]) === -1)
+                        this.update();
+                }, this),
+                keydown: $.proxy(this.keydown, this),
+                paste: $.proxy(this.paste, this)
+            };
+
+            if (this.o.showOnFocus === true) {
+                events.focus = $.proxy(this.show, this);
+            }
+
+            if (this.isInput) { // single input
+                this._events = [
+                    [this.element, events]
+                ];
+            }
+            else if (this.component && this.hasInput) { // component: input + button
+                this._events = [
+                    // For components that are not readonly, allow keyboard nav
+                    [this.element.find('input'), events],
+                    [this.component, {
+                        click: $.proxy(this.show, this)
+                    }]
+                ];
+            }
+			else if (this.element.is('div')){  // inline datepicker
+				this.isInline = true;
+			}
+			else {
+				this._events = [
+					[this.element, {
+						click: $.proxy(this.show, this)
+					}]
+				];
+			}
+			this._events.push(
+				// Component: listen for blur on element descendants
+				[this.element, '*', {
+					blur: $.proxy(function(e){
+						this._focused_from = e.target;
+					}, this)
+				}],
+				// Input: listen for blur on element
+				[this.element, {
+					blur: $.proxy(function(e){
+						this._focused_from = e.target;
+					}, this)
+				}]
+			);
+
+			if (this.o.immediateUpdates) {
+				// Trigger input updates immediately on changed year/month
+				this._events.push([this.element, {
+					'changeYear changeMonth': $.proxy(function(e){
+						this.update(e.date);
+					}, this)
+				}]);
+			}
+
+			this._secondaryEvents = [
+				[this.picker, {
+					click: $.proxy(this.click, this)
+				}],
+				[$(window), {
+					resize: $.proxy(this.place, this)
+				}],
+				[$(document), {
+					mousedown: $.proxy(function(e){
+						// Clicked outside the datepicker, hide it
+						if (!(
+							this.element.is(e.target) ||
+							this.element.find(e.target).length ||
+							this.picker.is(e.target) ||
+							this.picker.find(e.target).length ||
+							this.picker.hasClass('datepicker-inline')
+						)){
+							this.hide();
+						}
+					}, this)
+				}]
+			];
+		},
+		_attachEvents: function(){
+			this._detachEvents();
+			this._applyEvents(this._events);
+		},
+		_detachEvents: function(){
+			this._unapplyEvents(this._events);
+		},
+		_attachSecondaryEvents: function(){
+			this._detachSecondaryEvents();
+			this._applyEvents(this._secondaryEvents);
+		},
+		_detachSecondaryEvents: function(){
+			this._unapplyEvents(this._secondaryEvents);
+		},
+		_trigger: function(event, altdate){
+			var date = altdate || this.dates.get(-1),
+				local_date = this._utc_to_local(date);
+
+			this.element.trigger({
+				type: event,
+				date: local_date,
+				dates: $.map(this.dates, this._utc_to_local),
+				format: $.proxy(function(ix, format){
+					if (arguments.length === 0){
+						ix = this.dates.length - 1;
+						format = this.o.format;
+					}
+					else if (typeof ix === 'string'){
+						format = ix;
+						ix = this.dates.length - 1;
+					}
+					format = format || this.o.format;
+					var date = this.dates.get(ix);
+					return DPGlobal.formatDate(date, format, this.o.language);
+				}, this)
+			});
+		},
+
+		show: function(){
+			if (this.element.attr('readonly') && this.o.enableOnReadonly === false)
+				return;
+			if (!this.isInline)
+				this.picker.appendTo(this.o.container);
+			this.place();
+			this.picker.show();
+			this._attachSecondaryEvents();
+			this._trigger('show');
+			if ((window.navigator.msMaxTouchPoints || 'ontouchstart' in document) && this.o.disableTouchKeyboard) {
+				$(this.element).blur();
+			}
+			return this;
+		},
+
+		hide: function(){
+			if (this.isInline)
+				return this;
+			if (!this.picker.is(':visible'))
+				return this;
+			this.focusDate = null;
+			this.picker.hide().detach();
+			this._detachSecondaryEvents();
+			this.viewMode = this.o.startView;
+			this.showMode();
+
+			if (
+				this.o.forceParse &&
+				(
+					this.isInput && this.element.val() ||
+					this.hasInput && this.element.find('input').val()
+				)
+			)
+				this.setValue();
+			this._trigger('hide');
+			return this;
+		},
+
+		remove: function(){
+			this.hide();
+			this._detachEvents();
+			this._detachSecondaryEvents();
+			this.picker.remove();
+			delete this.element.data().datepicker;
+			if (!this.isInput){
+				delete this.element.data().date;
+			}
+			return this;
+		},
+
+		paste: function(evt){
+			var dateString;
+			if (evt.originalEvent.clipboardData && evt.originalEvent.clipboardData.types
+				&& $.inArray('text/plain', evt.originalEvent.clipboardData.types) !== -1) {
+				dateString = evt.originalEvent.clipboardData.getData('text/plain');
+			}
+			else if (window.clipboardData) {
+				dateString = window.clipboardData.getData('Text');
+			}
+			else {
+				return;
+			}
+			this.setDate(dateString);
+			this.update();
+			evt.preventDefault();
+		},
+
+		_utc_to_local: function(utc){
+			return utc && new Date(utc.getTime() + (utc.getTimezoneOffset()*60000));
+		},
+		_local_to_utc: function(local){
+			return local && new Date(local.getTime() - (local.getTimezoneOffset()*60000));
+		},
+		_zero_time: function(local){
+			return local && new Date(local.getFullYear(), local.getMonth(), local.getDate());
+		},
+		_zero_utc_time: function(utc){
+			return utc && new Date(Date.UTC(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate()));
+		},
+
+		getDates: function(){
+			return $.map(this.dates, this._utc_to_local);
+		},
+
+		getUTCDates: function(){
+			return $.map(this.dates, function(d){
+				return new Date(d);
+			});
+		},
+
+		getDate: function(){
+			return this._utc_to_local(this.getUTCDate());
+		},
+
+		getUTCDate: function(){
+			var selected_date = this.dates.get(-1);
+			if (typeof selected_date !== 'undefined') {
+				return new Date(selected_date);
+			} else {
+				return null;
+			}
+		},
+
+		clearDates: function(){
+			var element;
+			if (this.isInput) {
+				element = this.element;
+			} else if (this.component) {
+				element = this.element.find('input');
+			}
+
+			if (element) {
+				element.val('');
+			}
+
+			this.update();
+			this._trigger('changeDate');
+
+			if (this.o.autoclose) {
+				this.hide();
+			}
+		},
+		setDates: function(){
+			var args = $.isArray(arguments[0]) ? arguments[0] : arguments;
+			this.update.apply(this, args);
+			this._trigger('changeDate');
+			this.setValue();
+			return this;
+		},
+
+		setUTCDates: function(){
+			var args = $.isArray(arguments[0]) ? arguments[0] : arguments;
+			this.update.apply(this, $.map(args, this._utc_to_local));
+			this._trigger('changeDate');
+			this.setValue();
+			return this;
+		},
+
+		setDate: alias('setDates'),
+		setUTCDate: alias('setUTCDates'),
+
+		setValue: function(){
+			var formatted = this.getFormattedDate();
+			if (!this.isInput){
+				if (this.component){
+					this.element.find('input').val(formatted);
+				}
+			}
+			else {
+				this.element.val(formatted);
+			}
+			return this;
+		},
+
+		getFormattedDate: function(format){
+			if (format === undefined)
+				format = this.o.format;
+
+			var lang = this.o.language;
+			return $.map(this.dates, function(d){
+				return DPGlobal.formatDate(d, format, lang);
+			}).join(this.o.multidateSeparator);
+		},
+
+		setStartDate: function(startDate){
+			this._process_options({startDate: startDate});
+			this.update();
+			this.updateNavArrows();
+			return this;
+		},
+
+		setEndDate: function(endDate){
+			this._process_options({endDate: endDate});
+			this.update();
+			this.updateNavArrows();
+			return this;
+		},
+
+		setDaysOfWeekDisabled: function(daysOfWeekDisabled){
+			this._process_options({daysOfWeekDisabled: daysOfWeekDisabled});
+			this.update();
+			this.updateNavArrows();
+			return this;
+		},
+
+		setDaysOfWeekHighlighted: function(daysOfWeekHighlighted){
+			this._process_options({daysOfWeekHighlighted: daysOfWeekHighlighted});
+			this.update();
+			return this;
+		},
+
+		setDatesDisabled: function(datesDisabled){
+			this._process_options({datesDisabled: datesDisabled});
+			this.update();
+			this.updateNavArrows();
+		},
+
+		place: function(){
+			if (this.isInline)
+				return this;
+			var calendarWidth = this.picker.outerWidth(),
+				calendarHeight = this.picker.outerHeight(),
+				visualPadding = 10,
+				container = $(this.o.container),
+				windowWidth = container.width(),
+				scrollTop = container.scrollTop(),
+				appendOffset = container.offset();
+
+			var parentsZindex = [];
+			this.element.parents().each(function(){
+				var itemZIndex = $(this).css('z-index');
+				if (itemZIndex !== 'auto' && itemZIndex !== 0) parentsZindex.push(parseInt(itemZIndex));
+			});
+			var zIndex = Math.max.apply(Math, parentsZindex) + this.o.zIndexOffset;
+			var offset = this.component ? this.component.parent().offset() : this.element.offset();
+			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(false);
+			var width = this.component ? this.component.outerWidth(true) : this.element.outerWidth(false);
+			var left = offset.left - appendOffset.left,
+				top = offset.top - appendOffset.top;
+
+			this.picker.removeClass(
+				'datepicker-orient-top datepicker-orient-bottom '+
+				'datepicker-orient-right datepicker-orient-left'
+			);
+
+			if (this.o.orientation.x !== 'auto'){
+				this.picker.addClass('datepicker-orient-' + this.o.orientation.x);
+				if (this.o.orientation.x === 'right')
+					left -= calendarWidth - width;
+			}
+			// auto x orientation is best-placement: if it crosses a window
+			// edge, fudge it sideways
+			else {
+				if (offset.left < 0) {
+					// component is outside the window on the left side. Move it into visible range
+					this.picker.addClass('datepicker-orient-left');
+					left -= offset.left - visualPadding;
+				} else if (left + calendarWidth > windowWidth) {
+					// the calendar passes the widow right edge. Align it to component right side
+					this.picker.addClass('datepicker-orient-right');
+					left = offset.left + width - calendarWidth;
+				} else {
+					// Default to left
+					this.picker.addClass('datepicker-orient-left');
+				}
+			}
+
+			// auto y orientation is best-situation: top or bottom, no fudging,
+			// decision based on which shows more of the calendar
+			var yorient = this.o.orientation.y,
+				top_overflow;
+			if (yorient === 'auto'){
+				top_overflow = -scrollTop + top - calendarHeight;
+				yorient = top_overflow < 0 ? 'bottom' : 'top';
+			}
+
+			this.picker.addClass('datepicker-orient-' + yorient);
+			if (yorient === 'top')
+				top -= calendarHeight + parseInt(this.picker.css('padding-top'));
+			else
+				top += height;
+
+			if (this.o.rtl) {
+				var right = windowWidth - (left + width);
+				this.picker.css({
+					top: top,
+					right: right,
+					zIndex: zIndex
+				});
+			} else {
+				this.picker.css({
+					top: top,
+					left: left,
+					zIndex: zIndex
+				});
+			}
+			return this;
+		},
+
+		_allow_update: true,
+		update: function(){
+			if (!this._allow_update)
+				return this;
+
+			var oldDates = this.dates.copy(),
+				dates = [],
+				fromArgs = false;
+			if (arguments.length){
+				$.each(arguments, $.proxy(function(i, date){
+					if (date instanceof Date)
+						date = this._local_to_utc(date);
+					dates.push(date);
+				}, this));
+				fromArgs = true;
+			}
+			else {
+				dates = this.isInput
+						? this.element.val()
+						: this.element.data('date') || this.element.find('input').val();
+				if (dates && this.o.multidate)
+					dates = dates.split(this.o.multidateSeparator);
+				else
+					dates = [dates];
+				delete this.element.data().date;
+			}
+
+			dates = $.map(dates, $.proxy(function(date){
+				return DPGlobal.parseDate(date, this.o.format, this.o.language);
+			}, this));
+			dates = $.grep(dates, $.proxy(function(date){
+				return (
+					date < this.o.startDate ||
+					date > this.o.endDate ||
+					!date
+				);
+			}, this), true);
+			this.dates.replace(dates);
+
+			if (this.dates.length)
+				this.viewDate = new Date(this.dates.get(-1));
+			else if (this.viewDate < this.o.startDate)
+				this.viewDate = new Date(this.o.startDate);
+			else if (this.viewDate > this.o.endDate)
+				this.viewDate = new Date(this.o.endDate);
+			else
+				this.viewDate = this.o.defaultViewDate;
+
+			if (fromArgs){
+				// setting date by clicking
+				this.setValue();
+			}
+			else if (dates.length){
+				// setting date by typing
+				if (String(oldDates) !== String(this.dates))
+					this._trigger('changeDate');
+			}
+			if (!this.dates.length && oldDates.length)
+				this._trigger('clearDate');
+
+			this.fill();
+			this.element.change();
+			return this;
+		},
+
+		fillDow: function(){
+			var dowCnt = this.o.weekStart,
+				html = '<tr>';
+			if (this.o.calendarWeeks){
+				this.picker.find('.datepicker-days .datepicker-switch')
+					.attr('colspan', function(i, val){
+						return parseInt(val) + 1;
+					});
+				html += '<th class="cw">&#160;</th>';
+			}
+			while (dowCnt < this.o.weekStart + 7){
+				html += '<th class="dow">'+dates[this.o.language].daysMin[(dowCnt++)%7]+'</th>';
+			}
+			html += '</tr>';
+			this.picker.find('.datepicker-days thead').append(html);
+		},
+
+		fillMonths: function(){
+			var html = '',
+			i = 0;
+			while (i < 12){
+				html += '<span class="month">'+dates[this.o.language].monthsShort[i++]+'</span>';
+			}
+			this.picker.find('.datepicker-months td').html(html);
+		},
+
+		setRange: function(range){
+			if (!range || !range.length)
+				delete this.range;
+			else
+				this.range = $.map(range, function(d){
+					return d.valueOf();
+				});
+			this.fill();
+		},
+
+		getClassNames: function(date){
+			var cls = [],
+				year = this.viewDate.getUTCFullYear(),
+				month = this.viewDate.getUTCMonth(),
+				today = new Date();
+			if (date.getUTCFullYear() < year || (date.getUTCFullYear() === year && date.getUTCMonth() < month)){
+				cls.push('old');
+			}
+			else if (date.getUTCFullYear() > year || (date.getUTCFullYear() === year && date.getUTCMonth() > month)){
+				cls.push('new');
+			}
+			if (this.focusDate && date.valueOf() === this.focusDate.valueOf())
+				cls.push('focused');
+			// Compare internal UTC date with local today, not UTC today
+			if (this.o.todayHighlight &&
+				date.getUTCFullYear() === today.getFullYear() &&
+				date.getUTCMonth() === today.getMonth() &&
+				date.getUTCDate() === today.getDate()){
+				cls.push('today');
+			}
+			if (this.dates.contains(date) !== -1)
+				cls.push('active');
+			if (date.valueOf() < this.o.startDate || date.valueOf() > this.o.endDate ||
+				$.inArray(date.getUTCDay(), this.o.daysOfWeekDisabled) !== -1){
+				cls.push('disabled');
+			}
+			if ($.inArray(date.getUTCDay(), this.o.daysOfWeekHighlighted) !== -1){
+				cls.push('highlighted');
+			}
+			if (this.o.datesDisabled.length > 0 &&
+				$.grep(this.o.datesDisabled, function(d){
+					return isUTCEquals(date, d); }).length > 0) {
+				cls.push('disabled', 'disabled-date');
+			}
+
+			if (this.range){
+				if (date > this.range[0] && date < this.range[this.range.length-1]){
+					cls.push('range');
+				}
+				if ($.inArray(date.valueOf(), this.range) !== -1){
+					cls.push('selected');
+				}
+				if (date.valueOf() === this.range[0]){
+          cls.push('range-start');
+        }
+        if (date.valueOf() === this.range[this.range.length-1]){
+          cls.push('range-end');
+        }
+			}
+			return cls;
+		},
+
+		fill: function(){
+			var d = new Date(this.viewDate),
+				year = d.getUTCFullYear(),
+				month = d.getUTCMonth(),
+				startYear = this.o.startDate !== -Infinity ? this.o.startDate.getUTCFullYear() : -Infinity,
+				startMonth = this.o.startDate !== -Infinity ? this.o.startDate.getUTCMonth() : -Infinity,
+				endYear = this.o.endDate !== Infinity ? this.o.endDate.getUTCFullYear() : Infinity,
+				endMonth = this.o.endDate !== Infinity ? this.o.endDate.getUTCMonth() : Infinity,
+				todaytxt = dates[this.o.language].today || dates['en'].today || '',
+				cleartxt = dates[this.o.language].clear || dates['en'].clear || '',
+				titleFormat = dates[this.o.language].titleFormat || dates['en'].titleFormat,
+				tooltip;
+			if (isNaN(year) || isNaN(month))
+				return;
+			this.picker.find('.datepicker-days thead .datepicker-switch')
+						.text(DPGlobal.formatDate(new UTCDate(year, month), titleFormat, this.o.language));
+			this.picker.find('tfoot .today')
+						.text(todaytxt)
+						.toggle(this.o.todayBtn !== false);
+			this.picker.find('tfoot .clear')
+						.text(cleartxt)
+						.toggle(this.o.clearBtn !== false);
+			this.picker.find('thead .datepicker-title')
+						.text(this.o.title)
+						.toggle(this.o.title !== '');
+			this.updateNavArrows();
+			this.fillMonths();
+			var prevMonth = UTCDate(year, month-1, 28),
+				day = DPGlobal.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
+			prevMonth.setUTCDate(day);
+			prevMonth.setUTCDate(day - (prevMonth.getUTCDay() - this.o.weekStart + 7)%7);
+			var nextMonth = new Date(prevMonth);
+			if (prevMonth.getUTCFullYear() < 100){
+        nextMonth.setUTCFullYear(prevMonth.getUTCFullYear());
+      }
+			nextMonth.setUTCDate(nextMonth.getUTCDate() + 42);
+			nextMonth = nextMonth.valueOf();
+			var html = [];
+			var clsName;
+			while (prevMonth.valueOf() < nextMonth){
+				if (prevMonth.getUTCDay() === this.o.weekStart){
+					html.push('<tr>');
+					if (this.o.calendarWeeks){
+						// ISO 8601: First week contains first thursday.
+						// ISO also states week starts on Monday, but we can be more abstract here.
+						var
+							// Start of current week: based on weekstart/current date
+							ws = new Date(+prevMonth + (this.o.weekStart - prevMonth.getUTCDay() - 7) % 7 * 864e5),
+							// Thursday of this week
+							th = new Date(Number(ws) + (7 + 4 - ws.getUTCDay()) % 7 * 864e5),
+							// First Thursday of year, year from thursday
+							yth = new Date(Number(yth = UTCDate(th.getUTCFullYear(), 0, 1)) + (7 + 4 - yth.getUTCDay())%7*864e5),
+							// Calendar week: ms between thursdays, div ms per day, div 7 days
+							calWeek =  (th - yth) / 864e5 / 7 + 1;
+						html.push('<td class="cw">'+ calWeek +'</td>');
+
+					}
+				}
+				clsName = this.getClassNames(prevMonth);
+				clsName.push('day');
+
+				if (this.o.beforeShowDay !== $.noop){
+					var before = this.o.beforeShowDay(this._utc_to_local(prevMonth));
+					if (before === undefined)
+						before = {};
+					else if (typeof(before) === 'boolean')
+						before = {enabled: before};
+					else if (typeof(before) === 'string')
+						before = {classes: before};
+					if (before.enabled === false)
+						clsName.push('disabled');
+					if (before.classes)
+						clsName = clsName.concat(before.classes.split(/\s+/));
+					if (before.tooltip)
+						tooltip = before.tooltip;
+				}
+
+				clsName = $.unique(clsName);
+				html.push('<td class="'+clsName.join(' ')+'"' + (tooltip ? ' title="'+tooltip+'"' : '') + '>'+prevMonth.getUTCDate() + '</td>');
+				tooltip = null;
+				if (prevMonth.getUTCDay() === this.o.weekEnd){
+					html.push('</tr>');
+				}
+				prevMonth.setUTCDate(prevMonth.getUTCDate()+1);
+			}
+			this.picker.find('.datepicker-days tbody').empty().append(html.join(''));
+
+			var months = this.picker.find('.datepicker-months')
+						.find('.datepicker-switch')
+							.text(this.o.maxViewMode < 2 ? 'Months' : year)
+							.end()
+						.find('span').removeClass('active');
+
+			$.each(this.dates, function(i, d){
+				if (d.getUTCFullYear() === year)
+					months.eq(d.getUTCMonth()).addClass('active');
+			});
+
+			if (year < startYear || year > endYear){
+				months.addClass('disabled');
+			}
+			if (year === startYear){
+				months.slice(0, startMonth).addClass('disabled');
+			}
+			if (year === endYear){
+				months.slice(endMonth+1).addClass('disabled');
+			}
+
+			if (this.o.beforeShowMonth !== $.noop){
+				var that = this;
+				$.each(months, function(i, month){
+					if (!$(month).hasClass('disabled')) {
+						var moDate = new Date(year, i, 1);
+						var before = that.o.beforeShowMonth(moDate);
+						if (before === false)
+							$(month).addClass('disabled');
+					}
+				});
+			}
+
+			html = '';
+			year = parseInt(year/10, 10) * 10;
+			var yearCont = this.picker.find('.datepicker-years')
+								.find('.datepicker-switch')
+									.text(year + '-' + (year + 9))
+									.end()
+								.find('td');
+			year -= 1;
+			var years = $.map(this.dates, function(d){
+					return d.getUTCFullYear();
+				}),
+				classes;
+			for (var i = -1; i < 11; i++){
+				classes = ['year'];
+				tooltip = null;
+
+				if (i === -1)
+					classes.push('old');
+				else if (i === 10)
+					classes.push('new');
+				if ($.inArray(year, years) !== -1)
+					classes.push('active');
+				if (year < startYear || year > endYear)
+					classes.push('disabled');
+
+				if (this.o.beforeShowYear !== $.noop) {
+					var yrBefore = this.o.beforeShowYear(new Date(year, 0, 1));
+					if (yrBefore === undefined)
+						yrBefore = {};
+					else if (typeof(yrBefore) === 'boolean')
+						yrBefore = {enabled: yrBefore};
+					else if (typeof(yrBefore) === 'string')
+						yrBefore = {classes: yrBefore};
+					if (yrBefore.enabled === false)
+						classes.push('disabled');
+					if (yrBefore.classes)
+						classes = classes.concat(yrBefore.classes.split(/\s+/));
+					if (yrBefore.tooltip)
+						tooltip = yrBefore.tooltip;
+				}
+
+				html += '<span class="' + classes.join(' ') + '"' + (tooltip ? ' title="'+tooltip+'"' : '') + '>' + year + '</span>';
+				year += 1;
+			}
+			yearCont.html(html);
+		},
+
+		updateNavArrows: function(){
+			if (!this._allow_update)
+				return;
+
+			var d = new Date(this.viewDate),
+				year = d.getUTCFullYear(),
+				month = d.getUTCMonth();
+			switch (this.viewMode){
+				case 0:
+					if (this.o.startDate !== -Infinity && year <= this.o.startDate.getUTCFullYear() && month <= this.o.startDate.getUTCMonth()){
+						this.picker.find('.prev').css({visibility: 'hidden'});
+					}
+					else {
+						this.picker.find('.prev').css({visibility: 'visible'});
+					}
+					if (this.o.endDate !== Infinity && year >= this.o.endDate.getUTCFullYear() && month >= this.o.endDate.getUTCMonth()){
+						this.picker.find('.next').css({visibility: 'hidden'});
+					}
+					else {
+						this.picker.find('.next').css({visibility: 'visible'});
+					}
+					break;
+				case 1:
+				case 2:
+					if (this.o.startDate !== -Infinity && year <= this.o.startDate.getUTCFullYear() || this.o.maxViewMode < 2){
+						this.picker.find('.prev').css({visibility: 'hidden'});
+					}
+					else {
+						this.picker.find('.prev').css({visibility: 'visible'});
+					}
+					if (this.o.endDate !== Infinity && year >= this.o.endDate.getUTCFullYear() || this.o.maxViewMode < 2){
+						this.picker.find('.next').css({visibility: 'hidden'});
+					}
+					else {
+						this.picker.find('.next').css({visibility: 'visible'});
+					}
+					break;
+			}
+		},
+
+		click: function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			var target = $(e.target).closest('span, td, th'),
+				year, month, day;
+			if (target.length === 1){
+				switch (target[0].nodeName.toLowerCase()){
+					case 'th':
+						switch (target[0].className){
+							case 'datepicker-switch':
+								this.showMode(1);
+								break;
+							case 'prev':
+							case 'next':
+								var dir = DPGlobal.modes[this.viewMode].navStep * (target[0].className === 'prev' ? -1 : 1);
+								switch (this.viewMode){
+									case 0:
+										this.viewDate = this.moveMonth(this.viewDate, dir);
+										this._trigger('changeMonth', this.viewDate);
+										break;
+									case 1:
+									case 2:
+										this.viewDate = this.moveYear(this.viewDate, dir);
+										if (this.viewMode === 1)
+											this._trigger('changeYear', this.viewDate);
+										break;
+								}
+								this.fill();
+								break;
+							case 'today':
+								var date = new Date();
+								date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+
+								this.showMode(-2);
+								var which = this.o.todayBtn === 'linked' ? null : 'view';
+								this._setDate(date, which);
+								break;
+							case 'clear':
+								this.clearDates();
+								break;
+						}
+						break;
+					case 'span':
+						if (!target.hasClass('disabled')){
+							this.viewDate.setUTCDate(1);
+							if (target.hasClass('month')){
+								day = 1;
+								month = target.parent().find('span').index(target);
+								year = this.viewDate.getUTCFullYear();
+								this.viewDate.setUTCMonth(month);
+								this._trigger('changeMonth', this.viewDate);
+								if (this.o.minViewMode === 1){
+									this._setDate(UTCDate(year, month, day));
+									this.showMode();
+								} else {
+									this.showMode(-1);
+								}
+							}
+							else {
+								day = 1;
+								month = 0;
+								year = parseInt(target.text(), 10)||0;
+								this.viewDate.setUTCFullYear(year);
+								this._trigger('changeYear', this.viewDate);
+								if (this.o.minViewMode === 2){
+									this._setDate(UTCDate(year, month, day));
+								}
+								this.showMode(-1);
+							}
+							this.fill();
+						}
+						break;
+					case 'td':
+						if (target.hasClass('day') && !target.hasClass('disabled')){
+							day = parseInt(target.text(), 10)||1;
+							year = this.viewDate.getUTCFullYear();
+							month = this.viewDate.getUTCMonth();
+							if (target.hasClass('old')){
+								if (month === 0){
+									month = 11;
+									year -= 1;
+								}
+								else {
+									month -= 1;
+								}
+							}
+							else if (target.hasClass('new')){
+								if (month === 11){
+									month = 0;
+									year += 1;
+								}
+								else {
+									month += 1;
+								}
+							}
+							this._setDate(UTCDate(year, month, day));
+						}
+						break;
+				}
+			}
+			if (this.picker.is(':visible') && this._focused_from){
+				$(this._focused_from).focus();
+			}
+			delete this._focused_from;
+		},
+
+		_toggle_multidate: function(date){
+			var ix = this.dates.contains(date);
+			if (!date){
+				this.dates.clear();
+			}
+
+			if (ix !== -1){
+				if (this.o.multidate === true || this.o.multidate > 1 || this.o.toggleActive){
+					this.dates.remove(ix);
+				}
+			} else if (this.o.multidate === false) {
+				this.dates.clear();
+				this.dates.push(date);
+			}
+			else {
+				this.dates.push(date);
+			}
+
+			if (typeof this.o.multidate === 'number')
+				while (this.dates.length > this.o.multidate)
+					this.dates.remove(0);
+		},
+
+		_setDate: function(date, which){
+			if (!which || which === 'date')
+				this._toggle_multidate(date && new Date(date));
+			if (!which || which  === 'view')
+				this.viewDate = date && new Date(date);
+
+			this.fill();
+			this.setValue();
+			if (!which || which  !== 'view') {
+				this._trigger('changeDate');
+			}
+			var element;
+			if (this.isInput){
+				element = this.element;
+			}
+			else if (this.component){
+				element = this.element.find('input');
+			}
+			if (element){
+				element.change();
+			}
+			if (this.o.autoclose && (!which || which === 'date')){
+				this.hide();
+			}
+		},
+
+		moveMonth: function(date, dir){
+			if (!isValidDate(date))
+				return this.o.defaultViewDate;
+			if (!dir)
+				return date;
+			var new_date = new Date(date.valueOf()),
+				day = new_date.getUTCDate(),
+				month = new_date.getUTCMonth(),
+				mag = Math.abs(dir),
+				new_month, test;
+			dir = dir > 0 ? 1 : -1;
+			if (mag === 1){
+				test = dir === -1
+					// If going back one month, make sure month is not current month
+					// (eg, Mar 31 -> Feb 31 == Feb 28, not Mar 02)
+					? function(){
+						return new_date.getUTCMonth() === month;
+					}
+					// If going forward one month, make sure month is as expected
+					// (eg, Jan 31 -> Feb 31 == Feb 28, not Mar 02)
+					: function(){
+						return new_date.getUTCMonth() !== new_month;
+					};
+				new_month = month + dir;
+				new_date.setUTCMonth(new_month);
+				// Dec -> Jan (12) or Jan -> Dec (-1) -- limit expected date to 0-11
+				if (new_month < 0 || new_month > 11)
+					new_month = (new_month + 12) % 12;
+			}
+			else {
+				// For magnitudes >1, move one month at a time...
+				for (var i=0; i < mag; i++)
+					// ...which might decrease the day (eg, Jan 31 to Feb 28, etc)...
+					new_date = this.moveMonth(new_date, dir);
+				// ...then reset the day, keeping it in the new month
+				new_month = new_date.getUTCMonth();
+				new_date.setUTCDate(day);
+				test = function(){
+					return new_month !== new_date.getUTCMonth();
+				};
+			}
+			// Common date-resetting loop -- if date is beyond end of month, make it
+			// end of month
+			while (test()){
+				new_date.setUTCDate(--day);
+				new_date.setUTCMonth(new_month);
+			}
+			return new_date;
+		},
+
+		moveYear: function(date, dir){
+			return this.moveMonth(date, dir*12);
+		},
+
+		dateWithinRange: function(date){
+			return date >= this.o.startDate && date <= this.o.endDate;
+		},
+
+		keydown: function(e){
+			if (!this.picker.is(':visible')){
+				if (e.keyCode === 40 || e.keyCode === 27) { // allow down to re-show picker
+					this.show();
+					e.stopPropagation();
+        }
+				return;
+			}
+			var dateChanged = false,
+				dir, newDate, newViewDate,
+				focusDate = this.focusDate || this.viewDate;
+			switch (e.keyCode){
+				case 27: // escape
+					if (this.focusDate){
+						this.focusDate = null;
+						this.viewDate = this.dates.get(-1) || this.viewDate;
+						this.fill();
+					}
+					else
+						this.hide();
+					e.preventDefault();
+					e.stopPropagation();
+					break;
+				case 37: // left
+				case 39: // right
+					if (!this.o.keyboardNavigation)
+						break;
+					dir = e.keyCode === 37 ? -1 : 1;
+					if (e.ctrlKey){
+						newDate = this.moveYear(this.dates.get(-1) || UTCToday(), dir);
+						newViewDate = this.moveYear(focusDate, dir);
+						this._trigger('changeYear', this.viewDate);
+					}
+					else if (e.shiftKey){
+						newDate = this.moveMonth(this.dates.get(-1) || UTCToday(), dir);
+						newViewDate = this.moveMonth(focusDate, dir);
+						this._trigger('changeMonth', this.viewDate);
+					}
+					else {
+						newDate = new Date(this.dates.get(-1) || UTCToday());
+						newDate.setUTCDate(newDate.getUTCDate() + dir);
+						newViewDate = new Date(focusDate);
+						newViewDate.setUTCDate(focusDate.getUTCDate() + dir);
+					}
+					if (this.dateWithinRange(newViewDate)){
+						this.focusDate = this.viewDate = newViewDate;
+						this.setValue();
+						this.fill();
+						e.preventDefault();
+					}
+					break;
+				case 38: // up
+				case 40: // down
+					if (!this.o.keyboardNavigation)
+						break;
+					dir = e.keyCode === 38 ? -1 : 1;
+					if (e.ctrlKey){
+						newDate = this.moveYear(this.dates.get(-1) || UTCToday(), dir);
+						newViewDate = this.moveYear(focusDate, dir);
+						this._trigger('changeYear', this.viewDate);
+					}
+					else if (e.shiftKey){
+						newDate = this.moveMonth(this.dates.get(-1) || UTCToday(), dir);
+						newViewDate = this.moveMonth(focusDate, dir);
+						this._trigger('changeMonth', this.viewDate);
+					}
+					else {
+						newDate = new Date(this.dates.get(-1) || UTCToday());
+						newDate.setUTCDate(newDate.getUTCDate() + dir * 7);
+						newViewDate = new Date(focusDate);
+						newViewDate.setUTCDate(focusDate.getUTCDate() + dir * 7);
+					}
+					if (this.dateWithinRange(newViewDate)){
+						this.focusDate = this.viewDate = newViewDate;
+						this.setValue();
+						this.fill();
+						e.preventDefault();
+					}
+					break;
+				case 32: // spacebar
+					// Spacebar is used in manually typing dates in some formats.
+					// As such, its behavior should not be hijacked.
+					break;
+				case 13: // enter
+					if (!this.o.forceParse) {
+							break;
+					}
+					focusDate = this.focusDate || this.dates.get(-1) || this.viewDate;
+					if (this.o.keyboardNavigation) {
+						this._toggle_multidate(focusDate);
+						dateChanged = true;
+					}
+					this.focusDate = null;
+					this.viewDate = this.dates.get(-1) || this.viewDate;
+					this.setValue();
+					this.fill();
+					if (this.picker.is(':visible')){
+						e.preventDefault();
+						if (typeof e.stopPropagation === 'function') {
+							e.stopPropagation(); // All modern browsers, IE9+
+						} else {
+							e.cancelBubble = true; // IE6,7,8 ignore "stopPropagation"
+						}
+						if (this.o.autoclose)
+							this.hide();
+					}
+					break;
+				case 9: // tab
+					this.focusDate = null;
+					this.viewDate = this.dates.get(-1) || this.viewDate;
+					this.fill();
+					this.hide();
+					break;
+			}
+			if (dateChanged){
+				if (this.dates.length)
+					this._trigger('changeDate');
+				else
+					this._trigger('clearDate');
+				var element;
+				if (this.isInput){
+					element = this.element;
+				}
+				else if (this.component){
+					element = this.element.find('input');
+				}
+				if (element){
+					element.change();
+				}
+			}
+		},
+
+		showMode: function(dir){
+			if (dir){
+				this.viewMode = Math.max(this.o.minViewMode, Math.min(this.o.maxViewMode, this.viewMode + dir));
+			}
+			this.picker
+				.children('div')
+				.hide()
+				.filter('.datepicker-' + DPGlobal.modes[this.viewMode].clsName)
+					.show();
+			this.updateNavArrows();
+		}
+	};
+
+	var DateRangePicker = function(element, options){
+		this.element = $(element);
+		this.inputs = $.map(options.inputs, function(i){
+			return i.jquery ? i[0] : i;
+		});
+		delete options.inputs;
+
+		datepickerPlugin.call($(this.inputs), options)
+			.on('changeDate', $.proxy(this.dateUpdated, this));
+
+		this.pickers = $.map(this.inputs, function(i){
+			return $(i).data('datepicker');
+		});
+		this.updateDates();
+	};
+	DateRangePicker.prototype = {
+		updateDates: function(){
+			this.dates = $.map(this.pickers, function(i){
+				return i.getUTCDate();
+			});
+			this.updateRanges();
+		},
+		updateRanges: function(){
+			var range = $.map(this.dates, function(d){
+				return d.valueOf();
+			});
+			$.each(this.pickers, function(i, p){
+				p.setRange(range);
+			});
+		},
+		dateUpdated: function(e){
+			// `this.updating` is a workaround for preventing infinite recursion
+			// between `changeDate` triggering and `setUTCDate` calling.  Until
+			// there is a better mechanism.
+			if (this.updating)
+				return;
+			this.updating = true;
+
+			var dp = $(e.target).data('datepicker');
+
+			if (typeof(dp) === "undefined") {
+				return;
+			}
+
+			var new_date = dp.getUTCDate(),
+				i = $.inArray(e.target, this.inputs),
+				j = i - 1,
+				k = i + 1,
+				l = this.inputs.length;
+			if (i === -1)
+				return;
+
+			$.each(this.pickers, function(i, p){
+				if (!p.getUTCDate())
+					p.setUTCDate(new_date);
+			});
+
+			if (new_date < this.dates[j]){
+				// Date being moved earlier/left
+				while (j >= 0 && new_date < this.dates[j]){
+					this.pickers[j--].setUTCDate(new_date);
+				}
+			}
+			else if (new_date > this.dates[k]){
+				// Date being moved later/right
+				while (k < l && new_date > this.dates[k]){
+					this.pickers[k++].setUTCDate(new_date);
+				}
+			}
+			this.updateDates();
+
+			delete this.updating;
+		},
+		remove: function(){
+			$.map(this.pickers, function(p){ p.remove(); });
+			delete this.element.data().datepicker;
+		}
+	};
+
+	function opts_from_el(el, prefix){
+		// Derive options from element data-attrs
+		var data = $(el).data(),
+			out = {}, inkey,
+			replace = new RegExp('^' + prefix.toLowerCase() + '([A-Z])');
+		prefix = new RegExp('^' + prefix.toLowerCase());
+		function re_lower(_,a){
+			return a.toLowerCase();
+		}
+		for (var key in data)
+			if (prefix.test(key)){
+				inkey = key.replace(replace, re_lower);
+				out[inkey] = data[key];
+			}
+		return out;
+	}
+
+	function opts_from_locale(lang){
+		// Derive options from locale plugins
+		var out = {};
+		// Check if "de-DE" style date is available, if not language should
+		// fallback to 2 letter code eg "de"
+		if (!dates[lang]){
+			lang = lang.split('-')[0];
+			if (!dates[lang])
+				return;
+		}
+		var d = dates[lang];
+		$.each(locale_opts, function(i,k){
+			if (k in d)
+				out[k] = d[k];
+		});
+		return out;
+	}
+
+	var old = $.fn.datepicker;
+	var datepickerPlugin = function(option){
+		var args = Array.apply(null, arguments);
+		args.shift();
+		var internal_return;
+		this.each(function(){
+			var $this = $(this),
+				data = $this.data('datepicker'),
+				options = typeof option === 'object' && option;
+			if (!data){
+				var elopts = opts_from_el(this, 'date'),
+					// Preliminary otions
+					xopts = $.extend({}, defaults, elopts, options),
+					locopts = opts_from_locale(xopts.language),
+					// Options priority: js args, data-attrs, locales, defaults
+					opts = $.extend({}, defaults, locopts, elopts, options);
+				if ($this.hasClass('input-daterange') || opts.inputs){
+					var ropts = {
+						inputs: opts.inputs || $this.find('input').toArray()
+					};
+					$this.data('datepicker', (data = new DateRangePicker(this, $.extend(opts, ropts))));
+				}
+				else {
+					$this.data('datepicker', (data = new Datepicker(this, opts)));
+				}
+			}
+			if (typeof option === 'string' && typeof data[option] === 'function'){
+				internal_return = data[option].apply(data, args);
+			}
+		});
+
+		if (
+			internal_return === undefined ||
+			internal_return instanceof Datepicker ||
+			internal_return instanceof DateRangePicker
+		)
+			return this;
+
+		if (this.length > 1)
+			throw new Error('Using only allowed for the collection of a single element (' + option + ' function)');
+		else
+			return internal_return;
+	};
+	$.fn.datepicker = datepickerPlugin;
+
+	var defaults = $.fn.datepicker.defaults = {
+		autoclose: false,
+		beforeShowDay: $.noop,
+		beforeShowMonth: $.noop,
+		beforeShowYear: $.noop,
+		calendarWeeks: false,
+		clearBtn: false,
+		toggleActive: false,
+		daysOfWeekDisabled: [],
+		daysOfWeekHighlighted: [],
+		datesDisabled: [],
+		endDate: Infinity,
+		forceParse: true,
+		format: 'mm/dd/yyyy',
+		keyboardNavigation: true,
+		language: 'en',
+		minViewMode: 0,
+		maxViewMode: 2,
+		multidate: false,
+		multidateSeparator: ',',
+		orientation: "auto",
+		rtl: false,
+		startDate: -Infinity,
+		startView: 0,
+		todayBtn: false,
+		todayHighlight: false,
+		weekStart: 0,
+		disableTouchKeyboard: false,
+		enableOnReadonly: true,
+		container: 'body',
+		immediateUpdates: false,
+		title: ''
+	};
+	var locale_opts = $.fn.datepicker.locale_opts = [
+		'format',
+		'rtl',
+		'weekStart'
+	];
+	$.fn.datepicker.Constructor = Datepicker;
+	var dates = $.fn.datepicker.dates = {
+		en: {
+			days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+			daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+			daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+			months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			today: "Today",
+			clear: "Clear",
+			titleFormat: "MM yyyy"
+		}
+	};
+
+	var DPGlobal = {
+		modes: [
+			{
+				clsName: 'days',
+				navFnc: 'Month',
+				navStep: 1
+			},
+			{
+				clsName: 'months',
+				navFnc: 'FullYear',
+				navStep: 1
+			},
+			{
+				clsName: 'years',
+				navFnc: 'FullYear',
+				navStep: 10
+		}],
+		isLeapYear: function(year){
+			return (((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0));
+		},
+		getDaysInMonth: function(year, month){
+			return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+		},
+		validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
+		nonpunctuation: /[^ -\/:-@\[\u3400-\u9fff-`{-~\t\n\r]+/g,
+		parseFormat: function(format){
+			if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function')
+                return format;
+            // IE treats \0 as a string end in inputs (truncating the value),
+			// so it's a bad format delimiter, anyway
+			var separators = format.replace(this.validParts, '\0').split('\0'),
+				parts = format.match(this.validParts);
+			if (!separators || !separators.length || !parts || parts.length === 0){
+				throw new Error("Invalid date format.");
+			}
+			return {separators: separators, parts: parts};
+		},
+		parseDate: function(date, format, language){
+			if (!date)
+				return undefined;
+			if (date instanceof Date)
+				return date;
+			if (typeof format === 'string')
+				format = DPGlobal.parseFormat(format);
+			if (format.toValue)
+                return format.toValue(date, format, language);
+            var part_re = /([\-+]\d+)([dmwy])/,
+				parts = date.match(/([\-+]\d+)([dmwy])/g),
+				part, dir, i;
+			if (/^[\-+]\d+[dmwy]([\s,]+[\-+]\d+[dmwy])*$/.test(date)){
+				date = new Date();
+				for (i=0; i < parts.length; i++){
+					part = part_re.exec(parts[i]);
+					dir = parseInt(part[1]);
+					switch (part[2]){
+						case 'd':
+							date.setUTCDate(date.getUTCDate() + dir);
+							break;
+						case 'm':
+							date = Datepicker.prototype.moveMonth.call(Datepicker.prototype, date, dir);
+							break;
+						case 'w':
+							date.setUTCDate(date.getUTCDate() + dir * 7);
+							break;
+						case 'y':
+							date = Datepicker.prototype.moveYear.call(Datepicker.prototype, date, dir);
+							break;
+					}
+				}
+				return UTCDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0);
+			}
+			parts = date && date.match(this.nonpunctuation) || [];
+			date = new Date();
+			var parsed = {},
+				setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
+				setters_map = {
+					yyyy: function(d,v){
+						return d.setUTCFullYear(v);
+					},
+					yy: function(d,v){
+						return d.setUTCFullYear(2000+v);
+					},
+					m: function(d,v){
+						if (isNaN(d))
+							return d;
+						v -= 1;
+						while (v < 0) v += 12;
+						v %= 12;
+						d.setUTCMonth(v);
+						while (d.getUTCMonth() !== v)
+							d.setUTCDate(d.getUTCDate()-1);
+						return d;
+					},
+					d: function(d,v){
+						return d.setUTCDate(v);
+					}
+				},
+				val, filtered;
+			setters_map['M'] = setters_map['MM'] = setters_map['mm'] = setters_map['m'];
+			setters_map['dd'] = setters_map['d'];
+			date = UTCDate(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
+			var fparts = format.parts.slice();
+			// Remove noop parts
+			if (parts.length !== fparts.length){
+				fparts = $(fparts).filter(function(i,p){
+					return $.inArray(p, setters_order) !== -1;
+				}).toArray();
+			}
+			// Process remainder
+			function match_part(){
+				var m = this.slice(0, parts[i].length),
+					p = parts[i].slice(0, m.length);
+				return m.toLowerCase() === p.toLowerCase();
+			}
+			if (parts.length === fparts.length){
+				var cnt;
+				for (i=0, cnt = fparts.length; i < cnt; i++){
+					val = parseInt(parts[i], 10);
+					part = fparts[i];
+					if (isNaN(val)){
+						switch (part){
+							case 'MM':
+								filtered = $(dates[language].months).filter(match_part);
+								val = $.inArray(filtered[0], dates[language].months) + 1;
+								break;
+							case 'M':
+								filtered = $(dates[language].monthsShort).filter(match_part);
+								val = $.inArray(filtered[0], dates[language].monthsShort) + 1;
+								break;
+						}
+					}
+					parsed[part] = val;
+				}
+				var _date, s;
+				for (i=0; i < setters_order.length; i++){
+					s = setters_order[i];
+					if (s in parsed && !isNaN(parsed[s])){
+						_date = new Date(date);
+						setters_map[s](_date, parsed[s]);
+						if (!isNaN(_date))
+							date = _date;
+					}
+				}
+			}
+			return date;
+		},
+		formatDate: function(date, format, language){
+			if (!date)
+				return '';
+			if (typeof format === 'string')
+				format = DPGlobal.parseFormat(format);
+			if (format.toDisplay)
+                return format.toDisplay(date, format, language);
+            var val = {
+				d: date.getUTCDate(),
+				D: dates[language].daysShort[date.getUTCDay()],
+				DD: dates[language].days[date.getUTCDay()],
+				m: date.getUTCMonth() + 1,
+				M: dates[language].monthsShort[date.getUTCMonth()],
+				MM: dates[language].months[date.getUTCMonth()],
+				yy: date.getUTCFullYear().toString().substring(2),
+				yyyy: date.getUTCFullYear()
+			};
+			val.dd = (val.d < 10 ? '0' : '') + val.d;
+			val.mm = (val.m < 10 ? '0' : '') + val.m;
+			date = [];
+			var seps = $.extend([], format.separators);
+			for (var i=0, cnt = format.parts.length; i <= cnt; i++){
+				if (seps.length)
+					date.push(seps.shift());
+				date.push(val[format.parts[i]]);
+			}
+			return date.join('');
+		},
+		headTemplate: '<thead>'+
+			              '<tr>'+
+			                '<th colspan="7" class="datepicker-title"></th>'+
+			              '</tr>'+
+							'<tr>'+
+								'<th class="prev">&#171;</th>'+
+								'<th colspan="5" class="datepicker-switch"></th>'+
+								'<th class="next">&#187;</th>'+
+							'</tr>'+
+						'</thead>',
+		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',
+		footTemplate: '<tfoot>'+
+							'<tr>'+
+								'<th colspan="7" class="today"></th>'+
+							'</tr>'+
+							'<tr>'+
+								'<th colspan="7" class="clear"></th>'+
+							'</tr>'+
+						'</tfoot>'
+	};
+	DPGlobal.template = '<div class="datepicker">'+
+							'<div class="datepicker-days">'+
+								'<table class=" table-condensed">'+
+									DPGlobal.headTemplate+
+									'<tbody></tbody>'+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+							'<div class="datepicker-months">'+
+								'<table class="table-condensed">'+
+									DPGlobal.headTemplate+
+									DPGlobal.contTemplate+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+							'<div class="datepicker-years">'+
+								'<table class="table-condensed">'+
+									DPGlobal.headTemplate+
+									DPGlobal.contTemplate+
+									DPGlobal.footTemplate+
+								'</table>'+
+							'</div>'+
+						'</div>';
+
+	$.fn.datepicker.DPGlobal = DPGlobal;
+
+
+	/* DATEPICKER NO CONFLICT
+	* =================== */
+
+	$.fn.datepicker.noConflict = function(){
+		$.fn.datepicker = old;
+		return this;
+	};
+
+	/* DATEPICKER VERSION
+	 * =================== */
+	$.fn.datepicker.version = '1.5.0';
+
+	/* DATEPICKER DATA-API
+	* ================== */
+
+	$(document).on(
+		'focus.datepicker.data-api click.datepicker.data-api',
+		'[data-provide="datepicker"]',
+		function(e){
+			var $this = $(this);
+			if ($this.data('datepicker'))
+				return;
+			e.preventDefault();
+			// component click requires us to explicitly show it
+			datepickerPlugin.call($this, 'show');
+		}
+	);
+	$(function(){
+		datepickerPlugin.call($('[data-provide="datepicker-inline"]'));
+	});
+
+}));
+
+/*!
+ * Timepicker Component for Twitter Bootstrap
+ *
+ * Copyright 2013 Joris de Wit
+ *
+ * Contributors https://github.com/jdewit/bootstrap-timepicker/graphs/contributors
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+(function($, window, document) {
+  'use strict';
+
+  // TIMEPICKER PUBLIC CLASS DEFINITION
+  var Timepicker = function(element, options) {
+    this.widget = '';
+    this.$element = $(element);
+    this.defaultTime = options.defaultTime;
+    this.disableFocus = options.disableFocus;
+    this.disableMousewheel = options.disableMousewheel;
+    this.isOpen = options.isOpen;
+    this.minuteStep = options.minuteStep;
+    this.modalBackdrop = options.modalBackdrop;
+    this.orientation = options.orientation;
+    this.secondStep = options.secondStep;
+    this.snapToStep = options.snapToStep;
+    this.showInputs = options.showInputs;
+    this.showMeridian = options.showMeridian;
+    this.showSeconds = options.showSeconds;
+    this.template = options.template;
+    this.appendWidgetTo = options.appendWidgetTo;
+    this.showWidgetOnAddonClick = options.showWidgetOnAddonClick;
+    this.maxHours = options.maxHours;
+		this.explicitMode = options.explicitMode; // If true 123 = 1:23, 12345 = 1:23:45, else invalid.
+
+    this.handleDocumentClick = function (e) {
+      var self = e.data.scope;
+      // This condition was inspired by bootstrap-datepicker.
+      // The element the timepicker is invoked on is the input but it has a sibling for addon/button.
+      if (!(self.$element.parent().find(e.target).length ||
+          self.$widget.is(e.target) ||
+          self.$widget.find(e.target).length)) {
+        self.hideWidget();
+      }
+    };
+    this._init();
+  };
+
+  Timepicker.prototype = {
+
+    constructor: Timepicker,
+    _init: function() {
+      var self = this;
+
+      if (this.showWidgetOnAddonClick && (this.$element.parent().hasClass('input-group') && this.$element.parent().hasClass('bootstrap-timepicker'))) {
+        this.$element.parent('.input-group.bootstrap-timepicker').find('.input-group-addon').on({
+          'click.timepicker': $.proxy(this.showWidget, this)
+        });
+        this.$element.on({
+          'focus.timepicker': $.proxy(this.highlightUnit, this),
+          'click.timepicker': $.proxy(this.highlightUnit, this),
+          'keydown.timepicker': $.proxy(this.elementKeydown, this),
+          'blur.timepicker': $.proxy(this.blurElement, this),
+          'mousewheel.timepicker DOMMouseScroll.timepicker': $.proxy(this.mousewheel, this)
+        });
+      } else {
+        if (this.template) {
+          this.$element.on({
+            'focus.timepicker': $.proxy(this.showWidget, this),
+            'click.timepicker': $.proxy(this.showWidget, this),
+            'blur.timepicker': $.proxy(this.blurElement, this),
+            'mousewheel.timepicker DOMMouseScroll.timepicker': $.proxy(this.mousewheel, this)
+          });
+        } else {
+          this.$element.on({
+            'focus.timepicker': $.proxy(this.highlightUnit, this),
+            'click.timepicker': $.proxy(this.highlightUnit, this),
+            'keydown.timepicker': $.proxy(this.elementKeydown, this),
+            'blur.timepicker': $.proxy(this.blurElement, this),
+            'mousewheel.timepicker DOMMouseScroll.timepicker': $.proxy(this.mousewheel, this)
+          });
+        }
+      }
+
+      if (this.template !== false) {
+        this.$widget = $(this.getTemplate()).on('click', $.proxy(this.widgetClick, this));
+      } else {
+        this.$widget = false;
+      }
+
+      if (this.showInputs && this.$widget !== false) {
+        this.$widget.find('input').each(function() {
+          $(this).on({
+            'click.timepicker': function() { $(this).select(); },
+            'keydown.timepicker': $.proxy(self.widgetKeydown, self),
+            'keyup.timepicker': $.proxy(self.widgetKeyup, self)
+          });
+        });
+      }
+
+      this.setDefaultTime(this.defaultTime);
+    },
+
+    blurElement: function() {
+      this.highlightedUnit = null;
+      this.updateFromElementVal();
+    },
+
+    clear: function() {
+      this.hour = '';
+      this.minute = '';
+      this.second = '';
+      this.meridian = '';
+
+      this.$element.val('');
+    },
+
+    decrementHour: function() {
+      if (this.showMeridian) {
+        if (this.hour === 1) {
+          this.hour = 12;
+        } else if (this.hour === 12) {
+          this.hour--;
+
+          return this.toggleMeridian();
+        } else if (this.hour === 0) {
+          this.hour = 11;
+
+          return this.toggleMeridian();
+        } else {
+          this.hour--;
+        }
+      } else {
+        if (this.hour <= 0) {
+          this.hour = this.maxHours - 1;
+        } else {
+          this.hour--;
+        }
+      }
+    },
+
+    decrementMinute: function(step) {
+      var newVal;
+
+      if (step) {
+        newVal = this.minute - step;
+      } else {
+        newVal = this.minute - this.minuteStep;
+      }
+
+      if (newVal < 0) {
+        this.decrementHour();
+        this.minute = newVal + 60;
+      } else {
+        this.minute = newVal;
+      }
+    },
+
+    decrementSecond: function() {
+      var newVal = this.second - this.secondStep;
+
+      if (newVal < 0) {
+        this.decrementMinute(true);
+        this.second = newVal + 60;
+      } else {
+        this.second = newVal;
+      }
+    },
+
+    elementKeydown: function(e) {
+      switch (e.which) {
+      case 9: //tab
+        if (e.shiftKey) {
+          if (this.highlightedUnit === 'hour') {
+            break;
+          }
+          this.highlightPrevUnit();
+        } else if ((this.showMeridian && this.highlightedUnit === 'meridian') || (this.showSeconds && this.highlightedUnit === 'second') || (!this.showMeridian && !this.showSeconds && this.highlightedUnit ==='minute')) {
+          break;
+        } else {
+          this.highlightNextUnit();
+        }
+        e.preventDefault();
+        this.updateFromElementVal();
+        break;
+      case 27: // escape
+        this.updateFromElementVal();
+        break;
+      case 37: // left arrow
+        e.preventDefault();
+        this.highlightPrevUnit();
+        this.updateFromElementVal();
+        break;
+      case 38: // up arrow
+        e.preventDefault();
+        switch (this.highlightedUnit) {
+        case 'hour':
+          this.incrementHour();
+          this.highlightHour();
+          break;
+        case 'minute':
+          this.incrementMinute();
+          this.highlightMinute();
+          break;
+        case 'second':
+          this.incrementSecond();
+          this.highlightSecond();
+          break;
+        case 'meridian':
+          this.toggleMeridian();
+          this.highlightMeridian();
+          break;
+        }
+        this.update();
+        break;
+      case 39: // right arrow
+        e.preventDefault();
+        this.highlightNextUnit();
+        this.updateFromElementVal();
+        break;
+      case 40: // down arrow
+        e.preventDefault();
+        switch (this.highlightedUnit) {
+        case 'hour':
+          this.decrementHour();
+          this.highlightHour();
+          break;
+        case 'minute':
+          this.decrementMinute();
+          this.highlightMinute();
+          break;
+        case 'second':
+          this.decrementSecond();
+          this.highlightSecond();
+          break;
+        case 'meridian':
+          this.toggleMeridian();
+          this.highlightMeridian();
+          break;
+        }
+
+        this.update();
+        break;
+      }
+    },
+
+    getCursorPosition: function() {
+      var input = this.$element.get(0);
+
+      if ('selectionStart' in input) {// Standard-compliant browsers
+
+        return input.selectionStart;
+      } else if (document.selection) {// IE fix
+        input.focus();
+        var sel = document.selection.createRange(),
+          selLen = document.selection.createRange().text.length;
+
+        sel.moveStart('character', - input.value.length);
+
+        return sel.text.length - selLen;
+      }
+    },
+
+    getTemplate: function() {
+      var template,
+        hourTemplate,
+        minuteTemplate,
+        secondTemplate,
+        meridianTemplate,
+        templateContent;
+
+      if (this.showInputs) {
+        hourTemplate = '<input type="text" class="bootstrap-timepicker-hour" maxlength="2"/>';
+        minuteTemplate = '<input type="text" class="bootstrap-timepicker-minute" maxlength="2"/>';
+        secondTemplate = '<input type="text" class="bootstrap-timepicker-second" maxlength="2"/>';
+        meridianTemplate = '<input type="text" class="bootstrap-timepicker-meridian" maxlength="2"/>';
+      } else {
+        hourTemplate = '<span class="bootstrap-timepicker-hour"></span>';
+        minuteTemplate = '<span class="bootstrap-timepicker-minute"></span>';
+        secondTemplate = '<span class="bootstrap-timepicker-second"></span>';
+        meridianTemplate = '<span class="bootstrap-timepicker-meridian"></span>';
+      }
+
+      templateContent = '<table>'+
+         '<tr>'+
+           '<td><a href="#" data-action="incrementHour"><span class="glyphicon glyphicon-chevron-up"></span></a></td>'+
+           '<td class="separator">&nbsp;</td>'+
+           '<td><a href="#" data-action="incrementMinute"><span class="glyphicon glyphicon-chevron-up"></span></a></td>'+
+           (this.showSeconds ?
+             '<td class="separator">&nbsp;</td>'+
+             '<td><a href="#" data-action="incrementSecond"><span class="glyphicon glyphicon-chevron-up"></span></a></td>'
+           : '') +
+           (this.showMeridian ?
+             '<td class="separator">&nbsp;</td>'+
+             '<td class="meridian-column"><a href="#" data-action="toggleMeridian"><span class="glyphicon glyphicon-chevron-up"></span></a></td>'
+           : '') +
+         '</tr>'+
+         '<tr>'+
+           '<td>'+ hourTemplate +'</td> '+
+           '<td class="separator">:</td>'+
+           '<td>'+ minuteTemplate +'</td> '+
+           (this.showSeconds ?
+            '<td class="separator">:</td>'+
+            '<td>'+ secondTemplate +'</td>'
+           : '') +
+           (this.showMeridian ?
+            '<td class="separator">&nbsp;</td>'+
+            '<td>'+ meridianTemplate +'</td>'
+           : '') +
+         '</tr>'+
+         '<tr>'+
+           '<td><a href="#" data-action="decrementHour"><span class="glyphicon glyphicon-chevron-down"></span></a></td>'+
+           '<td class="separator"></td>'+
+           '<td><a href="#" data-action="decrementMinute"><span class="glyphicon glyphicon-chevron-down"></span></a></td>'+
+           (this.showSeconds ?
+            '<td class="separator">&nbsp;</td>'+
+            '<td><a href="#" data-action="decrementSecond"><span class="glyphicon glyphicon-chevron-down"></span></a></td>'
+           : '') +
+           (this.showMeridian ?
+            '<td class="separator">&nbsp;</td>'+
+            '<td><a href="#" data-action="toggleMeridian"><span class="glyphicon glyphicon-chevron-down"></span></a></td>'
+           : '') +
+         '</tr>'+
+       '</table>';
+
+      switch(this.template) {
+      case 'modal':
+        template = '<div class="bootstrap-timepicker-widget modal hide fade in" data-backdrop="'+ (this.modalBackdrop ? 'true' : 'false') +'">'+
+          '<div class="modal-header">'+
+            '<a href="#" class="close" data-dismiss="modal">×</a>'+
+            '<h3>Pick a Time</h3>'+
+          '</div>'+
+          '<div class="modal-content">'+
+            templateContent +
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<a href="#" class="btn btn-primary" data-dismiss="modal">OK</a>'+
+          '</div>'+
+        '</div>';
+        break;
+      case 'dropdown':
+        template = '<div class="bootstrap-timepicker-widget dropdown-menu">'+ templateContent +'</div>';
+        break;
+      }
+
+      return template;
+    },
+
+    getTime: function() {
+      if (this.hour === '') {
+        return '';
+      }
+
+      return this.hour + ':' + (this.minute.toString().length === 1 ? '0' + this.minute : this.minute) + (this.showSeconds ? ':' + (this.second.toString().length === 1 ? '0' + this.second : this.second) : '') + (this.showMeridian ? ' ' + this.meridian : '');
+    },
+
+    hideWidget: function() {
+      if (this.isOpen === false) {
+        return;
+      }
+
+      this.$element.trigger({
+        'type': 'hide.timepicker',
+        'time': {
+          'value': this.getTime(),
+          'hours': this.hour,
+          'minutes': this.minute,
+          'seconds': this.second,
+          'meridian': this.meridian
+        }
+      });
+
+      if (this.template === 'modal' && this.$widget.modal) {
+        this.$widget.modal('hide');
+      } else {
+        this.$widget.removeClass('open');
+      }
+
+      $(document).off('mousedown.timepicker, touchend.timepicker', this.handleDocumentClick);
+
+      this.isOpen = false;
+      // show/hide approach taken by datepicker
+      this.$widget.detach();
+    },
+
+    highlightUnit: function() {
+      this.position = this.getCursorPosition();
+      if (this.position >= 0 && this.position <= 2) {
+        this.highlightHour();
+      } else if (this.position >= 3 && this.position <= 5) {
+        this.highlightMinute();
+      } else if (this.position >= 6 && this.position <= 8) {
+        if (this.showSeconds) {
+          this.highlightSecond();
+        } else {
+          this.highlightMeridian();
+        }
+      } else if (this.position >= 9 && this.position <= 11) {
+        this.highlightMeridian();
+      }
+    },
+
+    highlightNextUnit: function() {
+      switch (this.highlightedUnit) {
+      case 'hour':
+        this.highlightMinute();
+        break;
+      case 'minute':
+        if (this.showSeconds) {
+          this.highlightSecond();
+        } else if (this.showMeridian){
+          this.highlightMeridian();
+        } else {
+          this.highlightHour();
+        }
+        break;
+      case 'second':
+        if (this.showMeridian) {
+          this.highlightMeridian();
+        } else {
+          this.highlightHour();
+        }
+        break;
+      case 'meridian':
+        this.highlightHour();
+        break;
+      }
+    },
+
+    highlightPrevUnit: function() {
+      switch (this.highlightedUnit) {
+      case 'hour':
+        if(this.showMeridian){
+          this.highlightMeridian();
+        } else if (this.showSeconds) {
+          this.highlightSecond();
+        } else {
+          this.highlightMinute();
+        }
+        break;
+      case 'minute':
+        this.highlightHour();
+        break;
+      case 'second':
+        this.highlightMinute();
+        break;
+      case 'meridian':
+        if (this.showSeconds) {
+          this.highlightSecond();
+        } else {
+          this.highlightMinute();
+        }
+        break;
+      }
+    },
+
+    highlightHour: function() {
+      var $element = this.$element.get(0),
+          self = this;
+
+      this.highlightedUnit = 'hour';
+
+      if ($element.setSelectionRange) {
+        setTimeout(function() {
+          if (self.hour < 10) {
+            $element.setSelectionRange(0,1);
+          } else {
+            $element.setSelectionRange(0,2);
+          }
+        }, 0);
+      }
+    },
+
+    highlightMinute: function() {
+      var $element = this.$element.get(0),
+          self = this;
+
+      this.highlightedUnit = 'minute';
+
+      if ($element.setSelectionRange) {
+        setTimeout(function() {
+          if (self.hour < 10) {
+            $element.setSelectionRange(2,4);
+          } else {
+            $element.setSelectionRange(3,5);
+          }
+        }, 0);
+      }
+    },
+
+    highlightSecond: function() {
+      var $element = this.$element.get(0),
+          self = this;
+
+      this.highlightedUnit = 'second';
+
+      if ($element.setSelectionRange) {
+        setTimeout(function() {
+          if (self.hour < 10) {
+            $element.setSelectionRange(5,7);
+          } else {
+            $element.setSelectionRange(6,8);
+          }
+        }, 0);
+      }
+    },
+
+    highlightMeridian: function() {
+      var $element = this.$element.get(0),
+          self = this;
+
+      this.highlightedUnit = 'meridian';
+
+      if ($element.setSelectionRange) {
+        if (this.showSeconds) {
+          setTimeout(function() {
+            if (self.hour < 10) {
+              $element.setSelectionRange(8,10);
+            } else {
+              $element.setSelectionRange(9,11);
+            }
+          }, 0);
+        } else {
+          setTimeout(function() {
+            if (self.hour < 10) {
+              $element.setSelectionRange(5,7);
+            } else {
+              $element.setSelectionRange(6,8);
+            }
+          }, 0);
+        }
+      }
+    },
+
+    incrementHour: function() {
+      if (this.showMeridian) {
+        if (this.hour === 11) {
+          this.hour++;
+          return this.toggleMeridian();
+        } else if (this.hour === 12) {
+          this.hour = 0;
+        }
+      }
+      if (this.hour === this.maxHours - 1) {
+        this.hour = 0;
+
+        return;
+      }
+      this.hour++;
+    },
+
+    incrementMinute: function(step) {
+      var newVal;
+
+      if (step) {
+        newVal = this.minute + step;
+      } else {
+        newVal = this.minute + this.minuteStep - (this.minute % this.minuteStep);
+      }
+
+      if (newVal > 59) {
+        this.incrementHour();
+        this.minute = newVal - 60;
+      } else {
+        this.minute = newVal;
+      }
+    },
+
+    incrementSecond: function() {
+      var newVal = this.second + this.secondStep - (this.second % this.secondStep);
+
+      if (newVal > 59) {
+        this.incrementMinute(true);
+        this.second = newVal - 60;
+      } else {
+        this.second = newVal;
+      }
+    },
+
+    mousewheel: function(e) {
+      if (this.disableMousewheel) {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail,
+          scrollTo = null;
+
+      if (e.type === 'mousewheel') {
+        scrollTo = (e.originalEvent.wheelDelta * -1);
+      }
+      else if (e.type === 'DOMMouseScroll') {
+        scrollTo = 40 * e.originalEvent.detail;
+      }
+
+      if (scrollTo) {
+        e.preventDefault();
+        $(this).scrollTop(scrollTo + $(this).scrollTop());
+      }
+
+      switch (this.highlightedUnit) {
+      case 'minute':
+        if (delta > 0) {
+          this.incrementMinute();
+        } else {
+          this.decrementMinute();
+        }
+        this.highlightMinute();
+        break;
+      case 'second':
+        if (delta > 0) {
+          this.incrementSecond();
+        } else {
+          this.decrementSecond();
+        }
+        this.highlightSecond();
+        break;
+      case 'meridian':
+        this.toggleMeridian();
+        this.highlightMeridian();
+        break;
+      default:
+        if (delta > 0) {
+          this.incrementHour();
+        } else {
+          this.decrementHour();
+        }
+        this.highlightHour();
+        break;
+      }
+
+      return false;
+    },
+
+    /**
+     * Given a segment value like 43, will round and snap the segment
+     * to the nearest "step", like 45 if step is 15. Segment will
+     * "overflow" to 0 if it's larger than 59 or would otherwise
+     * round up to 60.
+     */
+    changeToNearestStep: function (segment, step) {
+      if (segment % step === 0) {
+        return segment;
+      }
+      if (Math.round((segment % step) / step)) {
+        return (segment + (step - segment % step)) % 60;
+      } else {
+        return segment - segment % step;
+      }
+    },
+
+    // This method was adapted from bootstrap-datepicker.
+    place : function() {
+      if (this.isInline) {
+        return;
+      }
+      var widgetWidth = this.$widget.outerWidth(), widgetHeight = this.$widget.outerHeight(), visualPadding = 10, windowWidth =
+        $(window).width(), windowHeight = $(window).height(), scrollTop = $(window).scrollTop();
+
+      var zIndex = parseInt(this.$element.parents().filter(function() { return $(this).css('z-index') !== 'auto'; }).first().css('z-index'), 10) + 10;
+      var offset = this.component ? this.component.parent().offset() : this.$element.offset();
+      var height = this.component ? this.component.outerHeight(true) : this.$element.outerHeight(false);
+      var width = this.component ? this.component.outerWidth(true) : this.$element.outerWidth(false);
+      var left = offset.left, top = offset.top;
+
+      this.$widget.removeClass('timepicker-orient-top timepicker-orient-bottom timepicker-orient-right timepicker-orient-left');
+
+      if (this.orientation.x !== 'auto') {
+        this.picker.addClass('datepicker-orient-' + this.orientation.x);
+        if (this.orientation.x === 'right') {
+          left -= widgetWidth - width;
+        }
+      } else{
+        // auto x orientation is best-placement: if it crosses a window edge, fudge it sideways
+        // Default to left
+        this.$widget.addClass('timepicker-orient-left');
+        if (offset.left < 0) {
+          left -= offset.left - visualPadding;
+        } else if (offset.left + widgetWidth > windowWidth) {
+          left = windowWidth - widgetWidth - visualPadding;
+        }
+      }
+      // auto y orientation is best-situation: top or bottom, no fudging, decision based on which shows more of the widget
+      var yorient = this.orientation.y, topOverflow, bottomOverflow;
+      if (yorient === 'auto') {
+        topOverflow = -scrollTop + offset.top - widgetHeight;
+        bottomOverflow = scrollTop + windowHeight - (offset.top + height + widgetHeight);
+        if (Math.max(topOverflow, bottomOverflow) === bottomOverflow) {
+          yorient = 'top';
+        } else {
+          yorient = 'bottom';
+        }
+      }
+      this.$widget.addClass('timepicker-orient-' + yorient);
+      if (yorient === 'top'){
+        top += height;
+      } else{
+        top -= widgetHeight + parseInt(this.$widget.css('padding-top'), 10);
+      }
+
+      this.$widget.css({
+        top : top,
+        left : left,
+        zIndex : zIndex
+      });
+    },
+
+    remove: function() {
+      $('document').off('.timepicker');
+      if (this.$widget) {
+        this.$widget.remove();
+      }
+      delete this.$element.data().timepicker;
+    },
+
+    setDefaultTime: function(defaultTime) {
+      if (!this.$element.val()) {
+        if (defaultTime === 'current') {
+          var dTime = new Date(),
+            hours = dTime.getHours(),
+            minutes = dTime.getMinutes(),
+            seconds = dTime.getSeconds(),
+            meridian = 'AM';
+
+          if (seconds !== 0) {
+            seconds = Math.ceil(dTime.getSeconds() / this.secondStep) * this.secondStep;
+            if (seconds === 60) {
+              minutes += 1;
+              seconds = 0;
+            }
+          }
+
+          if (minutes !== 0) {
+            minutes = Math.ceil(dTime.getMinutes() / this.minuteStep) * this.minuteStep;
+            if (minutes === 60) {
+              hours += 1;
+              minutes = 0;
+            }
+          }
+
+          if (this.showMeridian) {
+            if (hours === 0) {
+              hours = 12;
+            } else if (hours >= 12) {
+              if (hours > 12) {
+                hours = hours - 12;
+              }
+              meridian = 'PM';
+            } else {
+              meridian = 'AM';
+            }
+          }
+
+          this.hour = hours;
+          this.minute = minutes;
+          this.second = seconds;
+          this.meridian = meridian;
+
+          this.update();
+
+        } else if (defaultTime === false) {
+          this.hour = 0;
+          this.minute = 0;
+          this.second = 0;
+          this.meridian = 'AM';
+        } else {
+          this.setTime(defaultTime);
+        }
+      } else {
+        this.updateFromElementVal();
+      }
+    },
+
+    setTime: function(time, ignoreWidget) {
+      if (!time) {
+        this.clear();
+        return;
+      }
+
+      var timeMode,
+          timeArray,
+          hour,
+          minute,
+          second,
+          meridian;
+
+      if (typeof time === 'object' && time.getMonth){
+        // this is a date object
+        hour    = time.getHours();
+        minute  = time.getMinutes();
+        second  = time.getSeconds();
+
+        if (this.showMeridian){
+          meridian = 'AM';
+          if (hour > 12){
+            meridian = 'PM';
+            hour = hour % 12;
+          }
+
+          if (hour === 12){
+            meridian = 'PM';
+          }
+        }
+      } else {
+        timeMode = ((/a/i).test(time) ? 1 : 0) + ((/p/i).test(time) ? 2 : 0); // 0 = none, 1 = AM, 2 = PM, 3 = BOTH.
+        if (timeMode > 2) { // If both are present, fail.
+          this.clear();
+          return;
+        }
+
+        timeArray = time.replace(/[^0-9\:]/g, '').split(':');
+
+        hour = timeArray[0] ? timeArray[0].toString() : timeArray.toString();
+
+        if(this.explicitMode && hour.length > 2 && (hour.length % 2) !== 0 ) {
+          this.clear();
+          return;
+        }
+
+        minute = timeArray[1] ? timeArray[1].toString() : '';
+        second = timeArray[2] ? timeArray[2].toString() : '';
+
+        // adaptive time parsing
+        if (hour.length > 4) {
+          second = hour.slice(-2);
+          hour = hour.slice(0, -2);
+        }
+
+        if (hour.length > 2) {
+          minute = hour.slice(-2);
+          hour = hour.slice(0, -2);
+        }
+
+        if (minute.length > 2) {
+          second = minute.slice(-2);
+          minute = minute.slice(0, -2);
+        }
+
+        hour = parseInt(hour, 10);
+        minute = parseInt(minute, 10);
+        second = parseInt(second, 10);
+
+        if (isNaN(hour)) {
+          hour = 0;
+        }
+        if (isNaN(minute)) {
+          minute = 0;
+        }
+        if (isNaN(second)) {
+          second = 0;
+        }
+
+        // Adjust the time based upon unit boundary.
+        // NOTE: Negatives will never occur due to time.replace() above.
+        if (second > 59) {
+          second = 59;
+        }
+
+        if (minute > 59) {
+          minute = 59;
+        }
+
+        if (hour >= this.maxHours) {
+          // No day/date handling.
+          hour = this.maxHours - 1;
+        }
+
+        if (this.showMeridian) {
+          if (hour > 12) {
+            // Force PM.
+            timeMode = 2;
+            hour -= 12;
+          }
+          if (!timeMode) {
+            timeMode = 1;
+          }
+          if (hour === 0) {
+            hour = 12; // AM or PM, reset to 12.  0 AM = 12 AM.  0 PM = 12 PM, etc.
+          }
+          meridian = timeMode === 1 ? 'AM' : 'PM';
+        } else if (hour < 12 && timeMode === 2) {
+          hour += 12;
+        } else {
+          if (hour >= this.maxHours) {
+            hour = this.maxHours - 1;
+          } else if (hour < 0) {
+            hour = 0;
+          }
+        }
+      }
+
+      this.hour = hour;
+      if (this.snapToStep) {
+        this.minute = this.changeToNearestStep(minute, this.minuteStep);
+        this.second = this.changeToNearestStep(second, this.secondStep);
+      } else {
+        this.minute = minute;
+        this.second = second;
+      }
+      this.meridian = meridian;
+
+      this.update(ignoreWidget);
+    },
+
+    showWidget: function() {
+      if (this.isOpen) {
+        return;
+      }
+
+      if (this.$element.is(':disabled')) {
+        return;
+      }
+
+      // show/hide approach taken by datepicker
+      this.$widget.appendTo(this.appendWidgetTo);
+      $(document).on('mousedown.timepicker, touchend.timepicker', {scope: this}, this.handleDocumentClick);
+
+      this.$element.trigger({
+        'type': 'show.timepicker',
+        'time': {
+          'value': this.getTime(),
+          'hours': this.hour,
+          'minutes': this.minute,
+          'seconds': this.second,
+          'meridian': this.meridian
+        }
+      });
+
+      this.place();
+      if (this.disableFocus) {
+        this.$element.blur();
+      }
+
+      // widget shouldn't be empty on open
+      if (this.hour === '') {
+        if (this.defaultTime) {
+          this.setDefaultTime(this.defaultTime);
+        } else {
+          this.setTime('0:0:0');
+        }
+      }
+
+      if (this.template === 'modal' && this.$widget.modal) {
+        this.$widget.modal('show').on('hidden', $.proxy(this.hideWidget, this));
+      } else {
+        if (this.isOpen === false) {
+          this.$widget.addClass('open');
+        }
+      }
+
+      this.isOpen = true;
+    },
+
+    toggleMeridian: function() {
+      this.meridian = this.meridian === 'AM' ? 'PM' : 'AM';
+    },
+
+    update: function(ignoreWidget) {
+      this.updateElement();
+      if (!ignoreWidget) {
+        this.updateWidget();
+      }
+
+      this.$element.trigger({
+        'type': 'changeTime.timepicker',
+        'time': {
+          'value': this.getTime(),
+          'hours': this.hour,
+          'minutes': this.minute,
+          'seconds': this.second,
+          'meridian': this.meridian
+        }
+      });
+    },
+
+    updateElement: function() {
+      this.$element.val(this.getTime()).change();
+    },
+
+    updateFromElementVal: function() {
+      this.setTime(this.$element.val());
+    },
+
+    updateWidget: function() {
+      if (this.$widget === false) {
+        return;
+      }
+
+      var hour = this.hour,
+          minute = this.minute.toString().length === 1 ? '0' + this.minute : this.minute,
+          second = this.second.toString().length === 1 ? '0' + this.second : this.second;
+
+      if (this.showInputs) {
+        this.$widget.find('input.bootstrap-timepicker-hour').val(hour);
+        this.$widget.find('input.bootstrap-timepicker-minute').val(minute);
+
+        if (this.showSeconds) {
+          this.$widget.find('input.bootstrap-timepicker-second').val(second);
+        }
+        if (this.showMeridian) {
+          this.$widget.find('input.bootstrap-timepicker-meridian').val(this.meridian);
+        }
+      } else {
+        this.$widget.find('span.bootstrap-timepicker-hour').text(hour);
+        this.$widget.find('span.bootstrap-timepicker-minute').text(minute);
+
+        if (this.showSeconds) {
+          this.$widget.find('span.bootstrap-timepicker-second').text(second);
+        }
+        if (this.showMeridian) {
+          this.$widget.find('span.bootstrap-timepicker-meridian').text(this.meridian);
+        }
+      }
+    },
+
+    updateFromWidgetInputs: function() {
+      if (this.$widget === false) {
+        return;
+      }
+
+      var t = this.$widget.find('input.bootstrap-timepicker-hour').val() + ':' +
+              this.$widget.find('input.bootstrap-timepicker-minute').val() +
+              (this.showSeconds ? ':' + this.$widget.find('input.bootstrap-timepicker-second').val() : '') +
+              (this.showMeridian ? this.$widget.find('input.bootstrap-timepicker-meridian').val() : '')
+      ;
+
+      this.setTime(t, true);
+    },
+
+    widgetClick: function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      var $input = $(e.target),
+          action = $input.closest('a').data('action');
+
+      if (action) {
+        this[action]();
+      }
+      this.update();
+
+      if ($input.is('input')) {
+        $input.get(0).setSelectionRange(0,2);
+      }
+    },
+
+    widgetKeydown: function(e) {
+      var $input = $(e.target),
+          name = $input.attr('class').replace('bootstrap-timepicker-', '');
+
+      switch (e.which) {
+      case 9: //tab
+        if (e.shiftKey) {
+          if (name === 'hour') {
+            return this.hideWidget();
+          }
+        } else if ((this.showMeridian && name === 'meridian') || (this.showSeconds && name === 'second') || (!this.showMeridian && !this.showSeconds && name === 'minute')) {
+          return this.hideWidget();
+        }
+        break;
+      case 27: // escape
+        this.hideWidget();
+        break;
+      case 38: // up arrow
+        e.preventDefault();
+        switch (name) {
+        case 'hour':
+          this.incrementHour();
+          break;
+        case 'minute':
+          this.incrementMinute();
+          break;
+        case 'second':
+          this.incrementSecond();
+          break;
+        case 'meridian':
+          this.toggleMeridian();
+          break;
+        }
+        this.setTime(this.getTime());
+        $input.get(0).setSelectionRange(0,2);
+        break;
+      case 40: // down arrow
+        e.preventDefault();
+        switch (name) {
+        case 'hour':
+          this.decrementHour();
+          break;
+        case 'minute':
+          this.decrementMinute();
+          break;
+        case 'second':
+          this.decrementSecond();
+          break;
+        case 'meridian':
+          this.toggleMeridian();
+          break;
+        }
+        this.setTime(this.getTime());
+        $input.get(0).setSelectionRange(0,2);
+        break;
+      }
+    },
+
+    widgetKeyup: function(e) {
+      if ((e.which === 65) || (e.which === 77) || (e.which === 80) || (e.which === 46) || (e.which === 8) || (e.which >= 48 && e.which <= 57) || (e.which >= 96 && e.which <= 105)) {
+        this.updateFromWidgetInputs();
+      }
+    }
+  };
+
+  //TIMEPICKER PLUGIN DEFINITION
+  $.fn.timepicker = function(option) {
+    var args = Array.apply(null, arguments);
+    args.shift();
+    return this.each(function() {
+      var $this = $(this),
+        data = $this.data('timepicker'),
+        options = typeof option === 'object' && option;
+
+      if (!data) {
+        $this.data('timepicker', (data = new Timepicker(this, $.extend({}, $.fn.timepicker.defaults, options, $(this).data()))));
+      }
+
+      if (typeof option === 'string') {
+        data[option].apply(data, args);
+      }
+    });
+  };
+
+  $.fn.timepicker.defaults = {
+    defaultTime: 'current',
+    disableFocus: false,
+    disableMousewheel: false,
+    isOpen: false,
+    minuteStep: 15,
+    modalBackdrop: false,
+    orientation: { x: 'auto', y: 'auto'},
+    secondStep: 15,
+    snapToStep: false,
+    showSeconds: false,
+    showInputs: true,
+    showMeridian: true,
+    template: 'dropdown',
+    appendWidgetTo: 'body',
+    showWidgetOnAddonClick: true,
+    maxHours: 24,
+    explicitMode: false
+  };
+
+  $.fn.timepicker.Constructor = Timepicker;
+
+  $(document).on(
+    'focus.timepicker.data-api click.timepicker.data-api',
+    '[data-provide="timepicker"]',
+    function(e){
+      var $this = $(this);
+      if ($this.data('timepicker')) {
+        return;
+      }
+      e.preventDefault();
+      // component click requires us to explicitly show it
+      $this.timepicker();
+    }
+  );
+
+})(jQuery, window, document);
+
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -115364,6 +118455,1962 @@ else if ( jQuery && !jQuery.fn.dataTable.Buttons ) {
 
 /***/ }
 /******/ ]);
+
+;(function(){
+
+/**
+ * Require the module at `name`.
+ *
+ * @param {String} name
+ * @return {Object} exports
+ * @api public
+ */
+
+function require(name) {
+  var module = require.modules[name];
+  if (!module) throw new Error('failed to require "' + name + '"');
+
+  if (!('exports' in module) && typeof module.definition === 'function') {
+    module.client = module.component = true;
+    module.definition.call(this, module.exports = {}, module);
+    delete module.definition;
+  }
+
+  return module.exports;
+}
+
+/**
+ * Meta info, accessible in the global scope unless you use AMD option.
+ */
+
+require.loader = 'component';
+
+/**
+ * Internal helper object, contains a sorting function for semantiv versioning
+ */
+require.helper = {};
+require.helper.semVerSort = function(a, b) {
+  var aArray = a.version.split('.');
+  var bArray = b.version.split('.');
+  for (var i=0; i<aArray.length; ++i) {
+    var aInt = parseInt(aArray[i], 10);
+    var bInt = parseInt(bArray[i], 10);
+    if (aInt === bInt) {
+      var aLex = aArray[i].substr((""+aInt).length);
+      var bLex = bArray[i].substr((""+bInt).length);
+      if (aLex === '' && bLex !== '') return 1;
+      if (aLex !== '' && bLex === '') return -1;
+      if (aLex !== '' && bLex !== '') return aLex > bLex ? 1 : -1;
+      continue;
+    } else if (aInt > bInt) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Find and require a module which name starts with the provided name.
+ * If multiple modules exists, the highest semver is used. 
+ * This function can only be used for remote dependencies.
+
+ * @param {String} name - module name: `user~repo`
+ * @param {Boolean} returnPath - returns the canonical require path if true, 
+ *                               otherwise it returns the epxorted module
+ */
+require.latest = function (name, returnPath) {
+  function showError(name) {
+    throw new Error('failed to find latest module of "' + name + '"');
+  }
+  // only remotes with semvers, ignore local files conataining a '/'
+  var versionRegexp = /(.*)~(.*)@v?(\d+\.\d+\.\d+[^\/]*)$/;
+  var remoteRegexp = /(.*)~(.*)/;
+  if (!remoteRegexp.test(name)) showError(name);
+  var moduleNames = Object.keys(require.modules);
+  var semVerCandidates = [];
+  var otherCandidates = []; // for instance: name of the git branch
+  for (var i=0; i<moduleNames.length; i++) {
+    var moduleName = moduleNames[i];
+    if (new RegExp(name + '@').test(moduleName)) {
+        var version = moduleName.substr(name.length+1);
+        var semVerMatch = versionRegexp.exec(moduleName);
+        if (semVerMatch != null) {
+          semVerCandidates.push({version: version, name: moduleName});
+        } else {
+          otherCandidates.push({version: version, name: moduleName});
+        } 
+    }
+  }
+  if (semVerCandidates.concat(otherCandidates).length === 0) {
+    showError(name);
+  }
+  if (semVerCandidates.length > 0) {
+    var module = semVerCandidates.sort(require.helper.semVerSort).pop().name;
+    if (returnPath === true) {
+      return module;
+    }
+    return require(module);
+  }
+  // if the build contains more than one branch of the same module
+  // you should not use this funciton
+  var module = otherCandidates.sort(function(a, b) {return a.name > b.name})[0].name;
+  if (returnPath === true) {
+    return module;
+  }
+  return require(module);
+}
+
+/**
+ * Registered modules.
+ */
+
+require.modules = {};
+
+/**
+ * Register module at `name` with callback `definition`.
+ *
+ * @param {String} name
+ * @param {Function} definition
+ * @api private
+ */
+
+require.register = function (name, definition) {
+  require.modules[name] = {
+    definition: definition
+  };
+};
+
+/**
+ * Define a module's exports immediately with `exports`.
+ *
+ * @param {String} name
+ * @param {Generic} exports
+ * @api private
+ */
+
+require.define = function (name, exports) {
+  require.modules[name] = {
+    exports: exports
+  };
+};
+require.register("abpetkov~transitionize@0.0.3", function (exports, module) {
+
+/**
+ * Transitionize 0.0.2
+ * https://github.com/abpetkov/transitionize
+ *
+ * Authored by Alexander Petkov
+ * https://github.com/abpetkov
+ *
+ * Copyright 2013, Alexander Petkov
+ * License: The MIT License (MIT)
+ * http://opensource.org/licenses/MIT
+ *
+ */
+
+/**
+ * Expose `Transitionize`.
+ */
+
+module.exports = Transitionize;
+
+/**
+ * Initialize new Transitionize.
+ *
+ * @param {Object} element
+ * @param {Object} props
+ * @api public
+ */
+
+function Transitionize(element, props) {
+  if (!(this instanceof Transitionize)) return new Transitionize(element, props);
+
+  this.element = element;
+  this.props = props || {};
+  this.init();
+}
+
+/**
+ * Detect if Safari.
+ *
+ * @returns {Boolean}
+ * @api private
+ */
+
+Transitionize.prototype.isSafari = function() {
+  return (/Safari/).test(navigator.userAgent) && (/Apple Computer/).test(navigator.vendor);
+};
+
+/**
+ * Loop though the object and push the keys and values in an array.
+ * Apply the CSS3 transition to the element and prefix with -webkit- for Safari.
+ *
+ * @api private
+ */
+
+Transitionize.prototype.init = function() {
+  var transitions = [];
+
+  for (var key in this.props) {
+    transitions.push(key + ' ' + this.props[key]);
+  }
+
+  this.element.style.transition = transitions.join(', ');
+  if (this.isSafari()) this.element.style.webkitTransition = transitions.join(', ');
+};
+});
+
+require.register("ftlabs~fastclick@v0.6.11", function (exports, module) {
+/**
+ * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
+ *
+ * @version 0.6.11
+ * @codingstandard ftlabs-jsv2
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @license MIT License (see LICENSE.txt)
+ */
+
+/*jslint browser:true, node:true*/
+/*global define, Event, Node*/
+
+
+/**
+ * Instantiate fast-clicking listeners on the specificed layer.
+ *
+ * @constructor
+ * @param {Element} layer The layer to listen on
+ */
+function FastClick(layer) {
+	'use strict';
+	var oldOnClick, self = this;
+
+
+	/**
+	 * Whether a click is currently being tracked.
+	 *
+	 * @type boolean
+	 */
+	this.trackingClick = false;
+
+
+	/**
+	 * Timestamp for when when click tracking started.
+	 *
+	 * @type number
+	 */
+	this.trackingClickStart = 0;
+
+
+	/**
+	 * The element being tracked for a click.
+	 *
+	 * @type EventTarget
+	 */
+	this.targetElement = null;
+
+
+	/**
+	 * X-coordinate of touch start event.
+	 *
+	 * @type number
+	 */
+	this.touchStartX = 0;
+
+
+	/**
+	 * Y-coordinate of touch start event.
+	 *
+	 * @type number
+	 */
+	this.touchStartY = 0;
+
+
+	/**
+	 * ID of the last touch, retrieved from Touch.identifier.
+	 *
+	 * @type number
+	 */
+	this.lastTouchIdentifier = 0;
+
+
+	/**
+	 * Touchmove boundary, beyond which a click will be cancelled.
+	 *
+	 * @type number
+	 */
+	this.touchBoundary = 10;
+
+
+	/**
+	 * The FastClick layer.
+	 *
+	 * @type Element
+	 */
+	this.layer = layer;
+
+	if (!layer || !layer.nodeType) {
+		throw new TypeError('Layer must be a document node');
+	}
+
+	/** @type function() */
+	this.onClick = function() { return FastClick.prototype.onClick.apply(self, arguments); };
+
+	/** @type function() */
+	this.onMouse = function() { return FastClick.prototype.onMouse.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchStart = function() { return FastClick.prototype.onTouchStart.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchMove = function() { return FastClick.prototype.onTouchMove.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchEnd = function() { return FastClick.prototype.onTouchEnd.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchCancel = function() { return FastClick.prototype.onTouchCancel.apply(self, arguments); };
+
+	if (FastClick.notNeeded(layer)) {
+		return;
+	}
+
+	// Set up event handlers as required
+	if (this.deviceIsAndroid) {
+		layer.addEventListener('mouseover', this.onMouse, true);
+		layer.addEventListener('mousedown', this.onMouse, true);
+		layer.addEventListener('mouseup', this.onMouse, true);
+	}
+
+	layer.addEventListener('click', this.onClick, true);
+	layer.addEventListener('touchstart', this.onTouchStart, false);
+	layer.addEventListener('touchmove', this.onTouchMove, false);
+	layer.addEventListener('touchend', this.onTouchEnd, false);
+	layer.addEventListener('touchcancel', this.onTouchCancel, false);
+
+	// Hack is required for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+	// which is how FastClick normally stops click events bubbling to callbacks registered on the FastClick
+	// layer when they are cancelled.
+	if (!Event.prototype.stopImmediatePropagation) {
+		layer.removeEventListener = function(type, callback, capture) {
+			var rmv = Node.prototype.removeEventListener;
+			if (type === 'click') {
+				rmv.call(layer, type, callback.hijacked || callback, capture);
+			} else {
+				rmv.call(layer, type, callback, capture);
+			}
+		};
+
+		layer.addEventListener = function(type, callback, capture) {
+			var adv = Node.prototype.addEventListener;
+			if (type === 'click') {
+				adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
+					if (!event.propagationStopped) {
+						callback(event);
+					}
+				}), capture);
+			} else {
+				adv.call(layer, type, callback, capture);
+			}
+		};
+	}
+
+	// If a handler is already declared in the element's onclick attribute, it will be fired before
+	// FastClick's onClick handler. Fix this by pulling out the user-defined handler function and
+	// adding it as listener.
+	if (typeof layer.onclick === 'function') {
+
+		// Android browser on at least 3.2 requires a new reference to the function in layer.onclick
+		// - the old one won't work if passed to addEventListener directly.
+		oldOnClick = layer.onclick;
+		layer.addEventListener('click', function(event) {
+			oldOnClick(event);
+		}, false);
+		layer.onclick = null;
+	}
+}
+
+
+/**
+ * Android requires exceptions.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0;
+
+
+/**
+ * iOS requires exceptions.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent);
+
+
+/**
+ * iOS 4 requires an exception for select elements.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOS4 = FastClick.prototype.deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+
+
+/**
+ * iOS 6.0(+?) requires the target element to be manually derived
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOSWithBadTarget = FastClick.prototype.deviceIsIOS && (/OS ([6-9]|\d{2})_\d/).test(navigator.userAgent);
+
+
+/**
+ * Determine whether a given element requires a native click.
+ *
+ * @param {EventTarget|Element} target Target DOM element
+ * @returns {boolean} Returns true if the element needs a native click
+ */
+FastClick.prototype.needsClick = function(target) {
+	'use strict';
+	switch (target.nodeName.toLowerCase()) {
+
+	// Don't send a synthetic click to disabled inputs (issue #62)
+	case 'button':
+	case 'select':
+	case 'textarea':
+		if (target.disabled) {
+			return true;
+		}
+
+		break;
+	case 'input':
+
+		// File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
+		if ((this.deviceIsIOS && target.type === 'file') || target.disabled) {
+			return true;
+		}
+
+		break;
+	case 'label':
+	case 'video':
+		return true;
+	}
+
+	return (/\bneedsclick\b/).test(target.className);
+};
+
+
+/**
+ * Determine whether a given element requires a call to focus to simulate click into element.
+ *
+ * @param {EventTarget|Element} target Target DOM element
+ * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
+ */
+FastClick.prototype.needsFocus = function(target) {
+	'use strict';
+	switch (target.nodeName.toLowerCase()) {
+	case 'textarea':
+		return true;
+	case 'select':
+		return !this.deviceIsAndroid;
+	case 'input':
+		switch (target.type) {
+		case 'button':
+		case 'checkbox':
+		case 'file':
+		case 'image':
+		case 'radio':
+		case 'submit':
+			return false;
+		}
+
+		// No point in attempting to focus disabled inputs
+		return !target.disabled && !target.readOnly;
+	default:
+		return (/\bneedsfocus\b/).test(target.className);
+	}
+};
+
+
+/**
+ * Send a click event to the specified element.
+ *
+ * @param {EventTarget|Element} targetElement
+ * @param {Event} event
+ */
+FastClick.prototype.sendClick = function(targetElement, event) {
+	'use strict';
+	var clickEvent, touch;
+
+	// On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect (#24)
+	if (document.activeElement && document.activeElement !== targetElement) {
+		document.activeElement.blur();
+	}
+
+	touch = event.changedTouches[0];
+
+	// Synthesise a click event, with an extra attribute so it can be tracked
+	clickEvent = document.createEvent('MouseEvents');
+	clickEvent.initMouseEvent(this.determineEventType(targetElement), true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
+	clickEvent.forwardedTouchEvent = true;
+	targetElement.dispatchEvent(clickEvent);
+};
+
+FastClick.prototype.determineEventType = function(targetElement) {
+	'use strict';
+
+	//Issue #159: Android Chrome Select Box does not open with a synthetic click event
+	if (this.deviceIsAndroid && targetElement.tagName.toLowerCase() === 'select') {
+		return 'mousedown';
+	}
+
+	return 'click';
+};
+
+
+/**
+ * @param {EventTarget|Element} targetElement
+ */
+FastClick.prototype.focus = function(targetElement) {
+	'use strict';
+	var length;
+
+	// Issue #160: on iOS 7, some input elements (e.g. date datetime) throw a vague TypeError on setSelectionRange. These elements don't have an integer value for the selectionStart and selectionEnd properties, but unfortunately that can't be used for detection because accessing the properties also throws a TypeError. Just check the type instead. Filed as Apple bug #15122724.
+	if (this.deviceIsIOS && targetElement.setSelectionRange && targetElement.type.indexOf('date') !== 0 && targetElement.type !== 'time') {
+		length = targetElement.value.length;
+		targetElement.setSelectionRange(length, length);
+	} else {
+		targetElement.focus();
+	}
+};
+
+
+/**
+ * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+ *
+ * @param {EventTarget|Element} targetElement
+ */
+FastClick.prototype.updateScrollParent = function(targetElement) {
+	'use strict';
+	var scrollParent, parentElement;
+
+	scrollParent = targetElement.fastClickScrollParent;
+
+	// Attempt to discover whether the target element is contained within a scrollable layer. Re-check if the
+	// target element was moved to another parent.
+	if (!scrollParent || !scrollParent.contains(targetElement)) {
+		parentElement = targetElement;
+		do {
+			if (parentElement.scrollHeight > parentElement.offsetHeight) {
+				scrollParent = parentElement;
+				targetElement.fastClickScrollParent = parentElement;
+				break;
+			}
+
+			parentElement = parentElement.parentElement;
+		} while (parentElement);
+	}
+
+	// Always update the scroll top tracker if possible.
+	if (scrollParent) {
+		scrollParent.fastClickLastScrollTop = scrollParent.scrollTop;
+	}
+};
+
+
+/**
+ * @param {EventTarget} targetElement
+ * @returns {Element|EventTarget}
+ */
+FastClick.prototype.getTargetElementFromEventTarget = function(eventTarget) {
+	'use strict';
+
+	// On some older browsers (notably Safari on iOS 4.1 - see issue #56) the event target may be a text node.
+	if (eventTarget.nodeType === Node.TEXT_NODE) {
+		return eventTarget.parentNode;
+	}
+
+	return eventTarget;
+};
+
+
+/**
+ * On touch start, record the position and scroll offset.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchStart = function(event) {
+	'use strict';
+	var targetElement, touch, selection;
+
+	// Ignore multiple touches, otherwise pinch-to-zoom is prevented if both fingers are on the FastClick element (issue #111).
+	if (event.targetTouches.length > 1) {
+		return true;
+	}
+
+	targetElement = this.getTargetElementFromEventTarget(event.target);
+	touch = event.targetTouches[0];
+
+	if (this.deviceIsIOS) {
+
+		// Only trusted events will deselect text on iOS (issue #49)
+		selection = window.getSelection();
+		if (selection.rangeCount && !selection.isCollapsed) {
+			return true;
+		}
+
+		if (!this.deviceIsIOS4) {
+
+			// Weird things happen on iOS when an alert or confirm dialog is opened from a click event callback (issue #23):
+			// when the user next taps anywhere else on the page, new touchstart and touchend events are dispatched
+			// with the same identifier as the touch event that previously triggered the click that triggered the alert.
+			// Sadly, there is an issue on iOS 4 that causes some normal touch events to have the same identifier as an
+			// immediately preceeding touch event (issue #52), so this fix is unavailable on that platform.
+			if (touch.identifier === this.lastTouchIdentifier) {
+				event.preventDefault();
+				return false;
+			}
+
+			this.lastTouchIdentifier = touch.identifier;
+
+			// If the target element is a child of a scrollable layer (using -webkit-overflow-scrolling: touch) and:
+			// 1) the user does a fling scroll on the scrollable layer
+			// 2) the user stops the fling scroll with another tap
+			// then the event.target of the last 'touchend' event will be the element that was under the user's finger
+			// when the fling scroll was started, causing FastClick to send a click event to that layer - unless a check
+			// is made to ensure that a parent layer was not scrolled before sending a synthetic click (issue #42).
+			this.updateScrollParent(targetElement);
+		}
+	}
+
+	this.trackingClick = true;
+	this.trackingClickStart = event.timeStamp;
+	this.targetElement = targetElement;
+
+	this.touchStartX = touch.pageX;
+	this.touchStartY = touch.pageY;
+
+	// Prevent phantom clicks on fast double-tap (issue #36)
+	if ((event.timeStamp - this.lastClickTime) < 200) {
+		event.preventDefault();
+	}
+
+	return true;
+};
+
+
+/**
+ * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.touchHasMoved = function(event) {
+	'use strict';
+	var touch = event.changedTouches[0], boundary = this.touchBoundary;
+
+	if (Math.abs(touch.pageX - this.touchStartX) > boundary || Math.abs(touch.pageY - this.touchStartY) > boundary) {
+		return true;
+	}
+
+	return false;
+};
+
+
+/**
+ * Update the last position.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchMove = function(event) {
+	'use strict';
+	if (!this.trackingClick) {
+		return true;
+	}
+
+	// If the touch has moved, cancel the click tracking
+	if (this.targetElement !== this.getTargetElementFromEventTarget(event.target) || this.touchHasMoved(event)) {
+		this.trackingClick = false;
+		this.targetElement = null;
+	}
+
+	return true;
+};
+
+
+/**
+ * Attempt to find the labelled control for the given label element.
+ *
+ * @param {EventTarget|HTMLLabelElement} labelElement
+ * @returns {Element|null}
+ */
+FastClick.prototype.findControl = function(labelElement) {
+	'use strict';
+
+	// Fast path for newer browsers supporting the HTML5 control attribute
+	if (labelElement.control !== undefined) {
+		return labelElement.control;
+	}
+
+	// All browsers under test that support touch events also support the HTML5 htmlFor attribute
+	if (labelElement.htmlFor) {
+		return document.getElementById(labelElement.htmlFor);
+	}
+
+	// If no for attribute exists, attempt to retrieve the first labellable descendant element
+	// the list of which is defined here: http://www.w3.org/TR/html5/forms.html#category-label
+	return labelElement.querySelector('button, input:not([type=hidden]), keygen, meter, output, progress, select, textarea');
+};
+
+
+/**
+ * On touch end, determine whether to send a click event at once.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchEnd = function(event) {
+	'use strict';
+	var forElement, trackingClickStart, targetTagName, scrollParent, touch, targetElement = this.targetElement;
+
+	if (!this.trackingClick) {
+		return true;
+	}
+
+	// Prevent phantom clicks on fast double-tap (issue #36)
+	if ((event.timeStamp - this.lastClickTime) < 200) {
+		this.cancelNextClick = true;
+		return true;
+	}
+
+	// Reset to prevent wrong click cancel on input (issue #156).
+	this.cancelNextClick = false;
+
+	this.lastClickTime = event.timeStamp;
+
+	trackingClickStart = this.trackingClickStart;
+	this.trackingClick = false;
+	this.trackingClickStart = 0;
+
+	// On some iOS devices, the targetElement supplied with the event is invalid if the layer
+	// is performing a transition or scroll, and has to be re-detected manually. Note that
+	// for this to function correctly, it must be called *after* the event target is checked!
+	// See issue #57; also filed as rdar://13048589 .
+	if (this.deviceIsIOSWithBadTarget) {
+		touch = event.changedTouches[0];
+
+		// In certain cases arguments of elementFromPoint can be negative, so prevent setting targetElement to null
+		targetElement = document.elementFromPoint(touch.pageX - window.pageXOffset, touch.pageY - window.pageYOffset) || targetElement;
+		targetElement.fastClickScrollParent = this.targetElement.fastClickScrollParent;
+	}
+
+	targetTagName = targetElement.tagName.toLowerCase();
+	if (targetTagName === 'label') {
+		forElement = this.findControl(targetElement);
+		if (forElement) {
+			this.focus(targetElement);
+			if (this.deviceIsAndroid) {
+				return false;
+			}
+
+			targetElement = forElement;
+		}
+	} else if (this.needsFocus(targetElement)) {
+
+		// Case 1: If the touch started a while ago (best guess is 100ms based on tests for issue #36) then focus will be triggered anyway. Return early and unset the target element reference so that the subsequent click will be allowed through.
+		// Case 2: Without this exception for input elements tapped when the document is contained in an iframe, then any inputted text won't be visible even though the value attribute is updated as the user types (issue #37).
+		if ((event.timeStamp - trackingClickStart) > 100 || (this.deviceIsIOS && window.top !== window && targetTagName === 'input')) {
+			this.targetElement = null;
+			return false;
+		}
+
+		this.focus(targetElement);
+
+		// Select elements need the event to go through on iOS 4, otherwise the selector menu won't open.
+		if (!this.deviceIsIOS4 || targetTagName !== 'select') {
+			this.targetElement = null;
+			event.preventDefault();
+		}
+
+		return false;
+	}
+
+	if (this.deviceIsIOS && !this.deviceIsIOS4) {
+
+		// Don't send a synthetic click event if the target element is contained within a parent layer that was scrolled
+		// and this tap is being used to stop the scrolling (usually initiated by a fling - issue #42).
+		scrollParent = targetElement.fastClickScrollParent;
+		if (scrollParent && scrollParent.fastClickLastScrollTop !== scrollParent.scrollTop) {
+			return true;
+		}
+	}
+
+	// Prevent the actual click from going though - unless the target node is marked as requiring
+	// real clicks or if it is in the whitelist in which case only non-programmatic clicks are permitted.
+	if (!this.needsClick(targetElement)) {
+		event.preventDefault();
+		this.sendClick(targetElement, event);
+	}
+
+	return false;
+};
+
+
+/**
+ * On touch cancel, stop tracking the click.
+ *
+ * @returns {void}
+ */
+FastClick.prototype.onTouchCancel = function() {
+	'use strict';
+	this.trackingClick = false;
+	this.targetElement = null;
+};
+
+
+/**
+ * Determine mouse events which should be permitted.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onMouse = function(event) {
+	'use strict';
+
+	// If a target element was never set (because a touch event was never fired) allow the event
+	if (!this.targetElement) {
+		return true;
+	}
+
+	if (event.forwardedTouchEvent) {
+		return true;
+	}
+
+	// Programmatically generated events targeting a specific element should be permitted
+	if (!event.cancelable) {
+		return true;
+	}
+
+	// Derive and check the target element to see whether the mouse event needs to be permitted;
+	// unless explicitly enabled, prevent non-touch click events from triggering actions,
+	// to prevent ghost/doubleclicks.
+	if (!this.needsClick(this.targetElement) || this.cancelNextClick) {
+
+		// Prevent any user-added listeners declared on FastClick element from being fired.
+		if (event.stopImmediatePropagation) {
+			event.stopImmediatePropagation();
+		} else {
+
+			// Part of the hack for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+			event.propagationStopped = true;
+		}
+
+		// Cancel the event
+		event.stopPropagation();
+		event.preventDefault();
+
+		return false;
+	}
+
+	// If the mouse event is permitted, return true for the action to go through.
+	return true;
+};
+
+
+/**
+ * On actual clicks, determine whether this is a touch-generated click, a click action occurring
+ * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
+ * an actual click which should be permitted.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onClick = function(event) {
+	'use strict';
+	var permitted;
+
+	// It's possible for another FastClick-like library delivered with third-party code to fire a click event before FastClick does (issue #44). In that case, set the click-tracking flag back to false and return early. This will cause onTouchEnd to return early.
+	if (this.trackingClick) {
+		this.targetElement = null;
+		this.trackingClick = false;
+		return true;
+	}
+
+	// Very odd behaviour on iOS (issue #18): if a submit element is present inside a form and the user hits enter in the iOS simulator or clicks the Go button on the pop-up OS keyboard the a kind of 'fake' click event will be triggered with the submit-type input element as the target.
+	if (event.target.type === 'submit' && event.detail === 0) {
+		return true;
+	}
+
+	permitted = this.onMouse(event);
+
+	// Only unset targetElement if the click is not permitted. This will ensure that the check for !targetElement in onMouse fails and the browser's click doesn't go through.
+	if (!permitted) {
+		this.targetElement = null;
+	}
+
+	// If clicks are permitted, return true for the action to go through.
+	return permitted;
+};
+
+
+/**
+ * Remove all FastClick's event listeners.
+ *
+ * @returns {void}
+ */
+FastClick.prototype.destroy = function() {
+	'use strict';
+	var layer = this.layer;
+
+	if (this.deviceIsAndroid) {
+		layer.removeEventListener('mouseover', this.onMouse, true);
+		layer.removeEventListener('mousedown', this.onMouse, true);
+		layer.removeEventListener('mouseup', this.onMouse, true);
+	}
+
+	layer.removeEventListener('click', this.onClick, true);
+	layer.removeEventListener('touchstart', this.onTouchStart, false);
+	layer.removeEventListener('touchmove', this.onTouchMove, false);
+	layer.removeEventListener('touchend', this.onTouchEnd, false);
+	layer.removeEventListener('touchcancel', this.onTouchCancel, false);
+};
+
+
+/**
+ * Check whether FastClick is needed.
+ *
+ * @param {Element} layer The layer to listen on
+ */
+FastClick.notNeeded = function(layer) {
+	'use strict';
+	var metaViewport;
+	var chromeVersion;
+
+	// Devices that don't support touch don't need FastClick
+	if (typeof window.ontouchstart === 'undefined') {
+		return true;
+	}
+
+	// Chrome version - zero for other browsers
+	chromeVersion = +(/Chrome\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+	if (chromeVersion) {
+
+		if (FastClick.prototype.deviceIsAndroid) {
+			metaViewport = document.querySelector('meta[name=viewport]');
+			
+			if (metaViewport) {
+				// Chrome on Android with user-scalable="no" doesn't need FastClick (issue #89)
+				if (metaViewport.content.indexOf('user-scalable=no') !== -1) {
+					return true;
+				}
+				// Chrome 32 and above with width=device-width or less don't need FastClick
+				if (chromeVersion > 31 && window.innerWidth <= window.screen.width) {
+					return true;
+				}
+			}
+
+		// Chrome desktop doesn't need FastClick (issue #15)
+		} else {
+			return true;
+		}
+	}
+
+	// IE10 with -ms-touch-action: none, which disables double-tap-to-zoom (issue #97)
+	if (layer.style.msTouchAction === 'none') {
+		return true;
+	}
+
+	return false;
+};
+
+
+/**
+ * Factory method for creating a FastClick object
+ *
+ * @param {Element} layer The layer to listen on
+ */
+FastClick.attach = function(layer) {
+	'use strict';
+	return new FastClick(layer);
+};
+
+
+if (typeof define !== 'undefined' && define.amd) {
+
+	// AMD. Register as an anonymous module.
+	define(function() {
+		'use strict';
+		return FastClick;
+	});
+} else if (typeof module !== 'undefined' && module.exports) {
+	module.exports = FastClick.attach;
+	module.exports.FastClick = FastClick;
+} else {
+	window.FastClick = FastClick;
+}
+
+});
+
+require.register("component~indexof@0.0.3", function (exports, module) {
+module.exports = function(arr, obj){
+  if (arr.indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+});
+
+require.register("component~classes@1.2.1", function (exports, module) {
+/**
+ * Module dependencies.
+ */
+
+var index = require('component~indexof@0.0.3');
+
+/**
+ * Whitespace regexp.
+ */
+
+var re = /\s+/;
+
+/**
+ * toString reference.
+ */
+
+var toString = Object.prototype.toString;
+
+/**
+ * Wrap `el` in a `ClassList`.
+ *
+ * @param {Element} el
+ * @return {ClassList}
+ * @api public
+ */
+
+module.exports = function(el){
+  return new ClassList(el);
+};
+
+/**
+ * Initialize a new ClassList for `el`.
+ *
+ * @param {Element} el
+ * @api private
+ */
+
+function ClassList(el) {
+  if (!el) throw new Error('A DOM element reference is required');
+  this.el = el;
+  this.list = el.classList;
+}
+
+/**
+ * Add class `name` if not already present.
+ *
+ * @param {String} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.add = function(name){
+  // classList
+  if (this.list) {
+    this.list.add(name);
+    return this;
+  }
+
+  // fallback
+  var arr = this.array();
+  var i = index(arr, name);
+  if (!~i) arr.push(name);
+  this.el.className = arr.join(' ');
+  return this;
+};
+
+/**
+ * Remove class `name` when present, or
+ * pass a regular expression to remove
+ * any which match.
+ *
+ * @param {String|RegExp} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.remove = function(name){
+  if ('[object RegExp]' == toString.call(name)) {
+    return this.removeMatching(name);
+  }
+
+  // classList
+  if (this.list) {
+    this.list.remove(name);
+    return this;
+  }
+
+  // fallback
+  var arr = this.array();
+  var i = index(arr, name);
+  if (~i) arr.splice(i, 1);
+  this.el.className = arr.join(' ');
+  return this;
+};
+
+/**
+ * Remove all classes matching `re`.
+ *
+ * @param {RegExp} re
+ * @return {ClassList}
+ * @api private
+ */
+
+ClassList.prototype.removeMatching = function(re){
+  var arr = this.array();
+  for (var i = 0; i < arr.length; i++) {
+    if (re.test(arr[i])) {
+      this.remove(arr[i]);
+    }
+  }
+  return this;
+};
+
+/**
+ * Toggle class `name`, can force state via `force`.
+ *
+ * For browsers that support classList, but do not support `force` yet,
+ * the mistake will be detected and corrected.
+ *
+ * @param {String} name
+ * @param {Boolean} force
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.toggle = function(name, force){
+  // classList
+  if (this.list) {
+    if ("undefined" !== typeof force) {
+      if (force !== this.list.toggle(name, force)) {
+        this.list.toggle(name); // toggle again to correct
+      }
+    } else {
+      this.list.toggle(name);
+    }
+    return this;
+  }
+
+  // fallback
+  if ("undefined" !== typeof force) {
+    if (!force) {
+      this.remove(name);
+    } else {
+      this.add(name);
+    }
+  } else {
+    if (this.has(name)) {
+      this.remove(name);
+    } else {
+      this.add(name);
+    }
+  }
+
+  return this;
+};
+
+/**
+ * Return an array of classes.
+ *
+ * @return {Array}
+ * @api public
+ */
+
+ClassList.prototype.array = function(){
+  var str = this.el.className.replace(/^\s+|\s+$/g, '');
+  var arr = str.split(re);
+  if ('' === arr[0]) arr.shift();
+  return arr;
+};
+
+/**
+ * Check if class `name` is present.
+ *
+ * @param {String} name
+ * @return {ClassList}
+ * @api public
+ */
+
+ClassList.prototype.has =
+ClassList.prototype.contains = function(name){
+  return this.list
+    ? this.list.contains(name)
+    : !! ~index(this.array(), name);
+};
+
+});
+
+require.register("component~event@0.1.4", function (exports, module) {
+var bind = window.addEventListener ? 'addEventListener' : 'attachEvent',
+    unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
+    prefix = bind !== 'addEventListener' ? 'on' : '';
+
+/**
+ * Bind `el` event `type` to `fn`.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.bind = function(el, type, fn, capture){
+  el[bind](prefix + type, fn, capture || false);
+  return fn;
+};
+
+/**
+ * Unbind `el` event `type`'s callback `fn`.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.unbind = function(el, type, fn, capture){
+  el[unbind](prefix + type, fn, capture || false);
+  return fn;
+};
+});
+
+require.register("component~query@0.0.3", function (exports, module) {
+function one(selector, el) {
+  return el.querySelector(selector);
+}
+
+exports = module.exports = function(selector, el){
+  el = el || document;
+  return one(selector, el);
+};
+
+exports.all = function(selector, el){
+  el = el || document;
+  return el.querySelectorAll(selector);
+};
+
+exports.engine = function(obj){
+  if (!obj.one) throw new Error('.one callback required');
+  if (!obj.all) throw new Error('.all callback required');
+  one = obj.one;
+  exports.all = obj.all;
+  return exports;
+};
+
+});
+
+require.register("component~matches-selector@0.1.5", function (exports, module) {
+/**
+ * Module dependencies.
+ */
+
+var query = require('component~query@0.0.3');
+
+/**
+ * Element prototype.
+ */
+
+var proto = Element.prototype;
+
+/**
+ * Vendor function.
+ */
+
+var vendor = proto.matches
+  || proto.webkitMatchesSelector
+  || proto.mozMatchesSelector
+  || proto.msMatchesSelector
+  || proto.oMatchesSelector;
+
+/**
+ * Expose `match()`.
+ */
+
+module.exports = match;
+
+/**
+ * Match `el` to `selector`.
+ *
+ * @param {Element} el
+ * @param {String} selector
+ * @return {Boolean}
+ * @api public
+ */
+
+function match(el, selector) {
+  if (!el || el.nodeType !== 1) return false;
+  if (vendor) return vendor.call(el, selector);
+  var nodes = query.all(selector, el.parentNode);
+  for (var i = 0; i < nodes.length; ++i) {
+    if (nodes[i] == el) return true;
+  }
+  return false;
+}
+
+});
+
+require.register("component~closest@0.1.4", function (exports, module) {
+var matches = require('component~matches-selector@0.1.5')
+
+module.exports = function (element, selector, checkYoSelf, root) {
+  element = checkYoSelf ? {parentNode: element} : element
+
+  root = root || document
+
+  // Make sure `element !== document` and `element != null`
+  // otherwise we get an illegal invocation
+  while ((element = element.parentNode) && element !== document) {
+    if (matches(element, selector))
+      return element
+    // After `matches` on the edge case that
+    // the selector matches the root
+    // (when the root is not the document)
+    if (element === root)
+      return
+  }
+}
+
+});
+
+require.register("component~delegate@0.2.3", function (exports, module) {
+/**
+ * Module dependencies.
+ */
+
+var closest = require('component~closest@0.1.4')
+  , event = require('component~event@0.1.4');
+
+/**
+ * Delegate event `type` to `selector`
+ * and invoke `fn(e)`. A callback function
+ * is returned which may be passed to `.unbind()`.
+ *
+ * @param {Element} el
+ * @param {String} selector
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.bind = function(el, selector, type, fn, capture){
+  return event.bind(el, type, function(e){
+    var target = e.target || e.srcElement;
+    e.delegateTarget = closest(target, selector, true, el);
+    if (e.delegateTarget) fn.call(el, e);
+  }, capture);
+};
+
+/**
+ * Unbind event `type`'s callback `fn`.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @api public
+ */
+
+exports.unbind = function(el, type, fn, capture){
+  event.unbind(el, type, fn, capture);
+};
+
+});
+
+require.register("component~events@1.0.9", function (exports, module) {
+
+/**
+ * Module dependencies.
+ */
+
+var events = require('component~event@0.1.4');
+var delegate = require('component~delegate@0.2.3');
+
+/**
+ * Expose `Events`.
+ */
+
+module.exports = Events;
+
+/**
+ * Initialize an `Events` with the given
+ * `el` object which events will be bound to,
+ * and the `obj` which will receive method calls.
+ *
+ * @param {Object} el
+ * @param {Object} obj
+ * @api public
+ */
+
+function Events(el, obj) {
+  if (!(this instanceof Events)) return new Events(el, obj);
+  if (!el) throw new Error('element required');
+  if (!obj) throw new Error('object required');
+  this.el = el;
+  this.obj = obj;
+  this._events = {};
+}
+
+/**
+ * Subscription helper.
+ */
+
+Events.prototype.sub = function(event, method, cb){
+  this._events[event] = this._events[event] || {};
+  this._events[event][method] = cb;
+};
+
+/**
+ * Bind to `event` with optional `method` name.
+ * When `method` is undefined it becomes `event`
+ * with the "on" prefix.
+ *
+ * Examples:
+ *
+ *  Direct event handling:
+ *
+ *    events.bind('click') // implies "onclick"
+ *    events.bind('click', 'remove')
+ *    events.bind('click', 'sort', 'asc')
+ *
+ *  Delegated event handling:
+ *
+ *    events.bind('click li > a')
+ *    events.bind('click li > a', 'remove')
+ *    events.bind('click a.sort-ascending', 'sort', 'asc')
+ *    events.bind('click a.sort-descending', 'sort', 'desc')
+ *
+ * @param {String} event
+ * @param {String|function} [method]
+ * @return {Function} callback
+ * @api public
+ */
+
+Events.prototype.bind = function(event, method){
+  var e = parse(event);
+  var el = this.el;
+  var obj = this.obj;
+  var name = e.name;
+  var method = method || 'on' + name;
+  var args = [].slice.call(arguments, 2);
+
+  // callback
+  function cb(){
+    var a = [].slice.call(arguments).concat(args);
+    obj[method].apply(obj, a);
+  }
+
+  // bind
+  if (e.selector) {
+    cb = delegate.bind(el, e.selector, name, cb);
+  } else {
+    events.bind(el, name, cb);
+  }
+
+  // subscription for unbinding
+  this.sub(name, method, cb);
+
+  return cb;
+};
+
+/**
+ * Unbind a single binding, all bindings for `event`,
+ * or all bindings within the manager.
+ *
+ * Examples:
+ *
+ *  Unbind direct handlers:
+ *
+ *     events.unbind('click', 'remove')
+ *     events.unbind('click')
+ *     events.unbind()
+ *
+ * Unbind delegate handlers:
+ *
+ *     events.unbind('click', 'remove')
+ *     events.unbind('click')
+ *     events.unbind()
+ *
+ * @param {String|Function} [event]
+ * @param {String|Function} [method]
+ * @api public
+ */
+
+Events.prototype.unbind = function(event, method){
+  if (0 == arguments.length) return this.unbindAll();
+  if (1 == arguments.length) return this.unbindAllOf(event);
+
+  // no bindings for this event
+  var bindings = this._events[event];
+  if (!bindings) return;
+
+  // no bindings for this method
+  var cb = bindings[method];
+  if (!cb) return;
+
+  events.unbind(this.el, event, cb);
+};
+
+/**
+ * Unbind all events.
+ *
+ * @api private
+ */
+
+Events.prototype.unbindAll = function(){
+  for (var event in this._events) {
+    this.unbindAllOf(event);
+  }
+};
+
+/**
+ * Unbind all events for `event`.
+ *
+ * @param {String} event
+ * @api private
+ */
+
+Events.prototype.unbindAllOf = function(event){
+  var bindings = this._events[event];
+  if (!bindings) return;
+
+  for (var method in bindings) {
+    this.unbind(event, method);
+  }
+};
+
+/**
+ * Parse `event`.
+ *
+ * @param {String} event
+ * @return {Object}
+ * @api private
+ */
+
+function parse(event) {
+  var parts = event.split(/ +/);
+  return {
+    name: parts.shift(),
+    selector: parts.join(' ')
+  }
+}
+
+});
+
+require.register("switchery", function (exports, module) {
+/**
+ * Switchery 0.8.1
+ * http://abpetkov.github.io/switchery/
+ *
+ * Authored by Alexander Petkov
+ * https://github.com/abpetkov
+ *
+ * Copyright 2013-2015, Alexander Petkov
+ * License: The MIT License (MIT)
+ * http://opensource.org/licenses/MIT
+ *
+ */
+
+/**
+ * External dependencies.
+ */
+
+var transitionize = require('abpetkov~transitionize@0.0.3')
+  , fastclick = require('ftlabs~fastclick@v0.6.11')
+  , classes = require('component~classes@1.2.1')
+  , events = require('component~events@1.0.9');
+
+/**
+ * Expose `Switchery`.
+ */
+
+module.exports = Switchery;
+
+/**
+ * Set Switchery default values.
+ *
+ * @api public
+ */
+
+var defaults = {
+    color             : '#64bd63'
+  , secondaryColor    : '#dfdfdf'
+  , jackColor         : '#fff'
+  , jackSecondaryColor: null
+  , className         : 'switchery'
+  , disabled          : false
+  , disabledOpacity   : 0.5
+  , speed             : '0.4s'
+  , size              : 'default'
+};
+
+/**
+ * Create Switchery object.
+ *
+ * @param {Object} element
+ * @param {Object} options
+ * @api public
+ */
+
+function Switchery(element, options) {
+  if (!(this instanceof Switchery)) return new Switchery(element, options);
+
+  this.element = element;
+  this.options = options || {};
+
+  for (var i in defaults) {
+    if (this.options[i] == null) {
+      this.options[i] = defaults[i];
+    }
+  }
+
+  if (this.element != null && this.element.type == 'checkbox') this.init();
+  if (this.isDisabled() === true) this.disable();
+}
+
+/**
+ * Hide the target element.
+ *
+ * @api private
+ */
+
+Switchery.prototype.hide = function() {
+  this.element.style.display = 'none';
+};
+
+/**
+ * Show custom switch after the target element.
+ *
+ * @api private
+ */
+
+Switchery.prototype.show = function() {
+  var switcher = this.create();
+  this.insertAfter(this.element, switcher);
+};
+
+/**
+ * Create custom switch.
+ *
+ * @returns {Object} this.switcher
+ * @api private
+ */
+
+Switchery.prototype.create = function() {
+  this.switcher = document.createElement('span');
+  this.jack = document.createElement('small');
+  this.switcher.appendChild(this.jack);
+  this.switcher.className = this.options.className;
+  this.events = events(this.switcher, this);
+
+  return this.switcher;
+};
+
+/**
+ * Insert after element after another element.
+ *
+ * @param {Object} reference
+ * @param {Object} target
+ * @api private
+ */
+
+Switchery.prototype.insertAfter = function(reference, target) {
+  reference.parentNode.insertBefore(target, reference.nextSibling);
+};
+
+/**
+ * Set switch jack proper position.
+ *
+ * @param {Boolean} clicked - we need this in order to uncheck the input when the switch is clicked
+ * @api private
+ */
+
+Switchery.prototype.setPosition = function (clicked) {
+  var checked = this.isChecked()
+    , switcher = this.switcher
+    , jack = this.jack;
+
+  if (clicked && checked) checked = false;
+  else if (clicked && !checked) checked = true;
+
+  if (checked === true) {
+    this.element.checked = true;
+
+    if (window.getComputedStyle) jack.style.left = parseInt(window.getComputedStyle(switcher).width) - parseInt(window.getComputedStyle(jack).width) + 'px';
+    else jack.style.left = parseInt(switcher.currentStyle['width']) - parseInt(jack.currentStyle['width']) + 'px';
+
+    if (this.options.color) this.colorize();
+    this.setSpeed();
+  } else {
+    jack.style.left = 0;
+    this.element.checked = false;
+    this.switcher.style.boxShadow = 'inset 0 0 0 0 ' + this.options.secondaryColor;
+    this.switcher.style.borderColor = this.options.secondaryColor;
+    this.switcher.style.backgroundColor = (this.options.secondaryColor !== defaults.secondaryColor) ? this.options.secondaryColor : '#fff';
+    this.jack.style.backgroundColor = (this.options.jackSecondaryColor !== this.options.jackColor) ? this.options.jackSecondaryColor : this.options.jackColor;
+    this.setSpeed();
+  }
+};
+
+/**
+ * Set speed.
+ *
+ * @api private
+ */
+
+Switchery.prototype.setSpeed = function() {
+  var switcherProp = {}
+    , jackProp = {
+        'background-color': this.options.speed
+      , 'left': this.options.speed.replace(/[a-z]/, '') / 2 + 's'
+    };
+
+  if (this.isChecked()) {
+    switcherProp = {
+        'border': this.options.speed
+      , 'box-shadow': this.options.speed
+      , 'background-color': this.options.speed.replace(/[a-z]/, '') * 3 + 's'
+    };
+  } else {
+    switcherProp = {
+        'border': this.options.speed
+      , 'box-shadow': this.options.speed
+    };
+  }
+
+  transitionize(this.switcher, switcherProp);
+  transitionize(this.jack, jackProp);
+};
+
+/**
+ * Set switch size.
+ *
+ * @api private
+ */
+
+Switchery.prototype.setSize = function() {
+  var small = 'switchery-small'
+    , normal = 'switchery-default'
+    , large = 'switchery-large';
+
+  switch (this.options.size) {
+    case 'small':
+      classes(this.switcher).add(small)
+      break;
+    case 'large':
+      classes(this.switcher).add(large)
+      break;
+    default:
+      classes(this.switcher).add(normal)
+      break;
+  }
+};
+
+/**
+ * Set switch color.
+ *
+ * @api private
+ */
+
+Switchery.prototype.colorize = function() {
+  var switcherHeight = this.switcher.offsetHeight / 2;
+
+  this.switcher.style.backgroundColor = this.options.color;
+  this.switcher.style.borderColor = this.options.color;
+  this.switcher.style.boxShadow = 'inset 0 0 0 ' + switcherHeight + 'px ' + this.options.color;
+  this.jack.style.backgroundColor = this.options.jackColor;
+};
+
+/**
+ * Handle the onchange event.
+ *
+ * @param {Boolean} state
+ * @api private
+ */
+
+Switchery.prototype.handleOnchange = function(state) {
+  if (document.dispatchEvent) {
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent('change', true, true);
+    this.element.dispatchEvent(event);
+  } else {
+    this.element.fireEvent('onchange');
+  }
+};
+
+/**
+ * Handle the native input element state change.
+ * A `change` event must be fired in order to detect the change.
+ *
+ * @api private
+ */
+
+Switchery.prototype.handleChange = function() {
+  var self = this
+    , el = this.element;
+
+  if (el.addEventListener) {
+    el.addEventListener('change', function() {
+      self.setPosition();
+    });
+  } else {
+    el.attachEvent('onchange', function() {
+      self.setPosition();
+    });
+  }
+};
+
+/**
+ * Handle the switch click event.
+ *
+ * @api private
+ */
+
+Switchery.prototype.handleClick = function() {
+  var switcher = this.switcher;
+
+  fastclick(switcher);
+  this.events.bind('click', 'bindClick');
+};
+
+/**
+ * Attach all methods that need to happen on switcher click.
+ *
+ * @api private
+ */
+
+Switchery.prototype.bindClick = function() {
+  var parent = this.element.parentNode.tagName.toLowerCase()
+    , labelParent = (parent === 'label') ? false : true;
+
+  this.setPosition(labelParent);
+  this.handleOnchange(this.element.checked);
+};
+
+/**
+ * Mark an individual switch as already handled.
+ *
+ * @api private
+ */
+
+Switchery.prototype.markAsSwitched = function() {
+  this.element.setAttribute('data-switchery', true);
+};
+
+/**
+ * Check if an individual switch is already handled.
+ *
+ * @api private
+ */
+
+Switchery.prototype.markedAsSwitched = function() {
+  return this.element.getAttribute('data-switchery');
+};
+
+/**
+ * Initialize Switchery.
+ *
+ * @api private
+ */
+
+Switchery.prototype.init = function() {
+  this.hide();
+  this.show();
+  this.setSize();
+  this.setPosition();
+  this.markAsSwitched();
+  this.handleChange();
+  this.handleClick();
+};
+
+/**
+ * See if input is checked.
+ *
+ * @returns {Boolean}
+ * @api public
+ */
+
+Switchery.prototype.isChecked = function() {
+  return this.element.checked;
+};
+
+/**
+ * See if switcher should be disabled.
+ *
+ * @returns {Boolean}
+ * @api public
+ */
+
+Switchery.prototype.isDisabled = function() {
+  return this.options.disabled || this.element.disabled || this.element.readOnly;
+};
+
+/**
+ * Destroy all event handlers attached to the switch.
+ *
+ * @api public
+ */
+
+Switchery.prototype.destroy = function() {
+  this.events.unbind();
+};
+
+/**
+ * Enable disabled switch element.
+ *
+ * @api public
+ */
+
+Switchery.prototype.enable = function() {
+  if (this.options.disabled) this.options.disabled = false;
+  if (this.element.disabled) this.element.disabled = false;
+  if (this.element.readOnly) this.element.readOnly = false;
+  this.switcher.style.opacity = 1;
+  this.events.bind('click', 'bindClick');
+};
+
+/**
+ * Disable switch element.
+ *
+ * @api public
+ */
+
+Switchery.prototype.disable = function() {
+  if (!this.options.disabled) this.options.disabled = true;
+  if (!this.element.disabled) this.element.disabled = true;
+  if (!this.element.readOnly) this.element.readOnly = true;
+  this.switcher.style.opacity = this.options.disabledOpacity;
+  this.destroy();
+};
+
+});
+
+if (typeof exports == "object") {
+  module.exports = require("switchery");
+} else if (typeof define == "function" && define.amd) {
+  define("Switchery", [], function(){ return require("switchery"); });
+} else {
+  (this || window)["Switchery"] = require("switchery");
+}
+})()
+
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.UriTemplate=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 var UriTemplate, expand, extract, parser, _;
 
@@ -122842,6 +127889,15 @@ module.exports = {
 (1)
 });
 !function(e,t,n){"use strict";!function o(e,t,n){function a(s,l){if(!t[s]){if(!e[s]){var i="function"==typeof require&&require;if(!l&&i)return i(s,!0);if(r)return r(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var c=t[s]={exports:{}};e[s][0].call(c.exports,function(t){var n=e[s][1][t];return a(n?n:t)},c,c.exports,o,e,t,n)}return t[s].exports}for(var r="function"==typeof require&&require,s=0;s<n.length;s++)a(n[s]);return a}({1:[function(o){var a,r,s,l,i=function(e){return e&&e.__esModule?e:{"default":e}},u=o("./modules/handle-dom"),c=o("./modules/utils"),d=o("./modules/handle-swal-dom"),f=o("./modules/handle-click"),p=o("./modules/handle-key"),m=i(p),v=o("./modules/default-params"),y=i(v),h=o("./modules/set-params"),g=i(h);s=l=function(){function o(e){var t=s;return t[e]===n?y["default"][e]:t[e]}var s=arguments[0];if(u.addClass(t.body,"stop-scrolling"),d.resetInput(),s===n)return c.logStr("SweetAlert expects at least 1 attribute!"),!1;var i=c.extend({},y["default"]);switch(typeof s){case"string":i.title=s,i.text=arguments[1]||"",i.type=arguments[2]||"";break;case"object":if(s.title===n)return c.logStr('Missing "title" argument!'),!1;i.title=s.title;for(var p in y["default"])i[p]=o(p);i.confirmButtonText=i.showCancelButton?"Confirm":y["default"].confirmButtonText,i.confirmButtonText=o("confirmButtonText"),i.doneFunction=arguments[1]||null;break;default:return c.logStr('Unexpected type of argument! Expected "string" or "object", got '+typeof s),!1}g["default"](i),d.fixVerticalPosition(),d.openModal(arguments[1]);for(var v=d.getModal(),h=v.querySelectorAll("button"),b=["onclick","onmouseover","onmouseout","onmousedown","onmouseup","onfocus"],w=function(e){return f.handleButton(e,i,v)},C=0;C<h.length;C++)for(var S=0;S<b.length;S++){var x=b[S];h[C][x]=w}d.getOverlay().onclick=w,a=e.onkeydown;var k=function(e){return m["default"](e,i,v)};e.onkeydown=k,e.onfocus=function(){setTimeout(function(){r!==n&&(r.focus(),r=n)},0)},l.enableButtons()},s.setDefaults=l.setDefaults=function(e){if(!e)throw new Error("userParams is required");if("object"!=typeof e)throw new Error("userParams has to be a object");c.extend(y["default"],e)},s.close=l.close=function(){var o=d.getModal();u.fadeOut(d.getOverlay(),5),u.fadeOut(o,5),u.removeClass(o,"showSweetAlert"),u.addClass(o,"hideSweetAlert"),u.removeClass(o,"visible");var s=o.querySelector(".sa-icon.sa-success");u.removeClass(s,"animate"),u.removeClass(s.querySelector(".sa-tip"),"animateSuccessTip"),u.removeClass(s.querySelector(".sa-long"),"animateSuccessLong");var l=o.querySelector(".sa-icon.sa-error");u.removeClass(l,"animateErrorIcon"),u.removeClass(l.querySelector(".sa-x-mark"),"animateXMark");var i=o.querySelector(".sa-icon.sa-warning");return u.removeClass(i,"pulseWarning"),u.removeClass(i.querySelector(".sa-body"),"pulseWarningIns"),u.removeClass(i.querySelector(".sa-dot"),"pulseWarningIns"),setTimeout(function(){var e=o.getAttribute("data-custom-class");u.removeClass(o,e)},300),u.removeClass(t.body,"stop-scrolling"),e.onkeydown=a,e.previousActiveElement&&e.previousActiveElement.focus(),r=n,clearTimeout(o.timeout),!0},s.showInputError=l.showInputError=function(e){var t=d.getModal(),n=t.querySelector(".sa-input-error");u.addClass(n,"show");var o=t.querySelector(".sa-error-container");u.addClass(o,"show"),o.querySelector("p").innerHTML=e,setTimeout(function(){s.enableButtons()},1),t.querySelector("input").focus()},s.resetInputError=l.resetInputError=function(e){if(e&&13===e.keyCode)return!1;var t=d.getModal(),n=t.querySelector(".sa-input-error");u.removeClass(n,"show");var o=t.querySelector(".sa-error-container");u.removeClass(o,"show")},s.disableButtons=l.disableButtons=function(){var e=d.getModal(),t=e.querySelector("button.confirm"),n=e.querySelector("button.cancel");t.disabled=!0,n.disabled=!0},s.enableButtons=l.enableButtons=function(){var e=d.getModal(),t=e.querySelector("button.confirm"),n=e.querySelector("button.cancel");t.disabled=!1,n.disabled=!1},"undefined"!=typeof e?e.sweetAlert=e.swal=s:c.logStr("SweetAlert is a frontend module!")},{"./modules/default-params":2,"./modules/handle-click":3,"./modules/handle-dom":4,"./modules/handle-key":5,"./modules/handle-swal-dom":6,"./modules/set-params":8,"./modules/utils":9}],2:[function(e,t,n){Object.defineProperty(n,"__esModule",{value:!0});var o={title:"",text:"",type:null,allowOutsideClick:!1,showConfirmButton:!0,showCancelButton:!1,closeOnConfirm:!0,closeOnCancel:!0,confirmButtonText:"OK",confirmButtonColor:"#8CD4F5",cancelButtonText:"Cancel",imageUrl:null,imageSize:null,timer:null,customClass:"",html:!1,animation:!0,allowEscapeKey:!0,inputType:"text",inputPlaceholder:"",inputValue:"",showLoaderOnConfirm:!1};n["default"]=o,t.exports=n["default"]},{}],3:[function(t,n,o){Object.defineProperty(o,"__esModule",{value:!0});var a=t("./utils"),r=(t("./handle-swal-dom"),t("./handle-dom")),s=function(t,n,o){function s(e){m&&n.confirmButtonColor&&(p.style.backgroundColor=e)}var u,c,d,f=t||e.event,p=f.target||f.srcElement,m=-1!==p.className.indexOf("confirm"),v=-1!==p.className.indexOf("sweet-overlay"),y=r.hasClass(o,"visible"),h=n.doneFunction&&"true"===o.getAttribute("data-has-done-function");switch(m&&n.confirmButtonColor&&(u=n.confirmButtonColor,c=a.colorLuminance(u,-.04),d=a.colorLuminance(u,-.14)),f.type){case"mouseover":s(c);break;case"mouseout":s(u);break;case"mousedown":s(d);break;case"mouseup":s(c);break;case"focus":var g=o.querySelector("button.confirm"),b=o.querySelector("button.cancel");m?b.style.boxShadow="none":g.style.boxShadow="none";break;case"click":var w=o===p,C=r.isDescendant(o,p);if(!w&&!C&&y&&!n.allowOutsideClick)break;m&&h&&y?l(o,n):h&&y||v?i(o,n):r.isDescendant(o,p)&&"BUTTON"===p.tagName&&sweetAlert.close()}},l=function(e,t){var n=!0;r.hasClass(e,"show-input")&&(n=e.querySelector("input").value,n||(n="")),t.doneFunction(n),t.closeOnConfirm&&sweetAlert.close(),t.showLoaderOnConfirm&&sweetAlert.disableButtons()},i=function(e,t){var n=String(t.doneFunction).replace(/\s/g,""),o="function("===n.substring(0,9)&&")"!==n.substring(9,10);o&&t.doneFunction(!1),t.closeOnCancel&&sweetAlert.close()};o["default"]={handleButton:s,handleConfirm:l,handleCancel:i},n.exports=o["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],4:[function(n,o,a){Object.defineProperty(a,"__esModule",{value:!0});var r=function(e,t){return new RegExp(" "+t+" ").test(" "+e.className+" ")},s=function(e,t){r(e,t)||(e.className+=" "+t)},l=function(e,t){var n=" "+e.className.replace(/[\t\r\n]/g," ")+" ";if(r(e,t)){for(;n.indexOf(" "+t+" ")>=0;)n=n.replace(" "+t+" "," ");e.className=n.replace(/^\s+|\s+$/g,"")}},i=function(e){var n=t.createElement("div");return n.appendChild(t.createTextNode(e)),n.innerHTML},u=function(e){e.style.opacity="",e.style.display="block"},c=function(e){if(e&&!e.length)return u(e);for(var t=0;t<e.length;++t)u(e[t])},d=function(e){e.style.opacity="",e.style.display="none"},f=function(e){if(e&&!e.length)return d(e);for(var t=0;t<e.length;++t)d(e[t])},p=function(e,t){for(var n=t.parentNode;null!==n;){if(n===e)return!0;n=n.parentNode}return!1},m=function(e){e.style.left="-9999px",e.style.display="block";var t,n=e.clientHeight;return t="undefined"!=typeof getComputedStyle?parseInt(getComputedStyle(e).getPropertyValue("padding-top"),10):parseInt(e.currentStyle.padding),e.style.left="",e.style.display="none","-"+parseInt((n+t)/2)+"px"},v=function(e,t){if(+e.style.opacity<1){t=t||16,e.style.opacity=0,e.style.display="block";var n=+new Date,o=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){e.style.opacity=+e.style.opacity+(new Date-n)/100,n=+new Date,+e.style.opacity<1&&setTimeout(o,t)});o()}e.style.display="block"},y=function(e,t){t=t||16,e.style.opacity=1;var n=+new Date,o=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){e.style.opacity=+e.style.opacity-(new Date-n)/100,n=+new Date,+e.style.opacity>0?setTimeout(o,t):e.style.display="none"});o()},h=function(n){if("function"==typeof MouseEvent){var o=new MouseEvent("click",{view:e,bubbles:!1,cancelable:!0});n.dispatchEvent(o)}else if(t.createEvent){var a=t.createEvent("MouseEvents");a.initEvent("click",!1,!1),n.dispatchEvent(a)}else t.createEventObject?n.fireEvent("onclick"):"function"==typeof n.onclick&&n.onclick()},g=function(t){"function"==typeof t.stopPropagation?(t.stopPropagation(),t.preventDefault()):e.event&&e.event.hasOwnProperty("cancelBubble")&&(e.event.cancelBubble=!0)};a.hasClass=r,a.addClass=s,a.removeClass=l,a.escapeHtml=i,a._show=u,a.show=c,a._hide=d,a.hide=f,a.isDescendant=p,a.getTopMargin=m,a.fadeIn=v,a.fadeOut=y,a.fireClick=h,a.stopEventPropagation=g},{}],5:[function(t,o,a){Object.defineProperty(a,"__esModule",{value:!0});var r=t("./handle-dom"),s=t("./handle-swal-dom"),l=function(t,o,a){var l=t||e.event,i=l.keyCode||l.which,u=a.querySelector("button.confirm"),c=a.querySelector("button.cancel"),d=a.querySelectorAll("button[tabindex]");if(-1!==[9,13,32,27].indexOf(i)){for(var f=l.target||l.srcElement,p=-1,m=0;m<d.length;m++)if(f===d[m]){p=m;break}9===i?(f=-1===p?u:p===d.length-1?d[0]:d[p+1],r.stopEventPropagation(l),f.focus(),o.confirmButtonColor&&s.setFocusStyle(f,o.confirmButtonColor)):13===i?("INPUT"===f.tagName&&(f=u,u.focus()),f=-1===p?u:n):27===i&&o.allowEscapeKey===!0?(f=c,r.fireClick(f,l)):f=n}};a["default"]=l,o.exports=a["default"]},{"./handle-dom":4,"./handle-swal-dom":6}],6:[function(n,o,a){var r=function(e){return e&&e.__esModule?e:{"default":e}};Object.defineProperty(a,"__esModule",{value:!0});var s=n("./utils"),l=n("./handle-dom"),i=n("./default-params"),u=r(i),c=n("./injected-html"),d=r(c),f=".sweet-alert",p=".sweet-overlay",m=function(){var e=t.createElement("div");for(e.innerHTML=d["default"];e.firstChild;)t.body.appendChild(e.firstChild)},v=function(e){function t(){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(){var e=t.querySelector(f);return e||(m(),e=v()),e}),y=function(){var e=v();return e?e.querySelector("input"):void 0},h=function(){return t.querySelector(p)},g=function(e,t){var n=s.hexToRgb(t);e.style.boxShadow="0 0 2px rgba("+n+", 0.8), inset 0 0 0 1px rgba(0, 0, 0, 0.05)"},b=function(n){var o=v();l.fadeIn(h(),10),l.show(o),l.addClass(o,"showSweetAlert"),l.removeClass(o,"hideSweetAlert"),e.previousActiveElement=t.activeElement;var a=o.querySelector("button.confirm");a.focus(),setTimeout(function(){l.addClass(o,"visible")},500);var r=o.getAttribute("data-timer");if("null"!==r&&""!==r){var s=n;o.timeout=setTimeout(function(){var e=(s||null)&&"true"===o.getAttribute("data-has-done-function");e?s(null):sweetAlert.close()},r)}},w=function(){var e=v(),t=y();l.removeClass(e,"show-input"),t.value=u["default"].inputValue,t.setAttribute("type",u["default"].inputType),t.setAttribute("placeholder",u["default"].inputPlaceholder),C()},C=function(e){if(e&&13===e.keyCode)return!1;var t=v(),n=t.querySelector(".sa-input-error");l.removeClass(n,"show");var o=t.querySelector(".sa-error-container");l.removeClass(o,"show")},S=function(){var e=v();e.style.marginTop=l.getTopMargin(v())};a.sweetAlertInitialize=m,a.getModal=v,a.getOverlay=h,a.getInput=y,a.setFocusStyle=g,a.openModal=b,a.resetInput=w,a.resetInputError=C,a.fixVerticalPosition=S},{"./default-params":2,"./handle-dom":4,"./injected-html":7,"./utils":9}],7:[function(e,t,n){Object.defineProperty(n,"__esModule",{value:!0});var o='<div class="sweet-overlay" tabIndex="-1"></div><div class="sweet-alert"><div class="sa-icon sa-error">\n      <span class="sa-x-mark">\n        <span class="sa-line sa-left"></span>\n        <span class="sa-line sa-right"></span>\n      </span>\n    </div><div class="sa-icon sa-warning">\n      <span class="sa-body"></span>\n      <span class="sa-dot"></span>\n    </div><div class="sa-icon sa-info"></div><div class="sa-icon sa-success">\n      <span class="sa-line sa-tip"></span>\n      <span class="sa-line sa-long"></span>\n\n      <div class="sa-placeholder"></div>\n      <div class="sa-fix"></div>\n    </div><div class="sa-icon sa-custom"></div><h2>Title</h2>\n    <p>Text</p>\n    <fieldset>\n      <input type="text" tabIndex="3" />\n      <div class="sa-input-error"></div>\n    </fieldset><div class="sa-error-container">\n      <div class="icon">!</div>\n      <p>Not valid!</p>\n    </div><div class="sa-button-container">\n      <button class="cancel" tabIndex="2">Cancel</button>\n      <div class="sa-confirm-button-container">\n        <button class="confirm" tabIndex="1">OK</button><div class="la-ball-fall">\n          <div></div>\n          <div></div>\n          <div></div>\n        </div>\n      </div>\n    </div></div>';n["default"]=o,t.exports=n["default"]},{}],8:[function(e,t,o){Object.defineProperty(o,"__esModule",{value:!0});var a=e("./utils"),r=e("./handle-swal-dom"),s=e("./handle-dom"),l=["error","warning","info","success","input","prompt"],i=function(e){var t=r.getModal(),o=t.querySelector("h2"),i=t.querySelector("p"),u=t.querySelector("button.cancel"),c=t.querySelector("button.confirm");if(o.innerHTML=e.html?e.title:s.escapeHtml(e.title).split("\n").join("<br>"),i.innerHTML=e.html?e.text:s.escapeHtml(e.text||"").split("\n").join("<br>"),e.text&&s.show(i),e.customClass)s.addClass(t,e.customClass),t.setAttribute("data-custom-class",e.customClass);else{var d=t.getAttribute("data-custom-class");s.removeClass(t,d),t.setAttribute("data-custom-class","")}if(s.hide(t.querySelectorAll(".sa-icon")),e.type&&!a.isIE8()){var f=function(){for(var o=!1,a=0;a<l.length;a++)if(e.type===l[a]){o=!0;break}if(!o)return logStr("Unknown alert type: "+e.type),{v:!1};var i=["success","error","warning","info"],u=n;-1!==i.indexOf(e.type)&&(u=t.querySelector(".sa-icon.sa-"+e.type),s.show(u));var c=r.getInput();switch(e.type){case"success":s.addClass(u,"animate"),s.addClass(u.querySelector(".sa-tip"),"animateSuccessTip"),s.addClass(u.querySelector(".sa-long"),"animateSuccessLong");break;case"error":s.addClass(u,"animateErrorIcon"),s.addClass(u.querySelector(".sa-x-mark"),"animateXMark");break;case"warning":s.addClass(u,"pulseWarning"),s.addClass(u.querySelector(".sa-body"),"pulseWarningIns"),s.addClass(u.querySelector(".sa-dot"),"pulseWarningIns");break;case"input":case"prompt":c.setAttribute("type",e.inputType),c.value=e.inputValue,c.setAttribute("placeholder",e.inputPlaceholder),s.addClass(t,"show-input"),setTimeout(function(){c.focus(),c.addEventListener("keyup",swal.resetInputError)},400)}}();if("object"==typeof f)return f.v}if(e.imageUrl){var p=t.querySelector(".sa-icon.sa-custom");p.style.backgroundImage="url("+e.imageUrl+")",s.show(p);var m=80,v=80;if(e.imageSize){var y=e.imageSize.toString().split("x"),h=y[0],g=y[1];h&&g?(m=h,v=g):logStr("Parameter imageSize expects value with format WIDTHxHEIGHT, got "+e.imageSize)}p.setAttribute("style",p.getAttribute("style")+"width:"+m+"px; height:"+v+"px")}t.setAttribute("data-has-cancel-button",e.showCancelButton),e.showCancelButton?u.style.display="inline-block":s.hide(u),t.setAttribute("data-has-confirm-button",e.showConfirmButton),e.showConfirmButton?c.style.display="inline-block":s.hide(c),e.cancelButtonText&&(u.innerHTML=s.escapeHtml(e.cancelButtonText)),e.confirmButtonText&&(c.innerHTML=s.escapeHtml(e.confirmButtonText)),e.confirmButtonColor&&(c.style.backgroundColor=e.confirmButtonColor,c.style.borderLeftColor=e.confirmLoadingButtonColor,c.style.borderRightColor=e.confirmLoadingButtonColor,r.setFocusStyle(c,e.confirmButtonColor)),t.setAttribute("data-allow-outside-click",e.allowOutsideClick);var b=e.doneFunction?!0:!1;t.setAttribute("data-has-done-function",b),e.animation?"string"==typeof e.animation?t.setAttribute("data-animation",e.animation):t.setAttribute("data-animation","pop"):t.setAttribute("data-animation","none"),t.setAttribute("data-timer",e.timer)};o["default"]=i,t.exports=o["default"]},{"./handle-dom":4,"./handle-swal-dom":6,"./utils":9}],9:[function(t,n,o){Object.defineProperty(o,"__esModule",{value:!0});var a=function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n]);return e},r=function(e){var t=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(e);return t?parseInt(t[1],16)+", "+parseInt(t[2],16)+", "+parseInt(t[3],16):null},s=function(){return e.attachEvent&&!e.addEventListener},l=function(t){e.console&&e.console.log("SweetAlert: "+t)},i=function(e,t){e=String(e).replace(/[^0-9a-f]/gi,""),e.length<6&&(e=e[0]+e[0]+e[1]+e[1]+e[2]+e[2]),t=t||0;var n,o,a="#";for(o=0;3>o;o++)n=parseInt(e.substr(2*o,2),16),n=Math.round(Math.min(Math.max(0,n+n*t),255)).toString(16),a+=("00"+n).substr(n.length);return a};o.extend=a,o.hexToRgb=r,o.isIE8=s,o.logStr=l,o.colorLuminance=i},{}]},{},[1]),"function"==typeof define&&define.amd?define(function(){return sweetAlert}):"undefined"!=typeof module&&module.exports&&(module.exports=sweetAlert)}(window,document);
+(function(t,e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):t.Spinner=e()})(this,function(){"use strict";function t(t,e){var i,n=document.createElement(t||"div");for(i in e)n[i]=e[i];return n}function e(t){for(var e=1,i=arguments.length;i>e;e++)t.appendChild(arguments[e]);return t}function i(t,e,i,n){var r=["opacity",e,~~(100*t),i,n].join("-"),o=.01+100*(i/n),a=Math.max(1-(1-t)/e*(100-o),t),s=u.substring(0,u.indexOf("Animation")).toLowerCase(),l=s&&"-"+s+"-"||"";return c[r]||(p.insertRule("@"+l+"keyframes "+r+"{"+"0%{opacity:"+a+"}"+o+"%{opacity:"+t+"}"+(o+.01)+"%{opacity:1}"+(o+e)%100+"%{opacity:"+t+"}"+"100%{opacity:"+a+"}"+"}",p.cssRules.length),c[r]=1),r}function n(t,e){var i,n,r=t.style;for(e=e.charAt(0).toUpperCase()+e.slice(1),n=0;d.length>n;n++)if(i=d[n]+e,void 0!==r[i])return i;return void 0!==r[e]?e:void 0}function r(t,e){for(var i in e)t.style[n(t,i)||i]=e[i];return t}function o(t){for(var e=1;arguments.length>e;e++){var i=arguments[e];for(var n in i)void 0===t[n]&&(t[n]=i[n])}return t}function a(t,e){return"string"==typeof t?t:t[e%t.length]}function s(t){this.opts=o(t||{},s.defaults,f)}function l(){function i(e,i){return t("<"+e+' xmlns="urn:schemas-microsoft.com:vml" class="spin-vml">',i)}p.addRule(".spin-vml","behavior:url(#default#VML)"),s.prototype.lines=function(t,n){function o(){return r(i("group",{coordsize:d+" "+d,coordorigin:-u+" "+-u}),{width:d,height:d})}function s(t,s,l){e(p,e(r(o(),{rotation:360/n.lines*t+"deg",left:~~s}),e(r(i("roundrect",{arcsize:n.corners}),{width:u,height:n.width,left:n.radius,top:-n.width>>1,filter:l}),i("fill",{color:a(n.color,t),opacity:n.opacity}),i("stroke",{opacity:0}))))}var l,u=n.length+n.width,d=2*u,c=2*-(n.width+n.length)+"px",p=r(o(),{position:"absolute",top:c,left:c});if(n.shadow)for(l=1;n.lines>=l;l++)s(l,-2,"progid:DXImageTransform.Microsoft.Blur(pixelradius=2,makeshadow=1,shadowopacity=.3)");for(l=1;n.lines>=l;l++)s(l);return e(t,p)},s.prototype.opacity=function(t,e,i,n){var r=t.firstChild;n=n.shadow&&n.lines||0,r&&r.childNodes.length>e+n&&(r=r.childNodes[e+n],r=r&&r.firstChild,r=r&&r.firstChild,r&&(r.opacity=i))}}var u,d=["webkit","Moz","ms","O"],c={},p=function(){var i=t("style",{type:"text/css"});return e(document.getElementsByTagName("head")[0],i),i.sheet||i.styleSheet}(),f={lines:12,length:7,width:5,radius:10,rotate:0,corners:1,color:"#000",direction:1,speed:1,trail:100,opacity:.25,fps:20,zIndex:2e9,className:"spinner",top:"50%",left:"50%",position:"absolute"};s.defaults={},o(s.prototype,{spin:function(e){this.stop();var i=this,n=i.opts,o=i.el=r(t(0,{className:n.className}),{position:n.position,width:0,zIndex:n.zIndex});if(n.radius+n.length+n.width,r(o,{left:n.left,top:n.top}),e&&e.insertBefore(o,e.firstChild||null),o.setAttribute("role","progressbar"),i.lines(o,i.opts),!u){var a,s=0,l=(n.lines-1)*(1-n.direction)/2,d=n.fps,c=d/n.speed,p=(1-n.opacity)/(c*n.trail/100),f=c/n.lines;(function h(){s++;for(var t=0;n.lines>t;t++)a=Math.max(1-(s+(n.lines-t)*f)%c*p,n.opacity),i.opacity(o,t*n.direction+l,a,n);i.timeout=i.el&&setTimeout(h,~~(1e3/d))})()}return i},stop:function(){var t=this.el;return t&&(clearTimeout(this.timeout),t.parentNode&&t.parentNode.removeChild(t),this.el=void 0),this},lines:function(n,o){function s(e,i){return r(t(),{position:"absolute",width:o.length+o.width+"px",height:o.width+"px",background:e,boxShadow:i,transformOrigin:"left",transform:"rotate("+~~(360/o.lines*d+o.rotate)+"deg) translate("+o.radius+"px"+",0)",borderRadius:(o.corners*o.width>>1)+"px"})}for(var l,d=0,c=(o.lines-1)*(1-o.direction)/2;o.lines>d;d++)l=r(t(),{position:"absolute",top:1+~(o.width/2)+"px",transform:o.hwaccel?"translate3d(0,0,0)":"",opacity:o.opacity,animation:u&&i(o.opacity,o.trail,c+d*o.direction,o.lines)+" "+1/o.speed+"s linear infinite"}),o.shadow&&e(l,r(s("#000","0 0 4px #000"),{top:"2px"})),e(n,e(l,s(a(o.color,d),"0 0 1px rgba(0,0,0,.1)")));return n},opacity:function(t,e,i){t.childNodes.length>e&&(t.childNodes[e].style.opacity=i)}});var h=r(t("group"),{behavior:"url(#default#VML)"});return!n(h,"transform")&&h.adj?l():u=n(h,"animation"),s});
+/*!
+ * Ladda 0.9.8 (2015-03-19, 17:22)
+ * http://lab.hakim.se/ladda
+ * MIT licensed
+ *
+ * Copyright (C) 2015 Hakim El Hattab, http://hakim.se
+ */
+(function(t,e){"object"==typeof exports?module.exports=e(require("spin.js")):"function"==typeof define&&define.amd?define(["spin"],e):t.Ladda=e(t.Spinner)})(this,function(t){"use strict";function e(t){if(t===void 0)return console.warn("Ladda button target must be defined."),void 0;t.querySelector(".ladda-label")||(t.innerHTML='<span class="ladda-label">'+t.innerHTML+"</span>");var e,n=t.querySelector(".ladda-spinner");n||(n=document.createElement("span"),n.className="ladda-spinner"),t.appendChild(n);var r,a={start:function(){return e||(e=o(t)),t.setAttribute("disabled",""),t.setAttribute("data-loading",""),clearTimeout(r),e.spin(n),this.setProgress(0),this},startAfter:function(t){return clearTimeout(r),r=setTimeout(function(){a.start()},t),this},stop:function(){return t.removeAttribute("disabled"),t.removeAttribute("data-loading"),clearTimeout(r),e&&(r=setTimeout(function(){e.stop()},1e3)),this},toggle:function(){return this.isLoading()?this.stop():this.start(),this},setProgress:function(e){e=Math.max(Math.min(e,1),0);var n=t.querySelector(".ladda-progress");0===e&&n&&n.parentNode?n.parentNode.removeChild(n):(n||(n=document.createElement("div"),n.className="ladda-progress",t.appendChild(n)),n.style.width=(e||0)*t.offsetWidth+"px")},enable:function(){return this.stop(),this},disable:function(){return this.stop(),t.setAttribute("disabled",""),this},isLoading:function(){return t.hasAttribute("data-loading")},remove:function(){clearTimeout(r),t.removeAttribute("disabled",""),t.removeAttribute("data-loading",""),e&&(e.stop(),e=null);for(var n=0,i=u.length;i>n;n++)if(a===u[n]){u.splice(n,1);break}}};return u.push(a),a}function n(t,e){for(;t.parentNode&&t.tagName!==e;)t=t.parentNode;return e===t.tagName?t:void 0}function r(t){for(var e=["input","textarea","select"],n=[],r=0;e.length>r;r++)for(var a=t.getElementsByTagName(e[r]),i=0;a.length>i;i++)a[i].hasAttribute("required")&&n.push(a[i]);return n}function a(t,a){a=a||{};var i=[];"string"==typeof t?i=s(document.querySelectorAll(t)):"object"==typeof t&&"string"==typeof t.nodeName&&(i=[t]);for(var o=0,u=i.length;u>o;o++)(function(){var t=i[o];if("function"==typeof t.addEventListener){var s=e(t),u=-1;t.addEventListener("click",function(){var e=!0,i=n(t,"FORM");if(i!==void 0)for(var o=r(i),d=0;o.length>d;d++)""===o[d].value.replace(/^\s+|\s+$/g,"")&&(e=!1),"checkbox"!==o[d].type&&"radio"!==o[d].type||o[d].checked||(e=!1),"email"===o[d].type&&(e=/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(o[d].value));e&&(s.startAfter(1),"number"==typeof a.timeout&&(clearTimeout(u),u=setTimeout(s.stop,a.timeout)),"function"==typeof a.callback&&a.callback.apply(null,[s]))},!1)}})()}function i(){for(var t=0,e=u.length;e>t;t++)u[t].stop()}function o(e){var n,r=e.offsetHeight;0===r&&(r=parseFloat(window.getComputedStyle(e).height)),r>32&&(r*=.8),e.hasAttribute("data-spinner-size")&&(r=parseInt(e.getAttribute("data-spinner-size"),10)),e.hasAttribute("data-spinner-color")&&(n=e.getAttribute("data-spinner-color"));var a=12,i=.2*r,o=.6*i,s=7>i?2:3;return new t({color:n||"#fff",lines:a,radius:i,length:o,width:s,zIndex:"auto",top:"auto",left:"auto",className:""})}function s(t){for(var e=[],n=0;t.length>n;n++)e.push(t[n]);return e}var u=[];return{bind:a,create:e,stopAll:i}});
 (function($) {
 
     'use strict';

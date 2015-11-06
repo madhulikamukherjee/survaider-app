@@ -1,7 +1,7 @@
 {% extends 'nav.container.html' %}
 
 {% block content %}
-  <div class='sb-main'></div>
+<div class='sb-main'></div>
 <div class="container">
 </div>
 {% endblock %}
@@ -39,5 +39,125 @@
 
     });
   });
+</script>
+{% endblock %}
+
+{% block modal %}
+<div class="modal fade stick-up" id="survey_export_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header clearfix text-left">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+        </button>
+        <h5>See your <span class="semi-bold">Survaider</span> in action</h5>
+        <p>Nice work, {{ g.user.metadata.full_name }}!<br>
+        Click any of the button below to preview your Survey.</p>
+        <div class="row">
+          <div class="col-sm-6 m-t-10 sm-m-t-10 m-b-20 sm-m-b-10 col-sm-offset-3">
+            <div class="btn-group btn-group-justified">
+              <div class="btn-group">
+                <button type="button" class="btn btn-primary">
+                  <span class="p-t-5 p-b-5">
+                    <i class="fa fa-star fs-15"></i>
+                  </span>
+                  <br>
+                  <span class="fs-11 font-montserrat text-uppercase">Gamified</span>
+                </button>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-complete">
+                  <span class="p-t-5 p-b-5">
+                    <i class="fa fa-file-text-o fs-15"></i>
+                  </span>
+                  <br>
+                  <span class="fs-11 font-montserrat text-uppercase">Regular Survey</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p>To start collecting responses, just copy the links below. You can also embed Survaider on your own website. <a href="#">Click Here</a> for instructions.</p>
+
+        <div class="form-group-attached">
+          <div class="form-group form-group-default">
+            <label>Gamified Survey Link</label>
+            <input type="text" class="form-control input-sm">
+          </div>
+          <div class="form-group form-group-default">
+            <label>Project name</label>
+            <input type="text" class="form-control input-sm">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade stick-up" id="survey_settings_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header clearfix text-left">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+        </button>
+        <h5>Modify your <span class="semi-bold">Survaider</span></h5>
+
+
+
+      </div>
+      <div class="modal-body">
+        <p>To start collecting responses, just copy the links below. You can also embed Survaider on your own website. <a href="#">Click Here</a> for instructions.</p>
+
+        <div class="form-group-attached">
+          <div class="form-group form-group-default">
+            <label>Name</label>
+            <input type="text" class="form-control" value="{{ survey.metadata.name }}">
+          </div>
+          <div class="form-group form-group-default">
+            <label>Description</label>
+            <input type="text" class="form-control" value="{{ survey.metadata.desc }}">
+          </div>
+          <div class="row clearfix">
+            <div class="col-xs-6">
+              <div class="form-group form-group-default">
+                <label>Response Goal</label>
+                <input type="text" class="form-control" value="{{ survey.metadata.response_cap|default('Infinite')}}">
+              </div>
+            </div>
+            <div class="col-xs-6">
+              <div class="form-group form-group-default" aria-required="true">
+                <label>Responses Collected Until</label>
+                <input type="text" class="form-control date" data-provide="datepicker">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-8">
+            <div class="p-t-20 clearfix p-l-10 p-r-10">
+              <div class="pull-left">
+
+                <p><span class="bold font-montserrat text-uppercase">Pause</span> this Survaider
+                <input type="checkbox" data-init-plugin="switchery" checked="checked" data-switchery="true" size="small"></p>
+              </div>
+              <div class="pull-right">
+                <p class="bold font-montserrat text-uppercase"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 m-t-10 sm-m-t-10 text-right">
+            <button class="btn btn-primary ladda-button" id="q" data-style="expand-left"><span class="ladda-label">expand-left</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+window.setTimeout(function() {
+  $("#survey_settings_modal").modal('show');
+}, 1000);
 </script>
 {% endblock %}

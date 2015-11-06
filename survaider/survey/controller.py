@@ -330,7 +330,17 @@ srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
 @srvy.route('/s:<survey_id>/edit')
 def get_index(survey_id):
-    return render_template('srvy.index.html', template = "Editing Survaider")
+    try:
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
+
+        if svey is None:
+            raise TypeError
+
+    except TypeError:
+        raise APIException("Invalid Survey ID", 404)
+
+    return render_template('srvy.index.html', template = "Editing Survaider", survey = svey)
 
 @srvy.route('/s:<survey_id>/analysis')
 def get_analysis_page(survey_id):
