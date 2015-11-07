@@ -85,6 +85,9 @@ module.exports = (grunt) ->
           '<%= build%>/domain/analytics.vendor.js': [
           ]
           '<%= build%>/domain/builder.vendor.js': [
+            'bower_components/nouislider/distribute/nouislider.js'
+            'bower_components/moment/moment.js'
+            'bower_components/livestamp/livestamp.js'
             'bower_components/ladda/dist/spin.min.js'
             'bower_components/ladda/dist/ladda.min.js'
           ]
@@ -141,6 +144,7 @@ module.exports = (grunt) ->
           '<%= build%>/domain/analytics.vendor.css': [
           ]
           '<%= build%>/domain/builder.vendor.css': [
+            'bower_components/nouislider/distribute/nouislider.min.css'
             'bower_components/ladda/dist/ladda-themeless.min.css'
           ]
 

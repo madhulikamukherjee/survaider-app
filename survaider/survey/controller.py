@@ -26,7 +26,6 @@ class SurveyController(Resource):
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('s_name', type = str, required = True)
-        parser.add_argument('s_desc', type = str)
         return parser.parse_args()
 
     def get(self):
@@ -70,7 +69,6 @@ class SurveyController(Resource):
             svey = Survey()
             usr  = User.objects(id = current_user.id).first()
             svey.metadata['name'] = args['s_name']
-            svey.metadata['desc'] = args['s_desc']
             svey.created_by.append(usr)
             svey.save()
 
@@ -174,6 +172,20 @@ class SurveyMetaController(Resource):
                 dat = json.loads(args['swag'])
                 if type(dat) is int:
                     svey.response_cap = dat
+                    svey.save()
+
+                    ret = {
+                        'id': str(svey),
+                        'field': action,
+                        'saved': True,
+                    }
+                    return ret, 200
+                raise Exception("TypeError")
+
+            elif action == 'survey_name':
+                dat = args['swag']
+                if len(dat) > 0:
+                    svey.metadata['name'] = dat
                     svey.save()
 
                     ret = {

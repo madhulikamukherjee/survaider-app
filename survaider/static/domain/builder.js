@@ -11,18 +11,59 @@
     }
 
     BuilderView.prototype.events = {
-      'click .builder-save': 'update'
+      'click  .builder-save': 'update',
+      'change #builder-date': 'builder_date',
+      'change #builder-name': 'builder_name'
     };
 
     BuilderView.prototype.initialize = function(options) {
-      console.log("LOL");
+      var ol_date;
       this.setElement($('#survey_settings_modal'));
+      this.s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id;
+      this.el_date = $('#builder-date');
+      ol_date = moment(this.el_date.val()).format('DD/MM/YYYY');
+      this.el_date.val(ol_date);
       return this.save_btn = Ladda.create(document.querySelector('#builder-save'));
     };
 
-    BuilderView.prototype.update = function() {
-      console.log("LOLs");
-      return this.save_btn.start();
+    BuilderView.prototype.builder_date = _.debounce(function() {
+      var date;
+      date = moment(this.el_date.val()).toISOString();
+      if (date) {
+        return this.update('expires', date);
+      }
+    }, 500);
+
+    BuilderView.prototype.builder_name = _.debounce(function() {
+      var date;
+      date = $('#builder-name').val();
+      if (date) {
+        return this.update('survey_name', date);
+      }
+    }, 500);
+
+    BuilderView.prototype.update = function(field, value) {
+      this.save_btn.start();
+      return $.ajax({
+        url: "/api/survey/" + this.s_id + "/" + field,
+        method: 'POST',
+        data: {
+          swag: value
+        }
+      }).done((function(_this) {
+        return function() {
+          _this.save_btn.stop();
+          return $('#builder-updated').attr('data-livestamp', moment().toISOString());
+        };
+      })(this)).fail((function(_this) {
+        return function() {
+          _this.save_btn.stop();
+          return swal({
+            title: "Invalid Value",
+            type: "error"
+          });
+        };
+      })(this));
     };
 
     return BuilderView;
@@ -35,7 +76,6 @@
       if (opts == null) {
         opts = {};
       }
-      console.log("KIK");
       _.extend(this, Backbone.Events);
       args = _.extend(opts, {
         builder: this
