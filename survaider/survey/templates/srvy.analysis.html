@@ -55,28 +55,11 @@
 {% endblock %}
 
 {% block additionaljs%}
-<script type="text/javascript">
-  $(document).ready(function() {
-    var s_id = UriTemplate.extract("/survey/s:{s_id}/edit", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}/response/aggregate", {s_id: s_id});
+<script type="text/javascript" src="{{ url_for('static', filename='domain/analytics.vendor.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='domain/analytics.js') }}"></script>
+{% endblock %}
 
-    $.getJSON(json_uri, function (data) {
-      "use strict";
-      //: Render the Table Head.
-      for (var i = 0; i < data.columns.length; i++) {
-        $("#tableWithSearch thead tr").append("<th>" + data.columns[i] + "</th>");
-      };
-
-      $('#tableWithSearch').DataTable({
-        // "ajax": '/api/survey',
-        "data": data.rows,
-        dom: 'Blfrtip',
-        buttons: [
-            'copy',
-            // 'pdf'
-        ]
-      });
-    });
-  });
-</script>
+{% block additionalcss%}
+<link class="main-stylesheet" href="{{ url_for('static', filename='domain/analytics.vendor.css') }}" rel="stylesheet" type="text/css" />
+<link class="main-stylesheet" href="{{ url_for('static', filename='domain/analytics.css') }}" rel="stylesheet" type="text/css" />
 {% endblock %}

@@ -38,6 +38,12 @@ module.exports = (grunt) ->
           '<%= build %>/domain/dashboard.js': [
             'src/coffee/dashboard.coffee'
           ]
+          '<%= build %>/domain/analytics.js': [
+            'src/coffee/analytics.coffee'
+          ]
+          '<%= build %>/domain/builder.js': [
+            'src/coffee/builder.coffee'
+          ]
 
     concat:
       all:
@@ -64,8 +70,6 @@ module.exports = (grunt) ->
             'bower_components/switchery/dist/switchery.js'
             'bower_components/uri-template.js/dist/uri-template.js'
             'bower_components/sweetalert/dist/sweetalert.min.js'
-            'bower_components/ladda/dist/spin.min.js'
-            'bower_components/ladda/dist/ladda.min.js'
             'pages/js/pages.js'
           ]
           '<%= build%>/js/builder.js': [
@@ -77,6 +81,12 @@ module.exports = (grunt) ->
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
+          ]
+          '<%= build%>/domain/analytics.vendor.js': [
+          ]
+          '<%= build%>/domain/builder.vendor.js': [
+            'bower_components/ladda/dist/spin.min.js'
+            'bower_components/ladda/dist/ladda.min.js'
           ]
 
       simplesurvey:
@@ -120,7 +130,6 @@ module.exports = (grunt) ->
             'bower_components/datatables/media/css/jquery.dataTables.css'
             'bower_components/sweetalert/dist/sweetalert.css'
             'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css'
-            'bower_components/ladda/dist/ladda-themeless.min.css'
             'pages/css/pages-icons.css'
             'pages/css/pages.css'
           ]
@@ -129,6 +138,12 @@ module.exports = (grunt) ->
           ]
           '<%= build%>/domain/dashboard.vendor.css': [
           ]
+          '<%= build%>/domain/analytics.vendor.css': [
+          ]
+          '<%= build%>/domain/builder.vendor.css': [
+            'bower_components/ladda/dist/ladda-themeless.min.css'
+          ]
+
       simplesurvey:
         files:
           '<%= build %>/css/simplesurvey.css': [
@@ -184,6 +199,8 @@ module.exports = (grunt) ->
         files:
           '<%= build %>/css/survaider.styles.css': 'assets/css/survaider.sass'
           '<%= build %>/domain/dashboard.css': 'src/sass/dashboard.sass'
+          '<%= build %>/domain/analytics.css': 'src/sass/analytics.sass'
+          '<%= build %>/domain/builder.css': 'src/sass/builder.sass'
 
     watch:
       all:
