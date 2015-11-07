@@ -96,7 +96,7 @@ class SurveyMetaController(Resource):
         parser.add_argument('editing', type = str)
         return parser.parse_args()
 
-    def get(self, survey_id, action):
+    def get(self, survey_id, action = 'repr'):
         args = self.get_args()
 
         try:
@@ -114,8 +114,8 @@ class SurveyMetaController(Resource):
                 return svey.struct
             return svey.render_json
 
-        elif action == 'paused':
-            pass
+        elif action == 'repr':
+            return json.loads(svey.to_json())
 
         raise APIException("Must specify a valid option", 400)
 
@@ -329,6 +329,28 @@ class ResponseAggregationController(Resource):
         responses = ResponseAggregation(svey)
 
         return responses.get(), 201
+
+class ResponseDocumentController(Resource):
+
+    def get(self, survey_id, response_id):
+        try:
+            s_id = HashId.decode(survey_id)
+            svey = Survey.objects(id = s_id).first()
+
+            if svey is None:
+                raise TypeError("Invalid Survey ID")
+
+            r_id = HashId.decode(response_id)
+            res  = Response.objects(id = r_id, parent_survey = s_id).first()
+
+            if res is None:
+                raise TypeError("Invalid Response ID")
+
+        except TypeError as e:
+            ret = str(e) if len(str(e)) > 0 else "Invalid Hash ID"
+            raise APIException(ret, 404)
+
+        return json.loads(res.to_json()), 201
 
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 

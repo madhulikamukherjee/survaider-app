@@ -29,7 +29,7 @@ DashboardHelper =
   survey_tiles:
     tile_template:
       """
-        <div class="col-xs-3 tile">
+        <div class="tile">
           <div class="panel-heading bg-master-light">
             <span class="h3 font-montserrat"><%= dat.name %></span><br>
             <small class="font-montserrat">Modified <strong><span data-livestamp="<%= dat.last_modified %>"><%= dat.last_modified %></span></strong></small><br>
@@ -101,38 +101,21 @@ DashboardHelper =
     init: ->
       @container = $('#survey_tiles')
       @container.masonry
-        columnWidth: 200
+        columnWidth: 1
         itemSelector: '.tile'
+        percentPosition: true
+        # gutter: 10
+        # isFitWidth: true
 
     append: (dat) ->
       template = _.template @tile_template
-      @container.append template dat: dat
-
-    dat_repl: (dat)->
-      dat.has_response_cap = numeral(dat.has_response_cap).format('0[.]00a')
-      dat.has_obtained_responses = numeral(dat.has_obtained_responses).format('0[.]00a')
-
-      dat
+      el = $ template dat: dat
+      @container.append(el).masonry('appended', el, true)
 
 $(document).ready ->
-  # $('#tableWithSearch').DataTable
-  #   ajax: '/api/survey'
-  #   columns: [
-  #     { 'data': 'id' }
-  #     { 'data': 'name' }
-  #     { 'data': 'uri' }
-  #     { 'data': 'uri_edit' }
-  #     { 'data': 'uri_responses' }
-  #   ]
-  #   columnDefs: [
-  #     render: (data, type, row) ->
-  #       "<a href=\"#{data}\" target = \"_blank\">#{data}</a>"
-  #     targets: [2, 3, 4]
-  #   ]
-
   DashboardHelper.survey_tiles.init()
   $.getJSON('/api/survey', (data) ->
-    DashboardHelper.survey_tiles.append(dat) for dat in data.data
+    DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
   )
 
 window.DashboardHelper = DashboardHelper

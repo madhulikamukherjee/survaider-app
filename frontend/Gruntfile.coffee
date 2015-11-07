@@ -4,7 +4,6 @@ ALL_TASKS = [
   'concat:simplesurvey'
   'cssmin:dist'
   'cssmin:simplesurvey'
-  'uglify:dist'
   'sass:all'
   'copy:fontsfa'
   'copy:fontspages'
@@ -184,6 +183,7 @@ module.exports = (grunt) ->
 
         files:
           '<%= build %>/css/survaider.styles.css': 'assets/css/survaider.sass'
+          '<%= build %>/domain/dashboard.css': 'src/sass/dashboard.sass'
 
     watch:
       all:
