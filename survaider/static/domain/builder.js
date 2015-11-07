@@ -13,7 +13,8 @@
     BuilderView.prototype.events = {
       'click  .builder-save': 'update',
       'change #builder-date': 'builder_date',
-      'change #builder-name': 'builder_name'
+      'change #builder-name': 'builder_name',
+      'click #builder-pause': 'builder_paused'
     };
 
     BuilderView.prototype.initialize = function(options) {
@@ -23,7 +24,8 @@
       this.el_date = $('#builder-date');
       ol_date = moment(this.el_date.val()).format('DD/MM/YYYY');
       this.el_date.val(ol_date);
-      return this.save_btn = Ladda.create(document.querySelector('#builder-save'));
+      this.save_btn = Ladda.create(document.querySelector('#builder-save'));
+      return this.builder_paused_init();
     };
 
     BuilderView.prototype.builder_date = _.debounce(function() {
@@ -41,6 +43,30 @@
         return this.update('survey_name', date);
       }
     }, 500);
+
+    BuilderView.prototype.builder_paused_init = function() {
+      var d;
+      d = $('#builder-pause').attr('data-paused');
+      if (d === 'True') {
+        return $('#builder-pause .target').html('Resume');
+      } else {
+        return $('#builder-pause .target').html('Pause');
+      }
+    };
+
+    BuilderView.prototype.builder_paused = function() {
+      var d;
+      d = $('#builder-pause').attr('data-paused');
+      if (d === 'True') {
+        $('#builder-pause .target').html('Pause');
+        $('#builder-pause').attr('data-paused', 'False');
+        return this.update('paused', 'false');
+      } else {
+        $('#builder-pause .target').html('Resume');
+        $('#builder-pause').attr('data-paused', 'True');
+        return this.update('paused', 'true');
+      }
+    };
 
     BuilderView.prototype.update = function(field, value) {
       this.save_btn.start();

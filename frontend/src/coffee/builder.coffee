@@ -5,6 +5,7 @@ class BuilderView extends Backbone.View
     # 'input  #builder-date': 'builder_date'
     'change #builder-date': 'builder_date'
     'change #builder-name': 'builder_name'
+    'click #builder-pause': 'builder_paused'
 
   initialize: (options) ->
     @setElement $ '#survey_settings_modal'
@@ -13,6 +14,7 @@ class BuilderView extends Backbone.View
     ol_date = moment(@el_date.val()).format('DD/MM/YYYY')
     @el_date.val(ol_date)
     @save_btn = Ladda.create document.querySelector '#builder-save'
+    @builder_paused_init()
 
   builder_date: _.debounce ->
       date = moment(@el_date.val()).toISOString()
@@ -25,6 +27,24 @@ class BuilderView extends Backbone.View
       if date
         @update('survey_name', date)
     ,500
+
+  builder_paused_init: ->
+      d = $('#builder-pause').attr('data-paused')
+      if d == 'True'
+        $('#builder-pause .target').html('Resume')
+      else
+        $('#builder-pause .target').html('Pause')
+
+  builder_paused: ->
+      d = $('#builder-pause').attr('data-paused')
+      if d is 'True'
+        $('#builder-pause .target').html('Pause')
+        $('#builder-pause').attr('data-paused', 'False')
+        @update('paused', 'false')
+      else
+        $('#builder-pause .target').html('Resume')
+        $('#builder-pause').attr('data-paused', 'True')
+        @update('paused', 'true')
 
   update: (field, value) ->
     @save_btn.start()
