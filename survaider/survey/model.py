@@ -114,6 +114,14 @@ class Survey(db.Document):
         self.structure.update(value)
 
     @property
+    def modified(self):
+        return self.metadata['modified'] if 'modified' in self.metadata else self.added
+
+    def save(self, **kwargs):
+        self.metadata['modified'] = datetime.datetime.now()
+        super(Survey, self).save(**kwargs)
+
+    @property
     def render_json(self):
         game_map = {
             'short_text': {

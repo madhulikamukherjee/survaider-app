@@ -16,5 +16,8 @@
     "grunt-contrib-watch": "~0.6.1"
   },
   "author": "Prashant Sinha",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "grunt-contrib-coffee": "^0.13.0"
+  }
 }

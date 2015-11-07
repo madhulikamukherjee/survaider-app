@@ -39,15 +39,19 @@ class SurveyController(Resource):
                 survey_list.append({
                     'id': str(sv),
                     'name': sv.metadata['name'],
-                    'uri': '/survey/s:{0}/simple'.format(str(sv)),
+                    'desc': sv.metadata['desc'],
+                    'uri_simple': '/survey/s:{0}/simple'.format(str(sv)),
+                    'uri_game': '/survey/s:{0}/gamified'.format(str(sv)),
                     'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
                     'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
                     'is_paused': sv.paused,
                     'is_active': sv.active,
                     'has_response_cap': sv.response_cap,
                     'has_obtained_responses': sv.obtained_responses,
-                    'is_expired': sv.expires <= datetime.datetime.now(),
+                    'has_expired': sv.expires <= datetime.datetime.now(),
                     'expires': str(sv.expires),
+                    'created_on': str(sv.added),
+                    'last_modified': str(sv.modified),
                 })
 
             ret = {

@@ -1,5 +1,7 @@
 {% extends 'nav.container.html' %}
 
+{% block content_class %}bg-info{% endblock %}
+
 {% block content_head %}
 <div class="jumbotron page-cover" data-pages="parallax">
   <div class="container-fluid container-fixed-lg">
@@ -95,32 +97,35 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-            <div class="panel panel-transparent">
-              <div class="panel-heading">
-                <div class="panel-title">Pages Default Tables Style
-                </div>
-                <div class="pull-right">
-                  <div class="col-xs-12">
-                    <input type="text" id="search-table" class="form-control pull-right" placeholder="Search">
-                  </div>
-                </div>
-                <div class="clearfix"></div>
-              </div>
-              <div class="panel-body">
-                <table class="table table-hover demo-table-search" id="tableWithSearch">
-                  <thead>
-                    <tr>
-                      <th>id</th>
-                      <th>name</th>
-                      <th>simple survey uri</th>
-                      <th>edit_uri</th>
-                      <th>responses_uri</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-            </div>
+<div class="container no-padding no-margin">
+  <div class="" id="survey_tiles">
+  </div>
+
+<!--   <div class="panel panel-transparent">
+    <div class="panel-heading">
+      <div class="panel-title">Pages Default Tables Style
+      </div>
+      <div class="pull-right">
+        <div class="col-xs-12">
+          <input type="text" id="search-table" class="form-control pull-right" placeholder="Search">
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+      <table class="table table-hover demo-table-search" id="tableWithSearch">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>simple survey uri</th>
+            <th>edit_uri</th>
+            <th>responses_uri</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div> -->
 </div>
 {% endblock %}
 
@@ -178,58 +183,10 @@
 {% endblock %}
 
 {% block additionaljs%}
-<script type="text/javascript">
+<script type="text/javascript" src="{{ url_for('static', filename='domain/dashboard.vendor.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='domain/dashboard.js') }}"></script>
+{% endblock %}
 
-  var DashboardHelper = {
-    create_survey: function () {
-      "use strict";
-      //: Get the form data.
-      var dat = $("#survaider_form").serialize();
-      //: Disable the submit button.
-      $("#exec_create_survaider").attr("disabled", true).text("Processing");
-      $.ajax({
-        type: 'POST',
-        url: '/api/survey',
-        data: dat
-      }).done(function(data) {
-        //: Render the New URI and Redirect.
-
-        swal({
-          title: "Built!",
-          text:  "Proceed to adding the stuff.",
-          type:  "success",
-          confirmButtonText: "Edit Structure!",
-          closeOnConfirm: true
-        }, function () {
-          window.open(data.uri_edit, '_blank');
-        });
-
-      }).fail(function(data) {
-        //: Render SweetAlert alert.
-        console.log(data);
-      });
-    }
-  };
-
-  $(document).ready(function() {
-      $('#tableWithSearch').DataTable( {
-          "ajax": '/api/survey',
-          "columns": [
-              { "data": "id" },
-              { "data": "name" },
-              { "data": "uri" },
-              { "data": "uri_edit" },
-              { "data": "uri_responses" },
-          ],
-          "columnDefs": [
-              {
-                  "render": function ( data, type, row ) {
-                      return "<a href=\"" + data + "\" target = \"_blank\">" + data + "</a>";
-                  },
-                  "targets": [2, 3, 4]
-              }
-          ]
-      } );
-  } );
-</script>
+{% block additionalcss%}
+<link class="main-stylesheet" href="{{ url_for('static', filename='domain/dashboard.vendor.css') }}" rel="stylesheet" type="text/css" />
 {% endblock %}

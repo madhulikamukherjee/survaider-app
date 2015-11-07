@@ -1,4 +1,5 @@
 ALL_TASKS = [
+  'coffee:all'
   'concat:all'
   'concat:simplesurvey'
   'cssmin:dist'
@@ -18,6 +19,7 @@ module.exports = (grunt) ->
   path = require('path')
   exec = require('child_process').exec
 
+  grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-contrib-concat')
   grunt.loadNpmTasks('grunt-contrib-cssmin')
   grunt.loadNpmTasks('grunt-contrib-sass')
@@ -30,6 +32,13 @@ module.exports = (grunt) ->
     pkg: '<json:package.json>'
     build: '../survaider/static'
     templates: '../survaider/templates'
+
+    coffee:
+      all:
+        files:
+          '<%= build %>/domain/dashboard.js': [
+            'src/coffee/dashboard.coffee'
+          ]
 
     concat:
       all:
@@ -63,6 +72,12 @@ module.exports = (grunt) ->
           '<%= build%>/js/builder.js': [
             'bower_components/survaider-builder/vendor/js/vendor.sans.jquery.js',
             'bower_components/survaider-builder/dist/formbuilder.js'
+          ]
+          '<%= build%>/domain/dashboard.vendor.js': [
+            'bower_components/moment/moment.js'
+            'bower_components/livestamp/livestamp.js'
+            'bower_components/numeral/numeral.js'
+            'bower_components/masonry/dist/masonry.pkgd.js'
           ]
 
       simplesurvey:
@@ -112,6 +127,8 @@ module.exports = (grunt) ->
           ]
           '<%= build %>/css/builder.vendor.css': [
             'bower_components/survaider-builder/vendor/css/vendor.css'
+          ]
+          '<%= build%>/domain/dashboard.vendor.css': [
           ]
       simplesurvey:
         files:
@@ -170,8 +187,11 @@ module.exports = (grunt) ->
 
     watch:
       all:
-        files: ['assets/css/*.sass']
-        tasks: ['sass:all']
+        files: [
+          'src/sass/*.sass'
+          'src/coffee/*.coffee'
+        ]
+        tasks: ALL_TASKS
         options:
           livereload:
             host: 'localhost'

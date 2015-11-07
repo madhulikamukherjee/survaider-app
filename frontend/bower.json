@@ -36,6 +36,10 @@
     "datatables-buttons": "~1.0.3",
     "bootstrap-datepicker": "~1.5.0",
     "bootstrap-timepicker": "~0.5.1",
-    "ladda": "~0.9.8"
+    "ladda": "~0.9.8",
+    "masonry": "~3.3.2",
+    "moment": "~2.10.6",
+    "livestamp": "~1.1.2",
+    "numeral": "~1.5.3"
   }
 }
