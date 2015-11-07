@@ -19,7 +19,7 @@ from survaider import app
 from survaider.minions.exceptions import APIException, ViewException
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response, ResponseSession, Helper, ResponseAggregation
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation
 
 class SurveyController(Resource):
 
@@ -108,7 +108,7 @@ class SurveyMetaController(Resource):
         if action == 'json':
             if args['editing'] == 'true':
                 return svey.struct
-            return Helper.process_render_json(svey.struct)
+            return svey.render_json
 
         elif action == 'paused':
             pass

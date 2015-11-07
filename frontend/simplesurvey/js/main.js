@@ -196,7 +196,13 @@
       }
 
       //Post a request to server for every question that is answered
-      $http.post(payload_update_uri, JSON.stringify(question.generateResponse()));
+      $http.post(payload_update_uri, function (dat) {
+        "use strict";
+        return {
+          q_id: dat.id,
+          q_res: dat.response,
+        };
+      }(question.generateResponse()));
 
       var index = -1;
 
