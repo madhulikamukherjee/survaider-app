@@ -38,7 +38,6 @@ class SurveyController(Resource):
                 survey_list.append({
                     'id': str(sv),
                     'name': sv.metadata['name'],
-                    'desc': sv.metadata['desc'],
                     'uri_simple': '/survey/s:{0}/simple'.format(str(sv)),
                     'uri_game': '/survey/s:{0}/gamified'.format(str(sv)),
                     'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
@@ -116,7 +115,6 @@ class SurveyMetaController(Resource):
             return {
                 'id': str(svey),
                 'name': svey.metadata['name'],
-                'desc': svey.metadata['desc'],
                 'uri_simple': '/survey/s:{0}/simple'.format(str(svey)),
                 'uri_game': '/survey/s:{0}/gamified'.format(str(svey)),
                 'uri_edit': '/survey/s:{0}/edit'.format(str(svey)),

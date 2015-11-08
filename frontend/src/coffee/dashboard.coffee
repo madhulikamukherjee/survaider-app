@@ -5,26 +5,25 @@ DashboardHelper =
     dat = $('#survaider_form').serialize()
     #: Disable the submit button.
     $('#exec_create_survaider').attr('disabled', true).text 'Processing'
-    $.ajax(
+    $.ajax
       type: 'POST'
       url: '/api/survey'
-      data: dat).done((data) ->
+      data: dat
+    .done (data) ->
       #: Render the New URI and Redirect.
-      swal {
+      swal
         title: 'Built!'
         text: 'Proceed to adding the stuff.'
         type: 'success'
-        confirmButtonText: 'Edit Structure!'
+        confirmButtonText: 'Edit Structure'
         closeOnConfirm: true
-      }, ->
-        window.open data.uri_edit, '_blank'
-        return
-      return
-    ).fail (data) ->
-      #: Render SweetAlert alert.
-      console.log data
-      return
-    return
+      , ->
+        $('#myModal').modal('hide')
+        window.open data.uri_edit
+    .fail (data) ->
+      swal
+        title: 'Error'
+        type: 'error'
 
   survey_tiles:
     tile_template:

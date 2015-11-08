@@ -7,22 +7,26 @@
       var dat;
       dat = $('#survaider_form').serialize();
       $('#exec_create_survaider').attr('disabled', true).text('Processing');
-      $.ajax({
+      return $.ajax({
         type: 'POST',
         url: '/api/survey',
         data: dat
       }).done(function(data) {
-        swal({
+        return swal({
           title: 'Built!',
           text: 'Proceed to adding the stuff.',
           type: 'success',
-          confirmButtonText: 'Edit Structure!',
+          confirmButtonText: 'Edit Structure',
           closeOnConfirm: true
         }, function() {
-          window.open(data.uri_edit, '_blank');
+          $('#myModal').modal('hide');
+          return window.open(data.uri_edit);
         });
       }).fail(function(data) {
-        console.log(data);
+        return swal({
+          title: 'Error',
+          type: 'error'
+        });
       });
     },
     survey_tiles: {
