@@ -66,7 +66,7 @@ DashboardHelper =
 
             <span class="font-montserrat">Stats, Modify or Share</span>
             <div class="btn-group btn-group-sm btn-group-justified m-t-10 m-b-10">
-              <a href="<%= dat.uri_edit %>" class="btn btn-default">
+              <a href="<%= dat.uri_responses %>" class="btn btn-default">
                 <i class="fa fa-star"></i>
                 <span class="font-montserrat">Analytics</span>
               </a>
@@ -76,8 +76,8 @@ DashboardHelper =
               </a>
             </div>
 
-            <a href="#"><span class="label font-montserrat"><i class="fa fa-cog"></i> <span class="font-montserrat">Share</span></span></a>
-            <a href="#"><span class="label font-montserrat"><i class="fa fa-cog"></i> <span class="font-montserrat">Settings</span></span></a>
+            <a href="<%= dat.uri_edit %>#share"><span class="label font-montserrat"><i class="fa fa-cog"></i> <span class="font-montserrat">Share</span></span></a>
+            <a href="<%= dat.uri_edit %>#settings"><span class="label font-montserrat"><i class="fa fa-cog"></i> <span class="font-montserrat">Settings</span></span></a>
 
             <p class="font-montserrat m-t-10">Preview</p>
             <div class="btn-group btn-group-justified m-t-10">
