@@ -1,0 +1,17 @@
+.modal-backdrop {
+  background: #FFFFFF;
+  opacity: 0.3;
+}
+.modal-backdrop.in {
+  opacity: 0.3;
+}
+
+.full-height {
+  background-image: url("/static/img/meta/background.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: bottom;
+  background-size: cover;
+}
+
+/*# sourceMappingURL=login.css.map */

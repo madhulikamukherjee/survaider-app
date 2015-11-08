@@ -147,6 +147,9 @@ module.exports = (grunt) ->
             'bower_components/nouislider/distribute/nouislider.min.css'
             'bower_components/ladda/dist/ladda-themeless.min.css'
           ]
+          '<%= build%>/domain/login.vendor.css': [
+            'bower_components/bootstrap-social/bootstrap-social.css'
+          ]
 
       simplesurvey:
         files:
@@ -205,6 +208,7 @@ module.exports = (grunt) ->
           '<%= build %>/domain/dashboard.css': 'src/sass/dashboard.sass'
           '<%= build %>/domain/analytics.css': 'src/sass/analytics.sass'
           '<%= build %>/domain/builder.css': 'src/sass/builder.sass'
+          '<%= build %>/domain/login.css': 'src/sass/login.sass'
 
     watch:
       all:

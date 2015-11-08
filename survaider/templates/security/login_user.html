@@ -3,51 +3,82 @@
 {% from 'macros.html' import footer_text %}
 
 {% block pgbody %}
-{% include "security/_messages.html" %}
-    <div class="login-wrapper ">
-      <div class="bg-pic">
-        <img src="/static/img/meta/IMG_20141223_154847863.jpg" data-src="/static/img/meta/IMG_20141223_154847863.jpg" data-src-retina="/static/img/meta/IMG_20141223_154847863.jpg" alt="" class="lazy">
-        <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
-          <h2 class="semi-bold text-white">Some Stuff.</h2>
-        </div>
+<div class="full-height">
+  <div class="container-sm-height full-height sm-p-t-50">
+    <div class="row row-sm-height font-montserrat">
+      <div class="col-sm-4 col-sm-offset-1 col-sm-height col-middle p-l-30 p-r-30 ">
+        <img src="/static/img/icon.png" width="60px" class="inline m-r-10">
+        <span class="inline no-margin h2 font-montserrat">Survaider</span>
+        <h2 class="semi-bold font-montserrat">Engaging surveys enabling smarter consumer led decisions</h2>
+        <h4 class="font-montserrat">Create delightful surveys using the easiest survey building tool</h4>
+        <ul>
+          <li>Engaging surveys that your audience would want to fill</li>
+          <li>Combined with untapped data from around the web</li>
+          <li>Monitor data from all your business locations individually</li>
+          <li>Get notified with every negative response for quick redressal</li>
+        </ul>
+        <a href="#" class="btn btn-complete font-montserrat btn-cons m-t-10" onclick="$('#modalFillIn').modal('show');">Login</a>
       </div>
-      <div class="login-container bg-white">
-        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
-          <img src="/static/img/logo.png" alt="logo" data-src="/static/img/logo.png" data-src-retina="/static/img/logo_2x.png" height="22">
-          <p class="p-t-35">Sign into your Survaider Account</p>
-
-          <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" id="form-login" class="p-t-15" role="form" >
-
-            {{ login_user_form.hidden_tag() }}
-            {{ render_field_with_errors(login_user_form.email,placeholder="johndoe@example.com") }}
-            {{ render_field_with_errors(login_user_form.password, placeholder="...") }}
-
-            <div class="row">
-              <div class="col-md-6 no-padding">
-                <div class="checkbox ">
-                  {{ login_user_form.remember()|safe }}
-                  {{ login_user_form.remember.label }}
-                </div>
-              </div>
-            </div>
-            {{ login_user_form.next }}
-            {{ login_user_form.submit(class="btn btn-primary btn-cons m-t-10") }}
-          </form>
-
-          {% macro social_login(provider_id, display_name) %}
-            <form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
-              <input type="submit" value="Login with {{ display_name }}" />
-            </form>
-          {% endmacro %}
-
-          {{ social_login('facebook', 'Facebook' )}}
-          <div class="pull-bottom sm-pull-bottom">
-
-            {{ footer_text() }}
-
-          </div>
-        </div>
+      <div class="col-sm-4 col-sm-offset-2 col-sm-height col-middle">
       </div>
     </div>
+  </div>
+</div>
 
+{% endblock %}
+{% block additionaljs%}
+{% endblock %}
+{% block additionalcss%}
+<link class="main-stylesheet" href="{{ url_for('static', filename='domain/login.vendor.css') }}" rel="stylesheet" type="text/css" />
+<link class="main-stylesheet" href="{{ url_for('static', filename='domain/login.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block title%}
+Login | Survaider
+{% endblock %}
+
+{% block modal %}
+    <div class="modal fade fill-in" id="modalFillIn" tabindex="-1" role="dialog" aria-hidden="true">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        <i class="pg-close"></i>
+      </button>
+      <div class="modal-dialog ">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="text-left p-b-5 font-montserrat">Login to your Survaider account</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+            <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" id="form-login" class="p-t-15" role="form" >
+
+              {{ login_user_form.hidden_tag() }}
+              {{ render_field_with_errors(login_user_form.email,placeholder="johndoe@example.com") }}
+              {{ render_field_with_errors(login_user_form.password, placeholder="...") }}
+
+              <div class="row">
+                <div class="col-md-6 no-padding">
+                  <div class="checkbox ">
+                    {{ login_user_form.remember()|safe }}
+                    {{ login_user_form.remember.label }}
+                  </div>
+                </div>
+              </div>
+
+              {{ login_user_form.next }}
+              {{ login_user_form.submit(class="btn btn-complete btn-cons m-t-10 font-montserrat") }}
+            </form>
+            <form action="{{ url_for('social.login', provider_id='facebook') }}" method="POST">
+              <button  type="submit" class="btn btn-social btn-facebook font-montserrat m-t-10">
+                <span class="fa fa-facebook"></span>
+                Login with Facebook
+              </button>
+            </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
 {% endblock %}
