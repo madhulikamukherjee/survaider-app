@@ -29,6 +29,7 @@ def create_app():
     @app.before_request
     def do_important_stuff():
         g.user = current_user
+        g.host = app.config['HOST']
         g.SRPL = Routines.gather_obfuscated_cookie('SRPL')
 
     @app.after_request

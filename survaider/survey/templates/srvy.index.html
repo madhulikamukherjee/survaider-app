@@ -20,22 +20,22 @@
           <div class="col-sm-6 m-t-10 sm-m-t-10 m-b-20 sm-m-b-10 col-sm-offset-3">
             <div class="btn-group btn-group-justified">
               <div class="btn-group">
-                <button type="button" class="btn btn-primary">
+                <a href="/survey/s:{{ survey.__unicode__() }}/gamified" type="button" class="btn btn-primary">
                   <span class="p-t-5 p-b-5">
                     <i class="fa fa-star fs-15"></i>
                   </span>
                   <br>
                   <span class="fs-11 font-montserrat text-uppercase">Gamified</span>
-                </button>
+                </a>
               </div>
               <div class="btn-group">
-                <button type="button" class="btn btn-complete">
+                <a href="/survey/s:{{ survey.__unicode__() }}/simple" type="button" class="btn btn-complete">
                   <span class="p-t-5 p-b-5">
                     <i class="fa fa-file-text-o fs-15"></i>
                   </span>
                   <br>
                   <span class="fs-11 font-montserrat text-uppercase">Regular Survey</span>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -47,11 +47,11 @@
         <div class="form-group-attached">
           <div class="form-group form-group-default">
             <label>Gamified Survey Link</label>
-            <input type="text" class="form-control input-sm">
+            <input type="text" class="form-control input-sm" value="{{ g.host }}/survey/s:{{ survey.__unicode__() }}/gamified">
           </div>
           <div class="form-group form-group-default">
-            <label>Project name</label>
-            <input type="text" class="form-control input-sm">
+            <label>Simple Survey Link</label>
+            <input type="text" class="form-control input-sm" value="{{ g.host }}/survey/s:{{ survey.__unicode__() }}/simple">
           </div>
         </div>
 
@@ -66,13 +66,8 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
         </button>
         <h5>Modify your <span class="semi-bold">Survaider</span></h5>
-
-
-
       </div>
       <div class="modal-body">
-        <p>To start collecting responses, just copy the links below. You can also embed Survaider on your own website. <a href="#">Click Here</a> for instructions.</p>
-
         <div class="form-group-attached">
           <div class="form-group form-group-default">
             <label>Name</label>

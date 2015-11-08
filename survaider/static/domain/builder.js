@@ -25,7 +25,8 @@
       ol_date = moment(this.el_date.val()).format('DD/MM/YYYY');
       this.el_date.val(ol_date);
       this.save_btn = Ladda.create(document.querySelector('#builder-save'));
-      return this.builder_paused_init();
+      this.builder_paused_init();
+      return $("#builder-project-title").html($('#builder-name').val());
     };
 
     BuilderView.prototype.builder_date = _.debounce(function() {
@@ -39,6 +40,7 @@
     BuilderView.prototype.builder_name = _.debounce(function() {
       var date;
       date = $('#builder-name').val();
+      $("#builder-project-title").html($('#builder-name').val());
       if (date) {
         return this.update('survey_name', date);
       }
@@ -116,7 +118,7 @@
   window.Builder = Builder;
 
   $(document).ready(function() {
-    var a, json_uri, payload_update_uri, s_id;
+    var json_uri, payload_update_uri, s_id;
     s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id;
     json_uri = UriTemplate.expand('/api/survey/{s_id}/json?editing=true', {
       s_id: s_id
@@ -124,17 +126,25 @@
     payload_update_uri = UriTemplate.expand('/api/survey/{s_id}/struct', {
       s_id: s_id
     });
-    a = new Builder();
-    $.getJSON(json_uri, function(data) {
-      var fb;
+    return $.getJSON(json_uri, function(data) {
+      var builder, fb;
       fb = new Formbuilder({
         selector: '.sb-main',
         bootstrapData: data.fields,
         screens: data.screens
       });
-      return fb.on('save', function(payload) {});
+      fb.on('save', function(payload) {
+        return $.post(payload_update_uri, {
+          swag: payload
+        }, function(data) {});
+      });
+      builder = new Builder();
+      if (window.location.hash === '#share') {
+        return $('#survey_export_modal').modal('show');
+      } else if (window.location.hash === '#settings') {
+        return $('#survey_settings_modal').modal('show');
+      }
     });
-    return $('#survey_settings_modal').modal('show');
   });
 
 }).call(this);

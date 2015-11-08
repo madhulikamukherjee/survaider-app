@@ -113,7 +113,23 @@ class SurveyMetaController(Resource):
             return svey.render_json
 
         elif action == 'repr':
-            return json.loads(svey.to_json())
+            return {
+                'id': str(svey),
+                'name': svey.metadata['name'],
+                'desc': svey.metadata['desc'],
+                'uri_simple': '/survey/s:{0}/simple'.format(str(svey)),
+                'uri_game': '/survey/s:{0}/gamified'.format(str(svey)),
+                'uri_edit': '/survey/s:{0}/edit'.format(str(svey)),
+                'uri_responses': '/survey/s:{0}/analysis'.format(str(svey)),
+                'is_paused': svey.paused,
+                'is_active': svey.active,
+                'has_response_cap': svey.response_cap,
+                'has_obtained_responses': svey.obtained_responses,
+                'has_expired': svey.expires <= datetime.datetime.now(),
+                'expires': str(svey.expires),
+                'created_on': str(svey.added),
+                'last_modified': str(svey.modified),
+            }
 
         raise APIException("Must specify a valid option", 400)
 

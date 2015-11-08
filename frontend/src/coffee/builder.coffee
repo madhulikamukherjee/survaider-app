@@ -15,6 +15,7 @@ class BuilderView extends Backbone.View
     @el_date.val(ol_date)
     @save_btn = Ladda.create document.querySelector '#builder-save'
     @builder_paused_init()
+    $("#builder-project-title").html($('#builder-name').val())
 
   builder_date: _.debounce ->
       date = moment(@el_date.val()).toISOString()
@@ -24,6 +25,7 @@ class BuilderView extends Backbone.View
 
   builder_name: _.debounce ->
       date = $('#builder-name').val()
+      $("#builder-project-title").html($('#builder-name').val())
       if date
         @update('survey_name', date)
     ,500
@@ -75,14 +77,17 @@ $(document).ready ->
   json_uri = UriTemplate.expand('/api/survey/{s_id}/json?editing=true', s_id: s_id)
   payload_update_uri = UriTemplate.expand('/api/survey/{s_id}/struct', s_id: s_id)
 
-  a = new Builder()
-
   $.getJSON json_uri, (data) ->
     fb = new Formbuilder(
       selector: '.sb-main'
       bootstrapData: data.fields
       screens: data.screens)
     fb.on 'save', (payload) ->
-      # $.post payload_update_uri, { swag: payload }, (data) ->
+      $.post payload_update_uri, { swag: payload }, (data) ->
 
-  $('#survey_settings_modal').modal 'show'
+    builder = new Builder()
+
+    if window.location.hash is '#share'
+      $('#survey_export_modal').modal 'show'
+    else if window.location.hash is '#settings'
+      $('#survey_settings_modal').modal 'show'
