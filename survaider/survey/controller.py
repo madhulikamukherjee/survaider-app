@@ -311,7 +311,7 @@ class ResponseController(Resource):
 
 class ResponseAggregationController(Resource):
 
-    def get(self, survey_id):
+    def get(self, survey_id, action = 'flat'):
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
@@ -324,7 +324,12 @@ class ResponseAggregationController(Resource):
 
         responses = ResponseAggregation(svey)
 
-        return responses.get(), 201
+        if action == 'flat':
+            return responses.flat(), 201
+        elif action == 'nested':
+            return responses.nested(), 201
+
+        raise APIException("Must specify a valid option", 400)
 
 class ResponseDocumentController(Resource):
 

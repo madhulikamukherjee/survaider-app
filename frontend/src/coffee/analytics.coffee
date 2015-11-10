@@ -3,19 +3,24 @@ $(document).ready ->
   , window.location.pathname
   .s_id
 
-  json_uri = UriTemplate.expand '/api/survey/{s_id}/response/aggregate'
+  json_uri = UriTemplate.expand '/api/survey/{s_id}/response/aggregate/nested'
   , s_id: s_id
 
   $.getJSON json_uri, (data) ->
     'use strict'
     #: Render the Table Head.
-    i = 0
+    $('#tableWithSearch thead tr').append """<th>Question</th>"""
+    i = 1
     while i < data.columns.length
-      $('#tableWithSearch thead tr').append '<th>' + data.columns[i] + '</th>'
+      $('#tableWithSearch thead tr').append """<th>ID: #{data.columns[i][0]}<br>Answered: <span data-livestamp=\"#{data.columns[i][1]}\"></span></th>"""
       i++
     $('#tableWithSearch').DataTable
       'data': data.rows
-      dom: 'Blfrtip'
+      dom: 'Brtip'
+      scrollX: true
       buttons: [ 'copy' ]
-    return
-  return
+      scrollCollapse: true
+      fixedColumns:   true
+      columnDefs:
+        width: '40%'
+        targets: 0

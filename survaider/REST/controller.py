@@ -17,7 +17,8 @@ api.add_resource(SurveyController,      '/survey')
 api.add_resource(SurveyMetaController,  '/survey/<string:survey_id>',
                                         '/survey/<string:survey_id>/<string:action>')
 api.add_resource(ResponseController,    '/survey/<string:survey_id>/response')
-api.add_resource(ResponseAggregationController, '/survey/<string:survey_id>/response/aggregate')
+api.add_resource(ResponseAggregationController, '/survey/<string:survey_id>/response/aggregate',
+                                                '/survey/<string:survey_id>/response/aggregate/<string:action>')
 api.add_resource(ResponseDocumentController,    '/survey/<string:survey_id>/response/<string:response_id>')
 
 @app.errorhandler(APIException)

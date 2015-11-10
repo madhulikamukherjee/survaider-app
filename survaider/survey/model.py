@@ -68,6 +68,10 @@ class Survey(db.Document):
         return [_['cid'] for _ in self.structure['fields']]
 
     @property
+    def questions(self):
+        return [[_['cid'], _['label']] for _ in self.structure['fields']]
+
+    @property
     def expires(self):
         return self.metadata['expires'] if 'expires' in self.metadata else datetime.datetime.max
 
@@ -110,7 +114,6 @@ class Survey(db.Document):
 
     @struct.setter
     def struct(self, value):
-        print(type(value))
         self.structure.update(value)
 
     @property
@@ -270,10 +273,8 @@ class ResponseAggregation(object):
     def __init__(self, survey):
         self.survey = survey
 
-    def get(self, page = 0):
-        limit = 10
-        skip = page * limit
-        responses = Response.objects[skip:limit](parent_survey = self.survey)
+    def flat(self):
+        responses = Response.objects(parent_survey = self.survey)
 
         cols = ["response_id", "added"] + self.survey.cols
 
@@ -289,8 +290,40 @@ class ResponseAggregation(object):
             rows.append(row)
 
         return {
-            "page": page,
+            "page": 0,
             "columns": cols,
+            "questions": self.survey.questions,
+            "rows": rows,
+            "len": self.count,
+            "survey_id": str(self.survey)
+        }
+
+    def nested(self):
+        responses = Response.objects(parent_survey = self.survey)
+
+        questions = self.survey.questions
+
+        rows = []
+        cols = [['Question', None]]
+        ps = True
+
+        for q in questions:
+            row = []
+            row.append(q[1])
+            for response in responses:
+                if ps:
+                    cols.append([str(response.id), str(response.added)])
+                if q[0] in response.responses:
+                    row.append(response.responses[q[0]])
+                else:
+                    row.append(None)
+            rows.append(row)
+            ps = False
+
+        return {
+            "page": 0,
+            "columns": cols,
+            "questions": self.survey.questions,
             "rows": rows,
             "len": self.count,
             "survey_id": str(self.survey)

@@ -3,34 +3,24 @@
 {% block content_class %}bg-info{% endblock %}
 
 {% block content_head %}
-<div class="jumbotron page-cover bg-info-dark text-white" data-pages="parallax">
+<div class="jumbotron page-cover" data-pages="parallax">
   <div class="container-fluid container-fixed-lg">
     <div class="inner" style="transform: translateY(0px); opacity: 1;">
-      <div class="container-md-height m-b-20">
-        <div class="row row-md-height">
-          <div class="col-lg-5 col-md-height col-md-6 col-top">
-            <!-- START PANEL -->
-            <div class="panel panel-transparent">
-              <div class="panel-body">
-                <h3>Welcome {{ g.user.metadata.full_name }}!</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                <br>
-                <button class="btn btn-primary btn-cons m-b-10 btn-lg" type="button" onclick="$('#myModal').modal('show')"><i class="pg-form"></i> <span class="bold">Build a Survaider</span></button>
-              </div>
-            </div>
-            <!-- END PANEL -->
-          </div>
-          <div class="col-lg-7 col-md-6 col-sm-height col-middle">
-          </div>
+      <div class="panel panel-transparent">
+        <div class="panel-body">
+          <span class="h3 font-montserrat">Welcome {{ g.user.metadata.full_name }}!</span><br><br>
+
+          <button class="btn btn-primary btn-cons m-b-10 btn-lg" type="button" onclick="$('#myModal').modal('show')"><i class="pg-form"></i> <span class="bold">Build a Survaider</span></button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block content %}
-<div class="container no-padding no-margin">
+<div class="container ">
   <div id="survey_tiles" class="tiles">
     <div class="tile-sizer"></div>
   </div>

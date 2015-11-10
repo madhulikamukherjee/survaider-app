@@ -62,11 +62,8 @@ module.exports = (grunt) ->
             'bower_components/imagesloaded/imagesloaded.pkgd.js'
             'bower_components/jquery.actual/jquery.actual.js'
             'bower_components/jquery.scrollbar/jquery.scrollbar.js'
-            'bower_components/datatables/media/js/jquery.dataTables.js'
-            'bower_components/datatables-buttons/js/dataTables.buttons.js'
             'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js'
             'bower_components/bootstrap-timepicker/js/bootstrap-timepicker.js'
-            'bower_components/pdfmake/build/pdfmake.js'
             'bower_components/switchery/dist/switchery.js'
             'bower_components/uri-template.js/dist/uri-template.js'
             'bower_components/sweetalert/dist/sweetalert.min.js'
@@ -77,6 +74,7 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/dist/formbuilder.js'
           ]
           '<%= build%>/domain/dashboard.vendor.js': [
+            'bower_components/underscore/underscore.js'
             'bower_components/moment/moment.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
@@ -86,6 +84,10 @@ module.exports = (grunt) ->
             'bower_components/moment/moment.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
+            'bower_components/datatables/media/js/jquery.dataTables.js'
+            'bower_components/datatables-buttons/js/dataTables.buttons.js'
+            'bower_components/datatables-fixedcolumns/js/dataTables.fixedColumns.js'
+            'bower_components/pdfmake/build/pdfmake.js'
             'reporting/js/vendor/Chart.min.js'
             'reporting/js/vendor/angular.min.js'
             'reporting/js/vendor/angular-chart.js'
@@ -137,7 +139,6 @@ module.exports = (grunt) ->
             'bower_components/jquery.scrollbar/jquery.scrollbar.css'
             'bower_components/select2-bootstrap-css/select2-bootstrap.css'
             'bower_components/switchery/dist/switchery.css'
-            'bower_components/datatables/media/css/jquery.dataTables.css'
             'bower_components/sweetalert/dist/sweetalert.css'
             'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css'
             'pages/css/pages-icons.css'
@@ -149,6 +150,7 @@ module.exports = (grunt) ->
           '<%= build%>/domain/dashboard.vendor.css': [
           ]
           '<%= build%>/domain/analytics.vendor.css': [
+            'bower_components/datatables/media/css/jquery.dataTables.css'
             'reporting/css/vendor/angular-charts.css'
           ]
           '<%= build%>/domain/builder.vendor.css': [
