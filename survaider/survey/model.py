@@ -122,6 +122,25 @@ class Survey(db.Document):
         super(Survey, self).save(**kwargs)
 
     @property
+    def repr(self):
+        return {
+            'id': str(self),
+            'name': self.metadata['name'],
+            'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
+            'uri_game': '/survey/s:{0}/gamified'.format(str(self)),
+            'uri_edit': '/survey/s:{0}/edit'.format(str(self)),
+            'uri_responses': '/survey/s:{0}/analysis'.format(str(self)),
+            'is_paused': self.paused,
+            'is_active': self.active,
+            'has_response_cap': self.response_cap,
+            'has_obtained_responses': self.obtained_responses,
+            'has_expired': self.expires <= datetime.datetime.now(),
+            'expires': str(self.expires),
+            'created_on': str(self.added),
+            'last_modified': str(self.modified),
+        }
+
+    @property
     def render_json(self):
         game_map = {
             'short_text': {

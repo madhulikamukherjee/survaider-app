@@ -1,6 +1,11 @@
 $(document).ready ->
-  s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id
-  json_uri = UriTemplate.expand('/api/survey/{s_id}/response/aggregate', s_id: s_id)
+  s_id = UriTemplate.extract '/survey/s:{s_id}/edit'
+  , window.location.pathname
+  .s_id
+
+  json_uri = UriTemplate.expand '/api/survey/{s_id}/response/aggregate'
+  , s_id: s_id
+
   $.getJSON json_uri, (data) ->
     'use strict'
     #: Render the Table Head.

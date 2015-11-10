@@ -83,6 +83,9 @@ module.exports = (grunt) ->
             'bower_components/masonry/dist/masonry.pkgd.js'
           ]
           '<%= build%>/domain/analytics.vendor.js': [
+            'bower_components/moment/moment.js'
+            'bower_components/livestamp/livestamp.js'
+            'bower_components/numeral/numeral.js'
           ]
           '<%= build%>/domain/builder.vendor.js': [
             'bower_components/nouislider/distribute/nouislider.js'

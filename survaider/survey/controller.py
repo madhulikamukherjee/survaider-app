@@ -35,22 +35,7 @@ class SurveyController(Resource):
             survey_list = []
 
             for sv in svey:
-                survey_list.append({
-                    'id': str(sv),
-                    'name': sv.metadata['name'],
-                    'uri_simple': '/survey/s:{0}/simple'.format(str(sv)),
-                    'uri_game': '/survey/s:{0}/gamified'.format(str(sv)),
-                    'uri_edit': '/survey/s:{0}/edit'.format(str(sv)),
-                    'uri_responses': '/survey/s:{0}/analysis'.format(str(sv)),
-                    'is_paused': sv.paused,
-                    'is_active': sv.active,
-                    'has_response_cap': sv.response_cap,
-                    'has_obtained_responses': sv.obtained_responses,
-                    'has_expired': sv.expires <= datetime.datetime.now(),
-                    'expires': str(sv.expires),
-                    'created_on': str(sv.added),
-                    'last_modified': str(sv.modified),
-                })
+                survey_list.append(sv.repr)
 
             ret = {
                 "data": survey_list,
@@ -112,22 +97,7 @@ class SurveyMetaController(Resource):
             return svey.render_json
 
         elif action == 'repr':
-            return {
-                'id': str(svey),
-                'name': svey.metadata['name'],
-                'uri_simple': '/survey/s:{0}/simple'.format(str(svey)),
-                'uri_game': '/survey/s:{0}/gamified'.format(str(svey)),
-                'uri_edit': '/survey/s:{0}/edit'.format(str(svey)),
-                'uri_responses': '/survey/s:{0}/analysis'.format(str(svey)),
-                'is_paused': svey.paused,
-                'is_active': svey.active,
-                'has_response_cap': svey.response_cap,
-                'has_obtained_responses': svey.obtained_responses,
-                'has_expired': svey.expires <= datetime.datetime.now(),
-                'expires': str(svey.expires),
-                'created_on': str(svey.added),
-                'last_modified': str(svey.modified),
-            }
+            return svey.repr
 
         raise APIException("Must specify a valid option", 400)
 
@@ -392,14 +362,21 @@ def get_index(survey_id):
     except TypeError:
         raise APIException("Invalid Survey ID", 404)
 
-    return render_template('srvy.index.html', template = "Editing Survaider", survey = svey)
+    return render_template('srvy.index.html', title = "Editing Survaider", survey = svey)
 
 @srvy.route('/s:<survey_id>/analysis')
 def get_analysis_page(survey_id):
-    render_dat = {
-        'id': survey_id
-    }
-    return render_template('srvy.analysis.html', dat = render_dat)
+    try:
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
+
+        if svey is None:
+            raise TypeError
+
+    except TypeError:
+        raise APIException("Invalid Survey ID", 404)
+
+    return render_template('srvy.analysis.html', title = "Analytics", survey = svey.repr)
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
