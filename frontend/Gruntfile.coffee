@@ -86,6 +86,10 @@ module.exports = (grunt) ->
             'bower_components/moment/moment.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
+            'reporting/js/vendor/Chart.min.js'
+            'reporting/js/vendor/angular.min.js'
+            'reporting/js/vendor/angular-chart.js'
+            'reporting/js/app.js'
           ]
           '<%= build%>/domain/builder.vendor.js': [
             'bower_components/nouislider/distribute/nouislider.js'
@@ -145,6 +149,7 @@ module.exports = (grunt) ->
           '<%= build%>/domain/dashboard.vendor.css': [
           ]
           '<%= build%>/domain/analytics.vendor.css': [
+            'reporting/css/vendor/angular-charts.css'
           ]
           '<%= build%>/domain/builder.vendor.css': [
             'bower_components/nouislider/distribute/nouislider.min.css'

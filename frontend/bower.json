@@ -42,6 +42,9 @@
     "livestamp": "~1.1.2",
     "numeral": "~1.5.3",
     "nouislider": "~8.1.0",
-    "bootstrap-social": "~4.10.1"
+    "bootstrap-social": "~4.10.1",
+    "angular": "~1.4.7",
+    "angular-charts": "~0.2.7",
+    "Chart.js": "~1.0.2"
   }
 }
