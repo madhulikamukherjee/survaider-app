@@ -398,3 +398,7 @@ def gamified_assets(survey_id, filename):
     g.gzip = True
     return app.send_static_file(new_path)
 
+@srvy.route('/s:<survey_id>/TemplateData/<filename>')
+def gamified_assets_2(survey_id, filename):
+    new_path = 'gamified/TemplateData/{0}'.format(filename)
+    return app.send_static_file(new_path)
