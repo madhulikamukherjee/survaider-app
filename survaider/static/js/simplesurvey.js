@@ -40880,11 +40880,14 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 
 YesNoQuestion.prototype.generateResponse = function(){
-  return {
+  var temp = this.response;
+  var response = {
     id: this.id,
     type: this.type,
-    response: this.response
-  }
+    response: ""
+  };
+  response.response = "a_" + temp;
+  return response;
 }
 ;
 function SingleChoiceQuestion(label, required, cid, field_type, next){
@@ -40928,11 +40931,14 @@ SingleChoiceQuestion.prototype.resetResponse = function(){
 
 
 SingleChoiceQuestion.prototype.generateResponse = function(){
-  return {
+  var temp = this.response;
+  var response = {
     id: this.id,
     type: this.type,
-    response: this.response
-  }
+    response: ""
+  };
+  response.response = "a_" + temp;
+  return response;
 }
 ;
 function GroupRatingQuestion(label, required, cid, field_type, next){
@@ -41050,12 +41056,20 @@ RankingQuestion.prototype.generateResponse = function(){
   var response = {
     id: this.id,
     type: this.type,
-    subparts: []
+    response: []
   }
 
-  this.subparts.forEach(function(subpart,index){
-    response.subparts.push(subpart.rank);
-  });
+
+  var temp = [],
+      delimeter1 = '##';
+      delimeter2 = '###';
+
+  for (var i = 0; i < this.subparts.length; i++) {
+    temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rank+1));
+  }
+
+
+  response.response = temp.join(delimeter2).toLocaleString();
 
   return response;
 }
@@ -41159,12 +41173,20 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
     id: this.id,
     type: this.type,
-    choices: []
+    response: ""
   }
 
-  this.choices.forEach(function(choice,index){
-    response.choices.push(choice.checked);
-  });
+  var temp = [],
+      delimeter = '###';
+
+  for (var i = 0; i < this.choices.length; i++) {
+    if (this.choices[i].checked) {
+      temp.push('a_' + (i + 1));
+    }
+  }
+
+
+  response.response = temp.join(delimeter).toLocaleString();
 
   return response;
 }
@@ -41723,11 +41745,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                messageEl = sidebar.find('.current-message h3');
            switch (type) {
              case 'short_text':
-               messageEl.html('Minimum 10 Charaters');
+               messageEl.html('Minimum 10 Characters');
                break;
 
              case 'long_text':
-               messageEl.html('Minimum 40 Charaters');
+               messageEl.html('Minimum 40 Characters');
                break;
 
              case 'single_choice':

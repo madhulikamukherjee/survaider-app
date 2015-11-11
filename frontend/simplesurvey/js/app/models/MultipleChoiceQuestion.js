@@ -57,12 +57,20 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
     id: this.id,
     type: this.type,
-    choices: []
+    response: ""
   }
 
-  this.choices.forEach(function(choice,index){
-    response.choices.push(choice.checked);
-  });
+  var temp = [],
+      delimeter = '###';
+
+  for (var i = 0; i < this.choices.length; i++) {
+    if (this.choices[i].checked) {
+      temp.push('a_' + (i + 1));
+    }
+  }
+
+
+  response.response = temp.join(delimeter).toLocaleString();
 
   return response;
 }

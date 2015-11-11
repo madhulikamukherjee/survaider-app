@@ -47,12 +47,20 @@ RankingQuestion.prototype.generateResponse = function(){
   var response = {
     id: this.id,
     type: this.type,
-    subparts: []
+    response: []
   }
 
-  this.subparts.forEach(function(subpart,index){
-    response.subparts.push(subpart.rank);
-  });
+
+  var temp = [],
+      delimeter1 = '##';
+      delimeter2 = '###';
+
+  for (var i = 0; i < this.subparts.length; i++) {
+    temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rank+1));
+  }
+
+
+  response.response = temp.join(delimeter2).toLocaleString();
 
   return response;
 }

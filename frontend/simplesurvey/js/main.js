@@ -509,11 +509,11 @@
                messageEl = sidebar.find('.current-message h3');
            switch (type) {
              case 'short_text':
-               messageEl.html('Minimum 10 Charaters');
+               messageEl.html('Minimum 10 Characters');
                break;
 
              case 'long_text':
-               messageEl.html('Minimum 40 Charaters');
+               messageEl.html('Minimum 40 Characters');
                break;
 
              case 'single_choice':

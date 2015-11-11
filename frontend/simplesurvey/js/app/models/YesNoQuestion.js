@@ -33,9 +33,12 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 
 YesNoQuestion.prototype.generateResponse = function(){
-  return {
+  var temp = this.response;
+  var response = {
     id: this.id,
     type: this.type,
-    response: this.response
-  }
+    response: ""
+  };
+  response.response = "a_" + temp;
+  return response;
 }
