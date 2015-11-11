@@ -12,7 +12,7 @@ import math
 from flask import request, g
 from bson.objectid import ObjectId
 
-from survaider.minions.helpers import HashId, Obfuscate
+from survaider.minions.helpers import HashId, Obfuscate, Uploads
 from survaider.user.model import User
 from survaider import db, app
 
@@ -123,8 +123,7 @@ class Survey(db.Document):
     @property
     def img_uploads(self):
         dat = self.metadata['img_uploads'] if 'img_uploads' in self.metadata else []
-        uri = app.config['UPLOADS_DEFAULT_URL'] + "/surveyimg/{0}"
-        return [uri.format(_) for _ in dat]
+        return [Uploads.url_for_surveyimg(_) for _ in dat]
 
     @img_uploads.setter
     def img_uploads(self, value):

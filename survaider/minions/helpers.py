@@ -61,6 +61,10 @@ class Uploads(object):
         configure_uploads(app, (self.img))
         patch_request_class(app, 16 * 1024 * 1024) #: 16 MB limit.
 
+    @staticmethod
+    def url_for_surveyimg(id):
+        return "{0}/surveyimg/{1}".format(app.config['UPLOADS_DEFAULT_URL'], id)
+
 class Routines(object):
 
     @staticmethod

@@ -192,8 +192,8 @@ class SurveyMetaController(Resource):
                     ret = {
                         'id': str(svey),
                         'field': action,
-                        'filename': filename,
-                        'access_at': app.config['UPLOADS_DEFAULT_URL'],
+                        'access_id': filename,
+                        'temp_uri': Uploads.url_for_surveyimg(filename),
                         'saved': True,
                     }
                     return ret, 200
