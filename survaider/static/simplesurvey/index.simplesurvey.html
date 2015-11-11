@@ -92,7 +92,7 @@
 
                   <!-- Template 4 (Multiple-Choice, Checkboxes for multiple responses) -->
 
-                  <div class="sv-question-switch" ng-switch-when="multiple_choices">
+                  <div class="sv-question-switch" ng-switch-when="multiple_choice">
 
                     <div class="sv-question-multiple-choice-input" ng-repeat="option in question.choices">
                       <input ng-click="changeInQuestion($questionIndex, question.id)" ng-model="option.checked" type="checkbox" name="question-{{question.id}}-multiple_choice-{{$index}}" value="{{$index}}" id="question-{{question.id}}-multiple_choice-{{$index}}">
@@ -103,7 +103,7 @@
 
                   <!-- Template 5 (Single-Choice, Radio Buttons for a single response) -->
 
-                  <div class="sv-question-switch" ng-switch-when="single_choices">
+                  <div class="sv-question-switch" ng-switch-when="single_choice">
 
                     <div class="sv-question-single-choice-input" ng-repeat="option in question.options">
                       <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-single_choice" value="{{$index+1}}" id="question-{{question.id}}-single_choice-{{$index}}">
