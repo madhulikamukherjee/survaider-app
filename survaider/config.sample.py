@@ -4,6 +4,9 @@
 
 DEBUG       = True
 SECRET_KEY  = 'super-secret'
+HOST        = 'http://localhost:5000'
+SERVE_HOST  = 'localhost'
+SERVE_PORT  = 5000
 
 # MongoDB Config
 MONGODB_DB      = 'qwer'
@@ -27,4 +30,13 @@ MAIL_SERVER     = 'smtp.gmail.com'
 MAIL_PORT       = 465
 MAIL_USE_SSL    = True
 MAIL_USERNAME   = 'prashantinq@gmail.com'
-MAIL_PASSWORD   = 'TROLOLOLOL.'
+MAIL_PASSWORD   = 'TROLL'
+
+# Social
+SOCIAL_FACEBOOK = {
+    'consumer_key': 'TROLL',
+    'consumer_secret': 'TROLL',
+}
+
+# Exceptions
+PROPAGATE_EXCEPTIONS = True

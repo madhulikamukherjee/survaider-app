@@ -13,10 +13,11 @@ manager = Manager(app)
 def runserver():
     "Runs the App"
     create_app()
-    app.run()
+    app.run(host = app.config['SERVE_HOST'],
+            port = app.config['SERVE_PORT'])
 
 @manager.command
-def create_admin():
+def create_user():
     from survaider.security.controller import user_datastore
 
     def add_user():
@@ -24,7 +25,10 @@ def create_admin():
         password = click.prompt('Password?', type = str, hide_input = True, confirmation_prompt = True)
         r = user_datastore.find_or_create_role("admin")
         u = user_datastore.create_user(email = email, password = password)
-        user_datastore.add_role_to_user(u, "admin")
+        if click.confirm("Admin User?"):
+            user_datastore.add_role_to_user(u, "admin")
+        else:
+            click.echo("Regular User.")
 
     while True:
         try:
