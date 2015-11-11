@@ -7,6 +7,7 @@ SECRET_KEY  = 'super-secret'
 HOST        = 'http://localhost:5000'
 SERVE_HOST  = 'localhost'
 SERVE_PORT  = 5000
+THREADED    = False
 
 # MongoDB Config
 MONGODB_DB      = 'qwer'

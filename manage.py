@@ -14,7 +14,8 @@ def runserver():
     "Runs the App"
     create_app()
     app.run(host = app.config['SERVE_HOST'],
-            port = app.config['SERVE_PORT'])
+            port = app.config['SERVE_PORT'],
+            threaded = app.config['THREADED'])
 
 @manager.command
 def create_user():
