@@ -64,3 +64,5 @@ node_modules
 config.py
 
 survaider/config.py
+survaider/static/uploads
+

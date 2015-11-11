@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 
 from survaider.minions.helpers import HashId, Obfuscate
 from survaider.user.model import User
-from survaider import db
+from survaider import db, app
 
 class Survey(db.Document):
     default_fields = [
@@ -120,6 +120,20 @@ class Survey(db.Document):
     def modified(self):
         return self.metadata['modified'] if 'modified' in self.metadata else self.added
 
+    @property
+    def img_uploads(self):
+        dat = self.metadata['img_uploads'] if 'img_uploads' in self.metadata else []
+        uri = app.config['UPLOADS_DEFAULT_URL'] + "/surveyimg/{0}"
+        return [uri.format(_) for _ in dat]
+
+    @img_uploads.setter
+    def img_uploads(self, value):
+        if 'img_uploads' in self.metadata:
+            self.metadata['img_uploads'].append(value)
+        else:
+            self.metadata['img_uploads'] = []
+            self.metadata['img_uploads'].append(value)
+
     def save(self, **kwargs):
         self.metadata['modified'] = datetime.datetime.now()
         super(Survey, self).save(**kwargs)
@@ -135,6 +149,7 @@ class Survey(db.Document):
             'uri_responses': '/survey/s:{0}/analysis'.format(str(self)),
             'is_paused': self.paused,
             'is_active': self.active,
+            'imgs': self.img_uploads,
             'has_response_cap': self.response_cap,
             'has_obtained_responses': self.obtained_responses,
             'has_expired': self.expires <= datetime.datetime.now(),

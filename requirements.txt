@@ -19,3 +19,4 @@ https://github.com/PrashntS/flask-social/archive/1.6.3.zip
 Click == 3.3
 meinheld == 0.5.8
 flask-script == 2.0.5
+https://github.com/PrashntS/Flask-Uploads-Py3/archive/0.1.4.zip

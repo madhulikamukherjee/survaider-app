@@ -60,11 +60,11 @@ var Boner = {
 
     FormbuilderModel.prototype.indexInDOM = function() {
       var $wrapper;
-      $wrapper = $(".sb-field-wrapper").filter(((function(_this) {
+      $wrapper = $(".sb-field-wrapper").filter((function(_this) {
         return function(_, el) {
           return $(el).data('cid') === _this.cid;
         };
-      })(this)));
+      })(this));
       return $(".sb-field-wrapper").index($wrapper);
     };
 
@@ -149,7 +149,6 @@ var Boner = {
     };
 
     ViewFieldView.prototype.render = function() {
-      this.model.q_no = this.model.collection.indexOf(this.model);
       this.$el.addClass('response-field-' + this.model.get(Formbuilder.options.mappings.FIELD_TYPE)).data('cid', this.model.cid).attr('data-cid', this.model.cid).html(Formbuilder.templates["view/base" + (!this.model.is_input() ? '_non_input' : '')]({
         rf: this.model
       }));
@@ -373,14 +372,14 @@ var Boner = {
     };
 
     BuilderView.prototype.render = function() {
-      var j, len, ref, subview;
+      var k, len, ref, subview;
       this.$el.html(Formbuilder.templates['page']());
       this.$fbLeft = this.$el.find('.sb-left');
       this.$responseFields = this.$el.find('.sb-response-fields');
       this.hideShowNoResponseFields();
       ref = this.SUBVIEWS;
-      for (j = 0, len = ref.length; j < len; j++) {
-        subview = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        subview = ref[k];
         new subview({
           parentView: this
         }).render();
@@ -477,6 +476,20 @@ var Boner = {
       });
     };
 
+    BuilderView.prototype.list_update = function() {
+      var i, j, k, last, len, ref;
+      i = 0;
+      last = void 0;
+      ref = this.collection.models;
+      for (k = 0, len = ref.length; k < len; k++) {
+        j = ref[k];
+        j.set('q_no', i + 1);
+        last = j;
+        i += 1;
+      }
+      return console.log(last);
+    };
+
     BuilderView.prototype.addAll = function() {
       this.collection.each(this.addOne, this);
       return this.setSortable();
@@ -552,7 +565,8 @@ var Boner = {
         return;
       }
       this.formSaved = false;
-      return this.saveFormButton.removeAttr('disabled').text(Formbuilder.options.dict.SAVE_FORM);
+      this.saveFormButton.removeAttr('disabled').text(Formbuilder.options.dict.SAVE_FORM);
+      return this.list_update();
     };
 
     BuilderView.prototype.saveForm = function(e) {
@@ -587,10 +601,10 @@ var Boner = {
         contentType: "application/json",
         success: (function(_this) {
           return function(data) {
-            var datum, j, len, ref;
+            var datum, k, len, ref;
             _this.updatingBatch = true;
-            for (j = 0, len = data.length; j < len; j++) {
-              datum = data[j];
+            for (k = 0, len = data.length; k < len; k++) {
+              datum = data[k];
               if ((ref = _this.collection.get(datum.cid)) != null) {
                 ref.set({
                   id: datum.id
@@ -673,6 +687,7 @@ var Boner = {
         attrs[Formbuilder.options.mappings.LABEL] = Formbuilder.options.dict.DEFAULT_LABEL;
         attrs[Formbuilder.options.mappings.FIELD_TYPE] = field_type;
         attrs[Formbuilder.options.mappings.REQUIRED] = true;
+        attrs[Formbuilder.options.mappings.QNO] = 2;
         attrs['field_options'] = {};
         return (typeof (base = Formbuilder.fields[field_type]).defaultAttributes === "function" ? base.defaultAttributes(attrs) : void 0) || attrs;
       },
@@ -703,7 +718,10 @@ var Boner = {
         MAX: 'field_options.max',
         MINLENGTH: 'field_options.minlength',
         MAXLENGTH: 'field_options.maxlength',
-        LENGTH_UNITS: 'field_options.min_max_length_units'
+        LENGTH_UNITS: 'field_options.min_max_length_units',
+        NEXT_VA: 'next.va',
+        VALIDATION: 'field_options.validation',
+        QNO: 'q_no'
       },
       limit_map: {
         yes_no: {
@@ -762,10 +780,10 @@ var Boner = {
     Formbuilder.nonInputFields = {};
 
     Formbuilder.registerField = function(name, opts) {
-      var j, len, ref, x;
+      var k, len, ref, x;
       ref = ['view', 'edit'];
-      for (j = 0, len = ref.length; j < len; j++) {
-        x = ref[j];
+      for (k = 0, len = ref.length; k < len; k++) {
+        x = ref[k];
         opts[x] = _.template(opts[x]);
       }
       opts.field_type = name;
@@ -895,8 +913,7 @@ var Boner = {
   Formbuilder.registerField('short_text', {
     order: 0,
     view: "<div class=\"line\">\n    <p>Any Response</p>\n    <button class=\"target hanging\"\n            data-target = \"out\"\n            id = \"<%= rf.cid %>_0\"\n    ></button>\n</div>",
-    edit: "",
-    ed: "<%= Formbuilder.templates['edit/min_max_length']() %>",
+    edit: "<%= Formbuilder.templates['edit/validation']() %>",
     addButton: "<span class='pull-left'><span class='fa fa-font'></span></span> Short Text"
   });
 
@@ -948,6 +965,31 @@ var Boner = {
 
 this["Formbuilder"] = this["Formbuilder"] || {};
 this["Formbuilder"]["templates"] = this["Formbuilder"]["templates"] || {};
+
+this["Formbuilder"]["templates"]["edit/add_logic"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+__p += '<div class=\'sb-edit-section-header\'>Add Option</div>\n\n';
+ if (typeof includeBlank !== 'undefined'){ ;
+__p += '\n  <label>\n    <input type=\'checkbox\' data-rv-checked=\'model.' +
+((__t = ( Formbuilder.options.mappings.INCLUDE_BLANK )) == null ? '' : __t) +
+'\' />\n    Include blank\n  </label>\n';
+ } ;
+__p += '\n\n<div class=\'option\' data-rv-each-option=\'model.' +
+((__t = ( Formbuilder.options.mappings.OPTIONS )) == null ? '' : __t) +
+'\'>\n  <input type="text" data-rv-input="option:label" class=\'option-label-input\' />\n  <a class="js-remove-option" title="Remove Option"><i class="fa fa-times-circle"></i></a>\n</div>\n\n';
+ if (typeof includeOther !== 'undefined'){ ;
+__p += '\n  <label>\n    <input type=\'checkbox\' data-rv-checked=\'model.' +
+((__t = ( Formbuilder.options.mappings.INCLUDE_OTHER )) == null ? '' : __t) +
+'\' />\n    Include "other"\n  </label>\n';
+ } ;
+__p += '\n\n<a class="js-add-option .button"><i class="fa fa-plus-circle"></i>&nbsp;Add Option</a>\n';
+
+}
+return __p
+};
 
 this["Formbuilder"]["templates"]["edit/base"] = function(obj) {
 obj || (obj = {});
@@ -1033,11 +1075,11 @@ this["Formbuilder"]["templates"]["edit/label_description"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<h3>What question do you want to ask?</h3>\n<input type=\'text\' data-rv-input=\'model.' +
+__p += '\n<div class="form-group form-group-default required">\n<label>Question Label</label>\n<textarea class="form-control" data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.LABEL )) == null ? '' : __t) +
-'\' placeholder="Question" />\n<p>\n' +
+'\'></textarea>\n</div>\n<p>\n' +
 ((__t = ( Formbuilder.options.dict.FIELDS[rf.get(Formbuilder.options.mappings.FIELD_TYPE)] )) == null ? '' : __t) +
-'\n</p>';
+'\n</p>\n';
 
 }
 return __p
@@ -1122,6 +1164,18 @@ __p += '<div class=\'sb-edit-section-header\'>Units</div>\n<input type="text" da
 return __p
 };
 
+this["Formbuilder"]["templates"]["edit/validation"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '\n<div class="form-group required">\n    <select data-rv-input=\'model.' +
+((__t = ( Formbuilder.options.mappings.VALIDATION )) == null ? '' : __t) +
+'\'>\n      <option value="text">Text</option>\n      <option value="email">Email</option>\n      <option value="telephone">Phone Number</option>\n    </select>\n</div>\n';
+
+}
+return __p
+};
+
 this["Formbuilder"]["templates"]["edit/yes_no"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
@@ -1185,7 +1239,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle text-center   ">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <!-- /.modal-content -->\n  </div>\n</div>\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle text-center   ">\n\n              <form action="/file-upload" class="dropzone no-margin dz-clickable">\n\n                    <div class="dz-default dz-message"><span>Drop files here to upload</span></div></form>\n\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n';
 
 }
 return __p
@@ -1205,7 +1259,7 @@ this["Formbuilder"]["templates"]["partials/right_side"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you">Thank you for contributing!</textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
+__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you"></textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
 
 }
 return __p
@@ -1228,7 +1282,7 @@ obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question ' +
-((__t = ( rf.q_no )) == null ? '' : __t) +
+((__t = ( rf.get('q_no') )) == null ? '' : __t) +
 '</p>\n\n            ' +
 ((__t = ( Formbuilder.templates['view/label']({rf: rf}) )) == null ? '' : __t) +
 '\n\n            <button class="target" data-target="in" id="' +
@@ -1291,6 +1345,12 @@ __p += '<p class="title">' +
 __p += '\n    Required\n    ';
  } else { ;
 __p += '\n    Optional\n    ';
+ } ;
+__p += '\n    ';
+ if (rf.get(Formbuilder.options.mappings.VALIDATION)) { ;
+__p += '\n    &bullet; ' +
+((__t = ( rf.get(Formbuilder.options.mappings.VALIDATION) )) == null ? '' : __t) +
+'\n    ';
  } ;
 __p += '\n    </small>\n</p>\n';
 

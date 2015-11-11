@@ -37,7 +37,7 @@
     canvas: document.getElementById('canvas'),
     progress: null,
     setStatus: function(text) {
-      if (this.progress == null) 
+      if (this.progress == null)
       {
         if (typeof UnityProgress != 'function')
           return;
@@ -49,7 +49,7 @@
       var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
       if (m)
         this.progress.SetProgress (parseInt(m[2])/parseInt(m[4]));
-      if (text === "") 
+      if (text === "")
         this.progress.Clear()
     },
     totalDependencies: 0,
@@ -71,7 +71,7 @@
   codeXHR.open('GET', 'Release/survaider_source_1.0.js', true);
   codeXHR.onload = function() {
     var code = codeXHR.responseText;
-    if (!Math.fround) { 
+    if (!Math.fround) {
 try {
   console.log('optimizing out Math.fround calls');
   var m = /var ([^=]+)=global\.Math\.fround;/.exec(code);
@@ -102,7 +102,7 @@ try {
   codeXHR.send(null);
 }
 </script>
-      <!--Add this Script to call function inside unity-->
+      <!--Add this Script to call function jbmn inside unity-->
       <script src="/static/js/survaider.js"></script>
       <script type="text/javascript" language="javascript">
 

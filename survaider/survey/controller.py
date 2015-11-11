@@ -11,13 +11,14 @@ import dateutil.parser
 import json
 
 from bson.objectid import ObjectId
+from uuid import uuid4
 from flask import request, Blueprint, render_template, g
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
 from survaider import app
 from survaider.minions.exceptions import APIException, ViewException
-from survaider.minions.helpers import HashId
+from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation
 
@@ -179,6 +180,25 @@ class SurveyMetaController(Resource):
                     }
                     return ret, 200
                 raise Exception("TypeError")
+
+            elif action == 'img_upload':
+                try:
+                    f_name = "{0}.".format(str(uuid4()))
+                    filename = Uploads().img.save(request.files['swag'],
+                                                  name = f_name)
+                    svey.img_uploads = filename
+                    svey.save()
+
+                    ret = {
+                        'id': str(svey),
+                        'field': action,
+                        'filename': filename,
+                        'access_at': app.config['UPLOADS_DEFAULT_URL'],
+                        'saved': True,
+                    }
+                    return ret, 200
+                except Exception as e:
+                    raise APIException("Upload Error; {0}".format(str(e)), 400)
 
             raise APIException("Must specify a valid option", 400)
         else:

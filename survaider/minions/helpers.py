@@ -9,6 +9,10 @@ from hashids import Hashids
 from binascii import hexlify, unhexlify
 
 from flask import current_app, g, request
+from flask.ext.uploads import UploadSet, IMAGES, configure_uploads,\
+                              patch_request_class
+
+from survaider import app
 
 class HashId(object):
     hashids = Hashids(salt = current_app.config.get('HASHIDS_SALT'))
@@ -31,9 +35,6 @@ class HashId(object):
         except Exception:
             raise TypeError
 
-class CheckSum():
-    pass
-
 class Obfuscate(object):
     pswd = current_app.config.get('COOKIE_PSWD')
 
@@ -54,6 +55,11 @@ class Obfuscate(object):
         ciphertext = unhexlify(s.encode('utf8'))
         return Obfuscate._obfuscate(ciphertext).decode('utf8')
 
+class Uploads(object):
+    def __init__(self):
+        self.img = UploadSet('surveyimg', IMAGES)
+        configure_uploads(app, (self.img))
+        patch_request_class(app, 16 * 1024 * 1024) #: 16 MB limit.
 
 class Routines(object):
 
