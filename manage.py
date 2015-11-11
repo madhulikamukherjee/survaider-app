@@ -44,7 +44,7 @@ def setup_db():
     from survaider.config import MONGODB_DB, MONGODB_HOST, MONGODB_PORT
     client = MongoClient(MONGODB_HOST, MONGODB_PORT)
     client.drop_database(MONGODB_DB)
-    create_admin()
+    create_user()
 
 if __name__ == "__main__":
     manager.run()
