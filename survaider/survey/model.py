@@ -208,8 +208,8 @@ class Survey(db.Document):
 
         rt['fields'] = cp
         rt['game_title'] = self.struct['screens'][0]
-        rt['game_description'] = self.struct['screens'][0]
-        rt['game_footer'] = self.struct['screens'][0]
+        rt['game_description'] = self.struct['screens'][1]
+        rt['game_footer'] = self.struct['screens'][2]
         return rt
 
 class Response(db.Document):
