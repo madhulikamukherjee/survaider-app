@@ -3,6 +3,7 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 import click
+import meinheld
 
 from flask.ext.script import Manager
 from survaider import create_app, app
@@ -13,9 +14,14 @@ manager = Manager(app)
 def runserver():
     "Runs the App"
     create_app()
-    app.run(host = app.config['SERVE_HOST'],
-            port = app.config['SERVE_PORT'],
-            threaded = app.config['THREADED'])
+    if app.config['MEINHELD']:
+        meinheld.listen((app.config['SERVE_HOST'],
+                         app.config['SERVE_PORT']))
+        meinheld.run(app)
+    else:
+        app.run(host     = app.config['SERVE_HOST'],
+                port     = app.config['SERVE_PORT'],
+                threaded = app.config['THREADED'])
 
 @manager.command
 def create_user():

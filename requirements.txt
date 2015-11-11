@@ -17,3 +17,5 @@ https://github.com/PrashntS/flask-oauth/archive/0.14.zip
 Flask-OAuthlib == 0.9.2
 https://github.com/PrashntS/flask-social/archive/1.6.3.zip
 Click == 3.3
+meinheld == 0.5.8
+flask-script == 2.0.5
