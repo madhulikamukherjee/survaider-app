@@ -211,6 +211,7 @@ var Boner = {
       'click .js-remove-option': 'removeOption',
       'click .js-default-updated': 'defaultUpdated',
       'input .option-label-input': 'forceRender',
+      'click .check': 'optionUpdated',
       'click .sb-label-description': 'prepareLabel',
       'click .option': 'prepareLabel'
     };
@@ -285,6 +286,12 @@ var Boner = {
         this.$el.find(".js-default-updated").not($el).attr('checked', false).trigger('change');
       }
       return this.forceRender();
+    };
+
+    EditFieldView.prototype.optionUpdated = function(e) {
+      var log;
+      log = _.bind(this.forceRender, this);
+      return _.delay(log, 100);
     };
 
     EditFieldView.prototype.forceRender = function() {
@@ -477,17 +484,18 @@ var Boner = {
     };
 
     BuilderView.prototype.list_update = function() {
-      var i, j, k, last, len, ref;
+      var i, j, k, last, len, ref, results;
       i = 0;
       last = void 0;
       ref = this.collection.models;
+      results = [];
       for (k = 0, len = ref.length; k < len; k++) {
         j = ref[k];
         j.set('q_no', i + 1);
         last = j;
-        i += 1;
+        results.push(i += 1);
       }
-      return console.log(last);
+      return results;
     };
 
     BuilderView.prototype.addAll = function() {
@@ -721,7 +729,8 @@ var Boner = {
         NEXT_VA: 'next.va',
         VALIDATION: 'field_options.validation',
         QNO: 'q_no',
-        RICHTEXT: 'richtext'
+        RICHTEXT: 'richtext',
+        NOTIFICATION: 'notifications'
       },
       limit_map: {
         yes_no: {
@@ -781,12 +790,6 @@ var Boner = {
         lists: function() {
           return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Unordered list\" data-wysihtml5-command=\"insertUnorderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ul\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Ordered list\" data-wysihtml5-command=\"insertOrderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ol\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Outdent\" data-wysihtml5-command=\"Outdent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-outdent\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Indent\" data-wysihtml5-command=\"Indent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-indent\">\n      </i>\n    </a>\n  </div>\n</li>";
         },
-        image: function() {
-          return "<li>\n  <div class=\"bootstrap-wysihtml5-insert-image-modal modal fade\">\n    <div class=\"modal-dialog \">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <a data-dismiss=\"modal\" class=\"close\">\n            x\n          </a>\n          <h3>\n            Insert image\n          </h3>\n        </div>\n        <div class=\"modal-body\">\n          <input class=\"bootstrap-wysihtml5-insert-image-url form-control\" value=\"http://\">\n        </div>\n        <div class=\"modal-footer\">\n          <a data-dismiss=\"modal\" class=\"btn btn-default\">\n            Cancel\n          </a>\n          <a data-dismiss=\"modal\" class=\"btn btn-primary\">\n            Insert image\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n  <a tabindex=\"-1\" title=\"Insert image\" data-wysihtml5-command=\"insertImage\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-image\">\n    </i>\n  </a>\n</li>";
-        },
-        link: function() {
-          return "<li>\n  <div class=\"bootstrap-wysihtml5-insert-link-modal modal fade\">\n    <div class=\"modal-dialog \">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <a data-dismiss=\"modal\" class=\"close\">\n            Ã—\n          </a>\n          <h3>\n            Insert link\n          </h3>\n        </div>\n        <div class=\"modal-body\">\n          <input class=\"bootstrap-wysihtml5-insert-link-url form-control\" value=\"http://\">\n          <label class=\"checkbox\">\n\n            <input type=\"checkbox\" checked=\"\" class=\"bootstrap-wysihtml5-insert-link-target\">\n            Open link in new window\n          </label>\n        </div>\n        <div class=\"modal-footer\">\n          <a data-dismiss=\"modal\" class=\"btn btn-default\">\n            Cancel\n          </a>\n          <a data-dismiss=\"modal\" class=\"btn btn-primary\" href=\"#\">\n            Insert link\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n  <a tabindex=\"-1\" title=\"Insert link\" data-wysihtml5-command=\"createLink\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-link\">\n    </i>\n  </a>\n</li>";
-        },
         html: function() {
           return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Edit HTML\" data-wysihtml5-action=\"change_view\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-html\">\n      </i>\n    </a>\n  </div>\n</li>";
         }
@@ -837,15 +840,11 @@ var Boner = {
       load_old: function() {
         return $.getJSON(this.opt.img_list, (function(_this) {
           return function(data) {
-            var i, k, len, m_f, ref, results;
+            var i, k, len, ref, results;
             ref = data.imgs;
             results = [];
             for (k = 0, len = ref.length; k < len; k++) {
               i = ref[k];
-              m_f = {
-                name: i.name,
-                size: 1000
-              };
               results.push(_this.add_thumbnail(i));
             }
             return results;
@@ -853,8 +852,7 @@ var Boner = {
         })(this));
       },
       add_thumbnail: function(i) {
-        this.th_el.slick('slickAdd', "<div class=\"thumbnail\">\n  <img src=\"" + i.uri + "\" data-img-name=\"" + i.name + "\">\n</div>");
-        return console.log(i);
+        return this.th_el.slick('slickAdd', "<div class=\"thumbnail\">\n  <img src=\"" + i.uri + "\" data-img-name=\"" + i.name + "\">\n</div>");
       },
       thumbnails: function() {
         this.th_el = $('#sb-thumbnails');
@@ -947,8 +945,8 @@ var Boner = {
 (function() {
   Formbuilder.registerField('multiple_choice', {
     order: 5,
-    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
-    edit: "<%= Formbuilder.templates['edit/options']() %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <p>\n        <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n        <% if (rf.get(Formbuilder.options.mappings.RICHTEXT )) { %>\n          <i class=\"fa fa-paperclip\"></i>\n        <% } %>\n        <% if (rf.get(Formbuilder.options.mappings.NOTIFICATION) &&\n               rf.get(Formbuilder.options.mappings.OPTIONS)[i].notify) { %>\n          <i class=\"fa fa-globe\"></i>\n        <% } %>\n      </p>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
+    edit: "<%= Formbuilder.templates['edit/notify']() %>\n<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"pull-left\"><span class=\"fa fa-square-o\"></span></span> Multiple Choice",
     defaultAttributes: function(attrs) {
       attrs.field_options.options = [
@@ -980,8 +978,8 @@ var Boner = {
 (function() {
   Formbuilder.registerField('ranking', {
     order: 6,
-    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <span class=\"digit up\"><i class=\"fa fa-arrow-up\"></i></span><span class=\"digit down\"><i class=\"fa fa-arrow-down\"></i></span>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n      </p>\n    </label>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
-    edit: "<%= Formbuilder.templates['edit/options']() %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n        <span class=\"digit up\"><i class=\"fa fa-arrow-up\"></i></span><span class=\"digit down\"><i class=\"fa fa-arrow-down\"></i></span>\n        <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n        <% if (rf.get(Formbuilder.options.mappings.RICHTEXT )) { %>\n          <i class=\"fa fa-paperclip\"></i>\n        <% } %>\n        <% if (rf.get(Formbuilder.options.mappings.NOTIFICATION) &&\n               rf.get(Formbuilder.options.mappings.OPTIONS)[i].notify) { %>\n          <i class=\"fa fa-globe\"></i>\n        <% } %>\n      </p>\n    </label>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
+    edit: "<%= Formbuilder.templates['edit/notify']() %>\n<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"pull-left\"><span class=\"fa fa-bars\"></span></span> Ranking",
     defaultAttributes: function(attrs) {
       attrs.field_options.options = [
@@ -1022,8 +1020,8 @@ var Boner = {
 (function() {
   Formbuilder.registerField('single_choice', {
     order: 4,
-    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
-    edit: "<%= Formbuilder.templates['edit/options']() %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p>\n        <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n        <% if (rf.get(Formbuilder.options.mappings.RICHTEXT )) { %>\n          <i class=\"fa fa-paperclip\"></i>\n        <% } %>\n        <% if (rf.get(Formbuilder.options.mappings.NOTIFICATION) &&\n               rf.get(Formbuilder.options.mappings.OPTIONS)[i].notify) { %>\n          <i class=\"fa fa-globe\"></i>\n        <% } %>\n      </p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
+    edit: "<%= Formbuilder.templates['edit/notify']() %>\n<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"pull-left\"><span class=\"fa fa-circle-o\"></span></span> Single Choice",
     defaultAttributes: function(attrs) {
       attrs.field_options.options = [
@@ -1044,8 +1042,8 @@ var Boner = {
 (function() {
   Formbuilder.registerField('yes_no', {
     order: 2,
-    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p><%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %></p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
-    edit: "<%= Formbuilder.templates['edit/options']() %>",
+    view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n      <span class=\"link\"></span>\n      <p>\n        <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n        <% if (rf.get(Formbuilder.options.mappings.RICHTEXT )) { %>\n          <i class=\"fa fa-paperclip\"></i>\n        <% } %>\n        <% if (rf.get(Formbuilder.options.mappings.NOTIFICATION) &&\n               rf.get(Formbuilder.options.mappings.OPTIONS)[i].notify) { %>\n          <i class=\"fa fa-globe\"></i>\n        <% } %>\n      </p>\n      <button class=\"target\"\n              data-target = \"out\"\n              id = \"<%= rf.cid %>_<%= i %>\"\n              data-target-index = \"<%= i %>\"\n              data-target-value = \"<%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\"\n      ></button>\n  </div>\n<% } %>",
+    edit: "<%= Formbuilder.templates['edit/notify']() %>\n<%= Formbuilder.templates['edit/options']() %>",
     addButton: "<span class=\"pull-left\"><span class=\"fa fa-dot-circle-o\"></span></span> Yes \/ No",
     defaultAttributes: function(attrs) {
       attrs.field_options.options = [
@@ -1141,7 +1139,7 @@ __p += '<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
 ((__t = ( Formbuilder.options.mappings.REQUIRED )) == null ? '' : __t) +
 '\' />\n  Required\n</label>\n\n<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
 ((__t = ( Formbuilder.options.mappings.RICHTEXT )) == null ? '' : __t) +
-'\' />\n  Richtext\n</label>\n\n';
+'\' />\n  Richtext\n</label>\n';
 
 }
 return __p
@@ -1217,26 +1215,29 @@ __p += '<div class=\'sb-edit-section-header\'>Length Limit</div>\n\nMin\n<input 
 return __p
 };
 
+this["Formbuilder"]["templates"]["edit/notify"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<div class=\'sb-edit-section-header\'>Notifications</div>\n\n<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
+((__t = ( Formbuilder.options.mappings.NOTIFICATION )) == null ? '' : __t) +
+'\' />\n  Notify for Answers\n</label>\n';
+
+}
+return __p
+};
+
 this["Formbuilder"]["templates"]["edit/options"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
-function print() { __p += __j.call(arguments, '') }
+var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-edit-section-header\'>Add Option</div>\n\n';
- if (typeof includeBlank !== 'undefined'){ ;
-__p += '\n  <label>\n    <input type=\'checkbox\' data-rv-checked=\'model.' +
-((__t = ( Formbuilder.options.mappings.INCLUDE_BLANK )) == null ? '' : __t) +
-'\' />\n    Include blank\n  </label>\n';
- } ;
-__p += '\n\n<div class=\'option\' data-rv-each-option=\'model.' +
+__p += '<div class=\'sb-edit-section-header\'>Add Option</div>\n\n<div class="input-group option m-b-5" data-rv-each-option=\'model.' +
 ((__t = ( Formbuilder.options.mappings.OPTIONS )) == null ? '' : __t) +
-'\'>\n  <input type="text" data-rv-input="option:label" class=\'option-label-input\' />\n  <a class="js-remove-option" title="Remove Option"><i class="fa fa-times-circle"></i></a>\n</div>\n\n';
- if (typeof includeOther !== 'undefined'){ ;
-__p += '\n  <label>\n    <input type=\'checkbox\' data-rv-checked=\'model.' +
-((__t = ( Formbuilder.options.mappings.INCLUDE_OTHER )) == null ? '' : __t) +
-'\' />\n    Include "other"\n  </label>\n';
- } ;
-__p += '\n\n<a class="js-add-option .button"><i class="fa fa-plus-circle"></i>&nbsp;Add Option</a>\n';
+'\'>\n  <input type="text" class="form-control option-label-input" data-rv-input="option:label">\n  <a class="input-group-addon" data-rv-if="model.' +
+((__t = ( Formbuilder.options.mappings.RICHTEXT )) == null ? '' : __t) +
+'">\n    <i class="fa fa-paperclip"></i>\n    <input type="text" data-rv-input="option:image" class="form-control option-label-input" style="display:none">\n  </a>\n  <a class="input-group-addon" data-rv-if="model.' +
+((__t = ( Formbuilder.options.mappings.NOTIFICATION )) == null ? '' : __t) +
+'">\n    <input type="checkbox" class="check" data-rv-checked="option:notify">\n  </a>\n  <a class="input-group-addon js-remove-option">\n    <i class="fa fa-times-circle"></i>\n  </a>\n</div>\n\n<button class="btn btn-primary btn-sm m-b-10 js-add-option" type="button">\n  <i class="fa fa-plus-circle"></i> <span class="bold">Add Option</span>\n</button>\n';
 
 }
 return __p
@@ -1341,7 +1342,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnails">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase">TOTAL</p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase">$20.00</p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnails">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase">TOTAL</p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase">$20.00</p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n\n';
 
 }
 return __p
@@ -1453,6 +1454,10 @@ __p += '\n    ';
 __p += '\n    &bullet; ' +
 ((__t = ( rf.get(Formbuilder.options.mappings.VALIDATION) )) == null ? '' : __t) +
 '\n    ';
+ } ;
+__p += '\n    ';
+ if (rf.get(Formbuilder.options.mappings.NOTIFICATION)) { ;
+__p += '\n    &bullet; <i class="fa fa-globe"></i>\n    ';
  } ;
 __p += '\n    </small>\n</p>\n';
 
