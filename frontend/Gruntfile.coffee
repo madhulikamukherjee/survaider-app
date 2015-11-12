@@ -155,6 +155,7 @@ module.exports = (grunt) ->
           ]
           '<%= build%>/domain/builder.vendor.css': [
             'bower_components/nouislider/distribute/nouislider.min.css'
+            'bower_components/bootstrap3-wysihtml5-bower/dist/bootstrap3-wysihtml5.css'
             'bower_components/ladda/dist/ladda-themeless.min.css'
           ]
           '<%= build%>/domain/login.vendor.css': [

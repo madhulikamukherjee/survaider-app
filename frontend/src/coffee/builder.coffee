@@ -76,12 +76,18 @@ $(document).ready ->
   s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id
   json_uri = UriTemplate.expand('/api/survey/{s_id}/json?editing=true', s_id: s_id)
   payload_update_uri = UriTemplate.expand('/api/survey/{s_id}/struct', s_id: s_id)
+  im_upload_uri = UriTemplate.expand('/api/survey/{s_id}/img_upload', s_id: s_id)
+  im_list_uri   = UriTemplate.expand('/api/survey/{s_id}/repr', s_id: s_id)
 
   $.getJSON json_uri, (data) ->
-    fb = new Formbuilder(
+    fb = new Formbuilder
       selector: '.sb-main'
       bootstrapData: data.fields
-      screens: data.screens)
+      screens: data.screens
+      endpoints:
+        img_upload: im_upload_uri
+        img_list:   im_list_uri
+
     fb.on 'save', (payload) ->
       $.post payload_update_uri, { swag: payload }, (data) ->
 

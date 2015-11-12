@@ -104,8 +104,6 @@ class SurveyMetaController(Resource):
 
     def post(self, survey_id, action):
         if current_user.is_authenticated():
-            args = self.post_args()
-
             try:
                 s_id = HashId.decode(survey_id)
                 svey = Survey.objects(id = s_id).first()
@@ -117,6 +115,7 @@ class SurveyMetaController(Resource):
                 raise APIException("Invalid Survey ID", 404)
 
             if action == 'struct':
+                args = self.post_args()
                 svey.struct = json.loads(args['swag'])
                 svey.save()
 
@@ -128,6 +127,7 @@ class SurveyMetaController(Resource):
                 return ret, 200
 
             elif action == 'expires':
+                args = self.post_args()
                 dat = args['swag']
                 svey.expires = dateutil.parser.parse(dat)
                 svey.save()
@@ -140,6 +140,7 @@ class SurveyMetaController(Resource):
                 return ret, 200
 
             elif action == 'paused':
+                args = self.post_args()
                 dat = json.loads(args['swag'])
                 if type(dat) is bool:
                     svey.paused = dat
@@ -154,6 +155,7 @@ class SurveyMetaController(Resource):
                 raise Exception("TypeError")
 
             elif action == 'response_cap':
+                args = self.post_args()
                 dat = json.loads(args['swag'])
                 if type(dat) is int:
                     svey.response_cap = dat
@@ -168,6 +170,7 @@ class SurveyMetaController(Resource):
                 raise Exception("TypeError")
 
             elif action == 'survey_name':
+                args = self.post_args()
                 dat = args['swag']
                 if len(dat) > 0:
                     svey.metadata['name'] = dat

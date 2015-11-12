@@ -767,10 +767,55 @@ var Boner = {
       }
     };
 
-    Formbuilder.proxy = {
-      addTargetAndSources: function() {
-        return console.log("Fired.");
+    Formbuilder.richtext = {
+      template: {
+        "font-styles": function() {
+          return "<li class=\"dropdown\">\n  <a data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle \">\n    <span class=\"editor-icon editor-icon-headline\">\n    </span>\n    <span class=\"current-font\">\n      Normal\n    </span>\n    <b class=\"caret\">\n    </b>\n  </a>\n  <ul class=\"dropdown-menu\">\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"p\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        Normal\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h1\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        1\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h2\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        2\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h3\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        3\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h4\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        4\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h5\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        5\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h6\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        6\n      </a>\n    </li>\n  </ul>\n</li>";
+        },
+        emphasis: function() {
+          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"CTRL+B\" data-wysihtml5-command=\"bold\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-bold\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"CTRL+I\" data-wysihtml5-command=\"italic\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-italic\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"CTRL+U\" data-wysihtml5-command=\"underline\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-underline\">\n      </i>\n    </a>\n  </div>\n</li>";
+        },
+        blockquote: function() {
+          return "<li>\n  <a tabindex=\"-1\" data-wysihtml5-display-format-name=\"false\" data-wysihtml5-command-value=\"blockquote\" data-wysihtml5-command=\"formatBlock\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-quote\">\n    </i>\n  </a>\n</li>";
+        },
+        lists: function() {
+          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Unordered list\" data-wysihtml5-command=\"insertUnorderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ul\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Ordered list\" data-wysihtml5-command=\"insertOrderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ol\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Outdent\" data-wysihtml5-command=\"Outdent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-outdent\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Indent\" data-wysihtml5-command=\"Indent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-indent\">\n      </i>\n    </a>\n  </div>\n</li>";
+        },
+        image: function() {
+          return "<li>\n  <div class=\"bootstrap-wysihtml5-insert-image-modal modal fade\">\n    <div class=\"modal-dialog \">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <a data-dismiss=\"modal\" class=\"close\">\n            x\n          </a>\n          <h3>\n            Insert image\n          </h3>\n        </div>\n        <div class=\"modal-body\">\n          <input class=\"bootstrap-wysihtml5-insert-image-url form-control\" value=\"http://\">\n        </div>\n        <div class=\"modal-footer\">\n          <a data-dismiss=\"modal\" class=\"btn btn-default\">\n            Cancel\n          </a>\n          <a data-dismiss=\"modal\" class=\"btn btn-primary\">\n            Insert image\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n  <a tabindex=\"-1\" title=\"Insert image\" data-wysihtml5-command=\"insertImage\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-image\">\n    </i>\n  </a>\n</li>";
+        },
+        link: function() {
+          return "<li>\n  <div class=\"bootstrap-wysihtml5-insert-link-modal modal fade\">\n    <div class=\"modal-dialog \">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <a data-dismiss=\"modal\" class=\"close\">\n            Ã—\n          </a>\n          <h3>\n            Insert link\n          </h3>\n        </div>\n        <div class=\"modal-body\">\n          <input class=\"bootstrap-wysihtml5-insert-link-url form-control\" value=\"http://\">\n          <label class=\"checkbox\">\n\n            <input type=\"checkbox\" checked=\"\" class=\"bootstrap-wysihtml5-insert-link-target\">\n            Open link in new window\n          </label>\n        </div>\n        <div class=\"modal-footer\">\n          <a data-dismiss=\"modal\" class=\"btn btn-default\">\n            Cancel\n          </a>\n          <a data-dismiss=\"modal\" class=\"btn btn-primary\" href=\"#\">\n            Insert link\n          </a>\n        </div>\n      </div>\n    </div>\n  </div>\n  <a tabindex=\"-1\" title=\"Insert link\" data-wysihtml5-command=\"createLink\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-link\">\n    </i>\n  </a>\n</li>";
+        },
+        html: function() {
+          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Edit HTML\" data-wysihtml5-action=\"change_view\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-html\">\n      </i>\n    </a>\n  </div>\n</li>";
+        }
+      },
+      init: function() {
+        return $('#sb-edit-rich').wysihtml5({
+          html: true,
+          customTemplates: this.template
+        });
       }
+    };
+
+    Formbuilder.uploads = {
+      init: function(opt) {
+        var el;
+        el = $('div#sbDropzone');
+        console.log(opt);
+        return el.dropzone({
+          url: opt.img_upload,
+          paramName: 'swag',
+          maxFilesize: 4,
+          uploadMultiple: false,
+          clickable: true
+        });
+      }
+    };
+
+    Formbuilder.proxy = {
+      addTargetAndSources: function() {}
     };
 
     Formbuilder.fields = {};
@@ -806,6 +851,7 @@ var Boner = {
       });
       this.mainView = new BuilderView(args);
       this.screenView = new ScreenView(args);
+      Formbuilder.uploads.init(args.endpoints);
     }
 
     return Formbuilder;
@@ -1239,7 +1285,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle text-center   ">\n\n              <form action="/file-upload" class="dropzone no-margin dz-clickable">\n\n                    <div class="dz-default dz-message"><span>Drop files here to upload</span></div></form>\n\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-lg">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body  col-middle">\n                <div class="wysiwyg5-wrapper b-a b-grey">\n                  <div id="sb-edit-rich"></div>\n                </div>\n\n\n                <div class="dropzone dropzone-previews" id="sbDropzone"></div>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n';
 
 }
 return __p

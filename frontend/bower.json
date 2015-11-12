@@ -46,6 +46,11 @@
     "angular": "~1.4.7",
     "angular-charts": "~0.2.7",
     "Chart.js": "~1.0.2",
-    "datatables-fixedcolumns": "~3.2.0"
+    "datatables-fixedcolumns": "~3.2.0",
+    "bootstrap3-wysihtml5-bower": "~0.3.3",
+    "dropzone": "~4.2.0"
+  },
+  "resolutions": {
+    "jquery": "~2.0.3"
   }
 }
