@@ -123,7 +123,8 @@ class Survey(db.Document):
     @property
     def img_uploads(self):
         dat = self.metadata['img_uploads'] if 'img_uploads' in self.metadata else []
-        return [Uploads.url_for_surveyimg(_) for _ in dat]
+        ret = lambda x: {'uri': Uploads.url_for_surveyimg(x), 'name': x}
+        return [ret(_) for _ in dat]
 
     @img_uploads.setter
     def img_uploads(self, value):

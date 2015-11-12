@@ -42,3 +42,7 @@ SOCIAL_FACEBOOK = {
 
 # Exceptions
 PROPAGATE_EXCEPTIONS = True
+
+# Upload Directories
+UPLOADS_DEFAULT_DEST = '/Users/prashantsinha/Repository/Git/survaider-app/survaider/static/uploads'
+UPLOADS_DEFAULT_URL  = "{0}/static/uploads".format(HOST)

@@ -581,7 +581,6 @@ var Boner = {
         fields: this.collection.toJSON(),
         screens: this.formBuilder.screenView.toJSON()
       });
-      console.log(payload);
       if (Formbuilder.options.HTTP_ENDPOINT) {
         this.doAjaxSave(payload);
       }
@@ -721,7 +720,8 @@ var Boner = {
         LENGTH_UNITS: 'field_options.min_max_length_units',
         NEXT_VA: 'next.va',
         VALIDATION: 'field_options.validation',
-        QNO: 'q_no'
+        QNO: 'q_no',
+        RICHTEXT: 'richtext'
       },
       limit_map: {
         yes_no: {
@@ -801,16 +801,35 @@ var Boner = {
 
     Formbuilder.uploads = {
       init: function(opt) {
-        var el;
-        el = $('div#sbDropzone');
-        console.log(opt);
-        return el.dropzone({
+        this.dz = new Dropzone('div#sbDropzone', {
           url: opt.img_upload,
           paramName: 'swag',
           maxFilesize: 4,
           uploadMultiple: false,
           clickable: true
         });
+        this.opt = opt;
+        return this.load_old();
+      },
+      load_old: function() {
+        return $.getJSON(this.opt.img_list, (function(_this) {
+          return function(data) {
+            var i, k, len, m_f, ref, results;
+            ref = data.imgs;
+            results = [];
+            for (k = 0, len = ref.length; k < len; k++) {
+              i = ref[k];
+              m_f = {
+                name: i.name,
+                size: 1000
+              };
+              _this.dz.emit("addedfile", m_f);
+              _this.dz.createThumbnailFromUrl(m_f, i.uri);
+              results.push(_this.dz.emit("complete", m_f));
+            }
+            return results;
+          };
+        })(this));
       }
     };
 
@@ -1085,7 +1104,9 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
 ((__t = ( Formbuilder.options.mappings.REQUIRED )) == null ? '' : __t) +
-'\' />\n  Required\n</label>\n';
+'\' />\n  Required\n</label>\n\n<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
+((__t = ( Formbuilder.options.mappings.RICHTEXT )) == null ? '' : __t) +
+'\' />\n  Richtext\n</label>\n\n';
 
 }
 return __p
@@ -1285,7 +1306,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-lg">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body  col-middle">\n                <div class="wysiwyg5-wrapper b-a b-grey">\n                  <div id="sb-edit-rich"></div>\n                </div>\n\n\n                <div class="dropzone dropzone-previews" id="sbDropzone"></div>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#editField").removeClass("active");\'>Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-lg">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body  col-middle">\n                <div class="wysiwyg5-wrapper b-a b-grey">\n                  <div id="sb-edit-rich"></div>\n                </div>\n\n\n                <div class="dropzone" id="sbDropzone"></div>\n\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n';
 
 }
 return __p
