@@ -1,7 +1,7 @@
 {
 "version": 3,
-"mappings": "",
-"sources": [],
+"mappings": "AAAA,YAAY;EACR,eAAe,EAAE,IAAI;EACrB,OAAO,EAAE,CAAC;;AAEV,8BAAiB;EACb,WAAW,EAAE,YAAY;EACzB,WAAW,EAAE,GAAG;;AAEpB,+BAAkB;EACd,aAAa,EAAE,IAAI;;;AAGvB,aAAE;EACE,gBAAgB,EAAE,OAAO",
+"sources": ["../../../frontend/src/sass/analytics.sass"],
 "names": [],
 "file": "analytics.css"
 }

@@ -1,3 +1,17 @@
+#sidebar-nav {
+  list-style-type: none;
+  padding: 0;
+}
+#sidebar-nav li:nth-child(odd) {
+  font-family: "Montserrat";
+  font-weight: 700;
+}
+#sidebar-nav li:nth-child(even) {
+  margin-bottom: 10px;
+}
 
+.dataTable th {
+  background-color: #FFFFFF;
+}
 
 /*# sourceMappingURL=analytics.css.map */
