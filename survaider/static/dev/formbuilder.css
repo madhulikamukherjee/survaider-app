@@ -686,6 +686,58 @@
   transition: background-color 0.5s ease;
 }
 
+.sb-rich-input .wysihtml5-editor {
+  height: 100px;
+  overflow: scroll;
+  padding-bottom: 20px !important;
+  margin-bottom: 60px;
+}
+.sb-rich-input .wysihtml5-editor:focus, .sb-rich-input .wysihtml5-editor:active {
+  outline: none;
+}
+.sb-rich-input .sb-thumbnails .thumbnail {
+  height: 60px;
+  margin: 10px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #999;
+  border-radius: 4px;
+}
+.sb-rich-input .sb-thumbnails .thumbnail img {
+  height: 60px;
+}
+.sb-rich-input .sb-thumbnails .thumbnail:active, .sb-rich-input .sb-thumbnails .thumbnail:focus {
+  outline: inherit;
+}
+.sb-rich-input .sb-thumbnails .thumbnail.selected {
+  outline-style: solid;
+  outline-color: #3B479D;
+  outline-offset: -3px;
+}
+.sb-rich-input .sb-thumbnails.slick-slider {
+  margin-bottom: 0;
+  padding: 0 20px;
+}
+.sb-rich-input .sb-thumbnails.slick-slider .slick-prev {
+  left: -2px;
+}
+.sb-rich-input .sb-thumbnails.slick-slider .slick-next {
+  right: -2px;
+}
+.sb-rich-input .sb-thumbnails.slick-slider .slick-prev::before, .sb-rich-input .sb-thumbnails.slick-slider .slick-next::before {
+  color: #626262;
+}
+.sb-rich-input .sb-thumbnails.slick-slider .slick-dots {
+  margin: 0;
+  bottom: -10px;
+}
+.sb-rich-input .dropzone {
+  border: 1px solid #e6e6e6;
+  min-height: 100px;
+  max-height: 100px;
+  padding: 5px;
+}
+
 .shepherd-step {
   z-index: 100;
   width: 300px;
