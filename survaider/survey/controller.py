@@ -388,7 +388,7 @@ def get_index(survey_id):
             raise TypeError
 
     except TypeError:
-        raise APIException("Invalid Survey ID", 404)
+        raise ViewException("Invalid Survey ID", 404)
 
     return render_template('srvy.index.html', title = "Editing Survaider", survey = svey)
 
@@ -402,16 +402,42 @@ def get_analysis_page(survey_id):
             raise TypeError
 
     except TypeError:
-        raise APIException("Invalid Survey ID", 404)
+        raise ViewException("Invalid Survey ID", 404)
 
     return render_template('srvy.analysis.html', title = "Analytics", survey = svey.repr)
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
+    try:
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
+
+        if svey is None:
+            raise TypeError
+
+        if not svey.active:
+            raise ViewException("This Survey is not accepting Responses at this moment", 403)
+
+    except TypeError:
+        raise ViewException("Invalid Survey ID", 404)
+
     return app.send_static_file('simplesurvey/index.simplesurvey.html')
 
 @srvy.route('/s:<survey_id>/gamified')
 def get_gamified_survey(survey_id):
+    try:
+        s_id = HashId.decode(survey_id)
+        svey = Survey.objects(id = s_id).first()
+
+        if svey is None:
+            raise TypeError
+
+        if not svey.active:
+            raise ViewException("This Survey is not accepting Responses at this moment", 403)
+
+    except TypeError:
+        raise ViewException("Invalid Survey ID", 404)
+
     return app.send_static_file('gamified/index.html')
 
 @srvy.route('/s:<survey_id>/Release/<filename>')

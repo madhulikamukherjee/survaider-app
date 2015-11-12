@@ -22,6 +22,7 @@ def create_app():
     from .dashboard.controller import dashboard, dashboard_home
     from .survey.controller import srvy
     from .REST.controller import api
+    from survaider.minions.exceptions import ViewException
     from .minions.helpers import Routines
 
     app.register_blueprint(usr, url_prefix = '/usr')
@@ -41,6 +42,33 @@ def create_app():
             response.headers.add('Content-Type', 'application/javascript')
             response.headers.add('Content-Encoding', 'gzip')
         return response
+
+    @app.errorhandler(500)
+    def handle_internal_server_error(e):
+        dat = {
+            'error_code': 500,
+            'error_msg': str(e),
+            'error_dsc': "Some highly trained monkeys have been dispached to fix this error."
+        }
+        return render_template('error_splash.html', dat = dat), 500
+
+    @app.errorhandler(404)
+    def handle_not_found_error(e):
+        dat = {
+            'error_code': 404,
+            'error_msg': str(e),
+            'error_dsc': None
+        }
+        return render_template('error_splash.html', dat = dat), 404
+
+    @app.errorhandler(ViewException)
+    def handle_raised_exceptions(e):
+        dat = {
+            'error_code': e.status_code,
+            'error_msg': e.message,
+            'error_dsc': e.to_dict()
+        }
+        return render_template('error_splash.html', dat = dat), 404
 
     @app.route('/')
     def home():

@@ -15,10 +15,6 @@
           <a href="/dashboard">Dashboard</a>
           <span class="icon-thumbnail bg-complete"><i class="fa fa-cube"></i></span>
         </li>
-        <li>
-          <a href="/survey">Surveys &amp; Responses</a>
-          <span class="icon-thumbnail bg-success"><i class="fa fa-cube"></i></span>
-        </li>
 
         {% block nav_admin %}
         {% if g.user.has_role('admin') %}
@@ -74,7 +70,9 @@
     <div class="pull-left sm-table">
       <div class="header-inner">
         <div class="brand inline">
-          <img src="/static/img/logo_2x.png" alt="logo" data-src="/static/img/logo.png" data-src-retina="/static/img/logo_2x.png" height="22">
+          <a href="/">
+            <img src="/static/img/logo_2x.png" alt="logo" data-src="/static/img/logo.png" data-src-retina="/static/img/logo_2x.png" height="22">
+          </a>
         </div>
         <ul class="notification-list no-margin b-grey b-l b-r no-style p-l-30 p-r-20">
           <li class="p-r-15 inline">

@@ -1,6 +1,6 @@
-{% macro footer_text() -%}
+{% macro footer_text(cls = "text-right") -%}
 
-<div class="container-fluid container-fixed-lg footer text-right">
+<div class="container-fluid container-fixed-lg footer {{ cls }}">
   <div class="copyright sm-text-center">
     <p class="small no-margin">
       <span class="hint-text">Copyright © 2015 </span>
