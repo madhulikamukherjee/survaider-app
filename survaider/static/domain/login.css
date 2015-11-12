@@ -14,4 +14,11 @@
   background-size: cover;
 }
 
+@media (min-width: 768px) {
+  .logo-sv {
+    position: absolute;
+    top: 60px;
+  }
+}
+
 /*# sourceMappingURL=login.css.map */
