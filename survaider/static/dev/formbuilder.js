@@ -145,7 +145,9 @@ var Boner = {
     ViewFieldView.prototype.initialize = function(options) {
       this.parentView = options.parentView;
       this.listenTo(this.model, "change", this.render);
-      return this.listenTo(this.model, "destroy", this.remove);
+      this.listenTo(this.model, "set", this.render);
+      this.listenTo(this.model, "destroy", this.remove);
+      return this.listenTo(this.parentView, "change", this.render);
     };
 
     ViewFieldView.prototype.render = function() {
@@ -387,14 +389,14 @@ var Boner = {
     };
 
     BuilderView.prototype.render = function() {
-      var k, len, ref, subview;
+      var j, len, ref, subview;
       this.$el.html(Formbuilder.templates['page']());
       this.$fbLeft = this.$el.find('.sb-left');
       this.$responseFields = this.$el.find('.sb-response-fields');
       this.hideShowNoResponseFields();
       ref = this.SUBVIEWS;
-      for (k = 0, len = ref.length; k < len; k++) {
-        subview = ref[k];
+      for (j = 0, len = ref.length; j < len; j++) {
+        subview = ref[j];
         new subview({
           parentView: this
         }).render();
@@ -491,21 +493,6 @@ var Boner = {
       });
     };
 
-    BuilderView.prototype.list_update = function() {
-      var i, j, k, last, len, ref, results;
-      i = 0;
-      last = void 0;
-      ref = this.collection.models;
-      results = [];
-      for (k = 0, len = ref.length; k < len; k++) {
-        j = ref[k];
-        j.set('q_no', i + 1);
-        last = j;
-        results.push(i += 1);
-      }
-      return results;
-    };
-
     BuilderView.prototype.addAll = function() {
       this.collection.each(this.addOne, this);
       return this.setSortable();
@@ -582,8 +569,7 @@ var Boner = {
         return;
       }
       this.formSaved = false;
-      this.saveFormButton.removeAttr('disabled').text(Formbuilder.options.dict.SAVE_FORM);
-      return this.list_update();
+      return this.saveFormButton.removeAttr('disabled').text(Formbuilder.options.dict.SAVE_FORM);
     };
 
     BuilderView.prototype.saveForm = function(e) {
@@ -617,10 +603,10 @@ var Boner = {
         contentType: "application/json",
         success: (function(_this) {
           return function(data) {
-            var datum, k, len, ref;
+            var datum, j, len, ref;
             _this.updatingBatch = true;
-            for (k = 0, len = data.length; k < len; k++) {
-              datum = data[k];
+            for (j = 0, len = data.length; j < len; j++) {
+              datum = data[j];
               if ((ref = _this.collection.get(datum.cid)) != null) {
                 ref.set({
                   id: datum.id
@@ -850,11 +836,11 @@ var Boner = {
       load_old: function() {
         return $.getJSON(this.opt.img_list, (function(_this) {
           return function(data) {
-            var i, k, len, ref, results;
+            var i, j, len, ref, results;
             ref = data.imgs;
             results = [];
-            for (k = 0, len = ref.length; k < len; k++) {
-              i = ref[k];
+            for (j = 0, len = ref.length; j < len; j++) {
+              i = ref[j];
               results.push(_this.add_thumbnail(i));
             }
             return results;
@@ -904,10 +890,10 @@ var Boner = {
     Formbuilder.nonInputFields = {};
 
     Formbuilder.registerField = function(name, opts) {
-      var k, len, ref, x;
+      var j, len, ref, x;
       ref = ['view', 'edit'];
-      for (k = 0, len = ref.length; k < len; k++) {
-        x = ref[k];
+      for (j = 0, len = ref.length; j < len; j++) {
+        x = ref[j];
         opts[x] = _.template(opts[x]);
       }
       opts.field_type = name;
@@ -1412,9 +1398,7 @@ this["Formbuilder"]["templates"]["view/base"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question ' +
-((__t = ( rf.get('q_no') )) == null ? '' : __t) +
-'</p>\n\n            ' +
+__p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question </p>\n\n            ' +
 ((__t = ( Formbuilder.templates['view/label']({rf: rf}) )) == null ? '' : __t) +
 '\n\n            <button class="target" data-target="in" id="' +
 ((__t = ( rf.cid )) == null ? '' : __t) +

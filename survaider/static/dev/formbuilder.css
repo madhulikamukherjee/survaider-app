@@ -432,6 +432,7 @@
   border-radius: 0;
   min-height: 200px;
   padding: 20px 0 0 20px;
+  counter-reset: section;
 }
 .sb-main .sb-right .sb-response-fields a.sortable-placeholder {
   display: block;
@@ -548,6 +549,10 @@
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.section {
   font-size: 14px;
   font-weight: 300;
+}
+.sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.section:after {
+  content: counter(section);
+  counter-increment: section;
 }
 .sb-main .sb-right .sb-response-fields .sb-field-wrapper div.field-card .meta p.title {
   font-size: 20px;
