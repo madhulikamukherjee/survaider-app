@@ -695,7 +695,8 @@
 .sb-rich-input .wysihtml5-editor:focus, .sb-rich-input .wysihtml5-editor:active {
   outline: none;
 }
-.sb-rich-input .sb-thumbnails .thumbnail {
+
+.sb-thumbnails .thumbnail {
   height: 60px;
   margin: 10px;
   padding: 0;
@@ -703,39 +704,85 @@
   border: 1px solid #999;
   border-radius: 4px;
 }
-.sb-rich-input .sb-thumbnails .thumbnail img {
+.sb-thumbnails .thumbnail img {
   height: 60px;
 }
-.sb-rich-input .sb-thumbnails .thumbnail:active, .sb-rich-input .sb-thumbnails .thumbnail:focus {
+.sb-thumbnails .thumbnail:active, .sb-thumbnails .thumbnail:focus {
   outline: inherit;
 }
-.sb-rich-input .sb-thumbnails .thumbnail.selected {
+.sb-thumbnails .thumbnail.selected {
   outline-style: solid;
   outline-color: #3B479D;
   outline-offset: -3px;
 }
-.sb-rich-input .sb-thumbnails.slick-slider {
+.sb-thumbnails.slick-slider {
   margin-bottom: 0;
   padding: 0 20px;
 }
-.sb-rich-input .sb-thumbnails.slick-slider .slick-prev {
+.sb-thumbnails.slick-slider .slick-prev {
   left: -2px;
 }
-.sb-rich-input .sb-thumbnails.slick-slider .slick-next {
+.sb-thumbnails.slick-slider .slick-next {
   right: -2px;
 }
-.sb-rich-input .sb-thumbnails.slick-slider .slick-prev::before, .sb-rich-input .sb-thumbnails.slick-slider .slick-next::before {
+.sb-thumbnails.slick-slider .slick-prev::before, .sb-thumbnails.slick-slider .slick-next::before {
   color: #626262;
 }
-.sb-rich-input .sb-thumbnails.slick-slider .slick-dots {
+.sb-thumbnails.slick-slider .slick-dots {
   margin: 0;
   bottom: -10px;
 }
-.sb-rich-input .dropzone {
+
+.dropzone {
   border: 1px solid #e6e6e6;
   min-height: 100px;
   max-height: 100px;
   padding: 5px;
+}
+
+.sb-attach {
+  z-index: 2000;
+  visibility: hidden;
+  -webkit-transition: opacity 0.2s, left 0.2s, right 0.5s;
+  -moz-transition: opacity 0.2s, left 0.2s, right 0.5s;
+  transition: opacity 0.2s, left 0.2s, right 0.5s;
+  position: absolute;
+  padding: 15px;
+  width: 550px;
+  opacity: 0;
+  top: 0;
+  left: -1000px;
+  background: #FFFCFC;
+  border: 1px solid #000000;
+  border-radius: 4px;
+}
+.sb-attach:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid #000000;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+.sb-attach:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid #FFFCFC;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+.modal-content-wrapper {
+  position: relative;
 }
 
 .shepherd-step {

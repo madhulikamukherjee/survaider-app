@@ -212,6 +212,7 @@ var Boner = {
       'click .js-default-updated': 'defaultUpdated',
       'input .option-label-input': 'forceRender',
       'click .check': 'optionUpdated',
+      'click .sb-attach-init': 'attachImage',
       'click .sb-label-description': 'prepareLabel',
       'click .option': 'prepareLabel'
     };
@@ -292,6 +293,13 @@ var Boner = {
       var log;
       log = _.bind(this.forceRender, this);
       return _.delay(log, 100);
+    };
+
+    EditFieldView.prototype.attachImage = function(e) {
+      var t, target;
+      target = $(e.currentTarget);
+      t = target.offset().top - (target.outerHeight() * 2.25);
+      return Formbuilder.uploads.show(t);
     };
 
     EditFieldView.prototype.forceRender = function() {
@@ -538,7 +546,8 @@ var Boner = {
     };
 
     BuilderView.prototype.deSelectField = function(model) {
-      return this.$el.find(".sb-field-wrapper").removeClass('editing');
+      this.$el.find(".sb-field-wrapper").removeClass('editing');
+      return Formbuilder.uploads.hide();
     };
 
     BuilderView.prototype.ensureEditViewScrolled = function() {
@@ -835,7 +844,8 @@ var Boner = {
           };
         })(this));
         this.thumbnails();
-        return this.load_old();
+        this.load_old();
+        return this.at = $('#sb-attach');
       },
       load_old: function() {
         return $.getJSON(this.opt.img_list, (function(_this) {
@@ -862,6 +872,18 @@ var Boner = {
           slidesToScroll: 2,
           variableWidth: true
         });
+      },
+      show: function(t) {
+        this.at.css('top', t - (this.at.height() * 0.5));
+        this.at.css('left', -1 * (this.at.width() + 25));
+        this.at.css('opacity', 1);
+        return this.at.css('visibility', 'visible');
+      },
+      hide: function() {
+        this.at.css('top', 0);
+        this.at.css('left', -1000);
+        this.at.css('opacity', 0);
+        return this.at.css('visibility', 'hidden');
       }
     };
 
@@ -1233,7 +1255,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '<div class=\'sb-edit-section-header\'>Add Option</div>\n\n<div class="input-group option m-b-5" data-rv-each-option=\'model.' +
 ((__t = ( Formbuilder.options.mappings.OPTIONS )) == null ? '' : __t) +
-'\'>\n  <input type="text" class="form-control option-label-input" data-rv-input="option:label">\n  <a class="input-group-addon" data-rv-if="model.' +
+'\'>\n  <input type="text" class="form-control option-label-input" data-rv-input="option:label">\n  <a class="input-group-addon sb-attach-init" data-rv-if="model.' +
 ((__t = ( Formbuilder.options.mappings.RICHTEXT )) == null ? '' : __t) +
 '">\n    <i class="fa fa-paperclip"></i>\n    <input type="text" data-rv-input="option:image" class="form-control option-label-input" style="display:none">\n  </a>\n  <a class="input-group-addon" data-rv-if="model.' +
 ((__t = ( Formbuilder.options.mappings.NOTIFICATION )) == null ? '' : __t) +
@@ -1342,7 +1364,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnails">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase">TOTAL</p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase">$20.00</p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-8">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n            <div class="sb-thumbnails" id="sb-thumbnails"></div>\n          </div>\n          <div class="col-xs-4">\n            <div class="dropzone" id="sbDropzone"></div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-8">\n            <div class="p-t-20 clearfix p-l-10 p-r-10">\n              <div class="pull-left">\n                <p class="bold font-montserrat text-uppercase"></p>\n              </div>\n              <div class="pull-right">\n                <p class="bold font-montserrat text-uppercase"></p>\n              </div>\n            </div>\n          </div>\n          <div class="col-xs-4 m-t-10 sm-m-t-10">\n            <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnaxxils">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropxxzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n';
 
 }
 return __p
