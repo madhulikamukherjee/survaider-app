@@ -51,16 +51,31 @@ class BuilderView extends Backbone.View
 
   survey_delete: ->
     swal
-        title: "Are you sure?"
-        text: "You will not be able to recover this imaginary file!"
+        title: "Are you sure you want to delete this Survey?"
+        text: "It's not possible to recover a deleted survey."
         type: "warning"
         showCancelButton: true
         confirmButtonColor: "#DD6B55"
         confirmButtonText: "Yes, delete it!"
         closeOnConfirm: false
-        # showLoaderOnConfirm: true
-      , ->
-        swal "Not Implemented!", "Sorry, this action is not implemented yet.", "error"
+        showLoaderOnConfirm: true
+      , =>
+        $.ajax
+          url: "/api/survey/#{@s_id}"
+          method: 'DELETE'
+        .done =>
+          swal
+              title: "Succesfully Deleted"
+              type:  "success"
+              confirmButtonText: 'Proceed'
+              closeOnConfirm: false
+              showCancelButton: false
+            , ->
+              window.location = '/'
+        .fail =>
+          swal
+            title: "Sorry, something went wrong. Please try again, or contact Support."
+            type:  "error"
 
   update: (field, value) ->
     @save_btn.start()

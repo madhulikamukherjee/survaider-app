@@ -82,7 +82,12 @@ class Survey(db.Document):
     @property
     def active(self):
         time_now = datetime.datetime.now()
-        return all([time_now <= self.expires, not self.paused, self.response_cap >= self.obtained_responses])
+        return all([
+            not self.hidden,
+            time_now <= self.expires,
+            not self.paused,
+            self.response_cap >= self.obtained_responses,
+        ])
 
     @property
     def paused(self):
@@ -133,6 +138,14 @@ class Survey(db.Document):
         else:
             self.metadata['img_uploads'] = []
             self.metadata['img_uploads'].append(value)
+
+    @property
+    def hidden(self):
+        return self.metadata['hidden'] if 'hidden' in self.metadata else False
+
+    @hidden.setter
+    def hidden(self, value):
+        self.metadata['hidden'] = value
 
     def save(self, **kwargs):
         self.metadata['modified'] = datetime.datetime.now()

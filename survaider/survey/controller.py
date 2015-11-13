@@ -33,10 +33,7 @@ class SurveyController(Resource):
         if current_user.is_authenticated():
             svey = Survey.objects(created_by = current_user.id)
 
-            survey_list = []
-
-            for sv in svey:
-                survey_list.append(sv.repr)
+            survey_list = [_.repr for _ in svey if not _.hidden]
 
             ret = {
                 "data": survey_list,
@@ -89,6 +86,9 @@ class SurveyMetaController(Resource):
             if svey is None:
                 raise TypeError
 
+            if svey.hidden:
+                raise APIException("This Survey has been deleted", 404)
+
         except TypeError:
             raise APIException("Invalid Survey ID", 404)
 
@@ -110,6 +110,9 @@ class SurveyMetaController(Resource):
 
                 if svey is None:
                     raise TypeError
+
+                if svey.hidden:
+                    raise APIException("This Survey has been deleted", 404)
 
             except TypeError:
                 raise APIException("Invalid Survey ID", 404)
@@ -152,7 +155,7 @@ class SurveyMetaController(Resource):
                         'saved': True,
                     }
                     return ret, 200
-                raise Exception("TypeError")
+                raise APIException("TypeError: Invalid swag value.", 400)
 
             elif action == 'response_cap':
                 args = self.post_args()
@@ -167,7 +170,7 @@ class SurveyMetaController(Resource):
                         'saved': True,
                     }
                     return ret, 200
-                raise Exception("TypeError")
+                raise APIException("TypeError: Invalid swag value.", 400)
 
             elif action == 'survey_name':
                 args = self.post_args()
@@ -182,7 +185,7 @@ class SurveyMetaController(Resource):
                         'saved': True,
                     }
                     return ret, 200
-                raise Exception("TypeError")
+                raise APIException("TypeError: Invalid swag value.", 400)
 
             elif action == 'img_upload':
                 try:
@@ -207,8 +210,37 @@ class SurveyMetaController(Resource):
         else:
             raise APIException("Login Required", 401)
 
-    def delete(self, survey_id):
-        pass
+    def delete(self, survey_id, action = 'self'):
+        if current_user.is_authenticated():
+            try:
+                s_id = HashId.decode(survey_id)
+                svey = Survey.objects(id = s_id).first()
+
+                if svey is None:
+                    raise TypeError
+
+                if svey.hidden:
+                    raise APIException("This Survey has already been deleted", 404)
+
+            except TypeError:
+                raise APIException("Invalid Survey ID", 404)
+
+            if action == 'self':
+                svey.hidden = True
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+                return ret, 200
+
+            elif action == 'img':
+                raise APIException("Method not Implemented.", 500)
+
+        else:
+            raise APIException("Login Required", 401)
 
 class ResponseController(Resource):
     """
@@ -247,6 +279,9 @@ class ResponseController(Resource):
 
             if svey is None:
                 raise TypeError
+
+            if svey.hidden:
+                raise APIException("This Survey has been deleted", 404)
 
         except TypeError:
             raise APIException("Invalid Survey ID", 404)
@@ -295,6 +330,9 @@ class ResponseController(Resource):
             if svey is None:
                 raise TypeError
 
+            if svey.hidden:
+                raise APIException("This Survey has been deleted", 404)
+
         except TypeError:
             raise APIException("Invalid Survey ID", 404)
 
@@ -342,6 +380,9 @@ class ResponseAggregationController(Resource):
             if svey is None:
                 raise TypeError
 
+            if svey.hidden:
+                raise APIException("This Survey has been deleted", 404)
+
         except TypeError:
             raise APIException("Invalid Survey ID", 404)
 
@@ -363,6 +404,9 @@ class ResponseDocumentController(Resource):
 
             if svey is None:
                 raise TypeError("Invalid Survey ID")
+
+            if svey.hidden:
+                raise APIException("This Survey has been deleted", 404)
 
             r_id = HashId.decode(response_id)
             res  = Response.objects(id = r_id, parent_survey = s_id).first()
@@ -386,6 +430,9 @@ def get_index(survey_id):
 
         if svey is None:
             raise TypeError
+
+        if svey.hidden:
+            raise ViewException("This Survey has been deleted.", 404)
 
     except TypeError:
         raise ViewException("Invalid Survey ID", 404)

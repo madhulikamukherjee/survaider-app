@@ -73,16 +73,37 @@
 
     BuilderView.prototype.survey_delete = function() {
       return swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
+        title: "Are you sure you want to delete this Survey?",
+        text: "It's not possible to recover a deleted survey.",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-      }, function() {
-        return swal("Not Implemented!", "Sorry, this action is not implemented yet.", "error");
-      });
+        closeOnConfirm: false,
+        showLoaderOnConfirm: true
+      }, (function(_this) {
+        return function() {
+          return $.ajax({
+            url: "/api/survey/" + _this.s_id,
+            method: 'DELETE'
+          }).done(function() {
+            return swal({
+              title: "Succesfully Deleted",
+              type: "success",
+              confirmButtonText: 'Proceed',
+              closeOnConfirm: false,
+              showCancelButton: false
+            }, function() {
+              return window.location = '/';
+            });
+          }).fail(function() {
+            return swal({
+              title: "Sorry, something went wrong. Please try again, or contact Support.",
+              type: "error"
+            });
+          });
+        };
+      })(this));
     };
 
     BuilderView.prototype.update = function(field, value) {
