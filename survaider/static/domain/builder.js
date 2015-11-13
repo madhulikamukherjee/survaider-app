@@ -11,8 +11,9 @@
     }
 
     BuilderView.prototype.events = {
-      'click  .builder-save': 'update',
-      'change #builder-date': 'builder_date',
+      'click .builder-save': 'update',
+      'click #builder-delete': 'survey_delete',
+      'input #builder-date': 'builder_date',
       'change #builder-name': 'builder_name',
       'click #builder-pause': 'builder_paused'
     };
@@ -68,6 +69,20 @@
         $('#builder-pause').attr('data-paused', 'True');
         return this.update('paused', 'true');
       }
+    };
+
+    BuilderView.prototype.survey_delete = function() {
+      return swal({
+        title: "Are you sure?",
+        text: "You will not be able to recover this imaginary file!",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, delete it!",
+        closeOnConfirm: false
+      }, function() {
+        return swal("Not Implemented!", "Sorry, this action is not implemented yet.", "error");
+      });
     };
 
     BuilderView.prototype.update = function(field, value) {

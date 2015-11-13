@@ -1,9 +1,10 @@
 
 class BuilderView extends Backbone.View
   events:
-    'click  .builder-save': 'update'
-    # 'input  #builder-date': 'builder_date'
-    'change #builder-date': 'builder_date'
+    'click .builder-save':   'update'
+    'click #builder-delete': 'survey_delete'
+    'input #builder-date':   'builder_date'
+    # 'change #builder-date': 'builder_date'
     'change #builder-name': 'builder_name'
     'click #builder-pause': 'builder_paused'
 
@@ -47,6 +48,19 @@ class BuilderView extends Backbone.View
         $('#builder-pause .target').html('Resume')
         $('#builder-pause').attr('data-paused', 'True')
         @update('paused', 'true')
+
+  survey_delete: ->
+    swal
+        title: "Are you sure?"
+        text: "You will not be able to recover this imaginary file!"
+        type: "warning"
+        showCancelButton: true
+        confirmButtonColor: "#DD6B55"
+        confirmButtonText: "Yes, delete it!"
+        closeOnConfirm: false
+        # showLoaderOnConfirm: true
+      , ->
+        swal "Not Implemented!", "Sorry, this action is not implemented yet.", "error"
 
   update: (field, value) ->
     @save_btn.start()
