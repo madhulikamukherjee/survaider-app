@@ -810,17 +810,61 @@ var Boner = {
 
     Formbuilder.uploads = {
       init: function(opt) {
-        this.dz = new Dropzone('div#sbDropzone', {
+        this.dzbtn = Ladda.create(document.querySelector('#sb-dz-attach'));
+        this.dzbtnel = $('#sb-dz-attach');
+        this.dz = new Dropzone('div#sb-attach', {
           url: opt.img_upload,
           paramName: 'swag',
           maxFilesize: 4,
+          acceptedFiles: 'image/*',
           uploadMultiple: false,
-          clickable: true
+          clickable: '#sb-dz-attach',
+          previewTemplate: '',
+          previewsContainer: false,
+          autoQueue: true
         });
         this.opt = opt;
-        this.dz.on('complete', (function(_this) {
+        this.dz.on('addedfile', (function(_this) {
+          return function(file, e) {
+            return _this.dzbtn.start();
+          };
+        })(this));
+        this.dz.on('sending', (function(_this) {
+          return function(file) {
+            return _this.dzbtnel.attr('disabled', 'true');
+          };
+        })(this));
+        this.dz.on('totaluploadprogress', (function(_this) {
+          return function(progress) {
+            return _this.dzbtn.setProgress(progress / 100);
+          };
+        })(this));
+        this.dz.on('queuecomplete', (function(_this) {
+          return function(progress) {
+            return _this.dzbtn.setProgress(0);
+          };
+        })(this));
+        this.dz.on('error', (function(_this) {
+          return function(file, e, xhr) {
+            _this.dzbtn.stop();
+            if (xhr != null) {
+              e = e.message;
+            }
+            return swal({
+              title: "Upload Error",
+              text: e,
+              type: "error",
+              showCancelButton: false,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Okay",
+              closeOnConfirm: true
+            });
+          };
+        })(this));
+        this.dz.on('success', (function(_this) {
           return function(file, e) {
             var js;
+            _this.dzbtn.stop();
             _this.dz.removeFile(file);
             js = JSON.parse(file.xhr.response);
             return _this.add_thumbnail({
@@ -1356,7 +1400,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-8">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n            <div class="sb-thumbnails" id="sb-thumbnails"></div>\n          </div>\n          <div class="col-xs-4">\n            <div class="dropzone" id="sbDropzone"></div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-8 m-t-10 sm-m-t-10">\n            <div class="pull-right">\n              <button type="button" class="btn btn-default font-montserrat btn-sm m-t-5 sb-attach-hide" onclick="Formbuilder.uploads.hide();">Cancel</button>\n            </div>\n          </div>\n          <div class="col-xs-4 m-t-10 sm-m-t-10">\n            <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5">Apply Changes</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnaxxils">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropxxzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-12">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n            <div class="sb-thumbnails" id="sb-thumbnails"></div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-8 m-t-10 sm-m-t-10">\n            <div class="pull-right">\n              <a class="btn btn-primary font-montserrat btn-sm ladda-button"\n                 id="sb-dz-attach"\n                 data-style="expand-left">\n                 <span class="ladda-label">Upload</span>\n              </a>\n              <small><span class="font-montserrat text-uppercase bold">You may also Drag and Drop the image here.</span></small>\n\n\n              <button type="button"\n                      class="btn btn-default font-montserrat btn-sm sb-attach-hide"\n                      onclick="Formbuilder.uploads.hide();">Cancel</button>\n            </div>\n          </div>\n          <div class="col-xs-4 m-t-10 sm-m-t-10">\n            <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5">Apply Changes</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnaxxils">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropxxzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n';
 
 }
 return __p
@@ -1376,7 +1420,7 @@ this["Formbuilder"]["templates"]["partials/right_side"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you"></textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
+__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you"></textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n\n      <div class="container sb-attach right" id="sb-links">\n        <div class="row">\n          <div class="col-xs-12">\n            <h1>:(</h1>\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n          </div>\n        </div>\n      </div>\n';
 
 }
 return __p
