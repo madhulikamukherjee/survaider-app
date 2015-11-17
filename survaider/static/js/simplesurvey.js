@@ -41598,8 +41598,29 @@ LongTextQuestion.prototype.generateResponse = function(){
 
           case 'rating':
 
-            var ratingLength = 5,
+            var ratingLength = 10,
                 number = (keyCode-48);
+
+            if (number == 0) {
+              number = 10;
+            }
+
+            var initialResponse = parseInt(q.response);
+
+            if (keyCode == 39) {
+
+              if (!initialResponse) {
+                number = 1;
+              }
+              else if((initialResponse > 0 && initialResponse < ratingLength)){
+                var number = initialResponse + 1;
+              }
+
+            }
+            else if(keyCode == 37 && (initialResponse > 1 && initialResponse <= ratingLength)){
+              var number = initialResponse - 1;
+            }
+
 
             if (number > 0 && number <= ratingLength) {
               // 1 refers to 48+1 in keyCode
@@ -41610,7 +41631,6 @@ LongTextQuestion.prototype.generateResponse = function(){
 
               $scope.$apply();
             }
-
 
             break;
 

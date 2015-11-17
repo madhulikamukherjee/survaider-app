@@ -1,0 +1,120 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat:400,700|Roboto+Slab:400,300);
+html {
+  box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  min-width: 100%;
+  font-family: "Montserrat", sans-serif;
+}
+
+section.slide1 {
+  background: url("/static/img/meta/bg0.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+section.slide1 div#bg {
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  height: 100%;
+  opacity: 0.5;
+}
+section.slide1 div.content {
+  z-index: 1;
+  color: #FFF;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+section.slide1 div.content img {
+  height: 90px;
+}
+section.slide1 div.content ul {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+section.slide1 div.content ul li {
+  display: inline-block;
+}
+section.slide1 div.content li.invite {
+  position: relative;
+}
+section.slide1 div.content li.invite div {
+  top: 0;
+  left: 0;
+  position: absolute;
+}
+section.slide1 div.content button, section.slide1 div.content input {
+  padding: 5px 20px;
+  background: transparent;
+  border: 1px solid #FFF;
+  border-radius: 4px;
+  color: #FFF;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  -webkit-transition: color 0.2s, background 0.2s;
+  -moz-transition: color 0.2s, background 0.2s;
+  transition: color 0.2s, background 0.2s;
+}
+section.slide1 div.content button:hover, section.slide1 div.content input:hover {
+  background: #000;
+  color: #fff;
+}
+@media (min-width: 768px) {
+  section.slide1 div.content {
+    width: 600px;
+    margin: 0 auto;
+  }
+}
+
+section.slide2 {
+  position: relative;
+  padding: 50px 0;
+}
+@media (min-width: 768px) {
+  section.slide2 div.content {
+    width: 600px;
+    margin: 0 auto;
+  }
+}
+
+footer {
+  padding: 20px 0;
+  background: #272b33;
+  color: #FFF;
+}
+
+@media (min-width: 768px) {
+  section.slide1 div.content, section.slide2 div.content, footer div.content {
+    width: 600px;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 767px) {
+  section.slide1 div.content, section.slide2 div.content, footer div.content {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
+
+/*# sourceMappingURL=homepage.css.map */

@@ -44,6 +44,9 @@ module.exports = (grunt) ->
           '<%= build %>/domain/builder.js': [
             'src/coffee/builder.coffee'
           ]
+          '<%= build %>/domain/homepage.js': [
+            'src/coffee/homepage.coffee'
+          ]
 
     concat:
       all:
@@ -99,6 +102,9 @@ module.exports = (grunt) ->
             'bower_components/livestamp/livestamp.js'
             'bower_components/ladda/dist/spin.min.js'
             'bower_components/ladda/dist/ladda.min.js'
+          ]
+          '<%= build %>/domain/homepage.vendor.js': [
+            'bower_components/three.js/three.min.js'
           ]
 
       simplesurvey:
@@ -220,6 +226,7 @@ module.exports = (grunt) ->
           '<%= build %>/domain/analytics.css': 'src/sass/analytics.sass'
           '<%= build %>/domain/builder.css': 'src/sass/builder.sass'
           '<%= build %>/domain/login.css': 'src/sass/login.sass'
+          '<%= build %>/domain/homepage.css': 'src/sass/homepage.sass'
 
     watch:
       all:

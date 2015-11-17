@@ -52,13 +52,13 @@
                     <div class="sv-short-text-input">
 
                       <span class="input input--madoka">
-                                <input class="input__field input__field--madoka" type="text" id="input-31" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
-                                <label class="input__label input__label--madoka" for="input-31">
-                                    <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
-                                        <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
-                                    </svg>
-                                </label>
-                            </span>
+                        <input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
+                        <label class="input__label input__label--madoka" for="short-text-{{question.id}}">
+                          <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
+                            <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
+                          </svg>
+                        </label>
+                      </span>
 
                     </div>
 
@@ -118,7 +118,7 @@
 
                     <div class="sv-rating-radio-group">
 
-                      <div class="sv-question-rating-input" ng-repeat="n in [1,2,3,4,5]">
+                      <div class="sv-question-rating-input" ng-repeat="n in [1,2,3,4,5,6,7,8,9,10]">
                         <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-rating" value="{{n}}" id="question-{{question.id}}-rating-{{$index}}">
                         <label ng-class="{ 'active' : $index+1 <= question.response }" for="question-{{question.id}}-rating-{{$index}}"></label>
                       </div>

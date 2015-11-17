@@ -75,7 +75,8 @@ def create_app():
         if current_user.is_authenticated():
             "Load the dashboard"
             return dashboard_home()
-        return security_login()
+        # return security_login()
+        return render_template('homepage.html')
 
 if __name__ == '__main__':
     create_app()
