@@ -60,6 +60,8 @@ static/.DS_Store
 
 .DS_Store
 bower_components
+bourbon
+neat
 node_modules
 config.py
 

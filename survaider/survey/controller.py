@@ -97,6 +97,9 @@ class SurveyMetaController(Resource):
                 return svey.struct
             return svey.render_json
 
+        elif action == 'deepjson':
+            return svey.struct
+
         elif action == 'repr':
             return svey.repr
 
