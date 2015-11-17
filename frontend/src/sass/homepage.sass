@@ -48,9 +48,9 @@ section.slide1
             li
                 display: inline-block
 
-            li.invite
-                div
-                    display: none
+                &.invite
+                    div
+                        display: none
 
             &.open
                 li
@@ -65,7 +65,6 @@ section.slide1
                             left: 0
                             right: 0
                             padding: 30px 20px
-                            width: 30vw
                             border: 1px solid
                             border-radius: 4px
                             text-align: left
@@ -73,6 +72,11 @@ section.slide1
                             margin: -35px auto 0 auto
                             background: rgba(39,43,59,0.7)
                             z-index: -1
+
+                            @media (min-width: 768px)
+                                width: 30vw
+                            @media (max-width: 767px)
+                                width: 80vw
 
                     &>button
                         border-color: transparent

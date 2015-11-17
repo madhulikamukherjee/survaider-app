@@ -71,7 +71,6 @@ section.slide1 div.content ul.open li.invite div {
   left: 0;
   right: 0;
   padding: 30px 20px;
-  width: 30vw;
   border: 1px solid;
   border-radius: 4px;
   text-align: left;
@@ -79,6 +78,16 @@ section.slide1 div.content ul.open li.invite div {
   margin: -35px auto 0 auto;
   background: rgba(39, 43, 59, 0.7);
   z-index: -1;
+}
+@media (min-width: 768px) {
+  section.slide1 div.content ul.open li.invite div {
+    width: 30vw;
+  }
+}
+@media (max-width: 767px) {
+  section.slide1 div.content ul.open li.invite div {
+    width: 80vw;
+  }
 }
 section.slide1 div.content ul.open li > button {
   border-color: transparent;
