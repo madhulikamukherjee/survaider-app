@@ -240,6 +240,35 @@ class Survey(db.Document):
         rt['game_footer'] = self.struct['screens'][2]
         return rt
 
+    @property
+    def render_deepjson(self):
+
+        rt = {}
+        cp = self.struct['fields']
+
+        def field_options(opt):
+            options = []
+            if 'options' in opt:
+                for op in opt['options']:
+                    #: Can make more changes here.
+                    options.append(op)
+            return options
+        def logic(id_next):
+            return {
+                'va': id_next
+            }
+
+        for i in range(len(cp)):
+            cp[i]['field_options'] = field_options(cp[i]['field_options'])
+            cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
+
+        rt['fields'] = cp
+        rt['survey_title'] = self.struct['screens'][0]
+        rt['survey_logo'] = False
+        rt['survey_description'] = self.struct['screens'][1]
+        rt['survey_footer'] = self.struct['screens'][2]
+        return rt
+
 class Response(db.Document):
     parent_survey   = db.ReferenceField(Survey)
 
