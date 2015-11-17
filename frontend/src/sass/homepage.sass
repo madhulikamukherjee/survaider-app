@@ -48,14 +48,39 @@ section.slide1
             li
                 display: inline-block
 
-        li.invite
-            position: relative
-            div
-                top: 0
-                left: 0
-                position: absolute
+            li.invite
+                div
+                    display: none
 
-        button, input
+            &.open
+                li
+                    visibility: hidden
+
+                    &.invite
+                        visibility: visible
+                        position: relative
+                        div
+                            // top: -10px
+                            display: block
+                            left: 0
+                            right: 0
+                            padding: 30px 20px
+                            width: 30vw
+                            border: 1px solid
+                            border-radius: 4px
+                            text-align: left
+                            position: fixed
+                            margin: -35px auto 0 auto
+                            background: rgba(39,43,59,0.7)
+                            z-index: -1
+
+                    &>button
+                        border-color: transparent
+                        &:hover
+                            background: transparent
+
+
+        button, input, .button
             padding: 5px 20px
             background: transparent
             border: 1px solid #FFF
@@ -63,12 +88,17 @@ section.slide1
             color: #FFF
             font-family: $f1
             font-size: 14px
+            text-decoration: none
+            outline: none
 
             @include transition(color 0.2s, background 0.2s)
 
             &:hover
                 background: #000
                 color: #fff
+
+            &:active
+                outline: none
 
         @media (min-width: 768px)
             width: 600px

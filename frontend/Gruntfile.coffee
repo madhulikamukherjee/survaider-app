@@ -104,7 +104,7 @@ module.exports = (grunt) ->
             'bower_components/ladda/dist/ladda.min.js'
           ]
           '<%= build %>/domain/homepage.vendor.js': [
-            'bower_components/three.js/three.min.js'
+            'bower_components/jquery/jquery.js'
           ]
 
       simplesurvey:

@@ -56,15 +56,37 @@ section.slide1 div.content ul {
 section.slide1 div.content ul li {
   display: inline-block;
 }
-section.slide1 div.content li.invite {
+section.slide1 div.content ul li.invite div {
+  display: none;
+}
+section.slide1 div.content ul.open li {
+  visibility: hidden;
+}
+section.slide1 div.content ul.open li.invite {
+  visibility: visible;
   position: relative;
 }
-section.slide1 div.content li.invite div {
-  top: 0;
+section.slide1 div.content ul.open li.invite div {
+  display: block;
   left: 0;
-  position: absolute;
+  right: 0;
+  padding: 30px 20px;
+  width: 30vw;
+  border: 1px solid;
+  border-radius: 4px;
+  text-align: left;
+  position: fixed;
+  margin: -35px auto 0 auto;
+  background: rgba(39, 43, 59, 0.7);
+  z-index: -1;
 }
-section.slide1 div.content button, section.slide1 div.content input {
+section.slide1 div.content ul.open li > button {
+  border-color: transparent;
+}
+section.slide1 div.content ul.open li > button:hover {
+  background: transparent;
+}
+section.slide1 div.content button, section.slide1 div.content input, section.slide1 div.content .button {
   padding: 5px 20px;
   background: transparent;
   border: 1px solid #FFF;
@@ -72,13 +94,18 @@ section.slide1 div.content button, section.slide1 div.content input {
   color: #FFF;
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
+  text-decoration: none;
+  outline: none;
   -webkit-transition: color 0.2s, background 0.2s;
   -moz-transition: color 0.2s, background 0.2s;
   transition: color 0.2s, background 0.2s;
 }
-section.slide1 div.content button:hover, section.slide1 div.content input:hover {
+section.slide1 div.content button:hover, section.slide1 div.content input:hover, section.slide1 div.content .button:hover {
   background: #000;
   color: #fff;
+}
+section.slide1 div.content button:active, section.slide1 div.content input:active, section.slide1 div.content .button:active {
+  outline: none;
 }
 @media (min-width: 768px) {
   section.slide1 div.content {
