@@ -81,7 +81,11 @@ DashboardHelper =
             <p class="font-montserrat m-t-10">Preview</p>
             <div class="btn-group btn-group-justified m-t-10">
               <div class="btn-group">
-                <a href="<%= dat.uri_game %>" class="btn btn-primary">
+                <% if (dat.is_gamified) { %>
+                  <a href="<%= dat.uri_game %>" class="btn btn-primary">
+                <% } else { %>
+                  <a href="#" class="btn btn-primary" disabled>
+                <% } %>
                   <i class="fa fa-star"></i>
                   <span class="font-montserrat">Gamified</span>
                 </a>

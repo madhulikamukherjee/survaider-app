@@ -485,6 +485,9 @@ def get_gamified_survey(survey_id):
         if not svey.active:
             raise ViewException("This Survey is not accepting Responses at this moment", 403)
 
+        if not svey.gamified_enabled:
+            raise ViewException("This Survey cannot be rendered as a Game.", 403)
+
     except TypeError:
         raise ViewException("Invalid Survey ID", 404)
 
