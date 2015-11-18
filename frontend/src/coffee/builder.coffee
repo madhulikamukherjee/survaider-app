@@ -141,10 +141,13 @@ class BuilderView extends Backbone.View
         field: 'response_cap'
         value: parseInt @el_limit.val()
     ]
-    console.log tasks
 
-  update: (field, value, btn) ->
-    unless btn
+    q = $.Deferred().resolve()
+    for task, i in tasks
+      q = q.then(@update task.field, task.value, (i + 1) / tasks.length)
+
+  update: (field, value, promise) ->
+    unless promise or promise is 0
       @save_btn.start()
     $.ajax
       url: "/api/survey/#{@s_id}/#{field}"
@@ -152,14 +155,23 @@ class BuilderView extends Backbone.View
       data:
         swag: value
     .done =>
-      unless btn
+      if promise and promise == 1
         @save_btn.stop()
+      else if promise
+        @save_btn.setProgress promise
+      else
+        @save_btn.stop()
+
       $('#builder-updated').attr('data-livestamp', moment().toISOString())
+      return true
     .fail =>
-      @save_btn.stop()
-      swal
-        text: "Error while saving. Please check the input data."
-        type:  "error"
+      unless promise
+        @save_btn.stop()
+        swal
+          title: "Error while saving. Please check the input data."
+          type:  "error"
+      else
+        throw "Error while saving"
 
 class Builder
   constructor: (opts={}) ->

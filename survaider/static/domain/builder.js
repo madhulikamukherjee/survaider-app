@@ -170,7 +170,7 @@
     };
 
     BuilderView.prototype.update_sequence = function() {
-      var tasks;
+      var i, j, len, q, results, task, tasks;
       tasks = [
         {
           field: 'survey_name',
@@ -183,11 +183,17 @@
           value: parseInt(this.el_limit.val())
         }
       ];
-      return console.log(tasks);
+      q = $.Deferred().resolve();
+      results = [];
+      for (i = j = 0, len = tasks.length; j < len; i = ++j) {
+        task = tasks[i];
+        results.push(q = q.then(this.update(task.field, task.value, (i + 1) / tasks.length)));
+      }
+      return results;
     };
 
-    BuilderView.prototype.update = function(field, value, btn) {
-      if (!btn) {
+    BuilderView.prototype.update = function(field, value, promise) {
+      if (!(promise || promise === 0)) {
         this.save_btn.start();
       }
       return $.ajax({
@@ -198,18 +204,27 @@
         }
       }).done((function(_this) {
         return function() {
-          if (!btn) {
+          if (promise && promise === 1) {
+            _this.save_btn.stop();
+          } else if (promise) {
+            _this.save_btn.setProgress(promise);
+          } else {
             _this.save_btn.stop();
           }
-          return $('#builder-updated').attr('data-livestamp', moment().toISOString());
+          $('#builder-updated').attr('data-livestamp', moment().toISOString());
+          return true;
         };
       })(this)).fail((function(_this) {
         return function() {
-          _this.save_btn.stop();
-          return swal({
-            text: "Error while saving. Please check the input data.",
-            type: "error"
-          });
+          if (!promise) {
+            _this.save_btn.stop();
+            return swal({
+              title: "Error while saving. Please check the input data.",
+              type: "error"
+            });
+          } else {
+            throw "Error while saving";
+          }
         };
       })(this));
     };
