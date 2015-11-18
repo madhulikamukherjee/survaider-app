@@ -40803,7 +40803,7 @@ Question.prototype.incomplete = function(){
 function ShortTextQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
-  this.minimumResponseLength = 10;
+  this.minimumResponseLength = 1;
 }
 
 
@@ -41016,12 +41016,20 @@ GroupRatingQuestion.prototype.generateResponse = function(){
   var response = {
     id: this.id,
     type: this.type,
-    subparts: []
+    response: []
   }
 
-  this.subparts.forEach(function(subpart,index){
-    response.subparts.push(subpart.rating);
-  });
+
+  var temp = [],
+      delimeter1 = '##';
+      delimeter2 = '###';
+
+  for (var i = 0; i < this.subparts.length; i++) {
+    temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rating));
+  }
+
+
+  response.response = temp.join(delimeter2).toLocaleString();
 
   return response;
 }
@@ -41219,7 +41227,7 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
 function LongTextQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
-  this.minimumResponseLength = 40;
+  this.minimumResponseLength = 1;
 }
 
 LongTextQuestion.prototype = Object.create(Question.prototype);
@@ -41305,6 +41313,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
       changeActiveSlideType('header');
       changeActiveSlideElement($('#header-slide'));
+
 
       setupEventListeners();
 
@@ -41453,6 +41462,8 @@ LongTextQuestion.prototype.generateResponse = function(){
       if (!question.isCompleted && question.isRequired) {
         return false;
       }
+
+      checkTheNumberOfRemainingQuestions();
 
 
       //Post a request to server for every question that is answered
@@ -41676,7 +41687,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
     // REQUEST MARK
     var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}/deepjson", {s_id: s_id}),
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/json", {s_id: s_id}),
         payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
@@ -41798,11 +41809,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                break;
 
              case 'single_choice':
-               messageEl.html('Select one choice');
+               messageEl.html('Select one choice (Use a,b,c,... keys)');
                break;
 
              case 'multiple_choice':
-               messageEl.html('Select as many as you want');
+               messageEl.html('Select as many as you want (Use a,b,c,... keys)');
                break;
 
              case 'group_rating':
@@ -41810,7 +41821,7 @@ LongTextQuestion.prototype.generateResponse = function(){
                break;
 
              case 'rating':
-               messageEl.html('Rate from 1 to 5');
+               messageEl.html('Rate from 1 to 10 (Use number keys or left/right keys)');
                break;
 
              case 'ranking':
@@ -41818,11 +41829,16 @@ LongTextQuestion.prototype.generateResponse = function(){
                break;
 
              case 'yes_no':
-               messageEl.html('Select yes or no');
+               messageEl.html('Select yes or no (Use keys a or b)');
                break;
 
              default:
-               messageEl.html('Let\'s get started!');
+               if ($scope.activeSlide.slideType == 'header') {
+                 messageEl.html('Let\'s get started!');
+               }
+               else if ($scope.activeSlide.slideType == 'footer') {
+                 messageEl.html('Thank You!');
+               }
                break;
 
            }
@@ -41848,7 +41864,7 @@ LongTextQuestion.prototype.generateResponse = function(){
          function checkTheNumberOfRemainingQuestions(){
            var numberOfQuestionsRemaining = 0;
            $scope.questions.forEach(function(question){
-             if (!question.isCompleted && !question.isDisabled) {
+             if (!question.isCompleted && !question.isDisabled && question.isRequired) {
                 numberOfQuestionsRemaining++;
              }
            });
