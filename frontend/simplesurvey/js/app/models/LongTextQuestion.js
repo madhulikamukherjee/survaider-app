@@ -1,7 +1,7 @@
 function LongTextQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
-  this.minimumResponseLength = 40;
+  this.minimumResponseLength = 1;
 }
 
 LongTextQuestion.prototype = Object.create(Question.prototype);

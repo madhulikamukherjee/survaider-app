@@ -108,7 +108,7 @@
                       <input ng-click="changeInQuestion($questionIndex, question.id)" ng-model="choice.checked" type="checkbox" name="question-{{question.id}}-multiple_choice-{{$index}}" value="{{$index}}" id="question-{{question.id}}-multiple_choice-{{$index}}">
                       <label ng-class="{ 'sv-label-group' : !choice.image, 'sv-label-choice-group' : choice.image }" for="question-{{question.id}}-multiple_choice-{{$index}}">
                         <img ng-src="{{choice.image}}" ng-if="choice.image" />
-                        <span>{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ choice.label }}</span>
+                        <span>{{ $index | numberToAlphabet }}&#46;&nbsp; &nbsp;{{ choice.label }}</span>
                       </label>
                     </div>
 
@@ -123,7 +123,7 @@
                       <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-single_choice" value="{{$index+1}}" id="question-{{question.id}}-single_choice-{{$index}}">
                       <label ng-class="{ 'sv-label-group' : !option.image, 'sv-label-choice-group' : option.image }" for="question-{{question.id}}-single_choice-{{$index}}">
                         <img ng-src="{{option.image}}" ng-if="option.image" />
-                        <span>{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ option.label }}</span>
+                        <span>{{ $index | numberToAlphabet }}&#46;&nbsp; &nbsp;{{ option.label }}</span>
                       </label>
                     </div>
 
@@ -157,8 +157,8 @@
                         <header class="sv-question-subpart-header">
 
                           <!-- Defined a variable $optionIndex to access the index of the sub-part in the nested loop using ng-init directive -->
-                          <span class="sv-group-rating-option-index" ng-init="$optionIndex = $index" ng-bind="$index | numberToAlphabet"></span>
-                          <h3 class="sv-group-rating-option-title" ng-bind="option.label"></h3>
+                          <span ng-init="$optionIndex = $index" ng-hide="true"></span>
+                          <h3 class="sv-group-rating-option-title">{{ $index | numberToAlphabet }}&#46;&nbsp; &nbsp;{{ option.label }}</h3>
 
                         </header>
 
@@ -250,7 +250,11 @@
 
           <section class="sv-footer-page sv-page sv-page-13" id="footer-slide">
             <button type="submit" class="sv-button sv-button-medium" ng-click="formSubmit()">Submit</button>
-            <h3 class="sv-survey-footer" ng-bind="survey_footer"></h3>
+            <h1 class="sv-footer-final-message">Congratulations! You just filled Survaider Survey. Click <a href="https://www.survaider.com">here</a> to build yours and experience new age of surveying!</h1>
+            <h1 class="sv-survey-footer" ng-bind="survey_footer"></h3>
+            <a class="sv-footer-survaider-logo" href="https://www.survaider.com">
+              <img src="img/survaider-logo.png" alt="" />
+            </a>
           </section>
 
           <section class="pagination">
@@ -271,9 +275,14 @@
               </div>
               <div class="always-message">
                 <p ng-if="!formEnabled">
-                  {{numberOfQuestionsRemaining}} questions are remaining
+                  <span ng-if="numberOfQuestionsRemaining == 0 && activeSlide.slideType == 'question'">You can submit the form now!</span>
+                  <span ng-if="numberOfQuestionsRemaining == 1 && activeSlide.slideType == 'question'">1 question is remaining</span>
+                  <span ng-if="numberOfQuestionsRemaining > 1 && activeSlide.slideType == 'question'">{{numberOfQuestionsRemaining}} questions are remaining</span>
+                  <span class="sv-made-with-survaider" ng-if="activeSlide.slideType != 'question'">
+                    <span>Made with Survaider</span>
+                    <img src="img/survaider-logo.png" alt="" />
+                  </span>
                 </p>
-                <a ng-if="formEnabled" href="#" ng-click="moveToSubmit()">Submit Form</a>
               </div>
             </div>
           </div>

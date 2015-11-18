@@ -116,9 +116,36 @@
          ],
          "field_type":"single_choice",
          "next":{
-            "va":"end"
+            "va":"c30"
          },
          "cid":"c22"
+      },
+      {
+        "label": "Rate each of the following out of 5 stars!",
+        "field_type": "group_rating",
+        "required": true,
+        "field_options": [
+          "Rooms",
+          "Hotel services",
+          "Facilities"
+        ],
+        "cid": "c30",
+        "next": {
+          "va": "c40"
+        },
+        "gametype": "star_game"
+      },
+      {
+        "label": "How would you rate your experience of staying with us?",
+        "field_type": "rating",
+        "required": true,
+        "field_options": [
+        ],
+        "cid": "c40",
+        "next": {
+          "va": "end"
+        },
+        "gametype": "scroll_scene"
       }
    ],
    "survey_title":"Default Title"

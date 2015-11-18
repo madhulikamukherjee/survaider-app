@@ -87,7 +87,7 @@ class Survey(db.Document):
             not self.hidden,
             time_now <= self.expires,
             not self.paused,
-            self.response_cap >= self.obtained_responses,
+            self.response_cap > self.obtained_responses,
         ])
 
     @property
