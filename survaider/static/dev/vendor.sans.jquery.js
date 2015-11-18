@@ -9523,6 +9523,515 @@ var __slice = [].slice;
 
 }).call(this);
 
+/*!
+ * jQuery.scrollTo
+ * Copyright (c) 2007-2015 Ariel Flesler - aflesler<a>gmail<d>com | http://flesler.blogspot.com
+ * Licensed under MIT
+ * http://flesler.blogspot.com/2007/10/jqueryscrollto.html
+ * @projectDescription Lightweight, cross-browser and highly customizable animated scrolling with jQuery
+ * @author Ariel Flesler
+ * @version 2.1.2
+ */
+;(function(factory) {
+	'use strict';
+	if (typeof define === 'function' && define.amd) {
+		// AMD
+		define(['jquery'], factory);
+	} else if (typeof module !== 'undefined' && module.exports) {
+		// CommonJS
+		module.exports = factory(require('jquery'));
+	} else {
+		// Global
+		factory(jQuery);
+	}
+})(function($) {
+	'use strict';
+
+	var $scrollTo = $.scrollTo = function(target, duration, settings) {
+		return $(window).scrollTo(target, duration, settings);
+	};
+
+	$scrollTo.defaults = {
+		axis:'xy',
+		duration: 0,
+		limit:true
+	};
+
+	function isWin(elem) {
+		return !elem.nodeName ||
+			$.inArray(elem.nodeName.toLowerCase(), ['iframe','#document','html','body']) !== -1;
+	}		
+
+	$.fn.scrollTo = function(target, duration, settings) {
+		if (typeof duration === 'object') {
+			settings = duration;
+			duration = 0;
+		}
+		if (typeof settings === 'function') {
+			settings = { onAfter:settings };
+		}
+		if (target === 'max') {
+			target = 9e9;
+		}
+
+		settings = $.extend({}, $scrollTo.defaults, settings);
+		// Speed is still recognized for backwards compatibility
+		duration = duration || settings.duration;
+		// Make sure the settings are given right
+		var queue = settings.queue && settings.axis.length > 1;
+		if (queue) {
+			// Let's keep the overall duration
+			duration /= 2;
+		}
+		settings.offset = both(settings.offset);
+		settings.over = both(settings.over);
+
+		return this.each(function() {
+			// Null target yields nothing, just like jQuery does
+			if (target === null) return;
+
+			var win = isWin(this),
+				elem = win ? this.contentWindow || window : this,
+				$elem = $(elem),
+				targ = target, 
+				attr = {},
+				toff;
+
+			switch (typeof targ) {
+				// A number will pass the regex
+				case 'number':
+				case 'string':
+					if (/^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ)) {
+						targ = both(targ);
+						// We are done
+						break;
+					}
+					// Relative/Absolute selector
+					targ = win ? $(targ) : $(targ, elem);
+					/* falls through */
+				case 'object':
+					if (targ.length === 0) return;
+					// DOMElement / jQuery
+					if (targ.is || targ.style) {
+						// Get the real position of the target
+						toff = (targ = $(targ)).offset();
+					}
+			}
+
+			var offset = $.isFunction(settings.offset) && settings.offset(elem, targ) || settings.offset;
+
+			$.each(settings.axis.split(''), function(i, axis) {
+				var Pos	= axis === 'x' ? 'Left' : 'Top',
+					pos = Pos.toLowerCase(),
+					key = 'scroll' + Pos,
+					prev = $elem[key](),
+					max = $scrollTo.max(elem, axis);
+
+				if (toff) {// jQuery / DOMElement
+					attr[key] = toff[pos] + (win ? 0 : prev - $elem.offset()[pos]);
+
+					// If it's a dom element, reduce the margin
+					if (settings.margin) {
+						attr[key] -= parseInt(targ.css('margin'+Pos), 10) || 0;
+						attr[key] -= parseInt(targ.css('border'+Pos+'Width'), 10) || 0;
+					}
+
+					attr[key] += offset[pos] || 0;
+
+					if (settings.over[pos]) {
+						// Scroll to a fraction of its width/height
+						attr[key] += targ[axis === 'x'?'width':'height']() * settings.over[pos];
+					}
+				} else {
+					var val = targ[pos];
+					// Handle percentage values
+					attr[key] = val.slice && val.slice(-1) === '%' ?
+						parseFloat(val) / 100 * max
+						: val;
+				}
+
+				// Number or 'number'
+				if (settings.limit && /^\d+$/.test(attr[key])) {
+					// Check the limits
+					attr[key] = attr[key] <= 0 ? 0 : Math.min(attr[key], max);
+				}
+
+				// Don't waste time animating, if there's no need.
+				if (!i && settings.axis.length > 1) {
+					if (prev === attr[key]) {
+						// No animation needed
+						attr = {};
+					} else if (queue) {
+						// Intermediate animation
+						animate(settings.onAfterFirst);
+						// Don't animate this axis again in the next iteration.
+						attr = {};
+					}
+				}
+			});
+
+			animate(settings.onAfter);
+
+			function animate(callback) {
+				var opts = $.extend({}, settings, {
+					// The queue setting conflicts with animate()
+					// Force it to always be true
+					queue: true,
+					duration: duration,
+					complete: callback && function() {
+						callback.call(elem, targ, settings);
+					}
+				});
+				$elem.animate(attr, opts);
+			}
+		});
+	};
+
+	// Max scrolling position, works on quirks mode
+	// It only fails (not too badly) on IE, quirks mode.
+	$scrollTo.max = function(elem, axis) {
+		var Dim = axis === 'x' ? 'Width' : 'Height',
+			scroll = 'scroll'+Dim;
+
+		if (!isWin(elem))
+			return elem[scroll] - $(elem)[Dim.toLowerCase()]();
+
+		var size = 'client' + Dim,
+			doc = elem.ownerDocument || elem.document,
+			html = doc.documentElement,
+			body = doc.body;
+
+		return Math.max(html[scroll], body[scroll]) - Math.min(html[size], body[size]);
+	};
+
+	function both(val) {
+		return $.isFunction(val) || $.isPlainObject(val) ? val : { top:val, left:val };
+	}
+
+	// Add special hooks so that window scroll properties can be animated
+	$.Tween.propHooks.scrollLeft = 
+	$.Tween.propHooks.scrollTop = {
+		get: function(t) {
+			return $(t.elem)[t.prop]();
+		},
+		set: function(t) {
+			var curr = this.get(t);
+			// If interrupt is true and user scrolled, stop animating
+			if (t.options.interrupt && t._last && t._last !== curr) {
+				return $(t.elem).stop();
+			}
+			var next = Math.round(t.now);
+			// Don't waste CPU
+			// Browsers don't render floating point scroll
+			if (curr !== next) {
+				$(t.elem)[t.prop](next);
+				t._last = this.get(t);
+			}
+		}
+	};
+
+	// AMD requirement
+	return $scrollTo;
+});
+
+// Image Picker
+// by Rodrigo Vera
+//
+// Version 0.2.4
+// Full source at https://github.com/rvera/image-picker
+// MIT License, https://github.com/rvera/image-picker/blob/master/LICENSE
+// Generated by CoffeeScript 1.4.0
+(function() {
+  var ImagePicker, ImagePickerOption, both_array_are_equal, sanitized_options,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  jQuery.fn.extend({
+    imagepicker: function(opts) {
+      if (opts == null) {
+        opts = {};
+      }
+      return this.each(function() {
+        var select;
+        select = jQuery(this);
+        if (select.data("picker")) {
+          select.data("picker").destroy();
+        }
+        select.data("picker", new ImagePicker(this, sanitized_options(opts)));
+        if (opts.initialized != null) {
+          return opts.initialized.call(select.data("picker"));
+        }
+      });
+    }
+  });
+
+  sanitized_options = function(opts) {
+    var default_options;
+    default_options = {
+      hide_select: true,
+      show_label: false,
+      initialized: void 0,
+      changed: void 0,
+      clicked: void 0,
+      selected: void 0,
+      limit: void 0,
+      limit_reached: void 0
+    };
+    return jQuery.extend(default_options, opts);
+  };
+
+  both_array_are_equal = function(a, b) {
+    return jQuery(a).not(b).length === 0 && jQuery(b).not(a).length === 0;
+  };
+
+  ImagePicker = (function() {
+
+    function ImagePicker(select_element, opts) {
+      this.opts = opts != null ? opts : {};
+      this.sync_picker_with_select = __bind(this.sync_picker_with_select, this);
+
+      this.select = jQuery(select_element);
+      this.multiple = this.select.attr("multiple") === "multiple";
+      if (this.select.data("limit") != null) {
+        this.opts.limit = parseInt(this.select.data("limit"));
+      }
+      this.build_and_append_picker();
+    }
+
+    ImagePicker.prototype.destroy = function() {
+      var option, _i, _len, _ref;
+      _ref = this.picker_options;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        option.destroy();
+      }
+      this.picker.remove();
+      this.select.unbind("change");
+      this.select.removeData("picker");
+      return this.select.show();
+    };
+
+    ImagePicker.prototype.build_and_append_picker = function() {
+      var _this = this;
+      if (this.opts.hide_select) {
+        this.select.hide();
+      }
+      this.select.change(function() {
+        return _this.sync_picker_with_select();
+      });
+      if (this.picker != null) {
+        this.picker.remove();
+      }
+      this.create_picker();
+      this.select.after(this.picker);
+      return this.sync_picker_with_select();
+    };
+
+    ImagePicker.prototype.sync_picker_with_select = function() {
+      var option, _i, _len, _ref, _results;
+      _ref = this.picker_options;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        if (option.is_selected()) {
+          _results.push(option.mark_as_selected());
+        } else {
+          _results.push(option.unmark_as_selected());
+        }
+      }
+      return _results;
+    };
+
+    ImagePicker.prototype.create_picker = function() {
+      this.picker = jQuery("<ul class='thumbnails image_picker_selector'></ul>");
+      this.picker_options = [];
+      this.recursively_parse_option_groups(this.select, this.picker);
+      return this.picker;
+    };
+
+    ImagePicker.prototype.recursively_parse_option_groups = function(scoped_dom, target_container) {
+      var container, option, option_group, _i, _j, _len, _len1, _ref, _ref1, _results;
+      _ref = scoped_dom.children("optgroup");
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option_group = _ref[_i];
+        option_group = jQuery(option_group);
+        container = jQuery("<ul></ul>");
+        container.append(jQuery("<li class='group_title'>" + (option_group.attr("label")) + "</li>"));
+        target_container.append(jQuery("<li>").append(container));
+        this.recursively_parse_option_groups(option_group, container);
+      }
+      _ref1 = (function() {
+        var _k, _len1, _ref1, _results1;
+        _ref1 = scoped_dom.children("option");
+        _results1 = [];
+        for (_k = 0, _len1 = _ref1.length; _k < _len1; _k++) {
+          option = _ref1[_k];
+          _results1.push(new ImagePickerOption(option, this, this.opts));
+        }
+        return _results1;
+      }).call(this);
+      _results = [];
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        option = _ref1[_j];
+        this.picker_options.push(option);
+        if (!option.has_image()) {
+          continue;
+        }
+        _results.push(target_container.append(option.node));
+      }
+      return _results;
+    };
+
+    ImagePicker.prototype.has_implicit_blanks = function() {
+      var option;
+      return ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.picker_options;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          option = _ref[_i];
+          if (option.is_blank() && !option.has_image()) {
+            _results.push(option);
+          }
+        }
+        return _results;
+      }).call(this)).length > 0;
+    };
+
+    ImagePicker.prototype.selected_values = function() {
+      if (this.multiple) {
+        return this.select.val() || [];
+      } else {
+        return [this.select.val()];
+      }
+    };
+
+    ImagePicker.prototype.toggle = function(imagepicker_option) {
+      var new_values, old_values, selected_value;
+      old_values = this.selected_values();
+      selected_value = imagepicker_option.value().toString();
+      if (this.multiple) {
+        if (__indexOf.call(this.selected_values(), selected_value) >= 0) {
+          new_values = this.selected_values();
+          new_values.splice(jQuery.inArray(selected_value, old_values), 1);
+          this.select.val([]);
+          this.select.val(new_values);
+        } else {
+          if ((this.opts.limit != null) && this.selected_values().length >= this.opts.limit) {
+            if (this.opts.limit_reached != null) {
+              this.opts.limit_reached.call(this.select);
+            }
+          } else {
+            this.select.val(this.selected_values().concat(selected_value));
+          }
+        }
+      } else {
+        if (this.has_implicit_blanks() && imagepicker_option.is_selected()) {
+          this.select.val("");
+        } else {
+          this.select.val(selected_value);
+        }
+      }
+      if (!both_array_are_equal(old_values, this.selected_values())) {
+        this.select.change();
+        if (this.opts.changed != null) {
+          return this.opts.changed.call(this.select, old_values, this.selected_values());
+        }
+      }
+    };
+
+    return ImagePicker;
+
+  })();
+
+  ImagePickerOption = (function() {
+
+    function ImagePickerOption(option_element, picker, opts) {
+      this.picker = picker;
+      this.opts = opts != null ? opts : {};
+      this.clicked = __bind(this.clicked, this);
+
+      this.option = jQuery(option_element);
+      this.create_node();
+    }
+
+    ImagePickerOption.prototype.destroy = function() {
+      return this.node.find(".thumbnail").unbind();
+    };
+
+    ImagePickerOption.prototype.has_image = function() {
+      return this.option.data("img-src") != null;
+    };
+
+    ImagePickerOption.prototype.is_blank = function() {
+      return !((this.value() != null) && this.value() !== "");
+    };
+
+    ImagePickerOption.prototype.is_selected = function() {
+      var select_value;
+      select_value = this.picker.select.val();
+      if (this.picker.multiple) {
+        return jQuery.inArray(this.value(), select_value) >= 0;
+      } else {
+        return this.value() === select_value;
+      }
+    };
+
+    ImagePickerOption.prototype.mark_as_selected = function() {
+      return this.node.find(".thumbnail").addClass("selected");
+    };
+
+    ImagePickerOption.prototype.unmark_as_selected = function() {
+      return this.node.find(".thumbnail").removeClass("selected");
+    };
+
+    ImagePickerOption.prototype.value = function() {
+      return this.option.val();
+    };
+
+    ImagePickerOption.prototype.label = function() {
+      if (this.option.data("img-label")) {
+        return this.option.data("img-label");
+      } else {
+        return this.option.text();
+      }
+    };
+
+    ImagePickerOption.prototype.clicked = function() {
+      this.picker.toggle(this);
+      if (this.opts.clicked != null) {
+        this.opts.clicked.call(this.picker.select, this);
+      }
+      if ((this.opts.selected != null) && this.is_selected()) {
+        return this.opts.selected.call(this.picker.select, this);
+      }
+    };
+
+    ImagePickerOption.prototype.create_node = function() {
+      var image, thumbnail;
+      this.node = jQuery("<li/>");
+      image = jQuery("<img class='image_picker_image'/>");
+      image.attr("src", this.option.data("img-src"));
+      thumbnail = jQuery("<div class='thumbnail'>");
+      thumbnail.click({
+        option: this
+      }, function(event) {
+        return event.data.option.clicked();
+      });
+      thumbnail.append(image);
+      if (this.opts.show_label) {
+        thumbnail.append(jQuery("<p/>").html(this.label()));
+      }
+      this.node.append(thumbnail);
+      return this.node;
+    };
+
+    return ImagePickerOption;
+
+  })();
+
+}).call(this);
+
 // TODO: in future try to replace most inline compability checks with polyfills for code readability 
 
 // element.textContent polyfill.
