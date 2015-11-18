@@ -11,6 +11,7 @@ import math
 
 from flask import request, g
 from bson.objectid import ObjectId
+from jsonschema import validate
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
 from survaider.user.model import User
@@ -119,7 +120,101 @@ class Survey(db.Document):
 
     @struct.setter
     def struct(self, value):
-        self.structure.update(value)
+        schema = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "cid": {
+                                "type": "string"
+                            },
+                            "field_options": {
+                                "type": "object",
+                                "properties": {
+                                    "options": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "checked": {
+                                                    "type": "boolean"
+                                                },
+                                                "img_enabled": {
+                                                    "type": "boolean"
+                                                },
+                                                "img_uri": {
+                                                    "type": "string"
+                                                },
+                                                "notify": {
+                                                    "type": "boolean"
+                                                },
+                                                "label": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": ["label"]
+                                        }
+                                    }
+                                }
+                            },
+                            "field_type": {
+                                "type": "string"
+                            },
+                            "label": {
+                                "type": "string"
+                            },
+                            "required": {
+                                "type": "boolean"
+                            },
+                            "notifications": {
+                                "type": "boolean"
+                            },
+                            "richtext": {
+                                "type": "boolean"
+                            },
+                        },
+                        "required": ["cid", "field_type", "label", "required"]
+                    }
+                },
+                "links": {
+                    "type": "null"
+                },
+                "screens": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": ["fields", "screens"]
+        }
+        if validate(value, schema):
+            self.structure.update(value)
+
+    @property
+    def gamified_enabled(self):
+        field_lim = {
+            'yes_no': [2, 3],
+            'single_choice': [2, 5],
+            'multiple_choice': [2, 5],
+            'ranking': [2, 6],
+            'group_rating': [2, 3],
+        }
+        for field in self.struct['fields']:
+            if all([
+                'options' in field['field_options'],
+                field['field_type'] in field_lim
+            ]):
+                count = len(field['field_options']['options'])
+                lower, upper = field_lim[field['field_type']]
+                if not lower <= count <= upper:
+                    return False
+        return True
 
     @property
     def modified(self):
@@ -156,6 +251,7 @@ class Survey(db.Document):
         return {
             'id': str(self),
             'name': self.metadata['name'],
+            'is_gamified': self.gamified_enabled,
             'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
             'uri_game': '/survey/s:{0}/gamified'.format(str(self)),
             'uri_edit': '/survey/s:{0}/edit'.format(str(self)),
