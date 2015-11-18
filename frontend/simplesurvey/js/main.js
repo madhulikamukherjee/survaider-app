@@ -418,7 +418,7 @@
 
     // REQUEST MARK
     var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}/json", {s_id: s_id}),
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/deepjson", {s_id: s_id}),
         payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
