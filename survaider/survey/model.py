@@ -193,8 +193,11 @@ class Survey(db.Document):
             },
             "required": ["fields", "screens"]
         }
-        if validate(value, schema):
+        try:
+            validate(value, schema)
             self.structure.update(value)
+        except ValidationError:
+            raise TypeError('Struct value invalid')
 
     @property
     def gamified_enabled(self):

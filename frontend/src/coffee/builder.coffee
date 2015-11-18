@@ -1,5 +1,10 @@
 
-class BuilderView extends Backbone.View
+class BuilderShareView extends Backbone.View
+
+  initialize: (options) ->
+    @setElement $ '#survey_export_modal'
+
+class BuilderSettingsView extends Backbone.View
   events:
     'click .builder-save':   'update_sequence'
     'click #builder-delete': 'survey_delete'
@@ -177,7 +182,8 @@ class Builder
   constructor: (opts={}) ->
     _.extend @, Backbone.Events
     args = _.extend opts, {builder: @}
-    @builderView = new BuilderView args
+    @builderView = new BuilderSettingsView args
+    @shareView   = new BuilderShareView args
 
 window.Builder = Builder
 

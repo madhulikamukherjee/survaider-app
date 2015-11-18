@@ -1,16 +1,31 @@
 (function() {
-  var Builder, BuilderView,
+  var Builder, BuilderSettingsView, BuilderShareView,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
-  BuilderView = (function(superClass) {
-    extend(BuilderView, superClass);
+  BuilderShareView = (function(superClass) {
+    extend(BuilderShareView, superClass);
 
-    function BuilderView() {
-      return BuilderView.__super__.constructor.apply(this, arguments);
+    function BuilderShareView() {
+      return BuilderShareView.__super__.constructor.apply(this, arguments);
     }
 
-    BuilderView.prototype.events = {
+    BuilderShareView.prototype.initialize = function(options) {
+      return this.setElement($('#survey_export_modal'));
+    };
+
+    return BuilderShareView;
+
+  })(Backbone.View);
+
+  BuilderSettingsView = (function(superClass) {
+    extend(BuilderSettingsView, superClass);
+
+    function BuilderSettingsView() {
+      return BuilderSettingsView.__super__.constructor.apply(this, arguments);
+    }
+
+    BuilderSettingsView.prototype.events = {
       'click .builder-save': 'update_sequence',
       'click #builder-delete': 'survey_delete',
       'input #builder-date': 'builder_date',
@@ -22,7 +37,7 @@
       'click #builder-pause': 'builder_paused'
     };
 
-    BuilderView.prototype.initialize = function(options) {
+    BuilderSettingsView.prototype.initialize = function(options) {
       this.setElement($('#survey_settings_modal'));
       this.s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id;
       this.el_date = $('#builder-date');
@@ -34,7 +49,7 @@
       return $("#builder-project-title").html($('#builder-name').val());
     };
 
-    BuilderView.prototype.builder_date_init = function() {
+    BuilderSettingsView.prototype.builder_date_init = function() {
       var ex_date;
       ex_date = moment(this.el_date.val());
       if (ex_date.isAfter('9000-01-01', 'year')) {
@@ -48,7 +63,7 @@
       return this.el_date.val(ex_date.format('YYYY MM DD'));
     };
 
-    BuilderView.prototype.builder_date_toggle = _.debounce(function() {
+    BuilderSettingsView.prototype.builder_date_toggle = _.debounce(function() {
       var ed;
       if ($('#builder-date-check').is(':checked')) {
         ed = moment().endOf("year");
@@ -61,7 +76,7 @@
       }
     }, 500);
 
-    BuilderView.prototype.builder_date = _.debounce(function() {
+    BuilderSettingsView.prototype.builder_date = _.debounce(function() {
       var date;
       date = moment(this.el_date.val());
       if (date.isValid()) {
@@ -69,7 +84,7 @@
       }
     }, 500);
 
-    BuilderView.prototype.builder_limit_init = function() {
+    BuilderSettingsView.prototype.builder_limit_init = function() {
       var ex_limit;
       ex_limit = parseInt(this.el_limit.val());
       if (ex_limit === Math.pow(2, 32)) {
@@ -82,7 +97,7 @@
       return this.el_limit.val(ex_limit);
     };
 
-    BuilderView.prototype.builder_limit_toggle = _.debounce(function() {
+    BuilderSettingsView.prototype.builder_limit_toggle = _.debounce(function() {
       if ($('#builder-limit-check').is(':checked')) {
         this.el_limit.val(1000);
         this.update('response_cap', 1000);
@@ -93,7 +108,7 @@
       }
     }, 500);
 
-    BuilderView.prototype.builder_limit = _.debounce(function() {
+    BuilderSettingsView.prototype.builder_limit = _.debounce(function() {
       var limit;
       limit = parseInt(this.el_limit.val());
       if (limit) {
@@ -101,7 +116,7 @@
       }
     }, 500);
 
-    BuilderView.prototype.builder_name = _.debounce(function() {
+    BuilderSettingsView.prototype.builder_name = _.debounce(function() {
       var date;
       date = $('#builder-name').val();
       $("#builder-project-title").html($('#builder-name').val());
@@ -110,7 +125,7 @@
       }
     }, 500);
 
-    BuilderView.prototype.builder_paused_init = function() {
+    BuilderSettingsView.prototype.builder_paused_init = function() {
       var d;
       d = $('#builder-pause').attr('data-paused');
       if (d === 'True') {
@@ -120,7 +135,7 @@
       }
     };
 
-    BuilderView.prototype.builder_paused = function() {
+    BuilderSettingsView.prototype.builder_paused = function() {
       var d;
       d = $('#builder-pause').attr('data-paused');
       if (d === 'True') {
@@ -134,7 +149,7 @@
       }
     };
 
-    BuilderView.prototype.survey_delete = function() {
+    BuilderSettingsView.prototype.survey_delete = function() {
       return swal({
         title: "Are you sure you want to delete this Survey?",
         text: "It's not possible to recover a deleted survey.",
@@ -169,7 +184,7 @@
       })(this));
     };
 
-    BuilderView.prototype.update_sequence = function() {
+    BuilderSettingsView.prototype.update_sequence = function() {
       var i, j, len, q, results, task, tasks;
       tasks = [
         {
@@ -192,7 +207,7 @@
       return results;
     };
 
-    BuilderView.prototype.update = function(field, value, promise) {
+    BuilderSettingsView.prototype.update = function(field, value, promise) {
       if (!(promise || promise === 0)) {
         this.save_btn.start();
       }
@@ -229,7 +244,7 @@
       })(this));
     };
 
-    return BuilderView;
+    return BuilderSettingsView;
 
   })(Backbone.View);
 
@@ -243,7 +258,8 @@
       args = _.extend(opts, {
         builder: this
       });
-      this.builderView = new BuilderView(args);
+      this.builderView = new BuilderSettingsView(args);
+      this.shareView = new BuilderShareView(args);
     }
 
     return Builder;
