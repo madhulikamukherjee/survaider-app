@@ -35,13 +35,18 @@ main{
 
 			&.done{
 				border: none;
-				background-color: darken(#60d7a9, 5%);
+				background-color: darken(#60d7a9, 5%) !important;
 			}
 
 			&.disabled{
 				@include transform(scale(0.6));
 				border-color: lighten(#999, 10%);
 				pointer-events: none;
+			}
+
+			&.notRequired{
+				border: none;
+				background-color: darken(#fdc162, 5%);
 			}
 
 			&.active{
@@ -337,6 +342,7 @@ main{
 	}
 }
 
+
 .sv-long-text-input{
 
 	textarea{
@@ -457,8 +463,8 @@ main{
 
 }
 
-.sv-short-text-input{
-
+.sv-question-switch{
+	@include clearfix;
 }
 
 .sv-question-yes-no-input{
@@ -467,25 +473,61 @@ main{
 	margin: 1em 0;
 	display: inline-block;
 
+	&:last-child{
+		margin-left: 1em;
+	}
+
 	.sv-input-done{
 		margin-top: 2em;
 	}
 
-	label {
+	.sv-label-group{
 		position: relative;
-		font-size: 24px;
-		font-weight: 900;
-		cursor: pointer;
-		background-color: #ddd;
-		display: block;
 		width: 150px;
 		height: 150px;
 		text-align: center;
-		line-height: 150px;
-		color: black;
+		cursor: pointer;
+		background-color: #ddd;
+		display: block;
 
-		@include transition(background-color 0.3s, color 0.3s);
+		@include transition(background-color 0.3s);
+
+		span{
+			font-size: 24px;
+			font-weight: 900;
+			line-height: 150px;
+			color: black;
+
+			@include transition(color 0.3s);
+		}
 	}
+
+	.sv-label-choice-group{
+		position: relative;
+		text-align: center;
+		cursor: pointer;
+		background-color: #ddd;
+		display: block;
+		padding: 1em 1.5em;
+
+		@include transition(background-color 0.3s);
+
+		img{
+			margin-top: 12px;
+		}
+
+		span{
+			display: block;
+			font-size: 18px;
+			font-weight: 900;
+			color: black;
+			margin-top: 12px;
+
+			@include transition(color 0.3s);
+		}
+	}
+
+
 
 	input[type="checkbox"],
 	input[type="radio"] {
@@ -496,9 +538,23 @@ main{
 		z-index: 100;
 	}
 
-	input[type="checkbox"]:checked + label,
-	input[type="radio"]:checked + label {
+	input[type="checkbox"]:checked + .sv-label-group,
+	input[type="radio"]:checked + .sv-label-group {
 		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-group span,
+	input[type="radio"]:checked + .sv-label-group span {
+		color: white;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group,
+	input[type="radio"]:checked + .sv-label-choice-group {
+		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group span,
+	input[type="radio"]:checked + .sv-label-choice-group span {
 		color: white;
 	}
 
@@ -514,18 +570,65 @@ main{
 		margin-top: 2em;
 	}
 
-	label {
+	.sv-label-group{
 		position: relative;
-		font-size: 24px;
-		font-weight: 900;
 		cursor: pointer;
 		background-color: #ddd;
 		display: block;
-		color: black;
 		padding: 10px;
 
-		@include transition(background-color 0.3s, color 0.3s);
+		@include transition(background-color 0.3s);
+
+		span{
+			font-size: 24px;
+			font-weight: 900;
+			color: black;
+
+			@include transition(color 0.3s);
+		}
 	}
+
+	&.with-image{
+		float: left;
+
+		&:nth-child(2n){
+			padding-left: 1em;
+		}
+
+		&:nth-child(2n+1){
+			padding-right: 1em;
+		}
+	}
+
+	.sv-label-choice-group{
+		position: relative;
+		text-align: center;
+		cursor: pointer;
+		background-color: #ddd;
+		padding: 1em 25px;
+		display: block;
+		width: 150px;
+		height: 200px;
+		@include transition(background-color 0.3s);
+
+		img{
+			max-width: 100px;
+			max-height: 250px;
+			padding-top: 12px;
+		}
+
+		span{
+			display: block;
+			font-size: 14px;
+			font-weight: 900;
+			color: black;
+			padding-top: 12px;
+
+			@include transition(color 0.3s);
+		}
+	}
+
+
 
 	input[type="checkbox"],
 	input[type="radio"] {
@@ -536,9 +639,23 @@ main{
 		z-index: 100;
 	}
 
-	input[type="checkbox"]:checked + label,
-	input[type="radio"]:checked + label {
+	input[type="checkbox"]:checked + .sv-label-group,
+	input[type="radio"]:checked + .sv-label-group {
 		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-group span,
+	input[type="radio"]:checked + .sv-label-group span {
+		color: white;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group,
+	input[type="radio"]:checked + .sv-label-choice-group {
+		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group span,
+	input[type="radio"]:checked + .sv-label-choice-group span {
 		color: white;
 	}
 
@@ -549,22 +666,69 @@ main{
 	margin: 1em 0;
 	display: block;
 
-	button{
-		margin-top: 4em;
+	.sv-input-done{
+		margin-top: 2em;
 	}
 
-	label {
+	.sv-label-group{
 		position: relative;
-		font-size: 20px;
-		font-weight: 900;
 		cursor: pointer;
 		background-color: #ddd;
 		display: block;
-		color: black;
 		padding: 10px;
 
-		@include transition(background-color 0.3s, color 0.3s);
+		@include transition(background-color 0.3s);
+
+		span{
+			font-size: 24px;
+			font-weight: 900;
+			color: black;
+
+			@include transition(color 0.3s);
+		}
 	}
+
+	&.with-image{
+		float: left;
+
+		&:nth-child(2n){
+			padding-left: 1em;
+		}
+
+		&:nth-child(2n+1){
+			padding-right: 1em;
+		}
+	}
+
+	.sv-label-choice-group{
+		position: relative;
+		text-align: center;
+		cursor: pointer;
+		background-color: #ddd;
+		padding: 1em 25px;
+		display: block;
+		width: 150px;
+		height: 200px;
+		@include transition(background-color 0.3s);
+
+		img{
+			max-width: 100px;
+			max-height: 250px;
+			padding-top: 12px;
+		}
+
+		span{
+			display: block;
+			font-size: 14px;
+			font-weight: 900;
+			color: black;
+			padding-top: 12px;
+
+			@include transition(color 0.3s);
+		}
+	}
+
+
 
 	input[type="checkbox"],
 	input[type="radio"] {
@@ -575,9 +739,23 @@ main{
 		z-index: 100;
 	}
 
-	input[type="checkbox"]:checked + label,
-	input[type="radio"]:checked + label {
+	input[type="checkbox"]:checked + .sv-label-group,
+	input[type="radio"]:checked + .sv-label-group {
 		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-group span,
+	input[type="radio"]:checked + .sv-label-group span {
+		color: white;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group,
+	input[type="radio"]:checked + .sv-label-choice-group {
+		background-color: black;
+	}
+
+	input[type="checkbox"]:checked + .sv-label-choice-group span,
+	input[type="radio"]:checked + .sv-label-choice-group span {
 		color: white;
 	}
 }
@@ -694,6 +872,18 @@ main{
 
 	h3{
 		margin: 1.25em 0;
+	}
+}
+
+.sv-surveyor-logo{
+	display: block;
+	width: 400px;
+	height: 200px;
+	margin: 2em auto;
+
+	img{
+		max-width: 100%;
+		max-height: 100%;
 	}
 }
 

@@ -1,10 +1,13 @@
 
 class BuilderView extends Backbone.View
   events:
-    'click .builder-save':   'update'
+    'click .builder-save':   'update_sequence'
     'click #builder-delete': 'survey_delete'
     'input #builder-date':   'builder_date'
-    # 'change #builder-date': 'builder_date'
+    'input #builder-limit':   'builder_limit'
+    'click #builder-date-check': 'builder_date_toggle'
+    'click #builder-limit-check': 'builder_limit_toggle'
+    'change #builder-date': 'builder_date'
     'change #builder-name': 'builder_name'
     'click #builder-pause': 'builder_paused'
 
@@ -12,42 +15,91 @@ class BuilderView extends Backbone.View
     @setElement $ '#survey_settings_modal'
     @s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id
     @el_date  = $('#builder-date')
-    ol_date = moment(@el_date.val()).format('DD/MM/YYYY')
-    @el_date.val(ol_date)
+    @el_limit = $('#builder-limit')
     @save_btn = Ladda.create document.querySelector '#builder-save'
+    @builder_date_init()
+    @builder_limit_init()
     @builder_paused_init()
     $("#builder-project-title").html($('#builder-name').val())
 
+  builder_date_init: ->
+    ex_date = moment(@el_date.val())
+    if ex_date.isAfter('9000-01-01', 'year')
+      ex_date = moment().endOf("year")
+      $('#builder-date-check').attr('checked', no)
+      @el_date.hide()
+    else
+      $('#builder-date-check').attr('checked', yes)
+      @el_date.show()
+    @el_date.val(ex_date.format('YYYY MM DD'))
+
+  builder_date_toggle: _.debounce ->
+    if $('#builder-date-check').is(':checked')
+      ed = moment().endOf("year")
+      @el_date.val(ed.format('YYYY MM DD'))
+      @update('expires', ed.toISOString())
+      @el_date.show()
+    else
+      @el_date.hide()
+      @update('expires', moment('9999 01 01').toISOString())
+  ,500
+
   builder_date: _.debounce ->
-      date = moment(@el_date.val()).toISOString()
-      if date
-        @update('expires', date)
-    ,500
+    date = moment @el_date.val()
+    if date.isValid()
+      @update('expires', date.toISOString())
+  ,500
+
+  builder_limit_init: ->
+    ex_limit = parseInt @el_limit.val()
+    if ex_limit is 2**32
+      $('#builder-limit-check').attr('checked', no)
+      @el_limit.hide()
+    else
+      $('#builder-limit-check').attr('checked', yes)
+      @el_limit.show()
+    @el_limit.val(ex_limit)
+
+  builder_limit_toggle: _.debounce ->
+    if $('#builder-limit-check').is(':checked')
+      @el_limit.val 1000
+      @update 'response_cap', 1000
+      @el_limit.show()
+    else
+      @el_limit.hide()
+      @update 'response_cap', 2**32
+  ,500
+
+  builder_limit: _.debounce ->
+    limit = parseInt @el_limit.val()
+    if limit
+      @update 'response_cap', limit
+  ,500
 
   builder_name: _.debounce ->
-      date = $('#builder-name').val()
-      $("#builder-project-title").html($('#builder-name').val())
-      if date
-        @update('survey_name', date)
-    ,500
+    date = $('#builder-name').val()
+    $("#builder-project-title").html($('#builder-name').val())
+    if date
+      @update('survey_name', date)
+  ,500
 
   builder_paused_init: ->
-      d = $('#builder-pause').attr('data-paused')
-      if d == 'True'
-        $('#builder-pause .target').html('Resume')
-      else
-        $('#builder-pause .target').html('Pause')
+    d = $('#builder-pause').attr('data-paused')
+    if d == 'True'
+      $('#builder-pause .target').html('Resume')
+    else
+      $('#builder-pause .target').html('Pause')
 
   builder_paused: ->
-      d = $('#builder-pause').attr('data-paused')
-      if d is 'True'
-        $('#builder-pause .target').html('Pause')
-        $('#builder-pause').attr('data-paused', 'False')
-        @update('paused', 'false')
-      else
-        $('#builder-pause .target').html('Resume')
-        $('#builder-pause').attr('data-paused', 'True')
-        @update('paused', 'true')
+    d = $('#builder-pause').attr('data-paused')
+    if d is 'True'
+      $('#builder-pause .target').html('Pause')
+      $('#builder-pause').attr('data-paused', 'False')
+      @update('paused', 'false')
+    else
+      $('#builder-pause .target').html('Resume')
+      $('#builder-pause').attr('data-paused', 'True')
+      @update('paused', 'true')
 
   survey_delete: ->
     swal
@@ -77,20 +129,36 @@ class BuilderView extends Backbone.View
             title: "Sorry, something went wrong. Please try again, or contact Support."
             type:  "error"
 
-  update: (field, value) ->
-    @save_btn.start()
+  update_sequence: ->
+    tasks = [
+        field: 'survey_name'
+        value: $('#builder-name').val()
+      ,
+        field: 'expires'
+        value: moment(@el_date.val()).toISOString()
+
+      ,
+        field: 'response_cap'
+        value: parseInt @el_limit.val()
+    ]
+    console.log tasks
+
+  update: (field, value, btn) ->
+    unless btn
+      @save_btn.start()
     $.ajax
       url: "/api/survey/#{@s_id}/#{field}"
       method: 'POST'
       data:
         swag: value
     .done =>
-      @save_btn.stop()
+      unless btn
+        @save_btn.stop()
       $('#builder-updated').attr('data-livestamp', moment().toISOString())
     .fail =>
       @save_btn.stop()
       swal
-        title: "Invalid Value"
+        text: "Error while saving. Please check the input data."
         type:  "error"
 
 class Builder

@@ -1,0 +1,125 @@
+{
+   "survey_logo":"img/logo.png",
+   "survey_footer":"Default Footer",
+   "survey_description":"Default Description",
+   "fields":[
+      {
+         "label":"What is your name?",
+         "required":false,
+         "field_options":[
+
+         ],
+         "field_type":"short_text",
+         "next":{
+            "va":"c14"
+         },
+         "cid":"c2"
+      },
+      {
+         "label":"Question Title\u001e",
+         "required":false,
+         "q_no":2,
+         "field_options":[
+
+         ],
+         "field_type":"short_text",
+         "next":{
+            "va":"c18"
+         },
+         "cid":"c14"
+      },
+      {
+         "label":"Question Title\u001e",
+         "required":false,
+         "q_no":2,
+         "field_options":[
+
+         ],
+         "field_type":"short_text",
+         "next":{
+            "va":"c6"
+         },
+         "cid":"c18"
+      },
+      {
+         "label":"Have you gone on Facebook ever before?",
+         "required":true,
+         "field_options":[
+            {
+               "label":"Yes",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"No",
+               "img":"img/choice.png",
+               "checked":false
+            }
+         ],
+         "field_type":"yes_no",
+         "next":{
+            "va":"c10"
+         },
+         "cid":"c6"
+      },
+      {
+         "label":"What do you primarily use Facebook for?",
+         "required":true,
+         "field_options":[
+            {
+               "label":"Reading about friends",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"Chatting with friends",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"Finding new people",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"Reading (news, articles)",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"Shopping",
+               "img":"img/choice.png",
+               "checked":false
+            }
+         ],
+         "field_type":"multiple_choice",
+         "next":{
+            "va":"c22"
+         },
+         "cid":"c10"
+      },
+      {
+         "label":"Question Title\u001e",
+         "required":true,
+         "q_no":2,
+         "field_options":[
+            {
+               "label":"Option\u001e",
+               "img":"img/choice.png",
+               "checked":false
+            },
+            {
+               "label":"Option\u001e",
+               "img":"img/choice.png",
+               "checked":false
+            }
+         ],
+         "field_type":"single_choice",
+         "next":{
+            "va":"end"
+         },
+         "cid":"c22"
+      }
+   ],
+   "survey_title":"Default Title"
+}

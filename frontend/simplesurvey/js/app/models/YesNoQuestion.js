@@ -1,10 +1,26 @@
 function YesNoQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
+  this.options = [];
+}
+
+function Option(label, image, isChecked){
+  this.label = label;
+  this.image = image;
+  this.checked = isChecked;
 }
 
 YesNoQuestion.prototype = Object.create(Question.prototype);
 YesNoQuestion.prototype.constructor = YesNoQuestion;
+
+YesNoQuestion.prototype.insertOption = function(option){
+  if (option.img) {
+    this.options.push(new Option(option.label, option.img, option.checked));
+  }
+  else{
+    this.options.push(new Option(option.label, null, option.checked));
+  }
+};
 
 YesNoQuestion.prototype.change = function(){
   console.log(this);
@@ -33,12 +49,9 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 
 YesNoQuestion.prototype.generateResponse = function(){
-  var temp = this.response;
-  var response = {
+  return {
     id: this.id,
     type: this.type,
-    response: ""
-  };
-  response.response = "a_" + temp;
-  return response;
+    response: this.response
+  }
 }

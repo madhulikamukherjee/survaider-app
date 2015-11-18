@@ -67,3 +67,4 @@ config.py
 
 survaider/config.py
 survaider/static/uploads
+frontend/simplesurvey/img/local*

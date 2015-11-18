@@ -68,22 +68,24 @@
         <h5>Modify your <span class="semi-bold">Survaider</span></h5>
       </div>
       <div class="modal-body">
-        <div class="form-group-attached">
+        <div class="form-group">
           <div class="form-group form-group-default">
             <label>Name</label>
             <input type="text" id="builder-name" class="form-control" value="{{ survey.metadata.name }}">
           </div>
           <div class="row clearfix">
             <div class="col-xs-6">
-              <div class="form-group form-group-default" aria-required="true">
-                <label>Responses Collected Until</label>
-                <input type="text" id="builder-date" class="form-control date" data-provide="datepicker" value="{{survey.expires}}">
+              <div class="checkbox form-group checkbox-success">
+                <input type="checkbox" id="builder-date-check">
+                <label for="builder-date-check">Set an Expiry Date</label>
+                <input type="text" id="builder-date" class="form-control date" data-provide="datepicker" data-date-format="yyyy mm dd" value="{{survey.expires}}">
               </div>
             </div>
             <div class="col-xs-6">
-              <div class="form-group form-group-default">
-                <label>Response Goal</label>
-                <input type="text" class="form-control" value="{{ survey.metadata.response_cap|default('Infinite')}}">
+              <div class="checkbox form-group checkbox-success">
+                <input type="checkbox" id="builder-limit-check">
+                <label for="builder-limit-check">Set Response Limit</label>
+                <input type="number" id="builder-limit" class="form-control" value="{{ survey.response_cap }}">
               </div>
             </div>
           </div>

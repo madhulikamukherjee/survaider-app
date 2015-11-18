@@ -99,7 +99,7 @@ main {
       transition: transform 0.3s, background-color 0.3s; }
       .pagination ul li.done {
         border: none;
-        background-color: #4cd29e; }
+        background-color: #4cd29e !important; }
       .pagination ul li.disabled {
         -webkit-transform: scale(0.6);
         -moz-transform: scale(0.6);
@@ -108,6 +108,9 @@ main {
         transform: scale(0.6);
         border-color: #b3b3b3;
         pointer-events: none; }
+      .pagination ul li.notRequired {
+        border: none;
+        background-color: #fdb749; }
       .pagination ul li.active {
         background-color: #777;
         -webkit-transform: scale(2);
@@ -450,27 +453,59 @@ main {
       display: inline-block;
       font-size: 14px; }
 
+.sv-question-switch::after {
+  clear: both;
+  content: "";
+  display: table; }
+
 .sv-question-yes-no-input {
   position: relative;
   margin: 1em 0;
   display: inline-block; }
+  .sv-question-yes-no-input:last-child {
+    margin-left: 1em; }
   .sv-question-yes-no-input .sv-input-done {
     margin-top: 2em; }
-  .sv-question-yes-no-input label {
+  .sv-question-yes-no-input .sv-label-group {
     position: relative;
-    font-size: 24px;
-    font-weight: 900;
-    cursor: pointer;
-    background-color: #ddd;
-    display: block;
     width: 150px;
     height: 150px;
     text-align: center;
-    line-height: 150px;
-    color: black;
-    -webkit-transition: background-color 0.3s, color 0.3s;
-    -moz-transition: background-color 0.3s, color 0.3s;
-    transition: background-color 0.3s, color 0.3s; }
+    cursor: pointer;
+    background-color: #ddd;
+    display: block;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-yes-no-input .sv-label-group span {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 150px;
+      color: black;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
+  .sv-question-yes-no-input .sv-label-choice-group {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    background-color: #ddd;
+    display: block;
+    padding: 1em 1.5em;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-yes-no-input .sv-label-choice-group img {
+      margin-top: 12px; }
+    .sv-question-yes-no-input .sv-label-choice-group span {
+      display: block;
+      font-size: 18px;
+      font-weight: 900;
+      color: black;
+      margin-top: 12px;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
   .sv-question-yes-no-input input[type="checkbox"],
   .sv-question-yes-no-input input[type="radio"] {
     opacity: 0;
@@ -478,9 +513,17 @@ main {
     display: inline-block;
     vertical-align: middle;
     z-index: 100; }
-  .sv-question-yes-no-input input[type="checkbox"]:checked + label,
-  .sv-question-yes-no-input input[type="radio"]:checked + label {
-    background-color: black;
+  .sv-question-yes-no-input input[type="checkbox"]:checked + .sv-label-group,
+  .sv-question-yes-no-input input[type="radio"]:checked + .sv-label-group {
+    background-color: black; }
+  .sv-question-yes-no-input input[type="checkbox"]:checked + .sv-label-group span,
+  .sv-question-yes-no-input input[type="radio"]:checked + .sv-label-group span {
+    color: white; }
+  .sv-question-yes-no-input input[type="checkbox"]:checked + .sv-label-choice-group,
+  .sv-question-yes-no-input input[type="radio"]:checked + .sv-label-choice-group {
+    background-color: black; }
+  .sv-question-yes-no-input input[type="checkbox"]:checked + .sv-label-choice-group span,
+  .sv-question-yes-no-input input[type="radio"]:checked + .sv-label-choice-group span {
     color: white; }
 
 .sv-question-multiple-choice-input {
@@ -489,18 +532,53 @@ main {
   display: block; }
   .sv-question-multiple-choice-input .sv-input-done {
     margin-top: 2em; }
-  .sv-question-multiple-choice-input label {
+  .sv-question-multiple-choice-input .sv-label-group {
     position: relative;
-    font-size: 24px;
-    font-weight: 900;
     cursor: pointer;
     background-color: #ddd;
     display: block;
-    color: black;
     padding: 10px;
-    -webkit-transition: background-color 0.3s, color 0.3s;
-    -moz-transition: background-color 0.3s, color 0.3s;
-    transition: background-color 0.3s, color 0.3s; }
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-multiple-choice-input .sv-label-group span {
+      font-size: 24px;
+      font-weight: 900;
+      color: black;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
+  .sv-question-multiple-choice-input.with-image {
+    float: left; }
+    .sv-question-multiple-choice-input.with-image:nth-child(2n) {
+      padding-left: 1em; }
+    .sv-question-multiple-choice-input.with-image:nth-child(2n+1) {
+      padding-right: 1em; }
+  .sv-question-multiple-choice-input .sv-label-choice-group {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    background-color: #ddd;
+    padding: 1em 25px;
+    display: block;
+    width: 150px;
+    height: 200px;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-multiple-choice-input .sv-label-choice-group img {
+      max-width: 100px;
+      max-height: 250px;
+      padding-top: 12px; }
+    .sv-question-multiple-choice-input .sv-label-choice-group span {
+      display: block;
+      font-size: 14px;
+      font-weight: 900;
+      color: black;
+      padding-top: 12px;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
   .sv-question-multiple-choice-input input[type="checkbox"],
   .sv-question-multiple-choice-input input[type="radio"] {
     opacity: 0;
@@ -508,29 +586,72 @@ main {
     display: inline-block;
     vertical-align: middle;
     z-index: 100; }
-  .sv-question-multiple-choice-input input[type="checkbox"]:checked + label,
-  .sv-question-multiple-choice-input input[type="radio"]:checked + label {
-    background-color: black;
+  .sv-question-multiple-choice-input input[type="checkbox"]:checked + .sv-label-group,
+  .sv-question-multiple-choice-input input[type="radio"]:checked + .sv-label-group {
+    background-color: black; }
+  .sv-question-multiple-choice-input input[type="checkbox"]:checked + .sv-label-group span,
+  .sv-question-multiple-choice-input input[type="radio"]:checked + .sv-label-group span {
+    color: white; }
+  .sv-question-multiple-choice-input input[type="checkbox"]:checked + .sv-label-choice-group,
+  .sv-question-multiple-choice-input input[type="radio"]:checked + .sv-label-choice-group {
+    background-color: black; }
+  .sv-question-multiple-choice-input input[type="checkbox"]:checked + .sv-label-choice-group span,
+  .sv-question-multiple-choice-input input[type="radio"]:checked + .sv-label-choice-group span {
     color: white; }
 
 .sv-question-single-choice-input {
   position: relative;
   margin: 1em 0;
   display: block; }
-  .sv-question-single-choice-input button {
-    margin-top: 4em; }
-  .sv-question-single-choice-input label {
+  .sv-question-single-choice-input .sv-input-done {
+    margin-top: 2em; }
+  .sv-question-single-choice-input .sv-label-group {
     position: relative;
-    font-size: 20px;
-    font-weight: 900;
     cursor: pointer;
     background-color: #ddd;
     display: block;
-    color: black;
     padding: 10px;
-    -webkit-transition: background-color 0.3s, color 0.3s;
-    -moz-transition: background-color 0.3s, color 0.3s;
-    transition: background-color 0.3s, color 0.3s; }
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-single-choice-input .sv-label-group span {
+      font-size: 24px;
+      font-weight: 900;
+      color: black;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
+  .sv-question-single-choice-input.with-image {
+    float: left; }
+    .sv-question-single-choice-input.with-image:nth-child(2n) {
+      padding-left: 1em; }
+    .sv-question-single-choice-input.with-image:nth-child(2n+1) {
+      padding-right: 1em; }
+  .sv-question-single-choice-input .sv-label-choice-group {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    background-color: #ddd;
+    padding: 1em 25px;
+    display: block;
+    width: 150px;
+    height: 200px;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .sv-question-single-choice-input .sv-label-choice-group img {
+      max-width: 100px;
+      max-height: 250px;
+      padding-top: 12px; }
+    .sv-question-single-choice-input .sv-label-choice-group span {
+      display: block;
+      font-size: 14px;
+      font-weight: 900;
+      color: black;
+      padding-top: 12px;
+      -webkit-transition: color 0.3s;
+      -moz-transition: color 0.3s;
+      transition: color 0.3s; }
   .sv-question-single-choice-input input[type="checkbox"],
   .sv-question-single-choice-input input[type="radio"] {
     opacity: 0;
@@ -538,9 +659,17 @@ main {
     display: inline-block;
     vertical-align: middle;
     z-index: 100; }
-  .sv-question-single-choice-input input[type="checkbox"]:checked + label,
-  .sv-question-single-choice-input input[type="radio"]:checked + label {
-    background-color: black;
+  .sv-question-single-choice-input input[type="checkbox"]:checked + .sv-label-group,
+  .sv-question-single-choice-input input[type="radio"]:checked + .sv-label-group {
+    background-color: black; }
+  .sv-question-single-choice-input input[type="checkbox"]:checked + .sv-label-group span,
+  .sv-question-single-choice-input input[type="radio"]:checked + .sv-label-group span {
+    color: white; }
+  .sv-question-single-choice-input input[type="checkbox"]:checked + .sv-label-choice-group,
+  .sv-question-single-choice-input input[type="radio"]:checked + .sv-label-choice-group {
+    background-color: black; }
+  .sv-question-single-choice-input input[type="checkbox"]:checked + .sv-label-choice-group span,
+  .sv-question-single-choice-input input[type="radio"]:checked + .sv-label-choice-group span {
     color: white; }
 
 .sv-group-rating-option header span, .sv-group-rating-option header h3 {
@@ -613,6 +742,15 @@ main {
   margin: 1.5em 0; }
 .sv-header-page h3 {
   margin: 1.25em 0; }
+
+.sv-surveyor-logo {
+  display: block;
+  width: 400px;
+  height: 200px;
+  margin: 2em auto; }
+  .sv-surveyor-logo img {
+    max-width: 100%;
+    max-height: 100%; }
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/

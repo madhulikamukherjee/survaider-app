@@ -11,30 +11,93 @@
     }
 
     BuilderView.prototype.events = {
-      'click .builder-save': 'update',
+      'click .builder-save': 'update_sequence',
       'click #builder-delete': 'survey_delete',
       'input #builder-date': 'builder_date',
+      'input #builder-limit': 'builder_limit',
+      'click #builder-date-check': 'builder_date_toggle',
+      'click #builder-limit-check': 'builder_limit_toggle',
+      'change #builder-date': 'builder_date',
       'change #builder-name': 'builder_name',
       'click #builder-pause': 'builder_paused'
     };
 
     BuilderView.prototype.initialize = function(options) {
-      var ol_date;
       this.setElement($('#survey_settings_modal'));
       this.s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id;
       this.el_date = $('#builder-date');
-      ol_date = moment(this.el_date.val()).format('DD/MM/YYYY');
-      this.el_date.val(ol_date);
+      this.el_limit = $('#builder-limit');
       this.save_btn = Ladda.create(document.querySelector('#builder-save'));
+      this.builder_date_init();
+      this.builder_limit_init();
       this.builder_paused_init();
       return $("#builder-project-title").html($('#builder-name').val());
     };
 
+    BuilderView.prototype.builder_date_init = function() {
+      var ex_date;
+      ex_date = moment(this.el_date.val());
+      if (ex_date.isAfter('9000-01-01', 'year')) {
+        ex_date = moment().endOf("year");
+        $('#builder-date-check').attr('checked', false);
+        this.el_date.hide();
+      } else {
+        $('#builder-date-check').attr('checked', true);
+        this.el_date.show();
+      }
+      return this.el_date.val(ex_date.format('YYYY MM DD'));
+    };
+
+    BuilderView.prototype.builder_date_toggle = _.debounce(function() {
+      var ed;
+      if ($('#builder-date-check').is(':checked')) {
+        ed = moment().endOf("year");
+        this.el_date.val(ed.format('YYYY MM DD'));
+        this.update('expires', ed.toISOString());
+        return this.el_date.show();
+      } else {
+        this.el_date.hide();
+        return this.update('expires', moment('9999 01 01').toISOString());
+      }
+    }, 500);
+
     BuilderView.prototype.builder_date = _.debounce(function() {
       var date;
-      date = moment(this.el_date.val()).toISOString();
-      if (date) {
-        return this.update('expires', date);
+      date = moment(this.el_date.val());
+      if (date.isValid()) {
+        return this.update('expires', date.toISOString());
+      }
+    }, 500);
+
+    BuilderView.prototype.builder_limit_init = function() {
+      var ex_limit;
+      ex_limit = parseInt(this.el_limit.val());
+      if (ex_limit === Math.pow(2, 32)) {
+        $('#builder-limit-check').attr('checked', false);
+        this.el_limit.hide();
+      } else {
+        $('#builder-limit-check').attr('checked', true);
+        this.el_limit.show();
+      }
+      return this.el_limit.val(ex_limit);
+    };
+
+    BuilderView.prototype.builder_limit_toggle = _.debounce(function() {
+      if ($('#builder-limit-check').is(':checked')) {
+        this.el_limit.val(1000);
+        this.update('response_cap', 1000);
+        return this.el_limit.show();
+      } else {
+        this.el_limit.hide();
+        return this.update('response_cap', Math.pow(2, 32));
+      }
+    }, 500);
+
+    BuilderView.prototype.builder_limit = _.debounce(function() {
+      var limit;
+      limit = parseInt(this.el_limit.val());
+      if (limit) {
+        return this.update('response_cap', limit);
       }
     }, 500);
 
@@ -106,8 +169,27 @@
       })(this));
     };
 
-    BuilderView.prototype.update = function(field, value) {
-      this.save_btn.start();
+    BuilderView.prototype.update_sequence = function() {
+      var tasks;
+      tasks = [
+        {
+          field: 'survey_name',
+          value: $('#builder-name').val()
+        }, {
+          field: 'expires',
+          value: moment(this.el_date.val()).toISOString()
+        }, {
+          field: 'response_cap',
+          value: parseInt(this.el_limit.val())
+        }
+      ];
+      return console.log(tasks);
+    };
+
+    BuilderView.prototype.update = function(field, value, btn) {
+      if (!btn) {
+        this.save_btn.start();
+      }
       return $.ajax({
         url: "/api/survey/" + this.s_id + "/" + field,
         method: 'POST',
@@ -116,14 +198,16 @@
         }
       }).done((function(_this) {
         return function() {
-          _this.save_btn.stop();
+          if (!btn) {
+            _this.save_btn.stop();
+          }
           return $('#builder-updated').attr('data-livestamp', moment().toISOString());
         };
       })(this)).fail((function(_this) {
         return function() {
           _this.save_btn.stop();
           return swal({
-            title: "Invalid Value",
+            text: "Error while saving. Please check the input data.",
             type: "error"
           });
         };

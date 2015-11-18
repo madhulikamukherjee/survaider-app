@@ -17,8 +17,11 @@
         <main ng-controller="FormController">
 
           <section class="sv-page-ontop sv-header-page sv-page sv-page-1 sv-page-current" id="header-slide">
-            <h1 class="sv-game-title" ng-bind="game_title"></h1>
-            <h3 class="sv-game-description" ng-bind="game_description"></h3>
+            <h1 class="sv-survey-title" ng-bind="survey_title"></h1>
+            <h3 class="sv-survey-description" ng-bind="survey_description"></h3>
+            <a href="#" class="sv-surveyor-logo" ng-if="survey_logo">
+              <img ng-src="{{survey_logo}}" alt="Logo" />
+            </a>
             <button type="button" class="sv-button sv-button-large" ng-click="moveHeaderSlide()">Start Survey</button>
           </section>
 
@@ -78,14 +81,13 @@
 
                   <div class="sv-question-switch" ng-switch-when="yes_no">
 
-                    <div class="sv-question-yes-no-input">
-                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-yes_no" value="1" id="question-{{question.id}}-yes_no-yes">
-                      <label for="question-{{question.id}}-yes_no-yes">Yes</label>
-                    </div>
+                    <div class="sv-question-yes-no-input" ng-repeat="option in question.options">
+                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-yes_no" value="{{$index+1}}" id="question-{{question.id}}-yes_no-{{option.label}}">
+                      <label ng-class="{ 'sv-label-group' : !option.image, 'sv-label-choice-group' : option.image }" class=""  for="question-{{question.id}}-yes_no-{{option.label}}">
+                        <img ng-src="{{option.image}}" ng-if="option.image" />
+                        <span ng-bind="option.label"></span>
+                      </label>
 
-                    <div class="sv-question-yes-no-input">
-                      <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-yes_no" value="2" id="question-{{question.id}}-yes_no-no">
-                      <label for="question-{{question.id}}-yes_no-no">No</label>
                     </div>
 
                   </div>
@@ -94,10 +96,14 @@
 
                   <div class="sv-question-switch" ng-switch-when="multiple_choice">
 
-                    <div class="sv-question-multiple-choice-input" ng-repeat="option in question.choices">
-                      <input ng-click="changeInQuestion($questionIndex, question.id)" ng-model="option.checked" type="checkbox" name="question-{{question.id}}-multiple_choice-{{$index}}" value="{{$index}}" id="question-{{question.id}}-multiple_choice-{{$index}}">
-                      <label for="question-{{question.id}}-multiple_choice-{{$index}}">{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ option.label }}</label>
+                    <div class="sv-question-multiple-choice-input" ng-class="{ 'with-image' : choice.image }" ng-repeat="choice in question.choices">
+                      <input ng-click="changeInQuestion($questionIndex, question.id)" ng-model="choice.checked" type="checkbox" name="question-{{question.id}}-multiple_choice-{{$index}}" value="{{$index}}" id="question-{{question.id}}-multiple_choice-{{$index}}">
+                      <label ng-class="{ 'sv-label-group' : !choice.image, 'sv-label-choice-group' : choice.image }" for="question-{{question.id}}-multiple_choice-{{$index}}">
+                        <img ng-src="{{choice.image}}" ng-if="choice.image" />
+                        <span>{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ choice.label }}</span>
+                      </label>
                     </div>
+
 
                   </div>
 
@@ -105,9 +111,12 @@
 
                   <div class="sv-question-switch" ng-switch-when="single_choice">
 
-                    <div class="sv-question-single-choice-input" ng-repeat="option in question.options">
+                    <div class="sv-question-single-choice-input" ng-class="{ 'with-image' : option.image }" ng-repeat="option in question.options">
                       <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-single_choice" value="{{$index+1}}" id="question-{{question.id}}-single_choice-{{$index}}">
-                      <label for="question-{{question.id}}-single_choice-{{$index}}" ng-bind="option"></label>
+                      <label ng-class="{ 'sv-label-group' : !option.image, 'sv-label-choice-group' : option.image }" for="question-{{question.id}}-single_choice-{{$index}}">
+                        <img ng-src="{{option.image}}" ng-if="option.image" />
+                        <span>{{ $index | numberToAlphabet }}&nbsp; &nbsp;{{ option.label }}</span>
+                      </label>
                     </div>
 
                   </div>
@@ -211,7 +220,11 @@
                   </div>
 
                   <div class="sv-input-done" ng-if="question.type != 'ranking'">
-                    <button class="sv-button sv-button-medium" id="question-{{question.id}}-yes_no-done" ng-click="moveToNext(question)" ng-show="question.isCompleted">Done</button>
+                    <button class="sv-button sv-button-medium" id="question-{{question.id}}-done" ng-click="moveToNext(question)" ng-show="question.isCompleted">Done</button>
+                  </div>
+
+                  <div class="sv-question-skip" ng-if="!question.isRequired && !question.isCompleted">
+                    <button class="sv-button sv-button-medium" id="question-{{question.id}}-skip" ng-click="moveToNext(question)">Skip</button>
                   </div>
 
                 </div>
@@ -229,12 +242,12 @@
 
           <section class="sv-footer-page sv-page sv-page-13" id="footer-slide">
             <button type="submit" class="sv-button sv-button-medium" ng-click="formSubmit()">Submit</button>
-            <h3 class="sv-game-footer" ng-bind="game_footer"></h3>
+            <h3 class="sv-survey-footer" ng-bind="survey_footer"></h3>
           </section>
 
           <section class="pagination">
             <ul>
-              <li ng-repeat="question in questions" ng-class="{ 'done' : question.isCompleted, 'active' : activeSlide.question.id == question.id, 'disabled' : question.isDisabled }" ng-click="paginate(question)" ng-disabled="question.isDisabled"></li>
+              <li ng-repeat="question in questions" ng-class="{ 'done' : question.isCompleted, 'active' : activeSlide.question.id == question.id, 'disabled' : question.isDisabled, 'notRequired' : !question.isRequired }" ng-click="paginate(question)" ng-disabled="question.isDisabled"></li>
             </ul>
           </section>
 

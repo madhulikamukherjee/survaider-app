@@ -40848,10 +40848,26 @@ ShortTextQuestion.prototype.generateResponse = function(){
 function YesNoQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
+  this.options = [];
+}
+
+function Option(label, image, isChecked){
+  this.label = label;
+  this.image = image;
+  this.checked = isChecked;
 }
 
 YesNoQuestion.prototype = Object.create(Question.prototype);
 YesNoQuestion.prototype.constructor = YesNoQuestion;
+
+YesNoQuestion.prototype.insertOption = function(option){
+  if (option.img) {
+    this.options.push(new Option(option.label, option.img, option.checked));
+  }
+  else{
+    this.options.push(new Option(option.label, null, option.checked));
+  }
+};
 
 YesNoQuestion.prototype.change = function(){
   console.log(this);
@@ -40880,35 +40896,41 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 
 YesNoQuestion.prototype.generateResponse = function(){
-  var temp = this.response;
-  var response = {
+  return {
     id: this.id,
     type: this.type,
-    response: ""
-  };
-  response.response = "a_" + temp;
-  return response;
+    response: this.response
+  }
 }
 ;
 function SingleChoiceQuestion(label, required, cid, field_type, next){
   Question.call(this, label, required, cid, field_type, next);
   this.response = "";
+  this.options = [];
+}
+
+function Option(label, image, isChecked){
+  this.label = label;
+  this.image = image;
+  this.checked = isChecked;
 }
 
 SingleChoiceQuestion.prototype = Object.create(Question.prototype);
 SingleChoiceQuestion.prototype.constructor = SingleChoiceQuestion;
 
+SingleChoiceQuestion.prototype.insertOption = function(option){
+  if (option.img) {
+    this.options.push(new Option(option.label, option.img, option.checked));
+  }
+  else{
+    this.options.push(new Option(option.label, null, option.checked));
+  }
+};
+
 SingleChoiceQuestion.prototype.change = function(){
   console.log(this);
   this.completed();
 };
-
-SingleChoiceQuestion.prototype.setPointers = function(){
-
-
-
-};
-
 
 SingleChoiceQuestion.prototype.checkIfCompleted = function(){
 
@@ -40931,14 +40953,11 @@ SingleChoiceQuestion.prototype.resetResponse = function(){
 
 
 SingleChoiceQuestion.prototype.generateResponse = function(){
-  var temp = this.response;
-  var response = {
+  return {
     id: this.id,
     type: this.type,
-    response: ""
-  };
-  response.response = "a_" + temp;
-  return response;
+    response: this.response
+  }
 }
 ;
 function GroupRatingQuestion(label, required, cid, field_type, next){
@@ -41120,16 +41139,22 @@ function MultipleChoiceQuestion(label, required, cid, field_type, next){
   this.minimumNumberOfChoicesToBeChecked = 1;
 }
 
-function Choice(label, isChecked){
+function Choice(label, image, isChecked){
   this.label = label;
+  this.image = image;
   this.checked = false;
 }
 
 MultipleChoiceQuestion.prototype = Object.create(Question.prototype);
 MultipleChoiceQuestion.prototype.constructor = MultipleChoiceQuestion;
 
-MultipleChoiceQuestion.prototype.insertChoice = function(label){
-  this.choices.push(new Choice(label, false));
+MultipleChoiceQuestion.prototype.insertChoice = function(choice){
+  if (choice.img) {
+    this.choices.push(new Choice(choice.label, choice.img, choice.checked));
+  }
+  else{
+    this.choices.push(new Choice(choice.label, null, choice.checked));
+  }
 };
 
 MultipleChoiceQuestion.prototype.change = function(){
@@ -41238,7 +41263,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
   'use strict';
 
-  var $app = angular.module('SurvaiderForms', ['ui.sortable', 'angular-loading-bar', 'ngAnimate']);
+  var $app = angular.module('SurvaiderForms', ['ui.sortable', 'ngAnimate']);
 
   $app.controller('FormController', function($scope, $http, $rootScope){
 
@@ -41362,7 +41387,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
     $scope.paginate = function(question){
       if ($scope.rendered && !$scope.isAnimating) {
-        if (($scope.activeSlide.question == null || $scope.activeSlide.question != question) && question.isCompleted) {
+        if ((($scope.activeSlide.question == null || $scope.activeSlide.question != question) && question.isCompleted) || !question.isRequired) {
           var indexOfQuestion = $scope.questions.indexOf(question);
           moveToQuestion(question, indexOfQuestion);
         }
@@ -41370,7 +41395,6 @@ LongTextQuestion.prototype.generateResponse = function(){
     }
 
     function moveToQuestion(question, indexOfQuestion){
-
 
         var indexOfCurrQuestion = $scope.questions.indexOf($scope.activeSlide.question);
 
@@ -41398,7 +41422,6 @@ LongTextQuestion.prototype.generateResponse = function(){
         changeActiveSlideType('question');
         changeActiveSlideElement(newElement);
         changeActiveSlideQuestion(question);
-
     }
 
 
@@ -41427,18 +41450,13 @@ LongTextQuestion.prototype.generateResponse = function(){
         question.completed();
       }
 
-      if (!question.isCompleted) {
+      if (!question.isCompleted && question.isRequired) {
         return false;
       }
 
+
       //Post a request to server for every question that is answered
-      $http.post(payload_update_uri, function (dat) {
-        "use strict";
-        return {
-          q_id: dat.id,
-          q_res: dat.response,
-        };
-      }(question.generateResponse()));
+      $http.post(payload_update_uri, JSON.stringify(question.generateResponse()));
 
       var index = -1;
 
@@ -41449,7 +41467,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
 
           //Strictly for testing purpose becuase there can be more than
-          //two options
+          //Two options
           var notAnsweredQuestionIndex = 0;
 
           if (question.response == 1) {
@@ -41658,14 +41676,15 @@ LongTextQuestion.prototype.generateResponse = function(){
 
     // REQUEST MARK
     var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
-    var json_uri = UriTemplate.expand("/api/survey/{s_id}/json", {s_id: s_id}),
+    var json_uri = UriTemplate.expand("/api/survey/{s_id}/deepjson", {s_id: s_id}),
         payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
          .success(function(data, status, header, config){
-           $scope.game_title = data.game_title;
-           $scope.game_description = data.game_description;
-           $scope.game_footer = data.game_footer;
+           $scope.survey_title = data.survey_title;
+           $scope.survey_description = data.survey_description;
+           $scope.survey_footer = data.survey_footer;
+           $scope.survey_logo = data.survey_logo;
            $scope.numberOfQuestionsRemaining = data.fields.length;
 
            $scope.questions = [];
@@ -41688,6 +41707,9 @@ LongTextQuestion.prototype.generateResponse = function(){
                case "yes_no":
                  var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next);
 
+                 for (var i = 0; i < question.field_options.length; i++) {
+                   tempQuestion.insertOption(question.field_options[i]);
+                 }
 
                  $scope.questions.push(tempQuestion);
 
@@ -41697,7 +41719,7 @@ LongTextQuestion.prototype.generateResponse = function(){
                  var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
 
                  for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertChoice(question.field_options[i], false);
+                   tempQuestion.insertChoice(question.field_options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
@@ -41705,7 +41727,10 @@ LongTextQuestion.prototype.generateResponse = function(){
                  break;
                case "single_choice":
                  var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
-                 tempQuestion.options = question.field_options;
+
+                 for (var i = 0; i < question.field_options.length; i++) {
+                   tempQuestion.insertOption(question.field_options[i]);
+                 }
 
                  $scope.questions.push(tempQuestion);
 
@@ -41747,7 +41772,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
          });
 
-         //Send a get request in beginning to start a session
+        //  Send a get request in beginning to start a session
          $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
 
@@ -41765,11 +41790,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                messageEl = sidebar.find('.current-message h3');
            switch (type) {
              case 'short_text':
-               messageEl.html('Minimum 10 Characters');
+               messageEl.html('Minimum 10 Charaters');
                break;
 
              case 'long_text':
-               messageEl.html('Minimum 40 Characters');
+               messageEl.html('Minimum 40 Charaters');
                break;
 
              case 'single_choice':

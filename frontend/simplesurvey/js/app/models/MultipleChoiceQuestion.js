@@ -4,16 +4,22 @@ function MultipleChoiceQuestion(label, required, cid, field_type, next){
   this.minimumNumberOfChoicesToBeChecked = 1;
 }
 
-function Choice(label, isChecked){
+function Choice(label, image, isChecked){
   this.label = label;
+  this.image = image;
   this.checked = false;
 }
 
 MultipleChoiceQuestion.prototype = Object.create(Question.prototype);
 MultipleChoiceQuestion.prototype.constructor = MultipleChoiceQuestion;
 
-MultipleChoiceQuestion.prototype.insertChoice = function(label){
-  this.choices.push(new Choice(label, false));
+MultipleChoiceQuestion.prototype.insertChoice = function(choice){
+  if (choice.img) {
+    this.choices.push(new Choice(choice.label, choice.img, choice.checked));
+  }
+  else{
+    this.choices.push(new Choice(choice.label, null, choice.checked));
+  }
 };
 
 MultipleChoiceQuestion.prototype.change = function(){

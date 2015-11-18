@@ -42,11 +42,15 @@
     },
     {
       "label": "Was the room clean and up to your expectations?",
-      "field_type": "single_choices",
+      "field_type": "single_choice",
       "required": true,
       "field_options": [
         "It was clean and tidy",
         "It was worse than my expectations!"
+      ],
+      "img": [
+        "img/choice.png",
+        "img/choice.png"
       ],
       "cid": "c7",
       "next": {
@@ -57,13 +61,19 @@
     },
     {
       "label": "We apologise. Which of these weren't clean?",
-      "field_type": "multiple_choices",
+      "field_type": "multiple_choice",
       "required": true,
       "field_options": [
         "Linen and bedding",
         "Glasses and cutlery",
         "Floors and cupboards",
         "Toilet"
+      ],
+      "img": [
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png"
       ],
       "cid": "c8",
       "next": {
@@ -73,13 +83,19 @@
     },
     {
       "label": "Was the staff helpful and courteous?",
-      "field_type": "single_choices",
+      "field_type": "single_choice",
       "required": true,
       "field_options": [
         "I am really not satisfied",
         "It was okay",
         "They were rude and not helpful",
         "Yes, the service was excellent"
+      ],
+      "img": [
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png"
       ],
       "cid": "c9",
       "next": {
@@ -104,7 +120,7 @@
     },
     {
       "label": "Did rooms have all the amenities as shown on the website?",
-      "field_type": "single_choices",
+      "field_type": "single_choice",
       "required": true,
       "field_options": [
         "Yes",
@@ -120,7 +136,7 @@
     },
     {
       "label": "Which of the following were promised but not present in the room?",
-      "field_type": "multiple_choices",
+      "field_type": "multiple_choice",
       "required": true,
       "field_options": [
         "AC",
@@ -129,6 +145,14 @@
         "Swimming",
         "Geyser",
         "Card payment"
+      ],
+      "img": [
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png",
+        "img/choice.png"
       ],
       "cid": "c12",
       "next": {
