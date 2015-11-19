@@ -72,6 +72,15 @@ var Boner = {
       return Formbuilder.inputFields[this.get(Formbuilder.options.mappings.FIELD_TYPE)] != null;
     };
 
+    FormbuilderModel.prototype.create_uid = function() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r, v;
+        r = crypto.getRandomValues(new Uint8Array(1))[0] % 16 | 0;
+        v = c === 'x' ? r : r & 0x3 | 0x8;
+        return v.toString(16);
+      });
+    };
+
     return FormbuilderModel;
 
   })(Backbone.DeepModel);
@@ -115,7 +124,7 @@ var Boner = {
     };
 
     FormbuilderCollection.prototype.copyCidToModel = function(model) {
-      return model.attributes.cid = model.cid;
+      return model.attributes.cid = model.create_uid();
     };
 
     return FormbuilderCollection;
