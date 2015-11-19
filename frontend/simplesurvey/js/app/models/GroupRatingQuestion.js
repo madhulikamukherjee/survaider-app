@@ -11,8 +11,8 @@ function GroupRatingSubpart(label){
 GroupRatingQuestion.prototype = Object.create(Question.prototype);
 GroupRatingQuestion.prototype.constructor = GroupRatingQuestion;
 
-GroupRatingQuestion.prototype.insertSubpart = function(label){
-  this.subparts.push(new GroupRatingSubpart(label, ''));
+GroupRatingQuestion.prototype.insertSubpart = function(subpart){
+  this.subparts.push(new GroupRatingSubpart(subpart.label, ''));
 };
 
 GroupRatingQuestion.prototype.change = function(index, rating){
@@ -52,9 +52,8 @@ GroupRatingQuestion.prototype.checkIfCompleted = function(){
 
 GroupRatingQuestion.prototype.generateResponse = function(){
   var response = {
-    id: this.id,
-    type: this.type,
-    response: []
+    q_id: this.id,
+    q_res: []
   }
 
 
@@ -67,7 +66,7 @@ GroupRatingQuestion.prototype.generateResponse = function(){
   }
 
 
-  response.response = temp.join(delimeter2).toLocaleString();
+  response.q_res = temp.join(delimeter2).toLocaleString();
 
   return response;
 }

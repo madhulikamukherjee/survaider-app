@@ -35,8 +35,7 @@ LongTextQuestion.prototype.resetResponse = function(){
 
 LongTextQuestion.prototype.generateResponse = function(){
   return {
-    id: this.id,
-    type: this.type,
-    response: this.response
+    q_id: this.id,
+    q_res: this.response
   }
 }

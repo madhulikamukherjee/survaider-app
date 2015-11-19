@@ -514,7 +514,7 @@
 
          });
 
-        //  Send a get request in beginning to start a session
+         // Send a get request in beginning to start a session
          $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
 
@@ -532,11 +532,11 @@
                messageEl = sidebar.find('.current-message h3');
            switch (type) {
              case 'short_text':
-               messageEl.html('Minimum 10 Charaters');
+               messageEl.html('Minimum 2 Charaters');
                break;
 
              case 'long_text':
-               messageEl.html('Minimum 40 Charaters');
+               messageEl.html('Minimum 2 Charaters');
                break;
 
              case 'single_choice':

@@ -31,7 +31,7 @@ DashboardHelper =
         <div class="tile">
           <div class="panel-heading bg-master-light">
             <span class="h3 font-montserrat"><%= dat.name %></span><br>
-            <small class="font-montserrat">Modified <strong><span data-livestamp="<%= dat.last_modified %>"><%= dat.last_modified %></span></strong></small><br>
+            <small class="font-montserrat">Modified <strong><span data-livestamp="<%= dat.last_modified %>">(Loading)</span></strong></small><br>
           </div>
           <div class="panel-body bg-master-lightest">
             <small><span class="font-montserrat text-uppercase bold">Status:</span></small>
@@ -120,5 +120,9 @@ $(document).ready ->
   $.getJSON('/api/survey', (data) ->
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
   )
+  $(document).on 'submit', '#survaider_form', (e) ->
+    e.stopPropogation()
+    DashboardHelper.create_survey()
+    return false
 
 window.DashboardHelper = DashboardHelper

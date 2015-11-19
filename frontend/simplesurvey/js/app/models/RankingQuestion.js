@@ -11,8 +11,8 @@ function RankingSubpart(label, rank){
 RankingQuestion.prototype = Object.create(Question.prototype);
 RankingQuestion.prototype.constructor = RankingQuestion;
 
-RankingQuestion.prototype.insertSubpart = function(label, rank){
-  this.subparts.push(new RankingSubpart(label, rank));
+RankingQuestion.prototype.insertSubpart = function(subpart, rank){
+  this.subparts.push(new RankingSubpart(subpart.label, rank));
 };
 
 RankingQuestion.prototype.change = function(index, rank){
@@ -45,9 +45,8 @@ RankingQuestion.prototype.resetResponse = function(){
 
 RankingQuestion.prototype.generateResponse = function(){
   var response = {
-    id: this.id,
-    type: this.type,
-    response: []
+    q_id: this.id,
+    q_res: []
   }
 
 
@@ -60,7 +59,7 @@ RankingQuestion.prototype.generateResponse = function(){
   }
 
 
-  response.response = temp.join(delimeter2).toLocaleString();
+  response.q_res = temp.join(delimeter2).toLocaleString();
 
   return response;
 }

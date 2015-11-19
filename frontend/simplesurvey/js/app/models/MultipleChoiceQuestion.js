@@ -61,9 +61,8 @@ MultipleChoiceQuestion.prototype.resetResponse = function(){
 
 MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
-    id: this.id,
-    type: this.type,
-    response: ""
+    q_id: this.id,
+    q_res: ""
   }
 
   var temp = [],
@@ -76,7 +75,7 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   }
 
 
-  response.response = temp.join(delimeter).toLocaleString();
+  response.q_res = temp.join(delimeter).toLocaleString();
 
   return response;
 }

@@ -37,8 +37,7 @@ ShortTextQuestion.prototype.resetResponse = function(){
 
 ShortTextQuestion.prototype.generateResponse = function(){
   return {
-    id: this.id,
-    type: this.type,
-    response: this.response
+    q_id: this.id,
+    q_res: this.response
   }
 }

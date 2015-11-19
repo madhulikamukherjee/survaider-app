@@ -125,9 +125,14 @@
         "field_type": "group_rating",
         "required": true,
         "field_options": [
-          "Rooms",
-          "Hotel services",
-          "Facilities"
+            {
+                "checked": false,
+                "label": "Option\u001e"
+            },
+            {
+                "checked": false,
+                "label": "Option\u001e"
+            }
         ],
         "cid": "c30",
         "next": {
@@ -143,9 +148,53 @@
         ],
         "cid": "c40",
         "next": {
-          "va": "end"
+          "va": "c41"
         },
         "gametype": "scroll_scene"
+      },
+      {
+        "cid": "c41",
+        "field_options": [
+            {
+                "checked": false,
+                "label": "Add Image?",
+                "notify": true
+            },
+            {
+                "checked": false,
+                "label": "Option\u001e"
+            }
+        ],
+        "field_type": "ranking",
+        "label": "Question Title\u001e",
+        "next": {
+            "va": "c42"
+        },
+        "notifications": true,
+        "q_no": 9,
+        "required": true,
+        "richtext": true
+      },
+      {
+        "cid": "c42",
+        "field_options": [
+            {
+                "checked": false,
+                "label": "Option\u001e"
+            },
+            {
+                "checked": false,
+                "label": "Option\u001e"
+            }
+        ],
+        "field_type": "group_rating",
+        "label": "Question Title\u001e",
+        "next": {
+            "va": "end"
+        },
+        "q_no": 6,
+        "required": true,
+        "richtext": true
       }
    ],
    "survey_title":"Default Title"

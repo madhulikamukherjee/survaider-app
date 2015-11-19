@@ -119,7 +119,6 @@ module.exports = (grunt) ->
             'simplesurvey/js/vendor/jquery-ui.min.js'
             'simplesurvey/js/vendor/angular-1.4.7/angular.js'
             'simplesurvey/js/vendor/angular-1.4.7/angular-animate.js'
-            'simplesurvey/js/vendor/angular-1.4.7/angular-loading-bar.min.js'
             'simplesurvey/js/vendor/sortable.js'
             'simplesurvey/js/vendor/waypoints.js'
             'simplesurvey/js/vendor/classie.js'
