@@ -120,9 +120,8 @@ $(document).ready ->
   $.getJSON('/api/survey', (data) ->
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
   )
-  $(document).on 'submit', '#survaider_form', (e) ->
-    e.stopPropogation()
+  $('#survaider_form').submit (e) ->
+    e.preventDefault()
     DashboardHelper.create_survey()
-    return false
 
 window.DashboardHelper = DashboardHelper

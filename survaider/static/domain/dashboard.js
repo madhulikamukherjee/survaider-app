@@ -62,10 +62,9 @@
       }
       return results;
     });
-    return $(document).on('submit', '#survaider_form', function(e) {
-      e.stopPropogation();
-      DashboardHelper.create_survey();
-      return false;
+    return $('#survaider_form').submit(function(e) {
+      e.preventDefault();
+      return DashboardHelper.create_survey();
     });
   });
 
