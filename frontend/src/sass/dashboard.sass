@@ -1,3 +1,6 @@
+@import "bourbon/bourbon"
+@import "neat/neat"
+
 .tiles
   margin: 0 auto
 
@@ -20,18 +23,28 @@ body
   padding: 20px
 
 div.card
-  width: 250px
+  $width: 270px
+  $pad_u: 15px
+
+  width: $width
   position: relative
-  background: #FFFFFF
-  padding: 15px
+  overflow: hidden
+  background: #333D5E
+  color: #FFFFFF
   border-radius: 3px
-  font-size: 14px
+  font-size: 12px
   font-weight: 300
 
   i
     margin-right: 5px
 
   section.frontmatter
+    background: #FFFFFF
+    color: #000
+    padding: $pad_u $pad_u 0 $pad_u
+
+    position: relative
+
     h1
       margin: 0
       font-weight: 400
@@ -57,27 +70,60 @@ div.card
 
         h2
           margin: 0
+          padding-top: 10px
+          position: absolute
           font-size: 24px
-
-        &:nth-child(odd)
-          float: left
+          font-weight: 400
+          color: #fff
+          @include transition(color 0.5s, padding 0.5s)
 
         &:nth-child(even)
           float: right
           text-align: right
 
+          h2
+            right: 0
+
+    &:after, &:before
+      position: absolute
+      bottom: -4px
+      left: 0
+      height: 4px
+      content: ""
+      @include transition(bottom 0.5s)
+
+    &:after
+      background: #39C4AC
+      width: 50%
+
+    &:before
+      background: #245582
+      width: 100%
+
   section.status
+    padding: 55px $pad_u $pad_u $pad_u
+
     h1
       margin: 0
       font-size: 14px
+      font-weight: 400
+      text-transform: uppercase
+      margin-bottom: 10px
 
     ul
       list-style: none
       padding: 0
+      margin: 0
+
+      li
+        margin: 0 0 5px 0
 
   section.footer
+    padding: 0 $pad_u $pad_u $pad_u
+
     ul
       list-style: none
+      margin: 0
       padding: 0
       display: block
 
@@ -86,14 +132,17 @@ div.card
 
     a
       text-decoration: none
-      color: #000
+      color: #FFFFFF
 
     section.destinations
+      margin-bottom: 10px
+
       li
-        width: 45%
+        width: (($width - $pad_u * 2) / 2 - 2)
         text-align: center
-        padding: 5px
+        padding: 10px 0
         border-radius: 3px
+        background: #2C3552
 
     section.actions
       text-align: center
@@ -104,3 +153,24 @@ div.card
 
         &:last-child
           float: right
+
+  section.frontmatter, section.status, section.footer
+    max-height: 200px
+    @include transition(max-height 0.5s, padding 0.5s)
+
+  &.narrow
+    section.frontmatter
+      padding-bottom: 44px
+
+      &:before, &:after
+        bottom: 0
+
+      ul.statistics > li
+        h2
+          color: #000
+          padding-top: 0
+
+    section.status, section.footer
+      max-height: 0px
+      padding: 0px
+      overflow: hidden

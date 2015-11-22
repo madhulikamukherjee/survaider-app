@@ -1,3 +1,11 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
 .tiles {
   margin: 0 auto;
 }
@@ -20,16 +28,23 @@ body {
 }
 
 div.card {
-  width: 250px;
+  width: 270px;
   position: relative;
-  background: #FFFFFF;
-  padding: 15px;
+  overflow: hidden;
+  background: #333D5E;
+  color: #FFFFFF;
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 300;
 }
 div.card i {
   margin-right: 5px;
+}
+div.card section.frontmatter {
+  background: #FFFFFF;
+  color: #000;
+  padding: 15px 15px 0 15px;
+  position: relative;
 }
 div.card section.frontmatter h1 {
   margin: 0;
@@ -57,25 +72,64 @@ div.card section.frontmatter ul.statistics li h1 {
 }
 div.card section.frontmatter ul.statistics li h2 {
   margin: 0;
+  padding-top: 10px;
+  position: absolute;
   font-size: 24px;
-}
-div.card section.frontmatter ul.statistics li:nth-child(odd) {
-  float: left;
+  font-weight: 400;
+  color: #fff;
+  -webkit-transition: color 0.5s, padding 0.5s;
+  -moz-transition: color 0.5s, padding 0.5s;
+  transition: color 0.5s, padding 0.5s;
 }
 div.card section.frontmatter ul.statistics li:nth-child(even) {
   float: right;
   text-align: right;
 }
+div.card section.frontmatter ul.statistics li:nth-child(even) h2 {
+  right: 0;
+}
+div.card section.frontmatter:after, div.card section.frontmatter:before {
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  height: 4px;
+  content: "";
+  -webkit-transition: bottom 0.5s;
+  -moz-transition: bottom 0.5s;
+  transition: bottom 0.5s;
+}
+div.card section.frontmatter:after {
+  background: #39C4AC;
+  width: 50%;
+}
+div.card section.frontmatter:before {
+  background: #245582;
+  width: 100%;
+}
+div.card section.status {
+  padding: 55px 15px 15px 15px;
+}
 div.card section.status h1 {
   margin: 0;
   font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
 div.card section.status ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+}
+div.card section.status ul li {
+  margin: 0 0 5px 0;
+}
+div.card section.footer {
+  padding: 0 15px 15px 15px;
 }
 div.card section.footer ul {
   list-style: none;
+  margin: 0;
   padding: 0;
   display: block;
 }
@@ -84,13 +138,17 @@ div.card section.footer ul li {
 }
 div.card section.footer a {
   text-decoration: none;
-  color: #000;
+  color: #FFFFFF;
+}
+div.card section.footer section.destinations {
+  margin-bottom: 10px;
 }
 div.card section.footer section.destinations li {
-  width: 45%;
+  width: 118px;
   text-align: center;
-  padding: 5px;
+  padding: 10px 0;
   border-radius: 3px;
+  background: #2C3552;
 }
 div.card section.footer section.actions {
   text-align: center;
@@ -100,6 +158,27 @@ div.card section.footer section.actions li:first-child {
 }
 div.card section.footer section.actions li:last-child {
   float: right;
+}
+div.card section.frontmatter, div.card section.status, div.card section.footer {
+  max-height: 200px;
+  -webkit-transition: max-height 0.5s, padding 0.5s;
+  -moz-transition: max-height 0.5s, padding 0.5s;
+  transition: max-height 0.5s, padding 0.5s;
+}
+div.card.narrow section.frontmatter {
+  padding-bottom: 44px;
+}
+div.card.narrow section.frontmatter:before, div.card.narrow section.frontmatter:after {
+  bottom: 0;
+}
+div.card.narrow section.frontmatter ul.statistics > li h2 {
+  color: #000;
+  padding-top: 0;
+}
+div.card.narrow section.status, div.card.narrow section.footer {
+  max-height: 0px;
+  padding: 0px;
+  overflow: hidden;
 }
 
 /*# sourceMappingURL=dashboard.css.map */
