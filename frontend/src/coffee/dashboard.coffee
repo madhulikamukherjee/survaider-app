@@ -108,7 +108,10 @@ DashboardHelper =
           <h1><%= dat.name %></h1>
           <small>
             <span class="status-expanded">
-              Modified <strong><span data-livestamp="<%= dat.last_modified %>">(Loading)</span></strong>
+              Created
+              <strong>
+                <span data-livestamp="<%= dat.created_on %>">(Loading)</span>
+              </strong>
             </span>
             <ul class="status-narrow">
               <li><i class="fa fa-circle-o idle"></i>Active</li>
@@ -119,7 +122,9 @@ DashboardHelper =
           <ul class="statistics">
             <li>
               <h1>Responses</h1>
-              <h2><%= numeral(dat.has_obtained_responses).format('0[.]00a') %></h2>
+              <h2>
+                <%= numeral(dat.has_obtained_responses).format('0[.]00a') %>
+              </h2>
             </li>
             <li>
               <% if (dat.has_response_cap !== Math.pow(2,32)) { %>
@@ -128,17 +133,27 @@ DashboardHelper =
               <% } %>
             </li>
           </ul>
-          <a href="#" class="more"><i class="fa fa-arrow-circle-down"></i>More</a>
+          <a href="#" class="more">
+            <i class="fa fa-arrow-circle-down"></i>More
+          </a>
         </section>
         <section class="status">
           <h1>
             Status
-            <a href="#" class="less"><i class="fa fa-arrow-circle-up"></i>Show Less</a>
+            <a href="#" class="less">
+              <i class="fa fa-arrow-circle-up"></i>Show Less
+            </a>
           </h1>
 
           <ul>
             <li><i class="fa fa-circle-o idle"></i>Active</li>
-            <li><i class="fa fa-clock-o primary"></i>Last modified <strong>2 hours ago</strong></li>
+            <li>
+              <i class="fa fa-clock-o primary"></i>
+              Modified
+              <strong>
+              <span data-livestamp="<%= dat.last_modified %>">(Loading)</span>
+              </strong>
+            </li>
             <li><i class="fa fa-rss alert"></i>10 critical alerts</li>
           </ul>
         </section>
@@ -155,9 +170,21 @@ DashboardHelper =
           </section>
           <section class="actions">
             <ul>
-              <li><a href="<%= dat.uri_edit %>#settings"><i class="fa fa-cog"></i> Settings</a></li>
-              <li><a href="<%= dat.uri_edit %>#share"><i class="fa fa-share-alt"></i> Share</a></li>
-              <li><a href="<%= dat.uri_edit %>#share"><i class="fa fa-star"></i> Preview</a></li>
+              <li>
+                <a href="<%= dat.uri_edit %>#settings">
+                  <i class="fa fa-cog"></i> Settings
+                </a>
+              </li>
+              <li>
+                <a href="<%= dat.uri_edit %>#share">
+                  <i class="fa fa-share-alt"></i> Share
+                </a>
+              </li>
+              <li>
+                <a href="<%= dat.uri_edit %>#share">
+                  <i class="fa fa-star"></i> Preview
+                </a>
+              </li>
             </ul>
           </section>
         </section>
@@ -181,31 +208,38 @@ DashboardHelper =
       el = $ template dat: dat, attrs: attrs
       @container.append(el).masonry('appended', el, true)
 
+      Waves.attach(el)
+
       el.on 'click', ->
         if el.hasClass('narrow')
           el.find('a.more').click()
 
       el.find("a.more").on 'click', =>
         el.removeClass('narrow')
-        reset = _.bind () =>
-          @container.masonry()
-        , @
-        _.delay reset, 100
-        _.delay reset, 300
-        _.delay reset, 600
+        @reload()
 
       el.find("a.less").on 'click', (e) =>
         el.addClass('narrow')
-        reset = _.bind () =>
-          @container.masonry()
-        , @
-        _.delay reset, 100
-        _.delay reset, 300
-        _.delay reset, 600
         e.stopPropagation()
+        @reload()
+
+    reload: ->
+      reset = _.bind () =>
+        @container.masonry()
+      , @
+
+      _.delay reset, 100
+      _.delay reset, 300
+      _.delay reset, 600
 
 $(document).ready ->
   DashboardHelper.survey_tiles.init()
+  Waves.init()
+
+  Waves.ripple 'body',
+    wait: 0,
+    position: null,
+
   $.getJSON('/api/survey', (data) ->
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
   )

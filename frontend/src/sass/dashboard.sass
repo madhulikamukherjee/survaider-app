@@ -227,6 +227,9 @@ div.card
     @include transform(scale(1))
     @include transition(max-height 0.5s, padding 0.5s, transform 0.5s)
 
+  .waves-ripple
+    background: #333D5E
+
   &.narrow
     z-index: 5
     cursor: pointer
@@ -282,3 +285,33 @@ div.card
 
   .primary
     color: $primary
+
+.waves-effect
+  position: relative
+  cursor: pointer
+  display: inline-block
+  overflow: hidden
+  @include user-select(none)
+
+  -webkit-tap-highlight-color: transparent
+
+  .waves-ripple
+    position: absolute
+    border-radius: 50%
+    width: 100px
+    height: 100px
+    margin-top: -50px
+    margin-left: -50px
+    opacity: 0
+
+    @include transition(all 0.5s ease-out)
+    @include transition-property(transform, opacity)
+
+    @include transform(scale(0) translate(0, 0))
+
+    pointer-events: none
+
+    background: rgba(255, 255, 255, 0.5)
+
+  &.waves-classic .waves-ripple
+    background: rgba(46, 150, 214, 0.2)

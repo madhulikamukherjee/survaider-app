@@ -51,7 +51,8 @@
     "dropzone": "~4.2.0",
     "three.js": "~0.73.0",
     "q": "1.0.1",
-    "backbone": "~1.2.3"
+    "backbone": "~1.2.3",
+    "Waves": "waves#~0.7.4"
   },
   "resolutions": {
     "jquery": "~2.0.3",

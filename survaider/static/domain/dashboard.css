@@ -241,6 +241,9 @@ div.card section.status, div.card section.footer {
   -moz-transition: max-height 0.5s, padding 0.5s, -moz-transform 0.5s;
   transition: max-height 0.5s, padding 0.5s, transform 0.5s;
 }
+div.card .waves-ripple {
+  background: #333D5E;
+}
 div.card.narrow {
   z-index: 5;
   cursor: pointer;
@@ -297,6 +300,43 @@ div.card .idle {
 }
 div.card .primary {
   color: #2E96D6;
+}
+
+.waves-effect {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.waves-effect .waves-ripple {
+  position: absolute;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  opacity: 0;
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  -webkit-transition-property: -webkit-transform, opacity;
+  -moz-transition-property: -moz-transform, opacity;
+  transition-property: transform, opacity;
+  -webkit-transform: scale(0) translate(0, 0);
+  -moz-transform: scale(0) translate(0, 0);
+  -ms-transform: scale(0) translate(0, 0);
+  -o-transform: scale(0) translate(0, 0);
+  transform: scale(0) translate(0, 0);
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+.waves-effect.waves-classic .waves-ripple {
+  background: rgba(46, 150, 214, 0.2);
 }
 
 /*# sourceMappingURL=dashboard.css.map */
