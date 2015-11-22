@@ -236,10 +236,6 @@ $(document).ready ->
   DashboardHelper.survey_tiles.init()
   Waves.init()
 
-  Waves.ripple 'body',
-    wait: 0,
-    position: null,
-
   $.getJSON('/api/survey', (data) ->
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
   )

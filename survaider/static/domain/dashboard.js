@@ -89,10 +89,6 @@
   $(document).ready(function() {
     DashboardHelper.survey_tiles.init();
     Waves.init();
-    Waves.ripple('body', {
-      wait: 0,
-      position: null
-    });
     $.getJSON('/api/survey', function(data) {
       var dat, i, len, ref, results;
       ref = data.data.reverse();
