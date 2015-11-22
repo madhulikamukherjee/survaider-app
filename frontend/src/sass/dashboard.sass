@@ -1,7 +1,106 @@
 .tiles
-    margin: 0 auto
+  margin: 0 auto
 
-    .tile, .tile-sizer
-        margin: 10px
-        padding: 0
-        width: 250px
+  .tile, .tile-sizer
+    margin: 10px
+    padding: 0
+    width: 250px
+
+$base: #33495F
+$main_font: 'Montserrat'
+
+html, body
+  margin: 0
+  position: relative
+  min-height: 100%
+
+body
+  font-family: $main_font
+  background: $base
+  padding: 20px
+
+div.card
+  width: 250px
+  position: relative
+  background: #FFFFFF
+  padding: 15px
+  border-radius: 3px
+  font-size: 14px
+  font-weight: 300
+
+  i
+    margin-right: 5px
+
+  section.frontmatter
+    h1
+      margin: 0
+      font-weight: 400
+      font-size: 26px
+    small
+      font-size: 14px
+      margin: 0 0 5px 0
+
+    ul.statistics
+      list-style: none
+      padding: 0
+      margin: 10px 0 0 0
+      position: relative
+
+      li
+        display: inline-block
+        width: 50%
+
+        h1
+          font-size: 14px
+          font-weight: 400
+          text-transform: uppercase
+
+        h2
+          margin: 0
+          font-size: 24px
+
+        &:nth-child(odd)
+          float: left
+
+        &:nth-child(even)
+          float: right
+          text-align: right
+
+  section.status
+    h1
+      margin: 0
+      font-size: 14px
+
+    ul
+      list-style: none
+      padding: 0
+
+  section.footer
+    ul
+      list-style: none
+      padding: 0
+      display: block
+
+      li
+        display: inline-block
+
+    a
+      text-decoration: none
+      color: #000
+
+    section.destinations
+      li
+        width: 45%
+        text-align: center
+        padding: 5px
+        border-radius: 3px
+
+    section.actions
+      text-align: center
+
+      li
+        &:first-child
+          float: left
+
+        &:last-child
+          float: right

@@ -50,9 +50,12 @@
     "bootstrap3-wysihtml5-bower": "~0.3.3",
     "dropzone": "~4.2.0",
     "three.js": "~0.73.0",
-    "q": "1.0.1"
+    "q": "1.0.1",
+    "backbone": "~1.2.3"
   },
   "resolutions": {
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "backbone": "~1.2.3",
+    "underscore": ">=1.7.0"
   }
 }

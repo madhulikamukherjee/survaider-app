@@ -77,6 +77,7 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/dist/formbuilder.js'
           ]
           '<%= build%>/domain/dashboard.vendor.js': [
+            'bower_components/backbone/backbone.js'
             'bower_components/underscore/underscore.js'
             'bower_components/moment/moment.js'
             'bower_components/livestamp/livestamp.js'
@@ -154,6 +155,7 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/vendor/css/vendor.css'
           ]
           '<%= build%>/domain/dashboard.vendor.css': [
+            'bower_components/font-awesome/css/font-awesome.css'
           ]
           '<%= build%>/domain/analytics.vendor.css': [
             'bower_components/datatables/media/css/jquery.dataTables.css'

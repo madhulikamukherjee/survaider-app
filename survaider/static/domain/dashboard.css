@@ -7,4 +7,99 @@
   width: 250px;
 }
 
+html, body {
+  margin: 0;
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Montserrat";
+  background: #33495F;
+  padding: 20px;
+}
+
+div.card {
+  width: 250px;
+  position: relative;
+  background: #FFFFFF;
+  padding: 15px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 300;
+}
+div.card i {
+  margin-right: 5px;
+}
+div.card section.frontmatter h1 {
+  margin: 0;
+  font-weight: 400;
+  font-size: 26px;
+}
+div.card section.frontmatter small {
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+div.card section.frontmatter ul.statistics {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  position: relative;
+}
+div.card section.frontmatter ul.statistics li {
+  display: inline-block;
+  width: 50%;
+}
+div.card section.frontmatter ul.statistics li h1 {
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+div.card section.frontmatter ul.statistics li h2 {
+  margin: 0;
+  font-size: 24px;
+}
+div.card section.frontmatter ul.statistics li:nth-child(odd) {
+  float: left;
+}
+div.card section.frontmatter ul.statistics li:nth-child(even) {
+  float: right;
+  text-align: right;
+}
+div.card section.status h1 {
+  margin: 0;
+  font-size: 14px;
+}
+div.card section.status ul {
+  list-style: none;
+  padding: 0;
+}
+div.card section.footer ul {
+  list-style: none;
+  padding: 0;
+  display: block;
+}
+div.card section.footer ul li {
+  display: inline-block;
+}
+div.card section.footer a {
+  text-decoration: none;
+  color: #000;
+}
+div.card section.footer section.destinations li {
+  width: 45%;
+  text-align: center;
+  padding: 5px;
+  border-radius: 3px;
+}
+div.card section.footer section.actions {
+  text-align: center;
+}
+div.card section.footer section.actions li:first-child {
+  float: left;
+}
+div.card section.footer section.actions li:last-child {
+  float: right;
+}
+
 /*# sourceMappingURL=dashboard.css.map */
