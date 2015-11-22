@@ -77,8 +77,9 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/dist/formbuilder.js'
           ]
           '<%= build%>/domain/dashboard.vendor.js': [
-            'bower_components/backbone/backbone.js'
+            'bower_components/jquery/jquery.js'
             'bower_components/underscore/underscore.js'
+            'bower_components/backbone/backbone.js'
             'bower_components/moment/moment.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
