@@ -42,6 +42,7 @@ div.card
     background: #FFFFFF
     color: #000
     padding: $pad_u $pad_u 0 $pad_u
+    @include transition(padding 0.5s)
 
     position: relative
 
@@ -49,9 +50,49 @@ div.card
       margin: 0
       font-weight: 400
       font-size: 26px
+
     small
       font-size: 14px
       margin: 0 0 5px 0
+      position: relative
+      display: block
+
+      span.status-expanded
+        opacity: 1
+
+      ul.status-narrow
+        padding: 0
+        margin: 0
+        list-style: none
+        text-align: justify
+        position: absolute
+        width: 100%
+        top: 0
+        opacity: 0
+
+        li
+          display: inline-block
+
+        &:after, &:before
+          content: ""
+
+        &:after
+          display: inline-block
+          width: 100%
+
+        &:before
+          display: block
+
+      span.status-expanded, ul.status-narrow
+        @include transition(opacity 0.5s)
+
+    a.more
+      position: absolute
+      right: -$pad_u
+      opacity: 0
+      color: #000000
+      bottom: 20px
+      @include transition(right 0.5s, opacity 0.5s)
 
     ul.statistics
       list-style: none
@@ -83,6 +124,11 @@ div.card
 
           h2
             right: 0
+
+        &:last-child
+          right: 0
+          opacity: 1
+          @include transition(right 0.5s, opacity 0.5s)
 
     &:after, &:before
       position: absolute
@@ -118,6 +164,14 @@ div.card
       li
         margin: 0 0 5px 0
 
+    a.less
+      color: #FFFFFF
+      position: absolute
+      right: $pad_u
+      font-size: 12px
+      text-transform: none
+      font-weight: 300
+
   section.footer
     padding: 0 $pad_u $pad_u $pad_u
 
@@ -131,7 +185,6 @@ div.card
         display: inline-block
 
     a
-      text-decoration: none
       color: #FFFFFF
 
     section.destinations
@@ -154,9 +207,10 @@ div.card
         &:last-child
           float: right
 
-  section.frontmatter, section.status, section.footer
+  section.status, section.footer
     max-height: 200px
-    @include transition(max-height 0.5s, padding 0.5s)
+    @include transform(scale(1))
+    @include transition(max-height 0.5s, padding 0.5s, transform 0.5s)
 
   &.narrow
     section.frontmatter
@@ -165,12 +219,31 @@ div.card
       &:before, &:after
         bottom: 0
 
+      small
+        span.status-expanded
+          opacity: 0
+        ul.status-narrow
+          opacity: 1
+
       ul.statistics > li
         h2
           color: #000
           padding-top: 0
 
+        &:last-child
+          position: absolute
+          opacity: 0
+          right: -50%
+
+      a.more
+        right: $pad_u
+        opacity: 1
+
     section.status, section.footer
+      @include transform(scale(1.5))
       max-height: 0px
       padding: 0px
       overflow: hidden
+
+  a
+    text-decoration: none

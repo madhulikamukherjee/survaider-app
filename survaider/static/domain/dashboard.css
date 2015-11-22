@@ -44,6 +44,9 @@ div.card section.frontmatter {
   background: #FFFFFF;
   color: #000;
   padding: 15px 15px 0 15px;
+  -webkit-transition: padding 0.5s;
+  -moz-transition: padding 0.5s;
+  transition: padding 0.5s;
   position: relative;
 }
 div.card section.frontmatter h1 {
@@ -54,6 +57,49 @@ div.card section.frontmatter h1 {
 div.card section.frontmatter small {
   font-size: 14px;
   margin: 0 0 5px 0;
+  position: relative;
+  display: block;
+}
+div.card section.frontmatter small span.status-expanded {
+  opacity: 1;
+}
+div.card section.frontmatter small ul.status-narrow {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-align: justify;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  opacity: 0;
+}
+div.card section.frontmatter small ul.status-narrow li {
+  display: inline-block;
+}
+div.card section.frontmatter small ul.status-narrow:after, div.card section.frontmatter small ul.status-narrow:before {
+  content: "";
+}
+div.card section.frontmatter small ul.status-narrow:after {
+  display: inline-block;
+  width: 100%;
+}
+div.card section.frontmatter small ul.status-narrow:before {
+  display: block;
+}
+div.card section.frontmatter small span.status-expanded, div.card section.frontmatter small ul.status-narrow {
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+div.card section.frontmatter a.more {
+  position: absolute;
+  right: -15px;
+  opacity: 0;
+  color: #000000;
+  bottom: 20px;
+  -webkit-transition: right 0.5s, opacity 0.5s;
+  -moz-transition: right 0.5s, opacity 0.5s;
+  transition: right 0.5s, opacity 0.5s;
 }
 div.card section.frontmatter ul.statistics {
   list-style: none;
@@ -87,6 +133,13 @@ div.card section.frontmatter ul.statistics li:nth-child(even) {
 }
 div.card section.frontmatter ul.statistics li:nth-child(even) h2 {
   right: 0;
+}
+div.card section.frontmatter ul.statistics li:last-child {
+  right: 0;
+  opacity: 1;
+  -webkit-transition: right 0.5s, opacity 0.5s;
+  -moz-transition: right 0.5s, opacity 0.5s;
+  transition: right 0.5s, opacity 0.5s;
 }
 div.card section.frontmatter:after, div.card section.frontmatter:before {
   position: absolute;
@@ -124,6 +177,14 @@ div.card section.status ul {
 div.card section.status ul li {
   margin: 0 0 5px 0;
 }
+div.card section.status a.less {
+  color: #FFFFFF;
+  position: absolute;
+  right: 15px;
+  font-size: 12px;
+  text-transform: none;
+  font-weight: 300;
+}
 div.card section.footer {
   padding: 0 15px 15px 15px;
 }
@@ -137,7 +198,6 @@ div.card section.footer ul li {
   display: inline-block;
 }
 div.card section.footer a {
-  text-decoration: none;
   color: #FFFFFF;
 }
 div.card section.footer section.destinations {
@@ -159,11 +219,16 @@ div.card section.footer section.actions li:first-child {
 div.card section.footer section.actions li:last-child {
   float: right;
 }
-div.card section.frontmatter, div.card section.status, div.card section.footer {
+div.card section.status, div.card section.footer {
   max-height: 200px;
-  -webkit-transition: max-height 0.5s, padding 0.5s;
-  -moz-transition: max-height 0.5s, padding 0.5s;
-  transition: max-height 0.5s, padding 0.5s;
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  transform: scale(1);
+  -webkit-transition: max-height 0.5s, padding 0.5s, -webkit-transform 0.5s;
+  -moz-transition: max-height 0.5s, padding 0.5s, -moz-transform 0.5s;
+  transition: max-height 0.5s, padding 0.5s, transform 0.5s;
 }
 div.card.narrow section.frontmatter {
   padding-bottom: 44px;
@@ -171,14 +236,37 @@ div.card.narrow section.frontmatter {
 div.card.narrow section.frontmatter:before, div.card.narrow section.frontmatter:after {
   bottom: 0;
 }
+div.card.narrow section.frontmatter small span.status-expanded {
+  opacity: 0;
+}
+div.card.narrow section.frontmatter small ul.status-narrow {
+  opacity: 1;
+}
 div.card.narrow section.frontmatter ul.statistics > li h2 {
   color: #000;
   padding-top: 0;
 }
+div.card.narrow section.frontmatter ul.statistics > li:last-child {
+  position: absolute;
+  opacity: 0;
+  right: -50%;
+}
+div.card.narrow section.frontmatter a.more {
+  right: 15px;
+  opacity: 1;
+}
 div.card.narrow section.status, div.card.narrow section.footer {
+  -webkit-transform: scale(1.5);
+  -moz-transform: scale(1.5);
+  -ms-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  transform: scale(1.5);
   max-height: 0px;
   padding: 0px;
   overflow: hidden;
+}
+div.card a {
+  text-decoration: none;
 }
 
 /*# sourceMappingURL=dashboard.css.map */
