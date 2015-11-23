@@ -37,7 +37,6 @@
         return this.container.masonry({
           columnWidth: 1,
           itemSelector: '.card',
-          gutter: 10,
           isFitWidth: true
         });
       },

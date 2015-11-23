@@ -195,9 +195,10 @@ DashboardHelper =
       @container = $('#card_dock')
       @container.masonry
         columnWidth: 1
+        # containerStyle: null
         itemSelector: '.card'
         # percentPosition: true
-        gutter: 10
+        # gutter: 10
         isFitWidth: true
 
     append: (dat) ->

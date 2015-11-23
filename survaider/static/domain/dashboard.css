@@ -44,6 +44,7 @@ header {
 
 section#card_dock {
   margin: 0 auto;
+  width: 100%;
 }
 
 div.card {
@@ -359,9 +360,36 @@ div.card .primary {
 
 .cd-stretchy-nav {
   position: absolute;
-  z-index: 12;
+  z-index: 0;
   top: 40px;
   right: 0;
+  -webkit-transition: z-index 0.5s step-end;
+  -moz-transition: z-index 0.5s step-end;
+  transition: z-index 0.5s step-end;
+}
+.cd-stretchy-nav::before {
+  content: "";
+  position: absolute;
+  background: #33495F;
+  height: 0px;
+  width: 0px;
+  top: -50px;
+  right: -50px;
+  border-radius: 50%;
+  opacity: 0;
+  -webkit-transition: height 0.2s, width 0.2s, opacity 0.2s;
+  -moz-transition: height 0.2s, width 0.2s, opacity 0.2s;
+  transition: height 0.2s, width 0.2s, opacity 0.2s;
+}
+.cd-stretchy-nav span.user-trigger {
+  position: absolute;
+  right: 75px;
+  top: 16px;
+  opacity: 0.9;
+  color: #ffffff;
+  -webkit-transition: opacity 0.2s;
+  -moz-transition: opacity 0.2s;
+  transition: opacity 0.2s;
 }
 .cd-stretchy-nav .stretchy-nav-bg {
   position: absolute;
@@ -442,6 +470,7 @@ div.card .primary {
   list-style: none;
   font-size: 14px;
   visibility: hidden;
+  overflow: hidden;
   -webkit-transition: visibility 0.3s;
   -moz-transition: visibility 0.3s;
   transition: visibility 0.3s;
@@ -456,7 +485,6 @@ div.card .primary {
 }
 .cd-stretchy-nav ul li a span {
   opacity: 0;
-  text-shadow: 0px 0px 16px black, 0px 0px 16px black, 0px 0px 16px black;
   -webkit-transform: translateX(-25px);
   -moz-transform: translateX(-25px);
   -ms-transform: translateX(-25px);
@@ -487,6 +515,20 @@ div.card .primary {
   -webkit-transition: color 0.2s, opacity 0.2s, background 0.2s;
   -moz-transition: color 0.2s, opacity 0.2s, background 0.2s;
   transition: color 0.2s, opacity 0.2s, background 0.2s;
+}
+.cd-stretchy-nav.nav-is-visible {
+  z-index: 12;
+  -webkit-transition: z-index 0.5s step-start;
+  -moz-transition: z-index 0.5s step-start;
+  transition: z-index 0.5s step-start;
+}
+.cd-stretchy-nav.nav-is-visible::before {
+  height: 300px;
+  width: 300px;
+  opacity: 0.9;
+}
+.cd-stretchy-nav.nav-is-visible span.user-trigger {
+  opacity: 0;
 }
 .cd-stretchy-nav.nav-is-visible .stretchy-nav-bg {
   height: 100%;

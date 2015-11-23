@@ -34,6 +34,7 @@ header
 
 section#card_dock
   margin: 0 auto
+  width: 100%
 
 div.card
   $width: 270px
@@ -330,11 +331,33 @@ div.card
 
 .cd-stretchy-nav
   position: absolute
-  z-index: 12
+  z-index: 0
   top: 40px
   right: 0
 
+  @include transition(z-index 0.5s step-end)
+
   $width: 50px
+
+  &::before
+    content: ''
+    position: absolute
+    background: #33495F
+    height: 0px
+    width: 0px
+    top: -50px
+    right: -50px
+    border-radius: 50%
+    opacity: 0
+    @include transition(height 0.2s, width 0.2s, opacity 0.2s)
+
+  span.user-trigger
+    position: absolute
+    right: 1.5 * $width
+    top: 16px
+    opacity: 0.9
+    color: #ffffff
+    @include transition(opacity 0.2s)
 
   .stretchy-nav-bg
     position: absolute
@@ -400,6 +423,7 @@ div.card
     list-style: none
     font-size: 14px
     visibility: hidden
+    overflow: hidden
 
     @include transition(visibility 0.3s)
 
@@ -416,7 +440,6 @@ div.card
 
         span
           opacity: 0
-          text-shadow: 0px 0px 16px rgba(0, 0, 0, 1), 0px 0px 16px rgba(0, 0, 0, 1), 0px 0px 16px rgba(0, 0, 0, 1)
 
           @include transform(translateX(-25px))
           @include transition(color 0.2s, opacity 0.2s)
@@ -440,6 +463,17 @@ div.card
           @include transition(color 0.2s, opacity 0.2s, background 0.2s)
 
   &.nav-is-visible
+    z-index: 12
+    @include transition(z-index 0.5s step-start)
+
+    &::before
+      height: 300px
+      width: 300px
+      opacity: 0.9
+
+    span.user-trigger
+      opacity: 0
+
     .stretchy-nav-bg
       height: 100%
       box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2)

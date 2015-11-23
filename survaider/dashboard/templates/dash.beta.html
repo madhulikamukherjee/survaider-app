@@ -22,6 +22,8 @@
         <span aria-hidden="true"></span>
       </a>
 
+      <span class="user-trigger">{{ g.user.email }}</span>
+
       <ul>
         <li>
           <a href="/dashboard" class="active">
@@ -51,8 +53,10 @@
 
       <span aria-hidden="true" class="stretchy-nav-bg"></span>
     </nav>
+    <img src="{{ url_for('static', filename = 'img/icon.png') }}" alt="Survaider Logo" height="60px">
   </header>
   <section id="card_dock">
+
   </section>
   <footer>
   </footer>
