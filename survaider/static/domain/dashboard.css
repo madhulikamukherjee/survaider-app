@@ -536,6 +536,7 @@ div.card .primary {
 }
 .cd-stretchy-nav ul li a span {
   opacity: 0;
+  display: inline-block;
   -webkit-transform: translateX(-25px);
   -moz-transform: translateX(-25px);
   -ms-transform: translateX(-25px);
