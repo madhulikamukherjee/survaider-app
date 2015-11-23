@@ -41,6 +41,57 @@ body {
 header {
   position: relative;
 }
+header div.create-modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  display: flex;
+  visibility: hidden;
+  z-index: -1;
+  -webkit-transition: z-index 0.5s step-end, visibility 0.5s step-end;
+  -moz-transition: z-index 0.5s step-end, visibility 0.5s step-end;
+  transition: z-index 0.5s step-end, visibility 0.5s step-end;
+}
+header div.create-modal .container {
+  width: 400px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  margin: auto;
+  z-index: 100;
+  -webkit-animation: moveOut 0.4s;
+  -moz-animation: moveOut 0.4s;
+  animation: moveOut 0.4s;
+}
+header div.create-modal::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  opacity: 0;
+  z-index: 99;
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+header div.create-modal.open {
+  visibility: visible;
+  z-index: 100;
+  -webkit-transition: z-index 0.5s step-start, visibility 0.5s step-start;
+  -moz-transition: z-index 0.5s step-start, visibility 0.5s step-start;
+  transition: z-index 0.5s step-start, visibility 0.5s step-start;
+}
+header div.create-modal.open::before {
+  opacity: 0.8;
+}
+header div.create-modal.open .container {
+  -webkit-animation: moveIn 0.4s;
+  -moz-animation: moveIn 0.4s;
+  animation: moveIn 0.4s;
+}
 
 section#card_dock {
   margin: 0 auto;
@@ -621,6 +672,21 @@ div.card .primary {
   animation-delay: 0.2s;
 }
 
+button, input {
+  padding: 10px 20px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid #33495F;
+  font-family: "Montserrat";
+  font-size: 14px;
+}
+button.lg, input.lg {
+  font-size: 18px;
+}
+button.create, input.create {
+  background: #2E96D6;
+}
+
 @-webkit-keyframes scaleIn {
   from {
     -webkit-transform: translateY(-50%) scale(0);
@@ -689,6 +755,83 @@ div.card .primary {
     -ms-transform: translateX(0);
     -o-transform: translateX(0);
     transform: translateX(0);
+  }
+}
+@-webkit-keyframes moveIn {
+  0% {
+    -webkit-transform: translateY(100vh);
+  }
+  65% {
+    -webkit-transform: translateY(-10.5vh);
+  }
+  100% {
+    -webkit-transform: translateY(0vh);
+  }
+}
+@-moz-keyframes moveIn {
+  0% {
+    -moz-transform: translateY(100vh);
+  }
+  65% {
+    -moz-transform: translateY(-10.5vh);
+  }
+  100% {
+    -moz-transform: translateY(0vh);
+  }
+}
+@keyframes moveIn {
+  0% {
+    -webkit-transform: translateY(100vh);
+    -moz-transform: translateY(100vh);
+    -ms-transform: translateY(100vh);
+    -o-transform: translateY(100vh);
+    transform: translateY(100vh);
+  }
+  65% {
+    -webkit-transform: translateY(-10.5vh);
+    -moz-transform: translateY(-10.5vh);
+    -ms-transform: translateY(-10.5vh);
+    -o-transform: translateY(-10.5vh);
+    transform: translateY(-10.5vh);
+  }
+  100% {
+    -webkit-transform: translateY(0vh);
+    -moz-transform: translateY(0vh);
+    -ms-transform: translateY(0vh);
+    -o-transform: translateY(0vh);
+    transform: translateY(0vh);
+  }
+}
+@-webkit-keyframes moveOut {
+  0% {
+    -webkit-transform: translateY(0vh);
+  }
+  100% {
+    -webkit-transform: translateY(-100vh);
+  }
+}
+@-moz-keyframes moveOut {
+  0% {
+    -moz-transform: translateY(0vh);
+  }
+  100% {
+    -moz-transform: translateY(-100vh);
+  }
+}
+@keyframes moveOut {
+  0% {
+    -webkit-transform: translateY(0vh);
+    -moz-transform: translateY(0vh);
+    -ms-transform: translateY(0vh);
+    -o-transform: translateY(0vh);
+    transform: translateY(0vh);
+  }
+  100% {
+    -webkit-transform: translateY(-100vh);
+    -moz-transform: translateY(-100vh);
+    -ms-transform: translateY(-100vh);
+    -o-transform: translateY(-100vh);
+    transform: translateY(-100vh);
   }
 }
 

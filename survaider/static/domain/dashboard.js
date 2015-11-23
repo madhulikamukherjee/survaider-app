@@ -19,8 +19,7 @@
           confirmButtonText: 'Edit Structure',
           closeOnConfirm: true
         }, function() {
-          $('#myModal').modal('hide');
-          return window.open(data.uri_edit);
+          return window.location = data.uri_edit;
         });
       }).fail(function(data) {
         return swal({

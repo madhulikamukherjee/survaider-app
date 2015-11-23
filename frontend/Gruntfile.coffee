@@ -81,6 +81,7 @@ module.exports = (grunt) ->
             'bower_components/underscore/underscore.js'
             'bower_components/backbone/backbone.js'
             'bower_components/moment/moment.js'
+            'bower_components/sweetalert/dist/sweetalert.min.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
             'bower_components/Waves/dist/waves.js'
@@ -157,6 +158,7 @@ module.exports = (grunt) ->
             'bower_components/survaider-builder/vendor/css/vendor.css'
           ]
           '<%= build%>/domain/dashboard.vendor.css': [
+            'bower_components/sweetalert/dist/sweetalert.css'
             'bower_components/font-awesome/css/font-awesome.css'
           ]
           '<%= build%>/domain/analytics.vendor.css': [

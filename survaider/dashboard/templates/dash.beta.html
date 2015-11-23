@@ -53,7 +53,32 @@
 
       <span aria-hidden="true" class="stretchy-nav-bg"></span>
     </nav>
+
+    <br>
+    <br>
     <img src="{{ url_for('static', filename = 'img/icon.png') }}" alt="Survaider Logo" height="60px">
+
+    <br>
+    <br>
+    <button class="lg create" onclick='$(".create-modal").addClass("open");'>
+      Build a Survaider
+    </button>
+    <br>
+    <br>
+    <br>
+
+      <div class="create-modal">
+        <div class="container">
+          <h1>Build a Survaider</h1>
+          <h2>Get started by giving your Survaider a name.</h2>
+          <form id="survaider_form">
+                    <input type="text" class="form-control" name="s_name" required placeholder="Survey Name">
+                <button type="submit" id="exec_create_survaider">Proceed</button>
+
+          </form>
+        </div>
+      </div>
+
   </header>
   <section id="card_dock">
 

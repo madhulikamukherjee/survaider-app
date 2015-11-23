@@ -18,8 +18,7 @@ DashboardHelper =
         confirmButtonText: 'Edit Structure'
         closeOnConfirm: true
       , ->
-        $('#myModal').modal('hide')
-        window.open data.uri_edit
+        window.location = data.uri_edit
     .fail (data) ->
       swal
         title: 'Error'
