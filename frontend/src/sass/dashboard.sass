@@ -21,7 +21,19 @@ html, body
 body
   font-family: $main_font
   background: $base
-  padding: 20px
+
+  @media (min-width: 1024px)
+    width: 1024px
+    margin: 0 auto
+
+  @media (max-width: 1023px)
+    padding: 0 10%
+
+header
+  position: relative
+
+section#card_dock
+  margin: 0 auto
 
 div.card
   $width: 270px
@@ -316,302 +328,189 @@ div.card
   &.waves-classic .waves-ripple
     background: rgba(46, 150, 214, 0.2)
 
-
 .cd-stretchy-nav
-  position: fixed
+  position: absolute
   z-index: 12
   top: 40px
-  right: 5%
+  right: 0
+
+  $width: 50px
 
   .stretchy-nav-bg
     position: absolute
     z-index: 1
     top: 0
     right: 0
-    width: 60px
-    height: 60px
-    border-radius: 30px
+    width: $width
+    height: $width
+
+    border-radius: $width / 2
     background: #9acd91
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2)
+
     @include transition(height 0.2s, box-shadow 0.2s)
 
-  &.nav-is-visible .stretchy-nav-bg
-    height: 100%
-    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2)
-
-.cd-nav-trigger
-  position: absolute
-  z-index: 3
-  top: 0
-  right: 0
-  height: 60px
-  width: 60px
-  border-radius: 50%
-  overflow: hidden
-  white-space: nowrap
-  color: transparent
-  span
+  .cd-nav-trigger
     position: absolute
-    width: 16px
-    height: 2px
-    background-color: #ffffff
-    &::after, &::before
+    z-index: 3
+    top: 0
+    right: 0
+    height: $width
+    width: $width
+    border-radius: 50%
+    overflow: hidden
+    white-space: nowrap
+    color: transparent
+
+    span
       position: absolute
       width: 16px
       height: 2px
       background-color: #ffffff
-    left: 50%
-    top: 50%
-    bottom: auto
-    right: auto
-    @include transform(translateX(-50%) translateY(-50%))
-    @include transition(background-color 0.2s)
 
-    &::after
-      content: ''
-      top: 0
-      left: 0
-      -webkit-backface-visibility: hidden
-      backface-visibility: hidden
-      -webkit-transition: -webkit-transform 0.2s
-      -moz-transition: -moz-transform 0.2s
-      transition: transform 0.2s
-    &::before
-      content: ''
-      top: 0
-      left: 0
-      -webkit-backface-visibility: hidden
-      backface-visibility: hidden
-      -webkit-transition: -webkit-transform 0.2s
-      -moz-transition: -moz-transform 0.2s
-      transition: transform 0.2s
-      -webkit-transform: translateY(-6px)
-      -moz-transform: translateY(-6px)
-      -ms-transform: translateY(-6px)
-      -o-transform: translateY(-6px)
-      transform: translateY(-6px)
-    &::after
-      -webkit-transform: translateY(6px)
-      -moz-transform: translateY(6px)
-      -ms-transform: translateY(6px)
-      -o-transform: translateY(6px)
-      transform: translateY(6px)
+      &::after, &::before
+        position: absolute
+        width: 16px
+        height: 2px
+        background-color: #ffffff
+        content: ''
+        top: 0
+        left: 0
+        @include backface-visibility(hidden)
+        @include transition(transform 0.2s)
 
-.no-touch .cd-nav-trigger:hover ~ .stretchy-nav-bg
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2)
+      left: 50%
+      top: 50%
+      bottom: auto
+      right: auto
 
-.nav-is-visible .cd-nav-trigger span
-  background-color: transparent
+      @include transform(translateX(-50%) translateY(-50%))
+      @include transition(background-color 0.2s)
 
-  &::before
-    @include transform(rotate(-45deg))
-  &::after
-    @include transform(rotate(45deg))
+      &::after
+        @include transform(translateY(6px))
 
-.cd-stretchy-nav
+      &::before
+        @include transform(translateY(-6px))
+
   ul
     position: relative
     z-index: 2
-    padding: 60px 0 0
+    padding: $width / 2 0 0
+    list-style: none
+    font-size: 14px
     visibility: hidden
-    -webkit-transition: visibility 0.3s
-    -moz-transition: visibility 0.3s
-    transition: visibility 0.3s
+
+    @include transition(visibility 0.3s)
+
     text-align: right
-    a
-      position: relative
-      display: block
-      height: 50px
-      line-height: 50px
-      padding: 0 calc(1em + 60px) 0 1em
-      color: rgba(255, 255, 255, 0.7)
-      font-size: 1.4rem
-      -webkit-transition: color 0.2s
-      -moz-transition: color 0.2s
-      transition: color 0.2s
 
-      i
-        content: ''
-        position: absolute
-        height: 16px
-        width: 16px
-        right: 22px
-        top: 50%
-        -webkit-transform: translateY(-50%) scale(0)
-        -moz-transform: translateY(-50%) scale(0)
-        -ms-transform: translateY(-50%) scale(0)
-        -o-transform: translateY(-50%) scale(0)
-        transform: translateY(-50%) scale(0)
-        opacity: .6
+    li
 
-      &::before
-        content: ''
-        position: absolute
-        width: 3px
-        height: 16px
-        top: 50%
-        right: 60px
-        -webkit-transform: translateX(3px) translateY(-50%) scaleY(0)
-        -moz-transform: translateX(3px) translateY(-50%) scaleY(0)
-        -ms-transform: translateX(3px) translateY(-50%) scaleY(0)
-        -o-transform: translateX(3px) translateY(-50%) scaleY(0)
-        transform: translateX(3px) translateY(-50%) scaleY(0)
-        background-color: #0a9581
+      a
+        position: relative
+        line-height: 35px
+        text-decoration: none
+        padding: 0 1.5 * $width 0
+        color: rgba(255, 255, 255, 0.7)
 
-    span
-      display: block
-      opacity: 0
-      -webkit-transform: translateX(-25px)
-      -moz-transform: translateX(-25px)
-      -ms-transform: translateX(-25px)
-      -o-transform: translateX(-25px)
-      transform: translateX(-25px)
-  &.nav-is-visible ul
-    visibility: visible
-    a
-      i
-        -webkit-transform: translateY(-50%) scale(1)
-        -moz-transform: translateY(-50%) scale(1)
-        -ms-transform: translateY(-50%) scale(1)
-        -o-transform: translateY(-50%) scale(1)
-        transform: translateY(-50%) scale(1)
-        -webkit-animation: scaleIn 0.15s backwards
-        -moz-animation: scaleIn 0.15s backwards
-        animation: scaleIn 0.15s backwards
-        -webkit-transition: opacity 0.2s
-        -moz-transition: opacity 0.2s
-        transition: opacity 0.2s
-      &.active
-        color: #ffffff
+        span
+          opacity: 0
+          text-shadow: 0px 0px 16px rgba(0, 0, 0, 1), 0px 0px 16px rgba(0, 0, 0, 1), 0px 0px 16px rgba(0, 0, 0, 1)
+
+          @include transform(translateX(-25px))
+          @include transition(color 0.2s, opacity 0.2s)
+
         i
-          opacity: 1
+          content: ''
+          position: absolute
+          width: 30px
+          height: 30px
+          padding: 5px
+          border-radius: 50%
+          text-align: center
+          right: ($width - 30) / 2
+          top: 50%
+          background: #9acd91
+
+          opacity: .6
+          font-size: 20px
+
+          @include transform(translateY(-50%) scale(0))
+          @include transition(color 0.2s, opacity 0.2s, background 0.2s)
+
+  &.nav-is-visible
+    .stretchy-nav-bg
+      height: 100%
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2)
+
+    .cd-nav-trigger
+      span
+        background-color: transparent
+
         &::before
-          -webkit-transform: translateX(3px) translateY(-50%) scaleY(1)
-          -moz-transform: translateX(3px) translateY(-50%) scaleY(1)
-          -ms-transform: translateX(3px) translateY(-50%) scaleY(1)
-          -o-transform: translateX(3px) translateY(-50%) scaleY(1)
-          transform: translateX(3px) translateY(-50%) scaleY(1)
-          -webkit-transition: -webkit-transform 0.15s 0.3s
-          -moz-transition: -moz-transform 0.15s 0.3s
-          transition: transform 0.15s 0.3s
-    span
-      opacity: 1
-      -webkit-transform: translateX(0)
-      -moz-transform: translateX(0)
-      -ms-transform: translateX(0)
-      -o-transform: translateX(0)
-      transform: translateX(0)
-      -webkit-animation: slideIn 0.15s backwards
-      -moz-animation: slideIn 0.15s backwards
-      animation: slideIn 0.15s backwards
-      -webkit-transition: -webkit-transform 0.2s
-      -moz-transition: -moz-transform 0.2s
-      transition: transform 0.2s
+          @include transform(rotate(-45deg))
+        &::after
+          @include transform(rotate(45deg))
 
-.no-touch .cd-stretchy-nav.nav-is-visible ul a:hover
-  color: #ffffff
-  &::after
-    opacity: 1
-  span
-    -webkit-transform: translateX(-5px)
-    -moz-transform: translateX(-5px)
-    -ms-transform: translateX(-5px)
-    -o-transform: translateX(-5px)
-    transform: translateX(-5px)
+    ul
+      visibility: visible
+      li
+        a
+          i
+            @include transform(translateY(-50%) scale(1))
+            @include animation(scaleIn 0.15s backwards)
+            @include transition(opacity 0.2s)
 
-.cd-stretchy-nav
-  &.nav-is-visible ul li
-    &:first-of-type
-      i, span
-        -webkit-animation-delay: 0.05s
-        -moz-animation-delay: 0.05s
-        animation-delay: 0.05s
-    &:nth-of-type(2)
-      i, span
-        -webkit-animation-delay: 0.1s
-        -moz-animation-delay: 0.1s
-        animation-delay: 0.1s
-    &:nth-of-type(3)
-      i, span
-        -webkit-animation-delay: 0.15s
-        -moz-animation-delay: 0.15s
-        animation-delay: 0.15s
-    &:nth-of-type(4)
-      i, span
-        -webkit-animation-delay: 0.2s
-        -moz-animation-delay: 0.2s
-        animation-delay: 0.2s
-    &:nth-of-type(5)
-      i, span
-        -webkit-animation-delay: 0.25s
-        -moz-animation-delay: 0.25s
-        animation-delay: 0.25s
+          &.active
+            color: #ffffff
+            i
+              opacity: 1
 
-@-webkit-keyframes scaleIn
+          span
+            opacity: 1
+            @include transform(translateX(0))
+            @include animation(slideIn 0.15s backwards)
+            @include transition(transform 0.2s)
+        &:hover
+
+          span
+            color: #ffffff
+            opacity: 1
+            @include transform(translateX(-5px))
+
+          i
+            color: #ffffff
+            opacity: 1
+
+        &:first-of-type
+          i, span
+            @include animation-delay(0.05s)
+
+        &:nth-of-type(2)
+          i, span
+            @include animation-delay(0.1s)
+
+        &:nth-of-type(3)
+          i, span
+            @include animation-delay(0.15s)
+
+        &:nth-of-type(4)
+          i, span
+            @include animation-delay(0.2s)
+
+@include keyframes(scaleIn)
   from
-    -webkit-transform: translateY(-50%) scale(0)
+    @include transform(translateY(-50%) scale(0))
 
   to
-    -webkit-transform: translateY(-50%) scale(1)
+    @include transform(translateY(-50%) scale(1))
 
-
-@-moz-keyframes scaleIn
-  from
-    -moz-transform: translateY(-50%) scale(0)
-
-  to
-    -moz-transform: translateY(-50%) scale(1)
-
-
-@keyframes scaleIn
-  from
-    -webkit-transform: translateY(-50%) scale(0)
-    -moz-transform: translateY(-50%) scale(0)
-    -ms-transform: translateY(-50%) scale(0)
-    -o-transform: translateY(-50%) scale(0)
-    transform: translateY(-50%) scale(0)
-
-  to
-    -webkit-transform: translateY(-50%) scale(1)
-    -moz-transform: translateY(-50%) scale(1)
-    -ms-transform: translateY(-50%) scale(1)
-    -o-transform: translateY(-50%) scale(1)
-    transform: translateY(-50%) scale(1)
-
-
-@-webkit-keyframes slideIn
+@include keyframes(slideIn)
   from
     opacity: 0
-    -webkit-transform: translateX(-25px)
+    @include transform(translateX(-25px))
 
   to
     opacity: 1
-    -webkit-transform: translateX(0)
-
-
-@-moz-keyframes slideIn
-  from
-    opacity: 0
-    -moz-transform: translateX(-25px)
-
-  to
-    opacity: 1
-    -moz-transform: translateX(0)
-
-
-@keyframes slideIn
-  from
-    opacity: 0
-    -webkit-transform: translateX(-25px)
-    -moz-transform: translateX(-25px)
-    -ms-transform: translateX(-25px)
-    -o-transform: translateX(-25px)
-    transform: translateX(-25px)
-
-  to
-    opacity: 1
-    -webkit-transform: translateX(0)
-    -moz-transform: translateX(0)
-    -ms-transform: translateX(0)
-    -o-transform: translateX(0)
-    transform: translateX(0)
+    @include transform(translateX(0))
