@@ -133,14 +133,14 @@ DashboardHelper =
               <% } %>
             </li>
           </ul>
-          <a href="#" class="more">
+          <a href="javascript:void(0)" class="more">
             <i class="fa fa-arrow-circle-down"></i>More
           </a>
         </section>
         <section class="status">
           <h1>
             Status
-            <a href="#" class="less">
+            <a href="javascript:void(0)" class="less">
               <i class="fa fa-arrow-circle-up"></i>Show Less
             </a>
           </h1>
@@ -192,7 +192,7 @@ DashboardHelper =
       """
 
     init: ->
-      @container = $('body')
+      @container = $('#card_dock')
       @container.masonry
         columnWidth: 1
         itemSelector: '.card'
@@ -232,6 +232,20 @@ DashboardHelper =
       _.delay reset, 300
       _.delay reset, 600
 
+  nav_menu: ->
+    if $('.cd-stretchy-nav').length > 0
+      stretchyNavs = $('.cd-stretchy-nav')
+      stretchyNavs.each ->
+        stretchyNav = $(this)
+        stretchyNavTrigger = stretchyNav.find('.cd-nav-trigger')
+        stretchyNavTrigger.on 'click', (event) ->
+          event.preventDefault()
+          stretchyNav.toggleClass 'nav-is-visible'
+
+      $(document).on 'click', (event) ->
+        !$(event.target).is('.cd-nav-trigger') and !$(event.target).is('.cd-nav-trigger span') and stretchyNavs.removeClass('nav-is-visible')
+
+
 $(document).ready ->
   DashboardHelper.survey_tiles.init()
   Waves.init()
@@ -242,5 +256,7 @@ $(document).ready ->
   $('#survaider_form').submit (e) ->
     e.preventDefault()
     DashboardHelper.create_survey()
+
+  DashboardHelper.nav_menu()
 
 window.DashboardHelper = DashboardHelper
