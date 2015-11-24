@@ -107,7 +107,7 @@
       var dat, i, len, ref, results;
       $('.spinner').hide();
       if (data.data.length === 0) {
-        $('.alt-text').slideDown();
+        $('.alt-text').fadeIn();
       }
       ref = data.data.reverse();
       results = [];

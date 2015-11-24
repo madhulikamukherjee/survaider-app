@@ -254,7 +254,7 @@ $(document).ready ->
     $('.spinner').hide()
 
     if data.data.length is 0
-      $('.alt-text').slideDown()
+      $('.alt-text').fadeIn()
 
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
 
