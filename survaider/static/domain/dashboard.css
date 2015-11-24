@@ -126,6 +126,16 @@ section.dock div.alt-text {
   margin: auto;
   display: none;
 }
+@media (max-width: 1023px) {
+  section.dock div.alt-text {
+    width: 80%;
+  }
+}
+@media (max-width: 550px) {
+  section.dock div.alt-text {
+    width: 100%;
+  }
+}
 
 div.card {
   width: 270px;
