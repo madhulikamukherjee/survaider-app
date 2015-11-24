@@ -891,6 +891,7 @@ var Boner = {
 
     Formbuilder.uploads = {
       init: function(opt) {
+        var show_bounce;
         this.dzbtn = Ladda.create(document.querySelector('#sb-dz-attach'));
         this.dzbtnel = $('#sb-dz-attach');
         this.dz = new Dropzone('div#sb-attach', {
@@ -957,6 +958,8 @@ var Boner = {
         this.th_el = $('#sb-thumbnails');
         this.load_old();
         this.init_thumbnail();
+        show_bounce = _.bind(this.show_routine, this);
+        this.show = _.debounce(show_bounce, 100);
         return this.at = $('#sb-attach');
       },
       init_thumbnail: function() {
@@ -989,24 +992,24 @@ var Boner = {
           value: i.name
         })).imagepicker();
       },
-      show: function(t, r, delegate, callback, selected) {
+      show_routine: function(t, r, delegate, callback, selected) {
         var scroll;
         this.at.removeClass('top');
         this.at.removeClass('right');
         if (delegate === 'right') {
-          this.at.addClass('right').css('top', t - (this.at.height() * 0.5)).css('position', 'fixed').css('right', r).css('left', 'auto').addClass('open');
+          this.at.addClass('right').css('top', t - (this.at.height() * 0.5)).css('position', 'fixed').css('right', r).css('left', 'auto').css('z-index', 2000).addClass('open');
         } else if (delegate === 'logo') {
-          this.at.addClass('top').css('top', t - 60).css('position', 'absolute').css('left', r - this.at.width() * 0.5 - 90).css('right', 'auto').addClass('open');
+          this.at.addClass('top').css('top', t - 60).css('position', 'absolute').css('left', r - this.at.width() * 0.5 - 90).css('right', 'auto').css('z-index', 10).addClass('open');
         }
         this.th_el.val(selected).imagepicker();
         this.callback = callback;
         scroll = _.bind(function() {
           return $(".sb-images-container").scrollTo("div.thumbnail.selected", {
-            duration: 500,
+            duration: 200,
             offset: -50
           });
         });
-        return _.delay(scroll, 500);
+        return _.delay(scroll, 100);
       },
       hide: function() {
         var df;
