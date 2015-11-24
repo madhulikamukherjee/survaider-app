@@ -561,9 +561,10 @@ div.card .primary {
   font-size: 14px;
   visibility: hidden;
   overflow: hidden;
-  -webkit-transition: visibility 0.3s;
-  -moz-transition: visibility 0.3s;
-  transition: visibility 0.3s;
+  width: 0;
+  -webkit-transition: visibility 0.3s, width 0.1s step-end;
+  -moz-transition: visibility 0.3s, width 0.1s step-end;
+  transition: visibility 0.3s, width 0.1s step-end;
   text-align: right;
 }
 .cd-stretchy-nav ul li a {
@@ -643,6 +644,10 @@ div.card .primary {
   transform: rotate(45deg);
 }
 .cd-stretchy-nav.nav-is-visible ul {
+  width: 100%;
+  -webkit-transition: visibility 0.3s, width 0.01s step-start;
+  -moz-transition: visibility 0.3s, width 0.01s step-start;
+  transition: visibility 0.3s, width 0.01s step-start;
   visibility: visible;
 }
 .cd-stretchy-nav.nav-is-visible ul li a i {
