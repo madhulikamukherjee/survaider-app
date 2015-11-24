@@ -1,3 +1,4 @@
+{% from 'macros.html' import favicons %}
 <!DOCTYPE html>
 <html {% block html_attr %}{% endblock %}>
   {% block head %}
@@ -6,9 +7,7 @@
     <meta charset="utf-8" />
     <title>{% block title %}{{ title }} | Survaider{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    {{ favicons() }}
     <meta content="" name="description" />
     <meta content="Prashant Sinha" name="author" />
 
