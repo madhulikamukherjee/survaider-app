@@ -95,7 +95,10 @@ class SurveyMetaController(Resource):
         if action == 'json':
             if args['editing'] == 'true':
                 return svey.struct
-            return svey.render_json
+            try:
+                return svey.render_json
+            except TypeError as e:
+                raise APIException(str(e), 400)
 
         elif action == 'deepjson':
             return svey.render_deepjson

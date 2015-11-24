@@ -303,6 +303,9 @@ class Survey(db.Document):
             }
         }
 
+        if not self.gamified_enabled:
+            raise TypeError("This survey does not have a Gamified Representation.")
+
         rt = {}
         cp = self.struct['fields']
 
