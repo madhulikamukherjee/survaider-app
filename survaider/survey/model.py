@@ -364,7 +364,7 @@ class Survey(db.Document):
 
         rt['fields'] = cp
         rt['survey_title'] = self.struct['screens'][0]
-        rt['survey_logo'] = self.struct['screens'][3] if len(self.struct['screens']) >= 3 else ''
+        rt['survey_logo'] = Uploads.url_for_surveyimg(self.struct['screens'][3]) if len(self.struct['screens']) >= 3 else ''
         rt['survey_description'] = self.struct['screens'][1]
         rt['survey_footer'] = self.struct['screens'][2]
         return rt
