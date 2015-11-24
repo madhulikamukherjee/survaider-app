@@ -333,10 +333,11 @@ var Boner = {
     };
 
     EditFieldView.prototype.attachImage = function(e) {
-      var callback, ol_val, t, target;
+      var callback, ol_val, r, t, target;
       target = $(e.currentTarget);
       ol_val = target.find('input[data-sb-attach=uri]').val();
       t = target.offset().top + (target.outerHeight() * 0.125) - $(window).scrollTop();
+      r = $(window).width() - target.offsetParent().offset().left + 10;
       callback = _.debounce((function(_this) {
         return function(uridat) {
           var uri;
@@ -348,7 +349,7 @@ var Boner = {
           }
         };
       })(this), 500);
-      return Formbuilder.uploads.show(t, callback, ol_val);
+      return Formbuilder.uploads.show(t, r, 'right', callback, ol_val);
     };
 
     EditFieldView.prototype.forceRender = function() {
@@ -696,7 +697,9 @@ var Boner = {
     ScreenView.prototype.events = {
       'input #survey_title': 'update',
       'input #survey_description': 'update',
-      'input #survey_thank_you': 'update'
+      'input #survey_thank_you': 'update',
+      'input #survey_image': 'update',
+      'click .screen_img': 'attach_logo'
     };
 
     ScreenView.prototype.initialize = function(options) {
@@ -710,18 +713,49 @@ var Boner = {
     };
 
     ScreenView.prototype.update = _.debounce(function() {
-      this.dat = [$('#survey_title').val(), $('#survey_description').val(), $('#survey_thank_you').val()];
+      this.dat = [$('#survey_title').val(), $('#survey_description').val(), $('#survey_thank_you').val(), $('#survey_image').val()];
+      this.renderIcon();
       return this.formBuilder.mainView.doForceSave();
     }, 500);
+
+    ScreenView.prototype.attach_logo = function(e) {
+      var callback, ol_val, p, t, target;
+      target = $(e.currentTarget);
+      ol_val = $('#survey_image').val();
+      t = target.offset().top + (target.outerHeight()) + 10;
+      p = target.offset().left + (target.outerWidth() * 0.5);
+      callback = _.debounce((function(_this) {
+        return function(uridat) {
+          var uri;
+          uri = $('#survey_image');
+          if (uridat !== "") {
+            return uri.val(uridat).trigger('input');
+          } else {
+            return uri.val("").trigger('input');
+          }
+        };
+      })(this), 500);
+      return Formbuilder.uploads.show(t, p, 'logo', callback, ol_val);
+    };
 
     ScreenView.prototype.toJSON = function() {
       return this.dat;
     };
 
+    ScreenView.prototype.renderIcon = function() {
+      if ($('#survey_image').val() !== "") {
+        return $('#survey_image_status').show();
+      } else {
+        return $('#survey_image_status').hide();
+      }
+    };
+
     ScreenView.prototype.render = function(dat) {
       $('#survey_title').val(dat[0]);
       $('#survey_description').val(dat[1]);
-      return $('#survey_thank_you').val(dat[2]);
+      $('#survey_thank_you').val(dat[2]);
+      $('#survey_image').val(dat[3]);
+      return this.renderIcon();
     };
 
     return ScreenView;
@@ -955,14 +989,24 @@ var Boner = {
           value: i.name
         })).imagepicker();
       },
-      show: function(t, callback, selected) {
-        this.at.css('top', t - (this.at.height() * 0.5)).addClass('open');
+      show: function(t, r, delegate, callback, selected) {
+        var scroll;
+        this.at.removeClass('top');
+        this.at.removeClass('right');
+        if (delegate === 'right') {
+          this.at.addClass('right').css('top', t - (this.at.height() * 0.5)).css('position', 'fixed').css('right', r).css('left', 'auto').addClass('open');
+        } else if (delegate === 'logo') {
+          this.at.addClass('top').css('top', t - 60).css('position', 'absolute').css('left', r - this.at.width() * 0.5 - 90).css('right', 'auto').addClass('open');
+        }
         this.th_el.val(selected).imagepicker();
         this.callback = callback;
-        return $(".sb-images-container").scrollTo("div.thumbnail.selected", {
-          duration: 500,
-          offset: -50
+        scroll = _.bind(function() {
+          return $(".sb-images-container").scrollTo("div.thumbnail.selected", {
+            duration: 500,
+            offset: -50
+          });
         });
+        return _.delay(scroll, 500);
       },
       hide: function() {
         var df;
@@ -1454,7 +1498,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-12">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span><br>\n            <div class="sb-images">\n              <div class="sb-images-container">\n                <select class="image-picker show-html" id="sb-thumbnails"></select>\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-12 m-t-10 sm-m-t-10">\n            <a class="btn btn-primary font-montserrat btn-sm ladda-button"\n               id="sb-dz-attach"\n               data-style="expand-left">\n               <span class="ladda-label">Upload</span>\n            </a>\n            <small><span class="font-montserrat text-uppercase bold">You may also Drag and Drop the image here.</span></small>\n            <div class="pull-right">\n              <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5" onclick="Formbuilder.uploads.hide();">Done</button>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n<div class="modal fade slide-up sb-rich-input" id="sb_upload_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-md">\n    <div class="modal-content-wrapper">\n      <div class="modal-content p-t-10 p-b-10 p-l-10 p-r-10 ">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i></button>\n        <div class="container-xs-height full-height p-10">\n          <div class="row-xs-height">\n            <div class="col-xs-12">\n              <span class="font-montserrat text-uppercase bold">Field Text</span>\n              <div class="wysiwyg5-wrapper b-a b-grey">\n                <div id="sb-edit-rich"></div>\n              </div>\n            </div>\n          </div>\n          <br>\n          <div class="row-xs-height">\n            <div class="col-xs-8">\n              <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n              <div class="sb-thumbnails" id="sb-thumbnaxxils">\n              </div>\n            </div>\n            <div class="col-xs-4">\n              <div class="dropzone" id="sbDropxxzone"></div>\n            </div>\n          </div>\n\n            <div class="row-xs-height">\n              <div class="col-xs-8">\n                <div class="p-t-20 clearfix p-l-10 p-r-10">\n                  <div class="pull-left">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                  <div class="pull-right">\n                    <p class="bold font-montserrat text-uppercase"></p>\n                  </div>\n                </div>\n              </div>\n              <div class="col-xs-4 m-t-10 sm-m-t-10">\n                <button type="button" class="btn btn-primary font-montserrat btn-block m-t-5">Apply Changes</button>\n              </div>\n            </div>\n\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n</div>\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-12">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span><br>\n            <div class="sb-images">\n              <div class="sb-images-container">\n                <select class="image-picker show-html" id="sb-thumbnails"></select>\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-12 m-t-10 sm-m-t-10">\n            <a class="btn btn-primary font-montserrat btn-sm ladda-button"\n               id="sb-dz-attach"\n               data-style="expand-left">\n               <span class="ladda-label">Upload</span>\n            </a>\n            <small><span class="font-montserrat text-uppercase bold">You may also Drag and Drop the image here.</span></small>\n            <div class="pull-right">\n              <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5" onclick="Formbuilder.uploads.hide();">Done</button>\n            </div>\n          </div>\n        </div>\n      </div>\n';
 
 }
 return __p
@@ -1474,7 +1518,7 @@ this["Formbuilder"]["templates"]["partials/right_side"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you"></textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n\n      <div class="container sb-attach right" id="sb-links">\n        <div class="row">\n          <div class="col-xs-12">\n            <h1>:(</h1>\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span>\n          </div>\n        </div>\n      </div>\n';
+__p += '<div class=\'sb-right\'>\n  <div id=\'svg-canvas\'></div>\n  <div class="sb-survey-description above">\n      <p class="section">Introduction Screen</p>\n      <div class="screen_head">\n        <input type="text" placeholder="Survey Title" value="" id="survey_title">\n        <input type="text" id="survey_image" style="display:none">\n        <button class="screen_img">Logo <i class="fa fa-paperclip" id="survey_image_status"></i></button>\n        <textarea id="survey_description"></textarea>\n        <button class="target_O"\n                id = "i"\n                data-target = "top_out"\n                data-target-index = "0"\n        ></button>\n      </div>\n  </div>\n  <div class=\'sb-response-fields\'>\n  </div>\n  <div class="sb-survey-description below">\n      <p class="section">End Screen</p>\n      <textarea id="survey_thank_you"></textarea>\n      <button class="target_O"\n              id = "j"\n              data-target = "top_in"\n              data-target-index = "0"\n      ></button>\n  </div>\n</div>\n';
 
 }
 return __p
