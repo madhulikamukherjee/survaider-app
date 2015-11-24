@@ -25,6 +25,8 @@ html, body
 body
   font-family: $main_font
   background: $base
+  min-height: 100vh
+  margin-bottom: 100px
 
   @media (min-width: 1024px)
     width: 1024px
@@ -117,6 +119,23 @@ section.dock
 
     @media (max-width: 550px)
       width: 100%
+
+footer
+  color: #ffffff
+  opacity: 0.8
+  font-size: 12px
+  text-align: center
+  position: absolute
+  width: 100%
+  left: 0
+  bottom: -100px
+  padding: 20px
+
+  p
+    margin: 0
+
+  a
+    color: #ffffff
 
 div.card
   $width: 270px

@@ -25,6 +25,8 @@ html, body {
 body {
   font-family: "Montserrat";
   background: #33495F;
+  min-height: 100vh;
+  margin-bottom: 100px;
 }
 @media (min-width: 1024px) {
   body {
@@ -135,6 +137,24 @@ section.dock div.alt-text {
   section.dock div.alt-text {
     width: 100%;
   }
+}
+
+footer {
+  color: #ffffff;
+  opacity: 0.8;
+  font-size: 12px;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: -100px;
+  padding: 20px;
+}
+footer p {
+  margin: 0;
+}
+footer a {
+  color: #ffffff;
 }
 
 div.card {
