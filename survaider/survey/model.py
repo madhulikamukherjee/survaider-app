@@ -338,7 +338,7 @@ class Survey(db.Document):
         rt['game_description'] = self.struct['screens'][1]
         rt['game_footer'] = self.struct['screens'][2]
 
-        give_img = len(self.struct['screens']) >= 3 and len(self.struct['screens'][3]) > 1
+        give_img = len(self.struct['screens']) >= 4 and len(self.struct['screens'][3]) > 1
 
         rt['survey_logo'] = Uploads.url_for_surveyimg(self.struct['screens'][3]) if give_img else False
 
@@ -369,7 +369,7 @@ class Survey(db.Document):
         rt['fields'] = cp
         rt['survey_title'] = self.struct['screens'][0]
 
-        give_img = len(self.struct['screens']) >= 3 and len(self.struct['screens'][3]) > 1
+        give_img = len(self.struct['screens']) >= 4 and len(self.struct['screens'][3]) > 1
 
         rt['survey_logo'] = Uploads.url_for_surveyimg(self.struct['screens'][3]) if give_img else False
         rt['survey_description'] = self.struct['screens'][1]
