@@ -78,9 +78,39 @@ header
       .container
         @include animation(moveIn 0.4s)
 
-section#card_dock
-  margin: 0 auto
+section.dock
   width: 100%
+
+  & > h1
+    font-size: 12px
+    color: #ffffff
+    position: relative
+
+    span
+      margin-left: 40px
+      padding: 0 20px
+      background: $base
+
+
+    &::after
+      content: ''
+      background: #ffffff
+      height: 1px
+      top: 50%
+      left: 0
+      right: 0
+      position: absolute
+      z-index: -1
+      border-radius: 50%
+
+  div#card_dock
+    margin: 0 auto
+
+  div.alt-text
+    color: #ffffff
+    width: 50%
+    margin: auto
+    display: none
 
 div.card
   $width: 270px
@@ -625,3 +655,34 @@ button, input
 
   100%
     @include transform(translateY(-100vh))
+
+.spinner
+  width: 70px
+  text-align: center
+  margin: 150px auto
+
+  > div
+    width: 18px
+    height: 18px
+    background-color: #ffffff
+    border-radius: 100%
+    display: inline-block
+    @include animation(sk-bouncedelay 1.4s infinite ease-in-out both)
+
+  > span
+    color: #FFFFFF
+    opacity: 0.6
+    margin-top: 20px
+    display: block
+
+  .bounce1
+    @include animation-delay(-0.32s)
+  .bounce2
+    @include animation-delay(-0.16s)
+
+@include keyframes(sk-bouncedelay)
+  0%, 80%, 100%
+    @include transform(scale(0))
+
+  40%
+    @include transform(scale(1))

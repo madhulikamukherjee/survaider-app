@@ -77,9 +77,7 @@
             return _this.container.masonry();
           };
         })(this), this);
-        _.delay(reset, 100);
-        _.delay(reset, 300);
-        return _.delay(reset, 600);
+        return _.delay(reset, 700);
       }
     },
     nav_menu: function() {
@@ -107,6 +105,10 @@
     Waves.init();
     $.getJSON('/api/survey', function(data) {
       var dat, i, len, ref, results;
+      $('.spinner').hide();
+      if (data.data.length === 0) {
+        $('.alt-text').slideDown();
+      }
       ref = data.data.reverse();
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {

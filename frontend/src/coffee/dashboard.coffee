@@ -228,9 +228,9 @@ DashboardHelper =
         @container.masonry()
       , @
 
-      _.delay reset, 100
-      _.delay reset, 300
-      _.delay reset, 600
+      # _.delay reset, 10
+      # _.delay reset, 300
+      _.delay reset, 700
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0
@@ -250,9 +250,14 @@ $(document).ready ->
   DashboardHelper.survey_tiles.init()
   Waves.init()
 
-  $.getJSON('/api/survey', (data) ->
+  $.getJSON '/api/survey', (data) ->
+    $('.spinner').hide()
+
+    if data.data.length is 0
+      $('.alt-text').slideDown()
+
     DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
-  )
+
   $('#survaider_form').submit (e) ->
     e.preventDefault()
     DashboardHelper.create_survey()
