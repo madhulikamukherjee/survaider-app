@@ -111,7 +111,7 @@
                         {{s_id}}
                       </a>
                     </li>
-                    <li>
+                    <!-- <li>
                       <a href="">
                         Last Edited On
                       </a>
@@ -120,7 +120,7 @@
                       <a href="">
                         12th of November, 2015 | 9:00 AM (GMT)
                       </a>
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
               </div>
@@ -164,26 +164,31 @@
                   <div class="col-sm-8">
                     <div class="panel panel-default">
                       <div class="panel-heading">
-                        <h4>
-                          {{right_title}}
-                        </h4>
+                       
                       </div>
                       <div class="panel-body">
-                        <canvas id="base" class="chart-base" chart-type="type" chart-data="data" chart-labels="labels" chart-legend="true">
-                        </canvas>
+                           <span ng-show="cond">
+                                  <canvas id="base" class="chart-base" chart-type="type"chart-data="data" chart-labels="labels" chart-legend="true">
+
+                                  </canvas> 
+                              </span>
+              
+                <span ng-hide="cond">Graph Report
+                <div class="paneln panel-default"> <div class="panel-body">Coming soon</div></div>
+                </span>
 
                         <div class="clearfix">
                         </div>
                         <div class="btn-group pull-left ">
-                          <button class=" btn btn-primary" ng-click="lol(cid,'p')" ng-disabled="cid<1" >
+                          <button class=" btn btn-primary" ng-click=navigate("prev") ng-disabled= "counter<1" >
                             Prev
                           </button>
-                          <button class="btn btn-success" ng-click="lol(cid,'n')" ng-init="cid=1">
+                          <button class="btn btn-success" ng-click= navigate("next") ng-disabled= "counter>total_question-2">
                             Next
                           </button>
                         </div>
                         <div class="btn-group pull-right btn-toggle">
-                          <button class="btn btn-primary active" ng-click="toggle = !toggle" >
+                          <button class="btn btn-primary active" ng-click="toggle()" >
                             {{toggleText}}
                           </button>
                         </div>
