@@ -11,7 +11,7 @@ import math
 
 from flask import request, g
 from bson.objectid import ObjectId
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
 from survaider.user.model import User
@@ -196,8 +196,8 @@ class Survey(db.Document):
         try:
             validate(value, schema)
             self.structure.update(value)
-        except ValidationError:
-            raise TypeError('Struct value invalid')
+        except ValidationError as e:
+            raise TypeError('Struct value invalid' + str(e))
 
     @property
     def gamified_enabled(self):
@@ -209,10 +209,9 @@ class Survey(db.Document):
             'group_rating': [2, 3],
         }
         for field in self.struct['fields']:
-            if all([
-                'options' in field['field_options'],
-                field['field_type'] in field_lim
-            ]):
+            if field['field_type'] in field_lim:
+                if not 'options' in field['field_options']:
+                    return False
                 count = len(field['field_options']['options'])
                 lower, upper = field_lim[field['field_type']]
                 if not lower <= count <= upper:
@@ -328,6 +327,8 @@ class Survey(db.Document):
                 for game, constr in game_map[typ].items():
                     if constr[0] <= op_len <= constr[1]:
                         games.append(game)
+
+                print(games)
 
                 return random.choice(games)
 
