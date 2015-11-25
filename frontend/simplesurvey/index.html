@@ -31,13 +31,17 @@
               <img ng-src="{{survey_logo}}" alt="Logo" />
             </a>
             <button type="button" class="sv-button sv-button-large" ng-click="moveHeaderSlide()">Start Survey</button>
+
+            <!-- Gray Star Image Load Hack(For Rating and Group Rating Questions) -->
+            <img id="star-image-hack" src="img/star-gray.png" />
+
           </section>
 
           <!-- <div class="sv-questions-container" id="questions-container"> -->
 
             <!-- Begin Loop on Questions -->
 
-            <section class="sv-page sv-page-{{$index+2}} sv-question-wrapper" ng-repeat="question in questions" ng-init="$questionIndex = $index" sv-question-directive  id="question-{{question.id}}">
+            <section ng-style="{{getTheBackgroundColor($index)}}" class="sv-page sv-question-wrapper" ng-repeat="question in questions" ng-init="$questionIndex = $index" sv-question-directive  id="question-{{question.id}}">
 
               <!-- Begin Question -->
 
@@ -63,13 +67,13 @@
                     <div class="sv-short-text-input">
 
                       <span class="input input--madoka">
-              					<input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
-              					<label class="input__label input__label--madoka" for="short-text-{{question.id}}">
-              						<svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
-              							<path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
-              						</svg>
-              					</label>
-              				</span>
+                        <input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
+                        <label class="input__label input__label--madoka" for="short-text-{{question.id}}">
+                          <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
+                            <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
+                          </svg>
+                        </label>
+                      </span>
 
                     </div>
 
@@ -147,6 +151,7 @@
                   <!-- Template 7 (Group-Rating, For every Sub-Part 5 Radio Buttons for a single response) -->
 
                   <div class="sv-question-switch" ng-switch-when="group_rating">
+
 
                     <div class="sv-question-group-rating-input" ng-repeat="option in question.subparts">
 
@@ -248,16 +253,30 @@
             <!-- End Loop on Questions -->
           <!-- </div> -->
 
-          <section class="sv-footer-page sv-page sv-page-13" id="footer-slide">
-            <button type="submit" class="sv-button sv-button-medium" ng-click="formSubmit()">Submit</button>
-            <h1 class="sv-footer-final-message">Congratulations! You just filled Survaider Survey. Click <a href="https://www.survaider.com">here</a> to build yours and experience new age of surveying!</h1>
-            <h1 class="sv-survey-footer" ng-bind="survey_footer"></h3>
-            <a class="sv-footer-survaider-logo" href="https://www.survaider.com">
-              <img src="img/survaider-logo.png" alt="" />
-            </a>
+          <!-- FOOTER -->
+          <section class="sv-footer-page sv-page sv-page-1" id="footer-slide">
+            <button id="footer-submit-button" type="submit" class="sv-button sv-button-large" ng-click="formSubmit()">Submit</button>
           </section>
+          <!-- END FOOTER -->
 
-          <section class="pagination">
+          <!-- FINAL SCREEN -->
+          <section class="sv-final-page sv-page sv-page-2" id="final-slide">
+            <div class="final-slide-wrapper">
+              <h1 class="sv-surveyor-message" ng-bind="survey_footer"></h3>
+              <div class="sv-final-footer">
+                <h1 class="sv-message">Congratulations! You just filled Survaider Survey. Click <a href="https://www.survaider.com">here</a> to build yours and experience new age of surveying!</h1>
+                <a class="sv-final-survaider-logo" href="https://www.survaider.com">
+                  <h3>Made with Survaider</h3>
+                  <img src="img/survaider-logo.png" alt="" />
+                </a>
+              </div>
+
+            </div>
+          </section>
+          <!-- END FINAL SCREEN -->
+
+
+          <section class="pagination" ng-hide=" activeSlide.slideType == 'final' ">
             <ul>
               <li ng-repeat="question in questions" ng-class="{ 'done' : question.isCompleted, 'active' : activeSlide.question.id == question.id, 'disabled' : question.isDisabled, 'notRequired' : !question.isRequired }" ng-click="paginate(question)" ng-disabled="question.isDisabled"></li>
             </ul>
@@ -265,7 +284,7 @@
 
           <!-- Begin Page Sidebar -->
 
-          <div class="sv-sidebar-wrapper">
+          <div class="sv-sidebar-wrapper" ng-hide=" activeSlide.slideType == 'final' ">
             <div class="sv-sidebar">
               <!-- <div class="flash-message" ng-hide="!isThereAFlashMessage" >
                 <h3 ng-bind="flashMessage"></h3>
@@ -288,13 +307,6 @@
           </div>
 
           <!-- End Page Sidebar -->
-
-          <div class="sv-logger">
-            <p>
-
-            </p>
-            <button type="button" name="button" class="sv-button sv-button-small">Close</button>
-          </div>
 
         </main>
 

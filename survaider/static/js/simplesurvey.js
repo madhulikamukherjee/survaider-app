@@ -40885,11 +40885,10 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 }
 
-
 YesNoQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
-    q_res: this.response
+    q_res: 'a_' + this.response
   }
 }
 ;
@@ -41265,6 +41264,13 @@ LongTextQuestion.prototype.generateResponse = function(){
     $scope.isOnQuestion = false;
     $scope.isAnimating = false;
 
+    var backgroundColors = ['#fdc162', '#fd6a62', '#0ac2d2', '#7bb7fa', '#60d7a9'];
+
+    $scope.getTheBackgroundColor = function(index){
+      return '{ \'background-color\' : \'' + backgroundColors[index%backgroundColors.length]   + '\'}';
+    }
+
+
     $scope.sortableOptions = {
       stop: function(e, ui) {
         var rankingQuestion = $scope.activeSlide.question;
@@ -41510,10 +41516,6 @@ LongTextQuestion.prototype.generateResponse = function(){
 
 
       var newSlide = $(index);
-
-      if (index != '#footer-slide') {
-        // $scope.activeSlides.push(newSlide);
-      }
 
       movePages('down', $('#question-' + question.id), newSlide);
 
@@ -41767,7 +41769,7 @@ LongTextQuestion.prototype.generateResponse = function(){
 
          });
 
-         // Send a get request in beginning to start a session
+        //  Send a get request in beginning to start a session
          $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
 
@@ -41785,11 +41787,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                messageEl = sidebar.find('.current-message h3');
            switch (type) {
              case 'short_text':
-               messageEl.html('Minimum 2 Charaters');
+               messageEl.html('Minimum 10 Charaters');
                break;
 
              case 'long_text':
-               messageEl.html('Minimum 2 Charaters');
+               messageEl.html('Minimum 40 Charaters');
                break;
 
              case 'single_choice':
@@ -41856,15 +41858,11 @@ LongTextQuestion.prototype.generateResponse = function(){
          }
 
          $scope.formSubmit = function(){
+           var finalSlide = $('#final-slide');
+           changeActiveSlideType('final');
+           changeActiveSlideElement(finalSlide);
            checkTheNumberOfRemainingQuestions();
-           var json = generateTheJSON();
-
-           $('.sv-logger pre').text(JSON.stringify(json, null, '\t'));
-           $('.sv-logger').addClass('is-active');
-           $('.sv-logger button').click(function(){
-             $('.sv-logger').removeClass('is-active');
-           });
-
+           movePages('down', $('#footer-slide'), finalSlide);
          }
 
          function generateTheJSON(){

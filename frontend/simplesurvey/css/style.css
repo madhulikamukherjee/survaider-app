@@ -79,7 +79,8 @@ main {
   width: 100px;
   height: 100%;
   top: 0;
-  right: 0; }
+  right: 0;
+  overflow: auto; }
   .pagination ul {
     position: absolute;
     top: 50%;
@@ -97,6 +98,10 @@ main {
       -webkit-transition: -webkit-transform 0.3s, background-color 0.3s;
       -moz-transition: -moz-transform 0.3s, background-color 0.3s;
       transition: transform 0.3s, background-color 0.3s; }
+      .pagination ul li:first-child {
+        margin-top: 0; }
+      .pagination ul li:last-child {
+        margin-bottom: 0; }
       .pagination ul li.done {
         border: none;
         background-color: #4cd29e !important; }
@@ -794,19 +799,18 @@ main {
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
-.sv-footer-page button {
-  margin: 2em 0; }
+.sv-footer-page {
+  position: relative; }
 
-.sv-footer-final-messageP {
-  margin: 1em 0; }
-
-.sv-survey-footer {
-  margin: 2em 0 0 0; }
-
-.sv-footer-survaider-logo img {
-  max-width: 100%;
-  max-height: 150px;
-  margin-top: 2em; }
+#footer-submit-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); }
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
@@ -922,25 +926,53 @@ main {
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
-.sv-logger {
-  min-height: 100vh;
-  z-index: 2000000;
-  position: fixed;
-  top: 0;
-  background: white;
-  left: 0;
-  width: 100%;
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: visibility 0.3s, opacity 0.3s;
-  -moz-transition: visibility 0.3s, opacity 0.3s;
-  transition: visibility 0.3s, opacity 0.3s; }
-  .sv-logger p {
-    font-size: 18px;
-    font-weight: 900;
-    line-height: 30px; }
-  .sv-logger.is-active {
-    visibility: visible;
-    opacity: 1; }
+.sv-final-page {
+  width: 100% !important;
+  height: 100% !important; }
+  .sv-final-page .final-slide-wrapper {
+    width: 80%;
+    margin: 2em auto 0; }
+
+.sv-surveyor-message {
+  font-size: 1.5em;
+  position: absolute;
+  top: 2em;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+  -moz-transform: translate(-50%);
+  -ms-transform: translate(-50%);
+  -o-transform: translate(-50%);
+  transform: translate(-50%); }
+
+.sv-final-footer {
+  position: absolute;
+  bottom: 1em;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%); }
+  .sv-final-footer .sv-message {
+    margin-bottom: 2em;
+    font-size: 1.25em;
+    color: white; }
+
+.sv-final-survaider-logo {
+  display: block; }
+  .sv-final-survaider-logo h3 {
+    font-size: 1em;
+    color: white; }
+  .sv-final-survaider-logo img {
+    max-width: 100%;
+    max-height: 100px;
+    margin-top: 0.5em; }
+
+/*---------------------------------------------------*/
+/*---------------------------------------------------*/
+#star-image-hack {
+  display: none;
+  width: 0;
+  height: 0; }
 
 /*# sourceMappingURL=style.css.map */
