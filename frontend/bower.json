@@ -52,11 +52,15 @@
     "three.js": "~0.73.0",
     "q": "1.0.1",
     "backbone": "~1.2.3",
-    "Waves": "waves#~0.7.4"
+    "Waves": "waves#~0.7.4",
+    "uri-template.js": "~0.1.2"
   },
   "resolutions": {
     "jquery": "~2.0.3",
     "backbone": "~1.2.3",
-    "underscore": ">=1.7.0"
+    "underscore": ">=1.7.0",
+    "jquery-ui": "~1.11.4",
+    "bootstrap": "~3",
+    "font-awesome": "~4.4.0"
   }
 }
