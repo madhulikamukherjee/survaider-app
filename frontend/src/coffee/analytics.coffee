@@ -129,7 +129,7 @@
               N++
           j++
         # end of the while loop.
-        console.log new_data
+        # console.log new_data
         $('#tableWithSearch').DataTable
           'data': new_data
           dom: 'Brtip'

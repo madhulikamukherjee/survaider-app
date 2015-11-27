@@ -139,7 +139,6 @@
             }
             j++;
           }
-          console.log(new_data);
           return $('#tableWithSearch').DataTable({
             'data': new_data,
             dom: 'Brtip',
