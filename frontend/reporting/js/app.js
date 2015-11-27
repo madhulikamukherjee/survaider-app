@@ -1,20 +1,32 @@
 var myApp= angular.module("ReportApp",["chart.js"]);
+myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$timeout",function($http,$scope,$location,ChartJs,$timeout){
 
-myApp.controller("ReportController",["$scope","$log","$http","$location",function($scope,$log,$http,$location){
-    //Helper function 1
-    function check_if_exists (arg, aList) {
-        for (var i = 0; i < aList.length; i++) {
-            if (aList[i]==arg){
-                return true;
-            }
-            return false;
-        };
-    }//func1
-    // Helper function 2
+    //ToDO
+    //Change Panel for Non Graphical Report
+    //
+
+   $scope.toggle=function toggle(){
+
+   
+   if ($scope.type=="Bar") {
+    $scope.toggleText="Bar";
+    $scope.type="Pie";
+    $scope.data= $scope.data[0];
+
+   }
+   else if ($scope.type=="Pie") {
+    $scope.toggleText="Pie";
+    $scope.type="Bar"
+    $scope.data=[$scope.data];
+
+   };
+   ;
+}
+  // Helper function 2
     function cot (arr) {
-        var a = [], b = [], prev;
+       var a = [], b = [], prev;
 
-     // arr.sort();
+    arr.sort();
     for ( var i = 0; i < arr.length; i++ ) {
         if ( arr[i] !== prev ) {
             a.push(arr[i]);
@@ -25,203 +37,515 @@ myApp.controller("ReportController",["$scope","$log","$http","$location",functio
         prev = arr[i];
     }
 
+   
     return [a, b];
 
     }//func2
 
-    //Function 3
-    $scope.toggle= true;
-    $scope.$watch('toggle',function(){
-        $scope.toggleText = $scope.toggle ? 'Pie' : 'Polar';
-        $scope.type = $scope.type === 'PolarArea' ?
-        'Pie' : 'PolarArea';
-
-    })
-
-
-
-
-
-
-
+    //SID
     var s_id = $location.absUrl().split("/")[4].split(":")[1];
-
+    //URLS
     var survey_str= "/api/survey/"+s_id+"/json";
-    var json_uri= "/api/survey/"+s_id+"/response/aggregate";
+    var json_resp= "/api/survey/"+s_id+"/response/aggregate";
+    //Get Survey Json //Bad Way
+    $http.get(survey_str).success(function(struct){
+            $http.get(json_resp).success(function(resp){
+                //Now I have access to Survey Structure (struct) and Survey Response
+                $scope.stitle= struct.game_title; //Set Survey Title
+                $scope.question_list= resp.columns.slice(2);//Get question List
+                $scope.total_question= $scope.question_list.length;
+                
+                
+                $scope.typed="Text";
+                $scope.counter= 0;
+                // Destroy Chat
+                 $scope.$on('create', function (event, chart) {
+                            
+                           $scope.chartid= chart.id;
+                          
+                                })
+                
+             
+                $scope.total_r= resp.len;
+                        $scope.survey_id= resp.survey_id;
+                        $scope.q_total= resp.columns.length-2;
+                //We need to put up an init code here :(
+                    //So that the user doesn't sees an empty page.
+                    //
+                    $scope.cid =$scope.question_list[0];
+                        //Get Question Label !!c <3 Lol is Life.
+                        for (var i = 0; i < resp.questions.length; i++) {
+                            if (resp.questions[i][0]==$scope.cid) {
+                                $scope.question_label= resp.questions[i][1];
+                            };
+                        };
+                        // Get Question Type and Options List.
+                        for (var i = 0; i < struct.fields.length; i++) {
+                            if (struct.fields[i].cid==$scope.cid) {
+                                $scope.question_type = struct.fields[i].field_type;
+                                $scope.question_options= struct.fields[i].field_options;
+                            };
+                        };
+                
+                        //Get total responses for that question
+                        var responses_for_a_cid= [];
+                        var index= resp.columns.indexOf($scope.cid);
+                        for (var i = 0; i < resp.rows.length; i++) {
+                            var response= resp.rows[i][index];
+                            responses_for_a_cid.push(response);
+                        };
+                        // console.log(cot(["a","a","b","b"])); //Why wrong values? No idea. ==Solved --> missed sorting
+                        //If an option has no values. then add 0 as its default value otherwise Graph will not initialize. Bleh!
+                        var count = cot(responses_for_a_cid); //an array of two array [[options],[count]] // Remove null from here,
+                
+                        var count_options = count[0];//Should have used the same variable .. ??? SHould learn DRY
+                        var count_options_total= count[1];
+                        function option_map(){
+                            var a={};
+                            for (var i = 1; i < $scope.question_options.length+1; i++) {
+                                // a.push("a_"+i.toString());
+                                a["a_"+i.toString()]=$scope.question_options[i-1];
+                                //{"a_1":"option"}
+                            };
+                            return a;
+
+                        };
+                        try{
+                        var options_map= option_map(); //Useful for getting labels
+                    }
+                    catch(err){ console.log ("Error_option_map");}
+                        //Some graph variables
+
+                        var type , series;
+                        $scope.option_extra= "";
+                        //Now Set the Graph
+                         if ($scope.question_type=="short_text" || $scope.question_type=="long_text") {
+                            // clean();
+                          
+                            $scope.cond=false;
+                            $scope.option= "Response";
+                            //write a function to get responses.
+                         
+                            $scope.text= "Coming Soon ......";
+                            $scope.toggleText="Load More";
+
+                         }
+                        
+                         else if ($scope.question_type=="multiple_choice"){
+                            $scope.text= "";
+                            $scope.cond=true;
+                            $scope.type="Pie";
+                            $scope.toggleText="Bar";
+
+                            var label=[];
+                            for (var i = 0; i < count_options.length; i++) {
+
+                                var single_option= count_options[i].split("###");
+                            
+                                var to_push= "";
+                                for (var j = 0; j < single_option.length; j++) {
+                                    to_push += " "+ options_map[single_option[j]];
+                                 };
+                                
+                                 label.push(to_push);
+
+                            };
+                            
+                            
+                            $timeout(function() {
+                                            $scope.data=count_options_total;
+                                            $scope.labels=label;
+                                        },100);
+
+                         }
+                         else if ($scope.question_type=="ranking"){
+                            $scope.text="";
+                            $scope.cond=true;
+                            $scope.type="Line";
+                            $scope.toggleText="Toggle Not Allowed";
+                            //Logic ... 1st Rank 3 Points . 2nd 2 points
+                            //get option_list
+                            //get raw_responses, then split , and se
+                            var ranked={};
+                            for (var i = 0; i < raw_responses.length; i++) {
+                                var split= raw_responses[i].split("##")
+                                for (var j = split.length; j =0; j--) {
+                                    //check if key exists
+                                    if (split[i] in ranked) {
+                                        var oldVal= ranked.split[i];
+                                      }
+                                      else{
+                                        var oldVal=0;
+                                      };
+
+                                        //Add new value []
+                                        var newVal= oldVal +j;
+                                        ranked[split[i]]= newVal;
 
 
-    //Get survey structure
-    $http.get(survey_str).success(function(fata){
-        $http.get(json_uri).success(function(data){
-          // /  Init
-          $scope.stitle=fata.game_title;
-          $scope.s_id= fata.survey_id;
-             // $scope.type="Pie";
-             //    $scope.labels= ["A","B","C"];
-             //    $scope.data= [1,2,0];
+                                  
+
+                                };
+                                
+
+                            };
+                            //We now have a value array where key is the option and value is the weight
+                            var data= [];
+                            var label=[];
+                            for (var key in ranked){
+                                data.push(ranked[key]);
+                                label.push(option_map.ranked[key]);
+                            };
+                            $scope.data = data;
+                            $scope.labels= label;
+
+                         }
+                         else if ($scope.question_type=="rating"){
+                            $scope.text="";
+                            $scope.type="Pie";
+                             $scope.cond=true;
+                             $scope.toggleText="Bar";
+                             $scope.option= "Rated";
+                             $scope.option_extra= "star";
+                            
+
+                            //Create a range of data for this type 1-4,5-7,8-10
+                            //get raw_data
+                            var a =0,b=0,c=0;
+                            for (var i = 0; i < responses_for_a_cid.length; i++) {
+                                var value = parseInt(responses_for_a_cid[i]);
+                                if (value<5) {a+=1;} else if (value>4 && value <8) {b+=1;} else if(value>7){c+=1;};
+                            };
 
 
-            var total_q=0;// a number | totalQuestions
-            var o_list={};//o_list= ["cid2":{label:"",options=[]},"cid 3"]
-            var q_list=[]; //q_listist=["cid3","cid4"] | questionList
+                                
+                                
 
-            var type_list={};
-            //
+                            
+                            
+                             $timeout(function() {
+                                            $scope.labels =["Below 5", "Between 5 and 7", "Above 7"];
+                                            $scope.data= [a,b,c];
+                                        },100);
+                         }
+                         else if ($scope.question_type=="yes_no" || $scope.question_type=="single_choice"){
+                         $scope.text=""; //Remove the text thing.
+                          $scope.cond=true;
+                         $scope.type="Bar";
+                         $scope.toggleText="Pie";
+                         
+                         var labels=[];
+                        
+                                for (var i = 0; i < count_options.length; i++) {
+                                    labels.push(options_map[count_options[i]]);
 
-                for (var i = 0; i < fata.fields.length; i++) {
-                   var cid = fata.fields[i].cid
-                    q_list.push(cid);
-                       total_q= total_q+1;
-                var label= fata.fields[i].label;
-                var type= fata.fields[i].field_type;
-                // o_list.push({label,"option":fata.fields[i].field_options,"cid":cid});
-                o_list[cid]={label,"option":fata.fields[i].field_options};
-                type_list[cid]=type;
-                }//for loop for q_listist
+                            
+                                };
+                                
+                                $timeout(function() {
+                                            $scope.data=[count_options_total];
+                                            $scope.labels=labels;
+                                        },100);
+                                
+                         };
 
+                        
+                    // Get the  options along with there option  here 
+                    var response_map= {};
+                    for (var i = 0; i < count_options.length; i++) {
+                        if ($scope.question_type=="short_text" || $scope.question_type=="long_text" || $scope.question_type=="rating") {
+                            response_map[count_options[i]]= count_options_total[i];
+                        }
+                            
+                        else if ($scope.question_type=="yes_no" || $scope.question_type=="single_choice") {
+                            response_map[options_map[count_options[i]]]=count_options_total[i];
+                        }
+                        else if ($scope.question_type=="multiple_choice"){
+                            var splitr= count_options[i].split("###");
+                            console.log(count_options[i]);
+                            var readable_option= "";
+                            for (var j = 0; j < splitr.length; j++) {
+                              readable_option+= " "+ options_map[splitr[j]];  
 
-                //
-                $scope.q_total=total_q;
-
-                $scope.total_r = data.len;
-
-                var c = data.columns;//shorthand
-                var r = data.rows;
-
-                var total_resp= data.len;
-                var restrc= {};// restrc= [[{cid:[{option:value,option2:value2}]}]
-                for (var i = 2; i < c.length; i++) {
-                    var tempAns= [];
-                    var cid = c[i];
-
-                    for (var j = 0; j < r.length; j++) {
-                        // Options are keys now , check if it exists
-                        tempAns.push(r[j][i]);
-
+                            };
+                            response_map[readable_option]= count_options_total[i];
+                            // console.log(response_map);
+                        
+                        } ;
+                        // 
                     };
 
+                    $scope.rep= response_map;
+                  
+
+                    $scope.cid= $scope.question_list[0];
+                //Navigation Button Control
+                $scope.navigate= function(type){
+                                                
+                  
+                        if (type=="next") {$scope.counter+=1;}
+                        else if (type=="prev") {$scope.counter-=1;};
+                        //get cid
+                        $scope.cid =$scope.question_list[$scope.counter];
+                        // $scope.question_label_raw= resp.questions;
+                        //Get Question Label !!c <3 Lol is Life.
+                        for (var i = 0; i < resp.questions.length; i++) {
+                            if (resp.questions[i][0]==$scope.cid) {
+                                $scope.question_label= resp.questions[i][1];
+                            };
+                        };
+                        // Get Question Type and Options List.
+                        for (var i = 0; i < struct.fields.length; i++) {
+                            if (struct.fields[i].cid==$scope.cid) {
+                                $scope.question_type = struct.fields[i].field_type;
+                                $scope.question_options= struct.fields[i].field_options;
+
+                            };
+                        };
+                
+                        //Get total responses for that question
+                        var responses_for_a_cid= [];
+                        var index= resp.columns.indexOf($scope.cid);
+                        for (var i = 0; i < resp.rows.length; i++) {
+                            var response= resp.rows[i][index];
+                            responses_for_a_cid.push(response);
+                        };
+                        // console.log(cot(["a","a","b","b"])); //Why wrong values? No idea. ==Solved --> missed sorting
+                        //If an option has no values. then add 0 as its default value otherwise Graph will not initialize. Bleh!
+                        var count = cot(responses_for_a_cid); //an array of two array [[options],[count]] // Remove null from here,
+                
+                        var count_options = count[0];//Should have used the same variable .. ??? SHould learn DRY
+                        var count_options_total= count[1];
+                        function option_map(){
+                            var a={};
+                            for (var i = 1; i < $scope.question_options.length+1; i++) {
+                                // a.push("a_"+i.toString());
+                                a["a_"+i.toString()]=$scope.question_options[i-1];
+                                //{"a_1":"option"}
+                            };
+                            return a;
+
+                        };
+                        try{
+                        var options_map= option_map(); //Useful for getting labels
+                    }
+                    catch(err){ console.log ("Error_option_map");}
+                    
+                        
+                        //check if all options are counted
+                        //Big mistake count[0]==[a_1, a_2] but question_options = [text ,] ==Solved!
+                    
+                        // if (count[0].length!= $scope.question_options.length) {
+                        //  //This means some options have not been counted,
+                        //  //Find out which options have not been counted.
+
+                        //  console.log(count[0],count[0].length, $scope.question_options.length);
+                        //  var notcounted = $scope.question_options.filter(function(val) {
+                                    //            return count[0].indexOf(val) == -1;
+                                    //          });
+
+                        //  //Not count is an array of options not been responded by any user.
+                        //  for (var i = 0; i < notcounted.length; i++) {
+                        //      count_options.push(notcounted[i]);
+                        //      count_options_total.push(0);
+                        //  };
+                        //  console.log("No Error");
+                            
+                        // }
+
+                        //Some graph variables
+
+                        var type , series;
+                        $scope.option_extra= "";
+                        //Now Set the Graph
+                         if ($scope.question_type=="short_text" || $scope.question_type=="long_text") {
+                            // clean();
+                          
+                            $scope.cond=false;
+                            $scope.option= "Response";
+                            //write a function to get responses.
+                         
+                            $scope.text= "Coming Soon ......";
+                            $scope.toggleText="Load More";
+
+                         }
+                        
+                         else if ($scope.question_type=="multiple_choice"){
+                            $scope.text= "";
+                            $scope.cond=true;
+                            $scope.type="Pie";
+                            $scope.toggleText="Bar";
+
+                            var label=[];
+                            for (var i = 0; i < count_options.length; i++) {
+
+                                var single_option= count_options[i].split("###");
+                            
+                                var to_push= "";
+                                for (var j = 0; j < single_option.length; j++) {
+                                    to_push += " "+ options_map[single_option[j]];
+                                 };
+                                
+                                 label.push(to_push);
+
+                            };
+                            
+                            
+                            $timeout(function() {
+                                            $scope.data=count_options_total;
+                                            $scope.labels=label;
+                                        },100);
+
+                         }
+                         else if ($scope.question_type=="ranking"){
+                            $scope.text="";
+                            $scope.cond=true;
+                            $scope.type="Line";
+                            $scope.toggleText="Toggle Not Allowed";
+                            //Logic ... 1st Rank 3 Points . 2nd 2 points
+                            //get option_list
+                            //get raw_responses, then split , and se
+                            var ranked={};
+                            for (var i = 0; i < raw_responses.length; i++) {
+                                var split= raw_responses[i].split("##")
+                                for (var j = split.length; j =0; j--) {
+                                    //check if key exists
+                                    if (split[i] in ranked) {
+                                        var oldVal= ranked.split[i];
+                                      }
+                                      else{
+                                        var oldVal=0;
+                                      };
+
+                                        //Add new value []
+                                        var newVal= oldVal +j;
+                                        ranked[split[i]]= newVal;
 
 
-                // restrc.push({"cid":cid,"ans":cot(tempAns)[1]});//I hope count works.lol
-                restrc[cid]={"o":cot(tempAns)[0],"ans":cot(tempAns)[1]};
-                $scope.ites=restrc  ;
-        };
-        // init
+                                  
 
-        var init_r_cid=q_list[0];
-        console.log(init_r_cid);
-        var init_lbl= o_list[init_r_cid].option;
-        var init_question= o_list[init_r_cid].label;
-        $scope.type="Pie";
+                                };
+                                
 
-        $scope.labels=init_lbl;//the options
-        $scope.question=init_question;
-        $scope.data=restrc[init_r_cid].ans;//the values
+                            };
+                            //We now have a value array where key is the option and value is the weight
+                            var data= [];
+                            var label=[];
+                            for (var key in ranked){
+                                data.push(ranked[key]);
+                                label.push(option_map.ranked[key]);
+                            };
+                            $scope.data = data;
+                            $scope.labels= label;
 
-        $scope.lol= function  (cid,typer) {
+                         }
+                         else if ($scope.question_type=="rating"){
+                            $scope.text="";
+                            $scope.type="Pie";
+                             $scope.cond=true;
+                             $scope.toggleText="Bar";
+                             $scope.option= "Rated";
+                             $scope.option_extra= "star";
+                            
 
-        var max = q_list.length-1;//Max length of the Report
-
-        var new_cid;
-
-        // if (parseInt(cid)==0) {
-        //     $scope.c=3;
-        // };
-        // if (parseInt(cid)>max) {
-        //     $scope.d= 6;
-        //     // $scope.cid= new_cid;
-
-        //     console.log("Finished");
-        // };
-        if (typer=="n") {
-             //rt(typer);
-            new_cid= parseInt(cid) +1;
-            $scope.c=6;
-        }
-        else if (typer=="p") {
-            // alert (type);
-            new_cid = parseInt(cid)-1;
-        }
-
-        $scope.cid= new_cid;
-
-        // else if(new_cid){$scope.c=5;};
+                            //Create a range of data for this type 1-4,5-7,8-10
+                            //get raw_data
+                            var a =0,b=0,c=0;
+                            for (var i = 0; i < responses_for_a_cid.length; i++) {
+                                var value = parseInt(responses_for_a_cid[i]);
+                                if (value<5) {a+=1;} else if (value>4 && value <8) {b+=1;} else if(value>7){c+=1;};
+                            };
 
 
-        var lbl,dta,question;
-        //get real cid for q_listist
-        var r_cid= q_list[cid];
-       alert(q_list);
+                                
+                                
 
-        if (type_list[r_cid]=="short_text"){
-            console.log("short_text");
-            $scope.right_title="Responses";
+                            
+                            
+                             $timeout(function() {
+                                            $scope.labels =["Below 5", "Between 5 and 7", "Above 7"];
+                                            $scope.data= [a,b,c];
+                                        },100);
+                         }
+                         else if ($scope.question_type=="yes_no" ){
+                         $scope.text=""; //Remove the text thing.
+                          $scope.cond=true;
+                         $scope.type="Bar";
+                         $scope.toggleText="Pie";
+                         
+                         var labels=[];
+                        
+                                for (var i = 0; i < count_options.length; i++) {
+                                    labels.push(options_map["a_"+count_options[i]]);
 
+                            
+                                };
+                                
+                                $timeout(function() {
+                                            $scope.data=[count_options_total];
+                                            $scope.labels=labels;
+                                        },100);
+                                
+                         }
+                           else if ($scope.question_type=="single_choice"){
+                         $scope.text=""; //Remove the text thing.
+                          $scope.cond=true;
+                         $scope.type="Bar";
+                         $scope.toggleText="Pie";
+                         
+                         var labels=[];
+                        
+                                for (var i = 0; i < count_options.length; i++) {
+                                    labels.push(options_map[count_options[i]]);
 
-
-        }  else{
-            $scope.right_title= "Graph";
-        };// if input type or something else
-
-
-        //get question and answer from o_list;
-
-        // for (var i = 0; i < o_list.length; i++) {
-        //     if (o_list[i].cid==r_cid) {
-        //         lbl = o_list[i].option;
-        //
-        //         question=o_list[i].label;
-        //     };
-        // };
-
-        lbl= o_list[r_cid].option;
-        question= o_list[r_cid].label;
-
-        //get answer values from restrc
-        // for (var i = 0; i < restrc.length; i++) {
-        //     // console.log($scopeo.q_list[i]);
-        //     if (restrc[i].cid==r_cid) {
-        //         data= restrc.ans;
-
-        //     };
-        // };
-
-        // data = restrc[r_cid].ans;
-      //Option Values are in the form of a_*;rest
-      var lolwut= {};
-
-      for (var i = 0; i < restrc[r_cid].o.length; i++) {
-          lolwut[restrc[r_cid].o[i]]=restrc[r_cid].ans[i];
-
-      };
-      console.log(lolwut);
-      //check if any option is not part of the count |Counters Zero Error
-      for (var i = 0; i < q_list.length; i++) {
-         var key = "a_"+i;
-         if (!key in lolwut) {
-                lolwut[key]=0;
-         };
-      };
+                            
+                                };
+                                
+                                $timeout(function() {
+                                            $scope.data=[count_options_total];
+                                            $scope.labels=labels;
+                                        },100);
+                                
+                         }
+                         ;
 
 
-        $scope.type="Pie";
-        $scope.labels=lbl;//the options
-        $scope.question=question;
-        $scope.data=restrc[r_cid].ans;//the values
-        $scope.cid=new_cid;//set the new cid
-        // Now get all individual responses :
-    //something like Option label : Response Value
-    var a = {};
-    for (var i = 0; i < lbl.length; i++) {
-        a[lbl[i]]=restrc[r_cid].ans[i];
-    };
-    $scope.rep = a;
+                        
+                    // Get the  options along with there option  here 
+                    var response_map= {};
+                   
+                    for (var i = 0; i < count_options.length; i++) {
+                        if ($scope.question_type=="short_text" || $scope.question_type=="long_text" || $scope.question_type=="rating") {
+                           
+                            response_map[count_options[i]]= count_options_total[i];
+                        }
+                            
+                        else if ($scope.question_type=="yes_no" || $scope.question_type=="single_choice") {
+                           
+                            response_map[options_map["a_"+count_options[i]]]=count_options_total[i];//Workaround for option without a_* format
+                        }
+                        else if ($scope.question_type=="multiple_choice"){
+                            var splitr= count_options[i].split("###");
+                        
+                            var readable_option= "";
+                            for (var j = 0; j < splitr.length; j++) {
+                             readable_option+= "| "+ options_map[splitr[j]];  
+
+                            };
+                            response_map[readable_option]= count_options_total[i];
+                            // console.log(response_map);
+                        
+                        } ;
+                        // 
+                    };
+
+                    $scope.rep= response_map;
+                  
+                    };//navigate ends here!
 
 
+            });
+            
+    });
 
-    }
-
-        });//data
-    }); //fata
-
-}]);//End
+}]);
