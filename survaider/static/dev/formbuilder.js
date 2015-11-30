@@ -1336,6 +1336,8 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '\n<div class="form-group form-group-default required">\n<label>Question Label</label>\n<textarea class="form-control" data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.LABEL )) == null ? '' : __t) +
+'\'></textarea>\n</div>\n<div class="form-group form-group-default">\n<label>Question Description</label>\n<textarea class="form-control" data-rv-input=\'model.' +
+((__t = ( Formbuilder.options.mappings.DESCRIPTION )) == null ? '' : __t) +
 '\'></textarea>\n</div>\n<p>\n' +
 ((__t = ( Formbuilder.options.dict.FIELDS[rf.get(Formbuilder.options.mappings.FIELD_TYPE)] )) == null ? '' : __t) +
 '\n</p>\n';
@@ -1616,7 +1618,9 @@ __p += '\n    ';
  if (rf.get(Formbuilder.options.mappings.NOTIFICATION)) { ;
 __p += '\n    &bullet; <i class="fa fa-globe"></i>\n    ';
  } ;
-__p += '\n    </small>\n</p>\n';
+__p += '\n    </small>\n</p>\n<p><small>' +
+((__t = ( Formbuilder.helpers.simple_format(rf.get(Formbuilder.options.mappings.DESCRIPTION)) )) == null ? '' : __t) +
+'</small></p>\n';
 
 }
 return __p
