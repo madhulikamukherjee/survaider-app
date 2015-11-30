@@ -88,13 +88,13 @@
                   if k == 0
                     option_list = option_label
                   else
-                    option_list = option_list + ', ' + option_label
+                    option_list = option_list + '<br>' + option_label
                   k++
                 new_data[j][N] = option_list
               else
                 new_data[j][N] = null
               N++
-          else if field_type == 'ranking' or field_type == 'group_rating'
+          else if field_type == 'ranking'
             N = 1
             while N < nested_data[j].length
               val = nested_data[j][N]
@@ -121,7 +121,36 @@
                   if k == 0
                     option_list = opt_str
                   else
-                    option_list = option_list + ', ' + opt_str
+                    option_list = option_list + '<br>' + opt_str
+                  k++
+                new_data[j][N] = option_list
+              else
+                new_data[j][N] = null
+              N++
+          else if field_type == 'group_rating'
+            N = 1
+            while N < nested_data[j].length
+              val = nested_data[j][N]
+              if val != null
+                val = nested_data[j][N].split('###')
+                opt = undefined
+                pos = undefined
+                opt_str = undefined
+                k = 0
+                while k < val.length
+                  val[k] = val[k].split('##')
+                  val[k][0] = Number(val[k][0][val[k][0].length - 1])
+                  k++
+                k = 0
+                while k < val.length
+                  opt = val[k][0]
+                  pos = val[k][1]
+                  opt = raw_data.fields[index_pos].field_options[opt - 1].label
+                  opt_str = pos + ': ' + opt
+                  if k == 0
+                    option_list = opt_str
+                  else
+                    option_list = option_list + '<br>' + opt_str
                   k++
                 new_data[j][N] = option_list
               else
