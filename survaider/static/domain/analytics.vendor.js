@@ -91085,7 +91085,6 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
         }
         prev = arr[i];
     }
-
    
     return [a, b];
 
@@ -91094,7 +91093,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
     //SID
     var s_id = $location.absUrl().split("/")[4].split(":")[1];
     //URLS
-    var survey_str= "/api/survey/"+s_id+"/json";
+    var survey_str= "/api/survey/"+s_id+"/deepjson";
     var json_resp= "/api/survey/"+s_id+"/response/aggregate";
     //Get Survey Json //Bad Way
     $http.get(survey_str).success(function(struct){
