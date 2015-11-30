@@ -94,7 +94,7 @@
               else
                 new_data[j][N] = null
               N++
-          else if field_type == 'ranking'
+          else if field_type == 'ranking' or field_type == 'group_rating'
             N = 1
             while N < nested_data[j].length
               val = nested_data[j][N]
