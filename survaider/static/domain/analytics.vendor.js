@@ -91464,7 +91464,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                          }
 
                          else if ($scope.question_type=="ranking"){
-                            alert("jj");
+                            // alert("jj");
                             $scope.text="";
                             $scope.cond=true;
                             $scope.type="Line";
