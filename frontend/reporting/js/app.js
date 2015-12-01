@@ -4,6 +4,14 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
     //ToDO
     //Change Panel for Non Graphical Report
     //
+    Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
 
    $scope.toggle=function toggle(){
 
@@ -36,6 +44,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
         }
         prev = arr[i];
     }
+
    
     return [a, b];
 
@@ -43,6 +52,9 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
 
     //SID
     var s_id = $location.absUrl().split("/")[4].split(":")[1];
+   
+    var v=1;
+    $scope.v=1;
     //URLS
     var survey_str= "/api/survey/"+s_id+"/deepjson";
     var json_resp= "/api/survey/"+s_id+"/response/aggregate";
@@ -50,13 +62,13 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
     $http.get(survey_str).success(function(struct){
             $http.get(json_resp).success(function(resp){
                 //Now I have access to Survey Structure (struct) and Survey Response
-                $scope.stitle= struct.game_title; //Set Survey Title
+                $scope.stitle= struct.survey_title; //Set Survey Title
                 $scope.question_list= resp.columns.slice(2);//Get question List
                 $scope.total_question= $scope.question_list.length;
                 
                 
                 $scope.typed="Text";
-                $scope.counter= 0;
+                $scope.counter= 1;
                 // Destroy Chat
                  $scope.$on('create', function (event, chart) {
                             
@@ -65,7 +77,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                                 })
                 
              
-                $scope.total_r= resp.len;
+                        $scope.total_r= resp.len;
                         $scope.survey_id= resp.survey_id;
                         $scope.q_total= resp.columns.length-2;
                 //We need to put up an init code here :(
@@ -82,7 +94,8 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                         for (var i = 0; i < struct.fields.length; i++) {
                             if (struct.fields[i].cid==$scope.cid) {
                                 $scope.question_type = struct.fields[i].field_type;
-                                $scope.question_options= struct.fields[i].field_options[1];
+                                $scope.question_options= struct.fields[i].field_options;
+
                             };
                         };
                 
@@ -261,7 +274,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                         }
                         else if ($scope.question_type=="multiple_choice"){
                             var splitr= count_options[i].split("###");
-                            console.log(count_options[i]);
+                            
                             var readable_option= "";
                             for (var j = 0; j < splitr.length; j++) {
                               readable_option+= " "+ options_map[splitr[j]];  
@@ -278,10 +291,14 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                   
 
                     $scope.cid= $scope.question_list[0];
+
+
+
+                    // ################################################################################################################3
                 //Navigation Button Control
                 $scope.navigate= function(type){
                                                 
-                  
+                  $scope.c= 1;
                         if (type=="next") {$scope.counter+=1;}
                         else if (type=="prev") {$scope.counter-=1;};
                         //get cid
@@ -297,7 +314,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                         for (var i = 0; i < struct.fields.length; i++) {
                             if (struct.fields[i].cid==$scope.cid) {
                                 $scope.question_type = struct.fields[i].field_type;
-                                $scope.question_options= struct.fields[i].field_options[1];
+                                $scope.question_options= struct.fields[i].field_options;
 
                             };
                         };
@@ -382,13 +399,13 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                             
                                 var to_push= "";
                                 for (var j = 0; j < single_option.length; j++) {
-                                    to_push += " "+ options_map[single_option[j]];
+                                    to_push += " "+ options_map[single_option[j]].label;
                                  };
                                 
                                  label.push(to_push);
 
                             };
-                            
+                         
                             
                             $timeout(function() {
                                             $scope.data=count_options_total;
@@ -396,11 +413,9 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                                         },100);
 
                          }
+
                          else if ($scope.question_type=="ranking"){
-<<<<<<< HEAD
                             // alert("jj");
-=======
->>>>>>> parent of 9a7f10a... Fixed labels in reporting page
                             $scope.text="";
                             $scope.cond=true;
                             $scope.type="Line";
@@ -408,40 +423,99 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                             //Logic ... 1st Rank 3 Points . 2nd 2 points
                             //get option_list
                             //get raw_responses, then split , and se
+                            //data structure a_1##1###a_2##3###a_3##
+                            var value= Object.size(options_map);
+                           
                             var ranked={};
+                            raw_responses=responses_for_a_cid;
+                            
                             for (var i = 0; i < raw_responses.length; i++) {
-                                var split= raw_responses[i].split("##")
-                                for (var j = split.length; j =0; j--) {
+                                var split= raw_responses[i].split("###")
+                                
+                                for (var j = 0;j<split.length;j++) {
+                                    var second_split=split[j].split("##"); //get value
+                             
+                                    var split_key= second_split[0]; //a_1
+                                    
+                                    
+                                    var split_value=second_split[1];//1
+                                      
                                     //check if key exists
-                                    if (split[i] in ranked) {
-                                        var oldVal= ranked.split[i];
+
+                                    if (split_key in ranked) {
+                                        // var oldVal= parseInt(ranked.split_key);
+
                                       }
                                       else{
                                         var oldVal=0;
                                       };
 
+
                                         //Add new value []
-                                        var newVal= oldVal +j;
-                                        ranked[split[i]]= newVal;
 
+                                        var newVal= oldVal +value-parseInt(split_value);
+                                      
+                                          
+                                        ranked[split_key]= newVal;
 
+                                    
                                   
 
                                 };
-                                
+                               
 
                             };
+                         
                             //We now have a value array where key is the option and value is the weight
                             var data= [];
                             var label=[];
                             for (var key in ranked){
+
+                                
                                 data.push(ranked[key]);
-                                label.push(option_map.ranked[key]);
+                                label.push(options_map[key].label);
+                                
                             };
-                            $scope.data = data;
-                            $scope.labels= label;
+                           
+                             $timeout(function() {
+                                            $scope.data=[data];
+                                            $scope.labels=label;
+                                        },100);
+                               
 
                          }
+                         else if($scope.question_type=="group_rating"){
+                            //DataStructure : a_1##1
+                            $scope.text="";
+                            $scope.type="Bar";
+                            $scope.cond=true;
+                          
+                             $scope.option= "";
+                             $scope.option_extra= "";
+                               $scope.cond=true;
+                            
+                            $scope.toggleText="Toggle Not Allowed";
+                            // var series= [];
+                            // for (var x= 1; x<11;x++){series.push(x);}
+                            // var data=[];
+                            // var labels=[];
+                            // var rate_map= {}; //{1:{cid:total_responses}}
+                            // for (var i = 0; i < responses_for_a_cid.length; i++) {
+                            //     var split= responses_for_a_cid[i].split("###");
+                            //     for (var g = 0; g < split.length; g++) {
+                            //         var second_split= split.split("##");
+                            //         var split_key= second_split[0];
+                            //         var split_value= second_split[1];
+
+                            //                                         };
+                            // };
+                    $scope.c= 4;//Disable button
+                             $timeout(function() {
+                                                       $scope.data= [[1,2,3,4],[2,3,4,5],[4,5,2,6],[5,6,8,3]];
+                            $scope.labels= ["Delhi","Imphal","Kolkata","Punjab"];
+                          
+                                        },444);
+                             }
                          else if ($scope.question_type=="rating"){
                             $scope.text="";
                             $scope.type="Pie";
@@ -470,16 +544,16 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                                             $scope.data= [a,b,c];
                                         },100);
                          }
-                         else if ($scope.question_type=="yes_no" ){
+                         else if ($scope.question_type=="yes_no" || $scope.question_type=="single_choice"){
                          $scope.text=""; //Remove the text thing.
                           $scope.cond=true;
                          $scope.type="Bar";
                          $scope.toggleText="Pie";
                          
                          var labels=[];
-                        
+
                                 for (var i = 0; i < count_options.length; i++) {
-                                    labels.push(options_map["a_"+count_options[i]]);
+                                    labels.push(options_map[count_options[i]].label);
 
                             
                                 };
@@ -488,52 +562,28 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                                             $scope.data=[count_options_total];
                                             $scope.labels=labels;
                                         },100);
-                                
-                         }
-                           else if ($scope.question_type=="single_choice"){
-                         $scope.text=""; //Remove the text thing.
-                          $scope.cond=true;
-                         $scope.type="Bar";
-                         $scope.toggleText="Pie";
-                         
-                         var labels=[];
+                               
                         
-                                for (var i = 0; i < count_options.length; i++) {
-                                    labels.push(options_map[count_options[i]]);
-
-                            
-                                };
                                 
-                                $timeout(function() {
-                                            $scope.data=[count_options_total];
-                                            $scope.labels=labels;
-                                        },100);
-                                
-                         }
-                         ;
+                         };
 
-
-                        
+                        //Question Answer Label
                     // Get the  options along with there option  here 
                     var response_map= {};
-                   
                     for (var i = 0; i < count_options.length; i++) {
                         if ($scope.question_type=="short_text" || $scope.question_type=="long_text" || $scope.question_type=="rating") {
-                           
                             response_map[count_options[i]]= count_options_total[i];
                         }
                             
                         else if ($scope.question_type=="yes_no" || $scope.question_type=="single_choice") {
-                           
-                            response_map[options_map["a_"+count_options[i]]]=count_options_total[i];//Workaround for option without a_* format
+                            response_map[options_map[count_options[i]].label]=count_options_total[i];
                         }
                         else if ($scope.question_type=="multiple_choice"){
                             var splitr= count_options[i].split("###");
-                        
+        
                             var readable_option= "";
                             for (var j = 0; j < splitr.length; j++) {
-                             readable_option+= "| "+ options_map[splitr[j]];  
-
+                             readable_option+= " "+ options_map[splitr[j]].label;  
                             };
                             response_map[readable_option]= count_options_total[i];
                             // console.log(response_map);
@@ -552,3 +602,4 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
     });
 
 }]);
+
