@@ -486,36 +486,31 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                          }
                          else if($scope.question_type=="group_rating"){
                             //DataStructure : a_1##1
-                            $scope.text="";
-                            $scope.type="Bar";
-                            $scope.cond=true;
+                            // $scope.text="";
+                            // $scope.type="Bar";
+                            // $scope.cond=true;
                           
-                             $scope.option= "";
-                             $scope.option_extra= "";
-                               $scope.cond=true;
+                            // $scope.option= "";
+                            // $scope.option_extra= "";
+                            // $scope.cond=true;
                             
-                            $scope.toggleText="Toggle Not Allowed";
-                            // var series= [];
-                            // for (var x= 1; x<11;x++){series.push(x);}
-                            // var data=[];
-                            // var labels=[];
-                            // var rate_map= {}; //{1:{cid:total_responses}}
-                            // for (var i = 0; i < responses_for_a_cid.length; i++) {
-                            //     var split= responses_for_a_cid[i].split("###");
-                            //     for (var g = 0; g < split.length; g++) {
-                            //         var second_split= split.split("##");
-                            //         var split_key= second_split[0];
-                            //         var split_value= second_split[1];
-
-                            //                                         };
-                            // };
-                    $scope.c= 4;//Disable button
-                             $timeout(function() {
-                                                       $scope.data= [[1,2,3,4],[2,3,4,5],[4,5,2,6],[5,6,8,3]];
-                            $scope.labels= ["Delhi","Imphal","Kolkata","Punjab"];
+                            // $scope.toggleText="Toggle Not Allowed";
+                           
+                            // $scope.c= 4;//Disable button
+                            // $timeout(function() {
+                            //                            $scope.data= [[1,2,3,4],[2,3,4,5],[4,5,2,6],[5,6,8,3]];
+                            // $scope.labels= ["Delhi","Imphal","Kolkata","Punjab"];
                           
-                                        },444);
+                            //             },444);
+                            $scope.cond=false;
+                            $scope.option= "Response";
+                            //write a function to get responses.
+                         
+                            $scope.text= "Coming Soon ......";
+                            $scope.toggleText="Load More";
                              }
+
+
                          else if ($scope.question_type=="rating"){
                             $scope.text="";
                             $scope.type="Pie";
