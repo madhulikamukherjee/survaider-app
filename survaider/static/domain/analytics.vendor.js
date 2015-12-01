@@ -91131,7 +91131,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                         for (var i = 0; i < struct.fields.length; i++) {
                             if (struct.fields[i].cid==$scope.cid) {
                                 $scope.question_type = struct.fields[i].field_type;
-                                $scope.question_options= struct.fields[i].field_options;
+                                $scope.question_options= struct.fields[i].field_options[1];
                             };
                         };
                 
@@ -91346,7 +91346,7 @@ myApp.controller("ReportController",["$http","$scope","$location","ChartJs","$ti
                         for (var i = 0; i < struct.fields.length; i++) {
                             if (struct.fields[i].cid==$scope.cid) {
                                 $scope.question_type = struct.fields[i].field_type;
-                                $scope.question_options= struct.fields[i].field_options;
+                                $scope.question_options= struct.fields[i].field_options[1];
 
                             };
                         };
