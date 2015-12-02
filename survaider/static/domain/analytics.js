@@ -15,7 +15,7 @@
       $.getJSON(raw_json, function(raw_data) {
         return $.getJSON(json_uri, function(data) {
           'use strict';
-          var N, check, cid, field_type, i, index_pos, j, k, nested_data, new_data, number_of_respondents, opt, opt_str, option_label, option_list, pos, question_label, val;
+          var N, check, cid, convertArrayOfObjectsToCSV, field_type, i, index_pos, j, k, nested_data, new_data, number_of_respondents, opt, opt_str, option_label, option_list, pos, question_label, val;
           i = void 0;
           $('#tableWithSearch thead tr').append('<th>Question</th>');
           i = 1;
@@ -174,6 +174,66 @@
             j++;
           }
           console.log(new_data);
+
+          /* Convert data to CSV */
+          convertArrayOfObjectsToCSV = function(args) {
+            var columnDelimiter, ctr, keys, lineDelimiter, result;
+            result = void 0;
+            ctr = void 0;
+            keys = void 0;
+            columnDelimiter = void 0;
+            lineDelimiter = void 0;
+            data = void 0;
+            data = args.data || null;
+            if (data === null || !data.length) {
+              return null;
+            }
+            columnDelimiter = args.columnDelimiter || ',';
+            lineDelimiter = args.lineDelimiter || '\n';
+            keys = Object.keys(data[0]);
+            result = '';
+            result += keys.join(columnDelimiter);
+            result += lineDelimiter;
+            data.forEach(function(item) {
+              ctr = 0;
+              keys.forEach(function(key) {
+                var temp;
+                if (ctr > 0) {
+                  result += columnDelimiter;
+                }
+                if (typeof item[key] === 'string') {
+                  temp = item[key];
+                  temp = temp.slice(0, 0) + '"' + temp.slice(0);
+                  item[key] = temp.slice(0, temp.length) + '"' + temp.slice(temp.length);
+                }
+                result += item[key];
+                ctr++;
+              });
+              result += lineDelimiter;
+            });
+            return result;
+          };
+          window.downloadCSV = function(args) {
+            var csv, filename, link;
+            data = void 0;
+            filename = void 0;
+            link = void 0;
+            csv = convertArrayOfObjectsToCSV({
+              data: new_data
+            });
+            if (csv === null) {
+              return;
+            }
+            filename = args.filename || 'export.csv';
+            if (!csv.match(/^data:text\/csv/i)) {
+              csv = 'data:text/csv;charset=utf-8,' + csv;
+            }
+            data = encodeURI(csv);
+            link = document.createElement('a');
+            link.setAttribute('href', data);
+            link.setAttribute('download', filename);
+            link.click();
+          };
           return $('#tableWithSearch').DataTable({
             'data': new_data,
             dom: 'Brtip',

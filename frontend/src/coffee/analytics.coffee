@@ -159,6 +159,65 @@
           j++
         # end of the while loop.
         console.log new_data
+
+
+        ###########################
+        ### Convert data to CSV ###
+        ###########################
+
+        convertArrayOfObjectsToCSV = (args) ->
+          result = undefined
+          ctr = undefined
+          keys = undefined
+          columnDelimiter = undefined
+          lineDelimiter = undefined
+          data = undefined
+          data = args.data or null
+          if data == null or !data.length
+            return null
+          columnDelimiter = args.columnDelimiter or ','
+          lineDelimiter = args.lineDelimiter or '\n'
+          keys = Object.keys(data[0])
+          result = ''
+          result += keys.join(columnDelimiter)
+          result += lineDelimiter
+          data.forEach (item) ->
+            ctr = 0
+            keys.forEach (key) ->
+              if ctr > 0
+                result += columnDelimiter
+              if typeof item[key] == 'string'
+                temp = item[key]
+                temp = temp.slice(0, 0) + '"' + temp.slice(0)
+                item[key] = temp.slice(0, temp.length) + '"' + temp.slice(temp.length)
+              result += item[key]
+              ctr++
+              return
+            result += lineDelimiter
+            return
+          result
+
+        ###########################
+        ## Activate download link #
+        ###########################
+
+        window.downloadCSV = (args) ->
+          data = undefined
+          filename = undefined
+          link = undefined
+          csv = convertArrayOfObjectsToCSV(data: new_data)
+          if csv == null
+            return
+          filename = args.filename or 'export.csv'
+          if !csv.match(/^data:text\/csv/i)
+            csv = 'data:text/csv;charset=utf-8,' + csv
+          data = encodeURI(csv)
+          link = document.createElement('a')
+          link.setAttribute 'href', data
+          link.setAttribute 'download', filename
+          link.click()
+          return
+
         $('#tableWithSearch').DataTable
           'data': new_data
           dom: 'Brtip'
