@@ -320,8 +320,8 @@ class Survey(db.Document):
             }
         def game(field):
             typ = field['field_type']
-            if typ in game_map:
-                op_len = len(field['field_options'])
+            if typ in game_map and 'options' in field['field_options']:
+                op_len = len(field['field_options']['options'])
                 games = []
 
                 for game, constr in game_map[typ].items():
@@ -333,7 +333,7 @@ class Survey(db.Document):
                 return random.choice(games)
 
         for i in range(len(cp)):
-            cp[i]['field_options'] = field_options(cp[i]['field_options'])
+            # cp[i]['field_options'] = field_options(cp[i]['field_options'])
             cp[i]['gametype'] = game(cp[i])
             cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
 
@@ -367,7 +367,7 @@ class Survey(db.Document):
             }
 
         for i in range(len(cp)):
-            cp[i]['field_options'] = field_options(cp[i]['field_options'])
+            # cp[i]['field_options'] = field_options(cp[i]['field_options'])
             cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
 
         rt['fields'] = cp
