@@ -348,6 +348,11 @@ main {
     padding: 0 1em;
     color: white; }
 
+.sv-question-description {
+  font-size: 14px;
+  color: white;
+  margin: 2em 1em; }
+
 .sv-long-text-input textarea {
   margin: 2em 0;
   padding: 1em;

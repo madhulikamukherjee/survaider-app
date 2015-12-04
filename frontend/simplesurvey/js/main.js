@@ -437,12 +437,12 @@
            data.fields.forEach(function(question, index){
              switch (question.field_type) {
                case "short_text":
-                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "long_text":
-                 var tempQuestion = new LongTextQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new LongTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
                  $scope.questions.push(tempQuestion);
@@ -450,10 +450,11 @@
                  break;
 
                case "yes_no":
-                 var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertOption(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                  console.log(question.field_options.options[i]);
+                   tempQuestion.insertOption(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
@@ -461,49 +462,49 @@
                  break;
 
                case "multiple_choice":
-                 var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertChoice(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertChoice(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "single_choice":
-                 var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertOption(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertOption(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "group_rating":
-                 var tempQuestion = new GroupRatingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new GroupRatingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertSubpart(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertSubpart(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "ranking":
-                 var tempQuestion = new RankingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new RankingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertSubpart(question.field_options[i], i);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertSubpart(question.field_options.options[i], i);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "rating":
-                 var tempQuestion = new RatingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new RatingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
                  $scope.questions.push(tempQuestion);
@@ -611,6 +612,10 @@
            changeActiveSlideElement(finalSlide);
            checkTheNumberOfRemainingQuestions();
            movePages('down', $('#footer-slide'), finalSlide);
+
+           //MARK :- TheFinalPostLink
+
+           $http.get('survey/' + s_id + '/response/finish');
          }
 
          function generateTheJSON(){

@@ -1,4 +1,4 @@
-function Question(label, required, cid, field_type, next){
+function Question(label, required, cid, field_type, next, description){
   this.label = label;
   this.type = field_type;
   this.isRequired = required;
@@ -7,6 +7,7 @@ function Question(label, required, cid, field_type, next){
   this.isDiscovered = false;
   this.next = next;
   this.isDisabled = false;
+  this.description = description;
 }
 
 Question.prototype.completed = function(){

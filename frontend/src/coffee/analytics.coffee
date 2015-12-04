@@ -18,6 +18,7 @@
           $('#tableWithSearch thead tr').append '<th>ID: ' + data.columns[i][0] + '<br>Answered: <span data-livestamp="' + data.columns[i][1] + '">' + data.columns[i][1] + '</span></th>'
           i++
         nested_data = data.rows
+        # console.log nested_data
         #The old F'ed up data.
         number_of_respondents = nested_data[0].length - 1
         #Because first one is question itself.
@@ -67,10 +68,11 @@
             N = 1
             while N < nested_data[j].length
               val = nested_data[j][N]
+              # console.log val
               if val != null
                 val = Number(val[val.length - 1])
                 #strip the "a_3" to just string "3" and then to number '3'.
-                option_label = raw_data.fields[index_pos].field_options[val - 1].label
+                option_label = raw_data.fields[index_pos].field_options.options[val - 1].label
                 new_data[j][N] = option_label
               else
                 new_data[j][N] = null
@@ -84,7 +86,7 @@
                 k = 0
                 while k < val.length
                   val[k] = Number(val[k][val[k].length - 1])
-                  option_label = raw_data.fields[index_pos].field_options[val[k] - 1].label
+                  option_label = raw_data.fields[index_pos].field_options.options[val[k] - 1].label
                   if k == 0
                     option_list = option_label
                   else
@@ -116,7 +118,7 @@
                 while k < val.length
                   opt = val[k][0]
                   pos = val[k][1]
-                  opt = raw_data.fields[index_pos].field_options[opt - 1].label
+                  opt = raw_data.fields[index_pos].field_options.options[opt - 1].label
                   opt_str = pos + ': ' + opt
                   if k == 0
                     option_list = opt_str
@@ -145,7 +147,7 @@
                 while k < val.length
                   opt = val[k][0]
                   pos = val[k][1]
-                  opt = raw_data.fields[index_pos].field_options[opt - 1].label
+                  opt = raw_data.fields[index_pos].field_options.options[opt - 1].label
                   opt_str = pos + ': ' + opt
                   if k == 0
                     option_list = opt_str
@@ -158,7 +160,7 @@
               N++
           j++
         # end of the while loop.
-        console.log new_data
+        # console.log new_data
 
 
         ###########################

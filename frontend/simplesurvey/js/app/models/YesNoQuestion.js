@@ -1,5 +1,5 @@
-function YesNoQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function YesNoQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.options = [];
 }
@@ -46,6 +46,7 @@ YesNoQuestion.prototype.resetResponse = function(){
   this.response = "";
 
 }
+
 
 YesNoQuestion.prototype.generateResponse = function(){
   return {

@@ -1,5 +1,5 @@
-function LongTextQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function LongTextQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.minimumResponseLength = 1;
 }

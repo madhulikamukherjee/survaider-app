@@ -1,5 +1,5 @@
-function RankingQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function RankingQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.subparts = [];
 }
 

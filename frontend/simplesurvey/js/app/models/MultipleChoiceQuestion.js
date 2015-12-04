@@ -1,5 +1,5 @@
-function MultipleChoiceQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function MultipleChoiceQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.choices = [];
   this.minimumNumberOfChoicesToBeChecked = 1;
 }

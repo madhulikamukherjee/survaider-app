@@ -69,7 +69,7 @@
                 val = nested_data[j][N];
                 if (val !== null) {
                   val = Number(val[val.length - 1]);
-                  option_label = raw_data.fields[index_pos].field_options[val - 1].label;
+                  option_label = raw_data.fields[index_pos].field_options.options[val - 1].label;
                   new_data[j][N] = option_label;
                 } else {
                   new_data[j][N] = null;
@@ -85,7 +85,7 @@
                   k = 0;
                   while (k < val.length) {
                     val[k] = Number(val[k][val[k].length - 1]);
-                    option_label = raw_data.fields[index_pos].field_options[val[k] - 1].label;
+                    option_label = raw_data.fields[index_pos].field_options.options[val[k] - 1].label;
                     if (k === 0) {
                       option_list = option_label;
                     } else {
@@ -121,7 +121,7 @@
                   while (k < val.length) {
                     opt = val[k][0];
                     pos = val[k][1];
-                    opt = raw_data.fields[index_pos].field_options[opt - 1].label;
+                    opt = raw_data.fields[index_pos].field_options.options[opt - 1].label;
                     opt_str = pos + ': ' + opt;
                     if (k === 0) {
                       option_list = opt_str;
@@ -155,7 +155,7 @@
                   while (k < val.length) {
                     opt = val[k][0];
                     pos = val[k][1];
-                    opt = raw_data.fields[index_pos].field_options[opt - 1].label;
+                    opt = raw_data.fields[index_pos].field_options.options[opt - 1].label;
                     opt_str = pos + ': ' + opt;
                     if (k === 0) {
                       option_list = opt_str;
@@ -173,7 +173,6 @@
             }
             j++;
           }
-          console.log(new_data);
 
           /* Convert data to CSV */
           convertArrayOfObjectsToCSV = function(args) {
