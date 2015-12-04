@@ -40772,7 +40772,7 @@ module.exports = {
 },{}]},{},[1])
 (1)
 });;
-function Question(label, required, cid, field_type, next){
+function Question(label, required, cid, field_type, next, description){
   this.label = label;
   this.type = field_type;
   this.isRequired = required;
@@ -40781,6 +40781,7 @@ function Question(label, required, cid, field_type, next){
   this.isDiscovered = false;
   this.next = next;
   this.isDisabled = false;
+  this.description = description;
 }
 
 Question.prototype.completed = function(){
@@ -40792,8 +40793,8 @@ Question.prototype.incomplete = function(){
   this.isCompleted = false;
 }
 ;
-function ShortTextQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function ShortTextQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.minimumResponseLength = 1;
 }
@@ -40836,8 +40837,8 @@ ShortTextQuestion.prototype.generateResponse = function(){
   }
 }
 ;
-function YesNoQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function YesNoQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.options = [];
 }
@@ -40885,6 +40886,7 @@ YesNoQuestion.prototype.resetResponse = function(){
 
 }
 
+
 YesNoQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
@@ -40892,8 +40894,8 @@ YesNoQuestion.prototype.generateResponse = function(){
   }
 }
 ;
-function SingleChoiceQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function SingleChoiceQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.options = [];
 }
@@ -40948,8 +40950,8 @@ SingleChoiceQuestion.prototype.generateResponse = function(){
   }
 }
 ;
-function GroupRatingQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function GroupRatingQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.subparts = [];
 }
 
@@ -41021,8 +41023,8 @@ GroupRatingQuestion.prototype.generateResponse = function(){
   return response;
 }
 ;
-function RankingQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function RankingQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.subparts = [];
 }
 
@@ -41087,8 +41089,8 @@ RankingQuestion.prototype.generateResponse = function(){
   return response;
 }
 ;
-function RatingQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function RatingQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
 }
 
@@ -41126,8 +41128,8 @@ RatingQuestion.prototype.generateResponse = function(){
   }
 }
 ;
-function MultipleChoiceQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function MultipleChoiceQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.choices = [];
   this.minimumNumberOfChoicesToBeChecked = 1;
 }
@@ -41208,8 +41210,8 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   return response;
 }
 ;
-function LongTextQuestion(label, required, cid, field_type, next){
-  Question.call(this, label, required, cid, field_type, next);
+function LongTextQuestion(label, required, cid, field_type, next, description){
+  Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.minimumResponseLength = 1;
 }
@@ -41689,12 +41691,12 @@ LongTextQuestion.prototype.generateResponse = function(){
            data.fields.forEach(function(question, index){
              switch (question.field_type) {
                case "short_text":
-                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "long_text":
-                 var tempQuestion = new LongTextQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new LongTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
                  $scope.questions.push(tempQuestion);
@@ -41702,10 +41704,11 @@ LongTextQuestion.prototype.generateResponse = function(){
                  break;
 
                case "yes_no":
-                 var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertOption(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                  console.log(question.field_options.options[i]);
+                   tempQuestion.insertOption(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
@@ -41713,49 +41716,49 @@ LongTextQuestion.prototype.generateResponse = function(){
                  break;
 
                case "multiple_choice":
-                 var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new MultipleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertChoice(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertChoice(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "single_choice":
-                 var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertOption(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertOption(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "group_rating":
-                 var tempQuestion = new GroupRatingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new GroupRatingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertSubpart(question.field_options[i]);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertSubpart(question.field_options.options[i]);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "ranking":
-                 var tempQuestion = new RankingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new RankingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
-                 for (var i = 0; i < question.field_options.length; i++) {
-                   tempQuestion.insertSubpart(question.field_options[i], i);
+                 for (var i = 0; i < question.field_options.options.length; i++) {
+                   tempQuestion.insertSubpart(question.field_options.options[i], i);
                  }
 
                  $scope.questions.push(tempQuestion);
 
                  break;
                case "rating":
-                 var tempQuestion = new RatingQuestion(question.label, question.required, question.cid, question.field_type, question.next);
+                 var tempQuestion = new RatingQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
 
                  $scope.questions.push(tempQuestion);
@@ -41863,6 +41866,10 @@ LongTextQuestion.prototype.generateResponse = function(){
            changeActiveSlideElement(finalSlide);
            checkTheNumberOfRemainingQuestions();
            movePages('down', $('#footer-slide'), finalSlide);
+
+           //MARK :- TheFinalPostLink
+
+           $http.get('survey/' + s_id + '/response/finish');
          }
 
          function generateTheJSON(){

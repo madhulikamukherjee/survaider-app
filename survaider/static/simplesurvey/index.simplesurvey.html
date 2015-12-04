@@ -68,6 +68,7 @@
                 <header class="sv-question-header">
                   <span class="sv-question-index" ng-bind="$index+1"></span>
                   <h1 ng-bind="question.label" class="sv-question-title"></h1>
+                  <h3 class="sv-question-description" ng-bind="question.description" ng-show="question.description != null"></h3>
                 </header>
 
                 <!-- End Question Header -->
