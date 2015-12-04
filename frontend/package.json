@@ -18,6 +18,8 @@
   "author": "Prashant Sinha",
   "license": "MIT",
   "dependencies": {
-    "grunt-contrib-coffee": "^0.13.0"
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-jst": "^0.6.0",
+    "grunt-underscore-jst": "^0.3.0"
   }
 }

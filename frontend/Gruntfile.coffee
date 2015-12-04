@@ -1,4 +1,5 @@
 ALL_TASKS = [
+  'jst:all'
   'coffee:all'
   'concat:all'
   'concat:simplesurvey'
@@ -21,6 +22,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-contrib-concat')
   grunt.loadNpmTasks('grunt-contrib-cssmin')
+  grunt.loadNpmTasks('grunt-contrib-jst')
   grunt.loadNpmTasks('grunt-contrib-sass')
   grunt.loadNpmTasks('grunt-contrib-uglify')
   grunt.loadNpmTasks('grunt-contrib-watch')
@@ -47,6 +49,17 @@ module.exports = (grunt) ->
           '<%= build %>/domain/homepage.js': [
             'src/coffee/homepage.coffee'
           ]
+
+    jst:
+      all:
+        options:
+          namespace: 'Survaider.Templates'
+          processName: (filename) ->
+            signalStr = "src/templates/" #strip extra filepath and extensions
+            filename.slice(filename.indexOf(signalStr)+signalStr.length, filename.indexOf(".html"))
+
+        files:
+          '<%= build %>/domain/templates.js': 'src/templates/*.html'
 
     concat:
       all:
@@ -86,6 +99,7 @@ module.exports = (grunt) ->
             'bower_components/numeral/numeral.js'
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
+            '<%= build %>/domain/templates.js'
           ]
           '<%= build%>/domain/analytics.vendor.js': [
             'bower_components/moment/moment.js'
@@ -239,6 +253,7 @@ module.exports = (grunt) ->
         files: [
           'src/sass/*.sass'
           'src/coffee/*.coffee'
+          'src/templates/*.html'
         ]
         tasks: ALL_TASKS
         options:
