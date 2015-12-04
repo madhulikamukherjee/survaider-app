@@ -1,7 +1,12 @@
-<div class="card <%= attrs.narrow %>">
+<div class="card <%= attrs.narrow %> <%= attrs.expand %>">
   <div class="parent-unit">
     <section class="frontmatter">
       <h1><%= dat.name %></h1>
+
+      <a href="javascript:void(0)" class="expand">
+        <i class="fa fa-arrow-circle-left"></i>expand
+      </a>
+
       <small>
         <span class="status-expanded">
           Created

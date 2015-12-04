@@ -158,24 +158,14 @@ footer a {
 }
 
 div.card {
-  width: 270px;
   position: relative;
-  overflow: hidden;
-  background: #333D5E;
   color: #FFFFFF;
-  border-radius: 3px;
   font-size: 12px;
   font-weight: 300;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
   margin: 10px;
-  display: inline-table;
-  -webkit-transition: box-shadow 0.2s;
-  -moz-transition: box-shadow 0.2s;
-  transition: box-shadow 0.2s;
+  display: flex;
+  overflow: inherit;
   z-index: 6;
-}
-div.card:hover {
-  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
 }
 div.card i {
   margin-right: 5px;
@@ -414,6 +404,28 @@ div.card.narrow section.status, div.card.narrow section.footer {
 }
 div.card.narrow:hover section.frontmatter:before, div.card.narrow:hover section.frontmatter:after {
   height: 10px;
+}
+div.card div.parent-unit {
+  width: 270px;
+  display: inline-block;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
+  background: #333D5E;
+  border-radius: 3px;
+  overflow: hidden;
+  -webkit-transition: box-shadow 0.2s;
+  -moz-transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s;
+}
+div.card div.parent-unit:hover {
+  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+}
+div.card div.subunit-container {
+  width: 570px;
+  float: right;
+  display: none;
+}
+div.card.expanded div.subunit-container {
+  display: inline-block;
 }
 div.card a {
   text-decoration: none;

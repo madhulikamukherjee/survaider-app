@@ -20059,9 +20059,11 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<div class="card ' +
 ((__t = ( attrs.narrow )) == null ? '' : __t) +
+' ' +
+((__t = ( attrs.expand )) == null ? '' : __t) +
 '">\n  <div class="parent-unit">\n    <section class="frontmatter">\n      <h1>' +
 ((__t = ( dat.name )) == null ? '' : __t) +
-'</h1>\n      <small>\n        <span class="status-expanded">\n          Created\n          <strong>\n            <span data-livestamp="' +
+'</h1>\n\n      <a href="javascript:void(0)" class="expand">\n        <i class="fa fa-arrow-circle-left"></i>expand\n      </a>\n\n      <small>\n        <span class="status-expanded">\n          Created\n          <strong>\n            <span data-livestamp="' +
 ((__t = ( dat.created_on )) == null ? '' : __t) +
 '">(Loading)</span>\n          </strong>\n        </span>\n        <ul class="status-narrow">\n          <li><i class="fa fa-circle-o idle"></i>Active</li>\n          <li><i class="fa fa-rss alert"></i>10 critical alerts</li>\n        </ul>\n      </small>\n\n      <ul class="statistics">\n        <li>\n          <h1>Responses</h1>\n          <h2>\n            ' +
 ((__t = ( numeral(dat.has_obtained_responses).format('0[.]00a') )) == null ? '' : __t) +
