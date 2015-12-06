@@ -1,4 +1,4 @@
-<div class="card <%= attrs.narrow %> <%= attrs.expand %>">
+<div class="card <%= attrs.narrow %> <%= attrs.expand %>" data-card="parent">
   <div class="parent-unit">
     <section class="frontmatter">
       <h1><%= dat.name %></h1>
@@ -20,7 +20,7 @@
         </ul>
       </small>
 
-      <ul class="statistics">
+      <ul class="statistics clear">
         <li>
           <h1>Responses</h1>
           <h2>
@@ -60,7 +60,7 @@
     </section>
     <section class="footer">
       <section class="destinations">
-        <ul>
+        <ul class="clear">
           <a href="<%= dat.uri_responses %>">
             <li><i class="fa fa-area-chart"></i> Analytics</li>
           </a>
@@ -70,7 +70,7 @@
         </ul>
       </section>
       <section class="actions">
-        <ul>
+        <ul class="clear">
           <li>
             <a href="<%= dat.uri_edit %>#settings">
               <i class="fa fa-cog"></i> Settings
@@ -91,6 +91,41 @@
     </section>
   </div>
   <div class="subunit-container">
-    LOL?
+    <h1 class="hr"><span>Units</span></h1>
+    <div class="card unit">
+      <section class="matter">
+        <h2>Gurgaon</h2>
+        <ul class="statistics clear">
+          <li>
+            <h1>Responses</h1>
+            <h2><%= numeral(10).format('0[.]00a') %></h2>
+          </li>
+          <li>
+            <h1>QSR</h1>
+            <h2><%= numeral(10).format('0[.]00a') %></h2>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <div class="sparkline"></div>
+      </section>
+      <section class="footer">
+        <ul class="clear">
+          <li>
+            <a href="<%= dat.uri_edit %>#settings">
+              <i class="fa fa-cog"></i> Settings
+            </a>
+          </li>
+          <li>
+            <a href="<%= dat.uri_edit %>#share">
+              <i class="fa fa-area-chart"></i> Analytics
+            </a>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <button class="btn-subunit">Add</button>
+
   </div>
 </div>

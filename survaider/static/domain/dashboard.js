@@ -33,7 +33,7 @@
         this.container = $('#card_dock');
         this.container.masonry({
           columnWidth: 1,
-          itemSelector: '.card',
+          itemSelector: "div[data-card=parent]",
           isFitWidth: true
         });
         return this.count = 0;
@@ -44,7 +44,7 @@
         template = Survaider.Templates['dashboard.tiles'];
         attrs = {
           narrow: dat.has_response_cap === Math.pow(2, 32) ? 'narrow' : '',
-          expand: this.count === 1 ? 'expasnded' : ''
+          expand: this.count === 1 ? 'expanded' : ''
         };
         el = $(template({
           dat: dat,
@@ -69,13 +69,24 @@
             return _this.reload(true);
           };
         })(this));
-        return el.find("a.less").on('click', (function(_this) {
+        el.find("a.less").on('click', (function(_this) {
           return function(e) {
             el.addClass('narrow');
             e.stopPropagation();
             return _this.reload();
           };
         })(this));
+        return el.find(".sparkline").sparkline([15, 16, 17, 19, 19, 15, 13, 12, 12, 14, 16, 17, 19, 30, 13, 35, 40, 30, 35, 35, 35, 22], {
+          type: 'line',
+          lineColor: '#333333',
+          fillColor: '#00bfbf',
+          spotColor: '#7f007f',
+          width: '100%',
+          height: '50px',
+          chartRangeMin: 0,
+          drawNormalOnTop: false,
+          disableInteraction: true
+        });
       },
       reload: function(now) {
         var reset;

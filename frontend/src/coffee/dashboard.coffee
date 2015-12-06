@@ -30,7 +30,7 @@ DashboardHelper =
       @container.masonry
         columnWidth: 1
         # containerStyle: null
-        itemSelector: '.card'
+        itemSelector: "div[data-card=parent]"
         # percentPosition: true
         # gutter: 10
         isFitWidth: true
@@ -42,7 +42,7 @@ DashboardHelper =
       template = Survaider.Templates['dashboard.tiles']
       attrs =
         narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
-        expand: if @count is 1 then 'expasnded' else ''
+        expand: if @count is 1 then 'expanded' else ''
 
       el = $ template dat: dat, attrs: attrs
       @container.append(el).masonry('appended', el, true)
@@ -65,6 +65,17 @@ DashboardHelper =
         el.addClass('narrow')
         e.stopPropagation()
         @reload()
+
+      el.find(".sparkline").sparkline [15,16,17,19,19,15,13,12,12,14,16,17,19,30,13,35,40,30,35,35,35,22],
+        type: 'line'
+        lineColor: '#333333'
+        fillColor: '#00bfbf'
+        spotColor: '#7f007f'
+        width: '100%'
+        height: '50px'
+        chartRangeMin: 0
+        drawNormalOnTop: false
+        disableInteraction: yes
 
     reload: (now) ->
       reset = _.bind () =>

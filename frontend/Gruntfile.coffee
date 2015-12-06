@@ -99,6 +99,7 @@ module.exports = (grunt) ->
             'bower_components/numeral/numeral.js'
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
+            'bower_components/jquery.sparkline/index.js'
             '<%= build %>/domain/templates.js'
           ]
           '<%= build%>/domain/analytics.vendor.js': [

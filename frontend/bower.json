@@ -52,11 +52,13 @@
     "three.js": "~0.73.0",
     "q": "1.0.1",
     "backbone": "~1.2.3",
-    "Waves": "waves#~0.7.4"
+    "Waves": "waves#~0.7.4",
+    "jquery.sparkline": "http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js"
   },
   "resolutions": {
     "jquery": "~2.0.3",
     "backbone": "~1.2.3",
-    "underscore": ">=1.7.0"
+    "underscore": ">=1.7.0",
+    "jquery.sparkline": "~2.1.2"
   }
 }

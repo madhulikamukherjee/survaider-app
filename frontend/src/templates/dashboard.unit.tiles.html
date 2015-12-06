@@ -1,0 +1,36 @@
+<div class="card unit">
+  <section class="matter">
+    <h2>Gurgaon</h2>
+    <ul class="statistics clear">
+      <li>
+        <h1>Responses</h1>
+        <h2>
+          <%= numeral(dat.has_obtained_responses).format('0[.]00a') %>
+        </h2>
+      </li>
+      <li>
+        <% if (dat.has_response_cap !== Math.pow(2,32)) { %>
+        <h1>Goal</h1>
+        <h2><%= numeral(dat.has_response_cap).format('0[.]00a') %></h2>
+        <% } %>
+      </li>
+    </ul>
+  </section>
+  <section>
+    <div class="sparkline"></div>
+  </section>
+  <section class="footer">
+    <ul class="clear">
+      <li>
+        <a href="<%= dat.uri_edit %>#settings">
+          <i class="fa fa-cog"></i> Settings
+        </a>
+      </li>
+      <li>
+        <a href="<%= dat.uri_edit %>#share">
+          <i class="fa fa-area-chart"></i> Analytics
+        </a>
+      </li>
+    </ul>
+  </section>
+</div>

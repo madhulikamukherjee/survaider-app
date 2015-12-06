@@ -80,30 +80,30 @@ header
       .container
         @include animation(moveIn 0.4s)
 
+h1.hr
+  font-size: 12px
+  color: #ffffff
+  position: relative
+
+  span
+    margin-left: 40px
+    padding: 0 20px
+    background: $base
+
+
+  &::after
+    content: ''
+    background: #ffffff
+    height: 1px
+    top: 50%
+    left: 0
+    right: 0
+    position: absolute
+    z-index: -1
+    border-radius: 50%
+
 section.dock
   width: 100%
-
-  & > h1
-    font-size: 12px
-    color: #ffffff
-    position: relative
-
-    span
-      margin-left: 40px
-      padding: 0 20px
-      background: $base
-
-
-    &::after
-      content: ''
-      background: #ffffff
-      height: 1px
-      top: 50%
-      left: 0
-      right: 0
-      position: absolute
-      z-index: -1
-      border-radius: 50%
 
   div#card_dock
     margin: 0 auto
@@ -156,6 +156,15 @@ div.card
 
   i
     margin-right: 5px
+
+  ul.clear
+    list-style: none
+    margin: 0
+    padding: 0
+    display: block
+
+    li
+      display: inline-block
 
   section.frontmatter
     background: #FFFFFF
@@ -294,15 +303,6 @@ div.card
   section.footer
     padding: 0 $pad_u $pad_u $pad_u
 
-    ul
-      list-style: none
-      margin: 0
-      padding: 0
-      display: block
-
-      li
-        display: inline-block
-
     a
       color: #FFFFFF
 
@@ -377,7 +377,7 @@ div.card
 
   div.parent-unit
     width: $width
-    display: inline-block
+    display: table
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4)
     background: #333D5E
     border-radius: 3px
@@ -395,6 +395,82 @@ div.card
   &.expanded
     div.subunit-container
       display: inline-block
+      padding: 0 10px 10px 10px
+      overflow: auto
+
+      h1
+        margin: 10px 0 5px 0
+
+        &.hr
+          span
+            margin-left: 10px
+
+  &.unit
+    display: inline-block
+    border-radius: 3px
+    width: 200px
+    background: $primary
+
+    section.matter
+      padding: 10px 10px 0 10px
+
+      h2, h3
+        margin: 0
+        font-weight: 300
+
+      ul
+        margin-top: 10px
+
+        li
+          position: relative
+
+          h1
+            font-size: 11px
+            font-weight: 300
+            text-transform: uppercase
+
+          h2
+            position: absolute
+            width: 100%
+
+          &:last-child
+            float: right
+            text-align: right
+
+    canvas
+      margin-bottom: -4px
+
+    section.footer
+      padding: 0 10px 10px 10px
+      background: #00bfbf
+      text-align: right
+
+      li
+        &:first-child
+          float: left
+        &:last-child
+          float: none
+
+  button.btn-subunit
+    position: absolute
+    right: 20px
+    top: 0
+    background: $base
+    border: 1px solid #ffffff
+    color: #ffffff
+    padding: 6px 10px
+    text-decoration: uppercase
+
+    @include transition(background 0.2s, color 0.2s)
+
+    &:hover
+      background: #ffffff
+      color: #000000
+
+    &:focus
+      background: $primary
+      color: #ffffff
+      outline: none
 
   a
     text-decoration: none

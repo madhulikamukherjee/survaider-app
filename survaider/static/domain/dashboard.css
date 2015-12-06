@@ -95,20 +95,17 @@ header div.create-modal.open .container {
   animation: moveIn 0.4s;
 }
 
-section.dock {
-  width: 100%;
-}
-section.dock > h1 {
+h1.hr {
   font-size: 12px;
   color: #ffffff;
   position: relative;
 }
-section.dock > h1 span {
+h1.hr span {
   margin-left: 40px;
   padding: 0 20px;
   background: #33495F;
 }
-section.dock > h1::after {
+h1.hr::after {
   content: "";
   background: #ffffff;
   height: 1px;
@@ -118,6 +115,10 @@ section.dock > h1::after {
   position: absolute;
   z-index: -1;
   border-radius: 50%;
+}
+
+section.dock {
+  width: 100%;
 }
 section.dock div#card_dock {
   margin: 0 auto;
@@ -169,6 +170,15 @@ div.card {
 }
 div.card i {
   margin-right: 5px;
+}
+div.card ul.clear {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+div.card ul.clear li {
+  display: inline-block;
 }
 div.card section.frontmatter {
   background: #FFFFFF;
@@ -318,15 +328,6 @@ div.card section.status a.less {
 div.card section.footer {
   padding: 0 15px 15px 15px;
 }
-div.card section.footer ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: block;
-}
-div.card section.footer ul li {
-  display: inline-block;
-}
 div.card section.footer a {
   color: #FFFFFF;
 }
@@ -407,7 +408,7 @@ div.card.narrow:hover section.frontmatter:before, div.card.narrow:hover section.
 }
 div.card div.parent-unit {
   width: 270px;
-  display: inline-block;
+  display: table;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
   background: #333D5E;
   border-radius: 3px;
@@ -426,6 +427,82 @@ div.card div.subunit-container {
 }
 div.card.expanded div.subunit-container {
   display: inline-block;
+  padding: 0 10px 10px 10px;
+  overflow: auto;
+}
+div.card.expanded div.subunit-container h1 {
+  margin: 10px 0 5px 0;
+}
+div.card.expanded div.subunit-container h1.hr span {
+  margin-left: 10px;
+}
+div.card.unit {
+  display: inline-block;
+  border-radius: 3px;
+  width: 200px;
+  background: #2E96D6;
+}
+div.card.unit section.matter {
+  padding: 10px 10px 0 10px;
+}
+div.card.unit section.matter h2, div.card.unit section.matter h3 {
+  margin: 0;
+  font-weight: 300;
+}
+div.card.unit section.matter ul {
+  margin-top: 10px;
+}
+div.card.unit section.matter ul li {
+  position: relative;
+}
+div.card.unit section.matter ul li h1 {
+  font-size: 11px;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+div.card.unit section.matter ul li h2 {
+  position: absolute;
+  width: 100%;
+}
+div.card.unit section.matter ul li:last-child {
+  float: right;
+  text-align: right;
+}
+div.card.unit canvas {
+  margin-bottom: -4px;
+}
+div.card.unit section.footer {
+  padding: 0 10px 10px 10px;
+  background: #00bfbf;
+  text-align: right;
+}
+div.card.unit section.footer li:first-child {
+  float: left;
+}
+div.card.unit section.footer li:last-child {
+  float: none;
+}
+div.card button.btn-subunit {
+  position: absolute;
+  right: 20px;
+  top: 0;
+  background: #33495F;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+  padding: 6px 10px;
+  text-decoration: uppercase;
+  -webkit-transition: background 0.2s, color 0.2s;
+  -moz-transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s;
+}
+div.card button.btn-subunit:hover {
+  background: #ffffff;
+  color: #000000;
+}
+div.card button.btn-subunit:focus {
+  background: #2E96D6;
+  color: #ffffff;
+  outline: none;
 }
 div.card a {
   text-decoration: none;
