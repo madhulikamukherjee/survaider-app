@@ -12,6 +12,7 @@ import math
 from flask import request, g
 from bson.objectid import ObjectId
 from jsonschema import validate, ValidationError
+from mongoengine.queryset import queryset_manager
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
 from survaider.user.model import User
@@ -60,6 +61,8 @@ class Survey(db.Document):
     structure   = db.DictField()
 
     created_by  = db.ListField(db.ReferenceField(User))
+
+    meta = {'allow_inheritance': True}
 
     def __unicode__(self):
         return HashId.encode(self.id)
@@ -248,6 +251,10 @@ class Survey(db.Document):
         self.metadata['modified'] = datetime.datetime.now()
         super(Survey, self).save(**kwargs)
 
+    @queryset_manager
+    def objects(doc_cls, queryset):
+        return queryset.filter(_cls = 'Survey')
+
     @property
     def repr(self):
         return {
@@ -379,6 +386,20 @@ class Survey(db.Document):
         rt['survey_description'] = self.struct['screens'][1]
         rt['survey_footer'] = self.struct['screens'][2]
         return rt
+
+class SurveyUnit(Survey):
+    referenced = db.ReferenceField(Survey, required = True)
+    unit_name  = db.StringField()
+
+    def __init__(self, **kwargs):
+        super(SurveyUnit, self).__init__(**kwargs)
+        if self.referenced:
+            self.structure = self.referenced.structure
+            self.metadata  = self.referenced.metadata
+
+    @queryset_manager
+    def objects(doc_cls, queryset):
+        return queryset.filter()
 
 class Response(db.Document):
     parent_survey   = db.ReferenceField(Survey)

@@ -76,7 +76,7 @@
             return _this.reload();
           };
         })(this));
-        return el.find(".sparkline").sparkline([15, 16, 17, 19, 19, 15, 13, 12, 12, 14, 16, 17, 19, 30, 13, 35, 40, 30, 35, 35, 35, 22], {
+        return el.find(".sparkline").sparkline(_.shuffle([15, 16, 17, 19, 19, 15, 13, 12, 12, 14, 16, 17, 19, 30, 13, 35, 40, 30, 35, 35, 35, 22]), {
           type: 'line',
           lineColor: '#333333',
           fillColor: '#00bfbf',
