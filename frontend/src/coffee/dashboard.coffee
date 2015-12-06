@@ -37,8 +37,8 @@ DashboardHelper =
       template = Survaider.Templates['dashboard.tiles']
       attrs =
         # narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
-        expand: if units then 'expanded' else ''
-        narrow: if units then '' else 'narrow'
+        expand: if units then 'expandeds' else ''
+        narrow: if units then 'narrow' else 'narrow'
 
       el = $ template dat: dat, attrs: attrs
       @container.append(el).masonry('appended', el, true)
@@ -46,7 +46,7 @@ DashboardHelper =
       if units
         subunit = @units
         cnt = @container.find(el).find('.subunit-container')
-        subunit.init cnt, dat
+        subunit.init cnt, dat, _.bind(@reload, @)
 
       Waves.attach el.find '.parent-unit'
 
@@ -58,7 +58,14 @@ DashboardHelper =
         el.removeClass('narrow')
         if units
           el.addClass('expanded')
-          subunit.reload()
+        fn = _.bind ->
+          if units
+            subunit.reload()
+            @reload()
+        , @
+
+        _.delay fn, 1000
+
         @reload()
 
       el.find("a.less").on 'click', (e) =>
@@ -72,17 +79,19 @@ DashboardHelper =
         @container.masonry()
       , @
 
-      _.delay reset, 700
+      _.delay reset, 500
+      _.delay reset, 1500
 
       if now
         _.delay reset, 50
 
     units:
-      init: (parent_container, data) ->
+      init: (parent_container, data, parent_reload) ->
         template = Survaider.Templates['dashboard.unit']
         el = $ template dat: data
 
         parent_container.append(el)
+        console.log parent_reload()
 
         @parent_container = parent_container
         @container = parent_container.find('.subunitdock')
@@ -95,21 +104,9 @@ DashboardHelper =
         @append(dat) for dat in data.units.reverse()
 
         parent_container.find('.btn-subunit').on 'click', =>
-          swal {
-            title: 'An input!'
-            text: 'Write something interesting:'
-            type: 'input'
-            showCancelButton: true
-            closeOnConfirm: false
-            animation: 'slide-from-top'
-            inputPlaceholder: 'Write something'
-          }, (inputValue) ->
-            if inputValue == false
-              return false
-            if inputValue == ''
-              swal.showInputError 'You need to write something!'
-              return false
-            swal 'Nice!', 'You wrote: ' + inputValue, 'success'
+          @add data, (dat) =>
+            @append dat.unit
+            parent_reload()
 
       append: (dat) ->
         template = Survaider.Templates['dashboard.unit.tiles']
@@ -128,12 +125,49 @@ DashboardHelper =
           drawNormalOnTop: false
           disableInteraction: yes
 
+        # @reload(yes)
+
+      add: (binding, callback) ->
+        swal
+          title: "Create a Survey Unit"
+          text: "Please provide Survey Unit name for '#{binding.name}'."
+          type: 'input'
+          showCancelButton: true
+          closeOnConfirm: false
+          showLoaderOnConfirm: true
+          inputPlaceholder: 'Unit Name'
+        , (inputValue) ->
+          if inputValue == false
+            return false
+          if inputValue == ''
+            swal.showInputError 'You need to write something!'
+            return false
+
+          $.ajax
+            url: "/api/survey/#{binding.id}/unit_addition"
+            data:
+              swag: inputValue
+            method: 'POST'
+          .done (dat) ->
+            swal
+                title: "Unit Created!"
+                type:  "success"
+                confirmButtonText: 'Done'
+                closeOnConfirm: yes
+                showCancelButton: no
+              , ->
+                callback(dat)
+          .fail ->
+            swal
+              title: "Sorry, something went wrong. Please try again, or contact Support."
+              type:  "error"
+
       reload: (now) ->
         reset = _.bind () =>
           @container.masonry()
         , @
 
-        _.delay reset, 100
+        _.delay reset, 600
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0

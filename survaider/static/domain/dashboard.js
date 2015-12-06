@@ -42,8 +42,8 @@
         units = dat.units.length > 0;
         template = Survaider.Templates['dashboard.tiles'];
         attrs = {
-          expand: units ? 'expanded' : '',
-          narrow: units ? '' : 'narrow'
+          expand: units ? 'expandeds' : '',
+          narrow: units ? 'narrow' : 'narrow'
         };
         el = $(template({
           dat: dat,
@@ -53,7 +53,7 @@
         if (units) {
           subunit = this.units;
           cnt = this.container.find(el).find('.subunit-container');
-          subunit.init(cnt, dat);
+          subunit.init(cnt, dat, _.bind(this.reload, this));
         }
         Waves.attach(el.find('.parent-unit'));
         el.on('click', function() {
@@ -63,11 +63,18 @@
         });
         el.find("a.more").on('click', (function(_this) {
           return function() {
+            var fn;
             el.removeClass('narrow');
             if (units) {
               el.addClass('expanded');
-              subunit.reload();
             }
+            fn = _.bind(function() {
+              if (units) {
+                subunit.reload();
+                return this.reload();
+              }
+            }, _this);
+            _.delay(fn, 1000);
             return _this.reload();
           };
         })(this));
@@ -89,19 +96,21 @@
             return _this.container.masonry();
           };
         })(this), this);
-        _.delay(reset, 700);
+        _.delay(reset, 500);
+        _.delay(reset, 1500);
         if (now) {
           return _.delay(reset, 50);
         }
       },
       units: {
-        init: function(parent_container, data) {
+        init: function(parent_container, data, parent_reload) {
           var dat, el, i, len, ref, template;
           template = Survaider.Templates['dashboard.unit'];
           el = $(template({
             dat: data
           }));
           parent_container.append(el);
+          console.log(parent_reload());
           this.parent_container = parent_container;
           this.container = parent_container.find('.subunitdock');
           this.container.masonry({
@@ -116,23 +125,9 @@
           }
           return parent_container.find('.btn-subunit').on('click', (function(_this) {
             return function() {
-              return swal({
-                title: 'An input!',
-                text: 'Write something interesting:',
-                type: 'input',
-                showCancelButton: true,
-                closeOnConfirm: false,
-                animation: 'slide-from-top',
-                inputPlaceholder: 'Write something'
-              }, function(inputValue) {
-                if (inputValue === false) {
-                  return false;
-                }
-                if (inputValue === '') {
-                  swal.showInputError('You need to write something!');
-                  return false;
-                }
-                return swal('Nice!', 'You wrote: ' + inputValue, 'success');
+              return _this.add(data, function(dat) {
+                _this.append(dat.unit);
+                return parent_reload();
               });
             };
           })(this));
@@ -156,6 +151,47 @@
             disableInteraction: true
           });
         },
+        add: function(binding, callback) {
+          return swal({
+            title: "Create a Survey Unit",
+            text: "Please provide Survey Unit name for '" + binding.name + "'.",
+            type: 'input',
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+            inputPlaceholder: 'Unit Name'
+          }, function(inputValue) {
+            if (inputValue === false) {
+              return false;
+            }
+            if (inputValue === '') {
+              swal.showInputError('You need to write something!');
+              return false;
+            }
+            return $.ajax({
+              url: "/api/survey/" + binding.id + "/unit_addition",
+              data: {
+                swag: inputValue
+              },
+              method: 'POST'
+            }).done(function(dat) {
+              return swal({
+                title: "Unit Created!",
+                type: "success",
+                confirmButtonText: 'Done',
+                closeOnConfirm: true,
+                showCancelButton: false
+              }, function() {
+                return callback(dat);
+              });
+            }).fail(function() {
+              return swal({
+                title: "Sorry, something went wrong. Please try again, or contact Support.",
+                type: "error"
+              });
+            });
+          });
+        },
         reload: function(now) {
           var reset;
           reset = _.bind((function(_this) {
@@ -163,7 +199,7 @@
               return _this.container.masonry();
             };
           })(this), this);
-          return _.delay(reset, 100);
+          return _.delay(reset, 600);
         }
       }
     },
