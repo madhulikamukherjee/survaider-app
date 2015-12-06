@@ -23140,15 +23140,7 @@ __p += '\n        </li>\n      </ul>\n      <a href="javascript:void(0)" class="
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '#share">\n              <i class="fa fa-share-alt"></i> Share\n            </a>\n          </li>\n          <li>\n            <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n              <i class="fa fa-star"></i> Preview\n            </a>\n          </li>\n        </ul>\n      </section>\n    </section>\n  </div>\n  <div class="subunit-container">\n    <h1 class="hr"><span>Units</span></h1>\n    <div class="card unit">\n      <section class="matter">\n        <h2>Gurgaon</h2>\n        <ul class="statistics clear">\n          <li>\n            <h1>Responses</h1>\n            <h2>' +
-((__t = ( numeral(10).format('0[.]00a') )) == null ? '' : __t) +
-'</h2>\n          </li>\n          <li>\n            <h1>QSR</h1>\n            <h2>' +
-((__t = ( numeral(10).format('0[.]00a') )) == null ? '' : __t) +
-'</h2>\n          </li>\n        </ul>\n      </section>\n      <section>\n        <div class="sparkline"></div>\n      </section>\n      <section class="footer">\n        <ul class="clear">\n          <li>\n            <a href="' +
-((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#settings">\n              <i class="fa fa-cog"></i> Settings\n            </a>\n          </li>\n          <li>\n            <a href="' +
-((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n              <i class="fa fa-area-chart"></i> Analytics\n            </a>\n          </li>\n        </ul>\n      </section>\n    </div>\n\n    <button class="btn-subunit">Add</button>\n\n  </div>\n</div>\n';
+'#share">\n              <i class="fa fa-star"></i> Preview\n            </a>\n          </li>\n        </ul>\n      </section>\n    </section>\n  </div>\n  <div class="subunit-container">\n  </div>\n</div>\n';
 
 }
 return __p
@@ -23158,7 +23150,7 @@ this["Survaider"]["Templates"]["dashboard.unit"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<h1 class="hr"><span>Units</span></h1>\n<div class="subunitdock"></div>\n';
+__p += '<h1 class="hr"><span>Units</span></h1>\n<button class="btn-subunit">Add</button>\n<div class="subunitdock">\n\n</div>\n';
 
 }
 return __p
@@ -23166,22 +23158,19 @@ return __p
 
 this["Survaider"]["Templates"]["dashboard.unit.tiles"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
-function print() { __p += __j.call(arguments, '') }
+var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class="card unit">\n  <section class="matter">\n    <h2>Gurgaon</h2>\n    <ul class="statistics clear">\n      <li>\n        <h1>Responses</h1>\n        <h2>\n          ' +
+__p += '<div class="card unit" data-card="unit">\n  <section class="matter">\n    <h2>' +
+((__t = ( dat.unit_name )) == null ? '' : __t) +
+'</h2>\n    <ul class="statistics clear">\n      <li>\n        <h1>Responses</h1>\n        <h2>' +
 ((__t = ( numeral(dat.has_obtained_responses).format('0[.]00a') )) == null ? '' : __t) +
-'\n        </h2>\n      </li>\n      <li>\n        ';
- if (dat.has_response_cap !== Math.pow(2,32)) { ;
-__p += '\n        <h1>Goal</h1>\n        <h2>' +
-((__t = ( numeral(dat.has_response_cap).format('0[.]00a') )) == null ? '' : __t) +
-'</h2>\n        ';
- } ;
-__p += '\n      </li>\n    </ul>\n  </section>\n  <section>\n    <div class="sparkline"></div>\n  </section>\n  <section class="footer">\n    <ul class="clear">\n      <li>\n        <a href="' +
+'</h2>\n      </li>\n      <li>\n        <h1>QSR</h1>\n        <h2>' +
+((__t = ( numeral(10).format('0[.]00a') )) == null ? '' : __t) +
+'</h2>\n      </li>\n    </ul>\n  </section>\n  <section>\n    <div class="sparkline"></div>\n  </section>\n  <section class="footer">\n    <ul class="clear">\n      <li>\n        <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '#settings">\n          <i class="fa fa-cog"></i> Settings\n        </a>\n      </li>\n      <li>\n        <a href="' +
-((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n          <i class="fa fa-area-chart"></i> Analytics\n        </a>\n      </li>\n    </ul>\n  </section>\n</div>\n';
+((__t = ( dat.uri_responses )) == null ? '' : __t) +
+'">\n          <i class="fa fa-area-chart"></i> Analytics\n        </a>\n      </li>\n    </ul>\n  </section>\n</div>\n';
 
 }
 return __p

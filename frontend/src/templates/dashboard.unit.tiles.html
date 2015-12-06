@@ -1,18 +1,14 @@
-<div class="card unit">
+<div class="card unit" data-card="unit">
   <section class="matter">
-    <h2>Gurgaon</h2>
+    <h2><%= dat.unit_name %></h2>
     <ul class="statistics clear">
       <li>
         <h1>Responses</h1>
-        <h2>
-          <%= numeral(dat.has_obtained_responses).format('0[.]00a') %>
-        </h2>
+        <h2><%= numeral(dat.has_obtained_responses).format('0[.]00a') %></h2>
       </li>
       <li>
-        <% if (dat.has_response_cap !== Math.pow(2,32)) { %>
-        <h1>Goal</h1>
-        <h2><%= numeral(dat.has_response_cap).format('0[.]00a') %></h2>
-        <% } %>
+        <h1>QSR</h1>
+        <h2><%= numeral(10).format('0[.]00a') %></h2>
       </li>
     </ul>
   </section>
@@ -27,7 +23,7 @@
         </a>
       </li>
       <li>
-        <a href="<%= dat.uri_edit %>#share">
+        <a href="<%= dat.uri_responses %>">
           <i class="fa fa-area-chart"></i> Analytics
         </a>
       </li>

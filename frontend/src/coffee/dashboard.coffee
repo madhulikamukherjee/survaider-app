@@ -29,10 +29,7 @@ DashboardHelper =
       @container = $('#card_dock')
       @container.masonry
         columnWidth: 1
-        # containerStyle: null
         itemSelector: "div[data-card=parent]"
-        # percentPosition: true
-        # gutter: 10
         isFitWidth: true
 
       @count = 0
@@ -41,11 +38,18 @@ DashboardHelper =
       @count += 1
       template = Survaider.Templates['dashboard.tiles']
       attrs =
-        narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
-        expand: if @count is 1 then 'expanded' else ''
+        narrow: if dat.has_response_cap is 2 ** 32 then '' else ''
+        expand: if @count is 1 and @narrow is '' then 'expanded' else 'expanded'
 
       el = $ template dat: dat, attrs: attrs
       @container.append(el).masonry('appended', el, true)
+
+      units = dat.units.length isnt 0
+
+      if units
+        subunit = @units
+        cnt = @container.find(el).find('.subunit-container')
+        subunit.init cnt, dat.units
 
       Waves.attach el.find '.parent-unit'
 
@@ -55,27 +59,16 @@ DashboardHelper =
 
       el.find("a.more").on 'click', =>
         el.removeClass('narrow')
+        if units
+          el.addClass('expanded')
+          subunit.reload()
         @reload()
-
-      el.find("a.expand").on 'click', =>
-        el.addClass('expanded')
-        @reload(yes)
 
       el.find("a.less").on 'click', (e) =>
         el.addClass('narrow')
+        el.removeClass('expanded') if units
         e.stopPropagation()
         @reload()
-
-      el.find(".sparkline").sparkline _.shuffle([15,16,17,19,19,15,13,12,12,14,16,17,19,30,13,35,40,30,35,35,35,22]),
-        type: 'line'
-        lineColor: '#333333'
-        fillColor: '#00bfbf'
-        spotColor: '#7f007f'
-        width: '100%'
-        height: '50px'
-        chartRangeMin: 0
-        drawNormalOnTop: false
-        disableInteraction: yes
 
     reload: (now) ->
       reset = _.bind () =>
@@ -86,6 +79,50 @@ DashboardHelper =
 
       if now
         _.delay reset, 50
+
+    units:
+      init: (parent_container, data) ->
+        template = Survaider.Templates['dashboard.unit']
+        el = $ template dat: data
+
+        parent_container.append(el)
+
+        @parent_container = parent_container
+        @container = parent_container.find('.subunitdock')
+
+        @container.masonry
+          columnWidth: 1
+          itemSelector: "div[data-card=unit]"
+          isFitWidth: true
+
+        @append(dat) for dat in data.reverse()
+
+      append: (dat) ->
+        template = Survaider.Templates['dashboard.unit.tiles']
+        el = $ template dat: dat
+
+        @container.append(el).masonry('appended', el, true)
+
+        el.find(".sparkline").sparkline _.shuffle([15,16,17,19,19,15,13,12,12,14,16,17,19,30,13,35,40,30,35,35,35,22]),
+          type: 'line'
+          lineColor: '#333333'
+          fillColor: '#00bfbf'
+          spotColor: '#7f007f'
+          width: '100%'
+          height: '50px'
+          chartRangeMin: 0
+          drawNormalOnTop: false
+          disableInteraction: yes
+
+      reload: (now) ->
+        reset = _.bind () =>
+          @container.masonry()
+        , @
+
+        _.delay reset, 700
+
+        if now
+          _.delay reset, 50
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0
