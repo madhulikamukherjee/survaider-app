@@ -31,31 +31,29 @@
     survey_tiles: {
       init: function() {
         this.container = $('#card_dock');
-        this.container.masonry({
+        return this.container.masonry({
           columnWidth: 1,
           itemSelector: "div[data-card=parent]",
           isFitWidth: true
         });
-        return this.count = 0;
       },
       append: function(dat) {
         var attrs, cnt, el, subunit, template, units;
-        this.count += 1;
+        units = dat.units.length > 0;
         template = Survaider.Templates['dashboard.tiles'];
         attrs = {
-          narrow: dat.has_response_cap === Math.pow(2, 32) ? '' : '',
-          expand: this.count === 1 && this.narrow === '' ? 'expanded' : 'expanded'
+          expand: units ? 'expanded' : '',
+          narrow: units ? '' : 'narrow'
         };
         el = $(template({
           dat: dat,
           attrs: attrs
         }));
         this.container.append(el).masonry('appended', el, true);
-        units = dat.units.length !== 0;
         if (units) {
           subunit = this.units;
           cnt = this.container.find(el).find('.subunit-container');
-          subunit.init(cnt, dat.units);
+          subunit.init(cnt, dat);
         }
         Waves.attach(el.find('.parent-unit'));
         el.on('click', function() {
@@ -98,7 +96,7 @@
       },
       units: {
         init: function(parent_container, data) {
-          var dat, el, i, len, ref, results, template;
+          var dat, el, i, len, ref, template;
           template = Survaider.Templates['dashboard.unit'];
           el = $(template({
             dat: data
@@ -111,13 +109,33 @@
             itemSelector: "div[data-card=unit]",
             isFitWidth: true
           });
-          ref = data.reverse();
-          results = [];
+          ref = data.units.reverse();
           for (i = 0, len = ref.length; i < len; i++) {
             dat = ref[i];
-            results.push(this.append(dat));
+            this.append(dat);
           }
-          return results;
+          return parent_container.find('.btn-subunit').on('click', (function(_this) {
+            return function() {
+              return swal({
+                title: 'An input!',
+                text: 'Write something interesting:',
+                type: 'input',
+                showCancelButton: true,
+                closeOnConfirm: false,
+                animation: 'slide-from-top',
+                inputPlaceholder: 'Write something'
+              }, function(inputValue) {
+                if (inputValue === false) {
+                  return false;
+                }
+                if (inputValue === '') {
+                  swal.showInputError('You need to write something!');
+                  return false;
+                }
+                return swal('Nice!', 'You wrote: ' + inputValue, 'success');
+              });
+            };
+          })(this));
         },
         append: function(dat) {
           var el, template;
@@ -131,7 +149,7 @@
             lineColor: '#333333',
             fillColor: '#00bfbf',
             spotColor: '#7f007f',
-            width: '100%',
+            width: '200px',
             height: '50px',
             chartRangeMin: 0,
             drawNormalOnTop: false,
@@ -145,10 +163,7 @@
               return _this.container.masonry();
             };
           })(this), this);
-          _.delay(reset, 700);
-          if (now) {
-            return _.delay(reset, 50);
-          }
+          return _.delay(reset, 100);
         }
       }
     },

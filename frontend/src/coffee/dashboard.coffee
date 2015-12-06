@@ -32,24 +32,21 @@ DashboardHelper =
         itemSelector: "div[data-card=parent]"
         isFitWidth: true
 
-      @count = 0
-
     append: (dat) ->
-      @count += 1
+      units = dat.units.length > 0
       template = Survaider.Templates['dashboard.tiles']
       attrs =
-        narrow: if dat.has_response_cap is 2 ** 32 then '' else ''
-        expand: if @count is 1 and @narrow is '' then 'expanded' else 'expanded'
+        # narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
+        expand: if units then 'expanded' else ''
+        narrow: if units then '' else 'narrow'
 
       el = $ template dat: dat, attrs: attrs
       @container.append(el).masonry('appended', el, true)
 
-      units = dat.units.length isnt 0
-
       if units
         subunit = @units
         cnt = @container.find(el).find('.subunit-container')
-        subunit.init cnt, dat.units
+        subunit.init cnt, dat
 
       Waves.attach el.find '.parent-unit'
 
@@ -95,7 +92,24 @@ DashboardHelper =
           itemSelector: "div[data-card=unit]"
           isFitWidth: true
 
-        @append(dat) for dat in data.reverse()
+        @append(dat) for dat in data.units.reverse()
+
+        parent_container.find('.btn-subunit').on 'click', =>
+          swal {
+            title: 'An input!'
+            text: 'Write something interesting:'
+            type: 'input'
+            showCancelButton: true
+            closeOnConfirm: false
+            animation: 'slide-from-top'
+            inputPlaceholder: 'Write something'
+          }, (inputValue) ->
+            if inputValue == false
+              return false
+            if inputValue == ''
+              swal.showInputError 'You need to write something!'
+              return false
+            swal 'Nice!', 'You wrote: ' + inputValue, 'success'
 
       append: (dat) ->
         template = Survaider.Templates['dashboard.unit.tiles']
@@ -108,7 +122,7 @@ DashboardHelper =
           lineColor: '#333333'
           fillColor: '#00bfbf'
           spotColor: '#7f007f'
-          width: '100%'
+          width: '200px'
           height: '50px'
           chartRangeMin: 0
           drawNormalOnTop: false
@@ -119,10 +133,7 @@ DashboardHelper =
           @container.masonry()
         , @
 
-        _.delay reset, 700
-
-        if now
-          _.delay reset, 50
+        _.delay reset, 100
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0

@@ -370,6 +370,9 @@ div.card
       padding: 0px
       overflow: hidden
 
+    div.subunit-container
+      display: none !important
+
     &:hover
       section.frontmatter
         &:before, &:after
@@ -410,6 +413,14 @@ div.card
     border-radius: 3px
     width: 200px
     background: $primary
+    overflow: hidden
+    cursor: pointer
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5)
+
+    @include transition(background 0.2s)
+
+    &:hover
+      background: #333D5E
 
     section.matter
       padding: 10px 10px 0 10px
@@ -440,10 +451,14 @@ div.card
     canvas
       margin-bottom: -4px
 
-    section.footer
+    section.foot
       padding: 0 10px 10px 10px
       background: #00bfbf
       text-align: right
+      color: #ffffff
+
+      a
+        color: #ffffff
 
       li
         &:first-child

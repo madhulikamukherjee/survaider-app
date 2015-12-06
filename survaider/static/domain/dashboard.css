@@ -403,6 +403,9 @@ div.card.narrow section.status, div.card.narrow section.footer {
   padding: 0px;
   overflow: hidden;
 }
+div.card.narrow div.subunit-container {
+  display: none !important;
+}
 div.card.narrow:hover section.frontmatter:before, div.card.narrow:hover section.frontmatter:after {
   height: 10px;
 }
@@ -441,6 +444,15 @@ div.card.unit {
   border-radius: 3px;
   width: 200px;
   background: #2E96D6;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+  -webkit-transition: background 0.2s;
+  -moz-transition: background 0.2s;
+  transition: background 0.2s;
+}
+div.card.unit:hover {
+  background: #333D5E;
 }
 div.card.unit section.matter {
   padding: 10px 10px 0 10px;
@@ -471,15 +483,19 @@ div.card.unit section.matter ul li:last-child {
 div.card.unit canvas {
   margin-bottom: -4px;
 }
-div.card.unit section.footer {
+div.card.unit section.foot {
   padding: 0 10px 10px 10px;
   background: #00bfbf;
   text-align: right;
+  color: #ffffff;
 }
-div.card.unit section.footer li:first-child {
+div.card.unit section.foot a {
+  color: #ffffff;
+}
+div.card.unit section.foot li:first-child {
   float: left;
 }
-div.card.unit section.footer li:last-child {
+div.card.unit section.foot li:last-child {
   float: none;
 }
 div.card button.btn-subunit {

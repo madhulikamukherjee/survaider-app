@@ -12,7 +12,7 @@ __p += '<div class="card ' +
 ((__t = ( attrs.expand )) == null ? '' : __t) +
 '" data-card="parent">\n  <div class="parent-unit">\n    <section class="frontmatter">\n      <h1>' +
 ((__t = ( dat.name )) == null ? '' : __t) +
-'</h1>\n\n      <a href="javascript:void(0)" class="expand">\n        <i class="fa fa-arrow-circle-left"></i>expand\n      </a>\n\n      <small>\n        <span class="status-expanded">\n          Created\n          <strong>\n            <span data-livestamp="' +
+'</h1>\n\n      <small>\n        <span class="status-expanded">\n          Created\n          <strong>\n            <span data-livestamp="' +
 ((__t = ( dat.created_on )) == null ? '' : __t) +
 '">(Loading)</span>\n          </strong>\n        </span>\n        <ul class="status-narrow">\n          <li><i class="fa fa-circle-o idle"></i>Active</li>\n          <li><i class="fa fa-rss alert"></i>10 critical alerts</li>\n        </ul>\n      </small>\n\n      <ul class="statistics clear">\n        <li>\n          <h1>Responses</h1>\n          <h2>\n            ' +
 ((__t = ( numeral(dat.has_obtained_responses).format('0[.]00a') )) == null ? '' : __t) +
@@ -60,7 +60,7 @@ __p += '<div class="card unit" data-card="unit">\n  <section class="matter">\n  
 ((__t = ( numeral(dat.has_obtained_responses).format('0[.]00a') )) == null ? '' : __t) +
 '</h2>\n      </li>\n      <li>\n        <h1>QSR</h1>\n        <h2>' +
 ((__t = ( numeral(10).format('0[.]00a') )) == null ? '' : __t) +
-'</h2>\n      </li>\n    </ul>\n  </section>\n  <section>\n    <div class="sparkline"></div>\n  </section>\n  <section class="footer">\n    <ul class="clear">\n      <li>\n        <a href="' +
+'</h2>\n      </li>\n    </ul>\n  </section>\n  <section>\n    <div class="sparkline"></div>\n  </section>\n  <section class="foot">\n    <ul class="clear">\n      <li>\n        <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '#settings">\n          <i class="fa fa-cog"></i> Settings\n        </a>\n      </li>\n      <li>\n        <a href="' +
 ((__t = ( dat.uri_responses )) == null ? '' : __t) +
