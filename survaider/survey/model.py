@@ -253,6 +253,10 @@ class Survey(db.Document):
 
     @queryset_manager
     def objects(doc_cls, queryset):
+        return queryset.filter()
+
+    @queryset_manager
+    def root(doc_cls, queryset):
         return queryset.filter(_cls = 'Survey')
 
     @property
@@ -395,7 +399,7 @@ class SurveyUnit(Survey):
         super(SurveyUnit, self).__init__(**kwargs)
         if self.referenced:
             self.structure = self.referenced.structure
-            self.metadata  = self.referenced.metadata
+            self.metadata.update(self.referenced.metadata)
 
     @queryset_manager
     def objects(doc_cls, queryset):

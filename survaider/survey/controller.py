@@ -31,7 +31,7 @@ class SurveyController(Resource):
 
     def get(self):
         if current_user.is_authenticated():
-            svey = Survey.objects(created_by = current_user.id)
+            svey = Survey.root(created_by = current_user.id)
 
             survey_list = [_.repr for _ in svey if not _.hidden]
 
