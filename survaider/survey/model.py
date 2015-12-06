@@ -62,7 +62,7 @@ class Survey(db.Document):
 
     created_by  = db.ListField(db.ReferenceField(User))
 
-    meta = {'allow_inheritance': True}
+    meta = {'allow_inheritance': True, 'strict': False}
 
     def __unicode__(self):
         return HashId.encode(self.id)

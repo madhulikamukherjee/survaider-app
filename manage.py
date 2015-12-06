@@ -46,6 +46,12 @@ def create_user():
             click.echo("Possible Error: Email Invalid or Exists.")
 
 @manager.command
+def dump_json():
+    create_app()
+    from survaider.survey.model import Survey
+    print(Survey.objects().to_json())
+
+@manager.command
 def setup_db():
     from pymongo import MongoClient
     from survaider.config import MONGODB_DB, MONGODB_HOST, MONGODB_PORT
