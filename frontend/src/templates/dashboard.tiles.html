@@ -52,6 +52,9 @@
           </strong>
         </li>
         <li><i class="fa fa-rss alert"></i>10 critical alerts</li>
+        <% if (dat.units.length == 0) { %>
+        <li><a href="javascript:void(0)" class="survey-unit-btn">Add Survey Unit</a></li>
+        <% } %>
       </ul>
     </section>
     <section class="footer">

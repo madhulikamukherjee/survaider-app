@@ -37,16 +37,19 @@ DashboardHelper =
       template = Survaider.Templates['dashboard.tiles']
       attrs =
         # narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
-        expand: if units then 'expandeds' else ''
-        narrow: if units then 'narrow' else 'narrow'
+        expand: if units then 'expanded' else ''
+        narrow: if units then '' else 'narrow'
 
       el = $ template dat: dat, attrs: attrs
-      @container.append(el).masonry('appended', el, true)
+      @container.append(el).masonry('appended', el, true).masonry()
 
-      if units
+      subroutine = (dat) =>
         subunit = @units
         cnt = @container.find(el).find('.subunit-container')
         subunit.init cnt, dat, _.bind(@reload, @)
+
+      if units
+        subroutine(dat)
 
       Waves.attach el.find '.parent-unit'
 
@@ -74,16 +77,26 @@ DashboardHelper =
         e.stopPropagation()
         @reload()
 
-    reload: (now) ->
+      el.find("a.survey-unit-btn").on 'click', =>
+        @units.add dat, (data) =>
+          dat.units.push data.unit
+          el.addClass('expanded')
+          subroutine(dat)
+          el.find("a.survey-unit-btn").hide()
+          @reload()
+
+    reload: _.debounce (now) ->
       reset = _.bind () =>
         @container.masonry()
       , @
 
       _.delay reset, 500
       _.delay reset, 1500
+      _.delay reset, 2500
 
       if now
         _.delay reset, 50
+    , 500
 
     units:
       init: (parent_container, data, parent_reload) ->
@@ -91,7 +104,7 @@ DashboardHelper =
         el = $ template dat: data
 
         parent_container.append(el)
-        console.log parent_reload()
+        parent_reload()
 
         @parent_container = parent_container
         @container = parent_container.find('.subunitdock')
@@ -112,7 +125,7 @@ DashboardHelper =
         template = Survaider.Templates['dashboard.unit.tiles']
         el = $ template dat: dat
 
-        @container.append(el).masonry('appended', el, true)
+        @container.append(el).masonry('appended', el, true).masonry()
 
         el.find(".sparkline").sparkline _.shuffle([15,16,17,19,19,15,13,12,12,14,16,17,19,30,13,35,40,30,35,35,35,22]),
           type: 'line'
@@ -162,12 +175,16 @@ DashboardHelper =
               title: "Sorry, something went wrong. Please try again, or contact Support."
               type:  "error"
 
-      reload: (now) ->
+      reload: _.debounce (now) ->
         reset = _.bind () =>
           @container.masonry()
         , @
 
         _.delay reset, 600
+        _.delay reset, 1000
+        _.delay reset, 2000
+        _.delay reset, 3000
+      , 100
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0

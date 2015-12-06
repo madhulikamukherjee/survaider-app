@@ -23130,7 +23130,11 @@ __p += '\n          <h1>Goal</h1>\n          <h2>' +
  } ;
 __p += '\n        </li>\n      </ul>\n      <a href="javascript:void(0)" class="more">\n        <i class="fa fa-arrow-circle-down"></i>More\n      </a>\n    </section>\n    <section class="status">\n      <h1>\n        Status\n        <a href="javascript:void(0)" class="less">\n          <i class="fa fa-arrow-circle-up"></i>Show Less\n        </a>\n      </h1>\n\n      <ul>\n        <li><i class="fa fa-circle-o idle"></i>Active</li>\n        <li>\n          <i class="fa fa-clock-o primary"></i>\n          Modified\n          <strong>\n          <span data-livestamp="' +
 ((__t = ( dat.last_modified )) == null ? '' : __t) +
-'">(Loading)</span>\n          </strong>\n        </li>\n        <li><i class="fa fa-rss alert"></i>10 critical alerts</li>\n      </ul>\n    </section>\n    <section class="footer">\n      <section class="destinations">\n        <ul class="clear">\n          <a href="' +
+'">(Loading)</span>\n          </strong>\n        </li>\n        <li><i class="fa fa-rss alert"></i>10 critical alerts</li>\n        ';
+ if (dat.units.length == 0) { ;
+__p += '\n        <li><a href="javascript:void(0)" class="survey-unit-btn">Add Survey Unit</a></li>\n        ';
+ } ;
+__p += '\n      </ul>\n    </section>\n    <section class="footer">\n      <section class="destinations">\n        <ul class="clear">\n          <a href="' +
 ((__t = ( dat.uri_responses )) == null ? '' : __t) +
 '">\n            <li><i class="fa fa-area-chart"></i> Analytics</li>\n          </a>\n          <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
@@ -23168,7 +23172,7 @@ __p += '<div class="card unit" data-card="unit">\n  <section class="matter">\n  
 ((__t = ( numeral(10).format('0[.]00a') )) == null ? '' : __t) +
 '</h2>\n      </li>\n    </ul>\n  </section>\n  <section>\n    <div class="sparkline"></div>\n  </section>\n  <section class="foot">\n    <ul class="clear">\n      <li>\n        <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#settings">\n          <i class="fa fa-cog"></i> Settings\n        </a>\n      </li>\n      <li>\n        <a href="' +
+'#share">\n          <i class="fa fa-cog"></i> Share\n        </a>\n      </li>\n      <li>\n        <a href="' +
 ((__t = ( dat.uri_responses )) == null ? '' : __t) +
 '">\n          <i class="fa fa-area-chart"></i> Analytics\n        </a>\n      </li>\n    </ul>\n  </section>\n</div>\n';
 

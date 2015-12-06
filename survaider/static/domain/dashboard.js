@@ -38,22 +38,28 @@
         });
       },
       append: function(dat) {
-        var attrs, cnt, el, subunit, template, units;
+        var attrs, el, subroutine, template, units;
         units = dat.units.length > 0;
         template = Survaider.Templates['dashboard.tiles'];
         attrs = {
-          expand: units ? 'expandeds' : '',
-          narrow: units ? 'narrow' : 'narrow'
+          expand: units ? 'expanded' : '',
+          narrow: units ? '' : 'narrow'
         };
         el = $(template({
           dat: dat,
           attrs: attrs
         }));
-        this.container.append(el).masonry('appended', el, true);
+        this.container.append(el).masonry('appended', el, true).masonry();
+        subroutine = (function(_this) {
+          return function(dat) {
+            var cnt, subunit;
+            subunit = _this.units;
+            cnt = _this.container.find(el).find('.subunit-container');
+            return subunit.init(cnt, dat, _.bind(_this.reload, _this));
+          };
+        })(this);
         if (units) {
-          subunit = this.units;
-          cnt = this.container.find(el).find('.subunit-container');
-          subunit.init(cnt, dat, _.bind(this.reload, this));
+          subroutine(dat);
         }
         Waves.attach(el.find('.parent-unit'));
         el.on('click', function() {
@@ -78,7 +84,7 @@
             return _this.reload();
           };
         })(this));
-        return el.find("a.less").on('click', (function(_this) {
+        el.find("a.less").on('click', (function(_this) {
           return function(e) {
             el.addClass('narrow');
             if (units) {
@@ -88,8 +94,19 @@
             return _this.reload();
           };
         })(this));
+        return el.find("a.survey-unit-btn").on('click', (function(_this) {
+          return function() {
+            return _this.units.add(dat, function(data) {
+              dat.units.push(data.unit);
+              el.addClass('expanded');
+              subroutine(dat);
+              el.find("a.survey-unit-btn").hide();
+              return _this.reload();
+            });
+          };
+        })(this));
       },
-      reload: function(now) {
+      reload: _.debounce(function(now) {
         var reset;
         reset = _.bind((function(_this) {
           return function() {
@@ -98,10 +115,11 @@
         })(this), this);
         _.delay(reset, 500);
         _.delay(reset, 1500);
+        _.delay(reset, 2500);
         if (now) {
           return _.delay(reset, 50);
         }
-      },
+      }, 500),
       units: {
         init: function(parent_container, data, parent_reload) {
           var dat, el, i, len, ref, template;
@@ -110,7 +128,7 @@
             dat: data
           }));
           parent_container.append(el);
-          console.log(parent_reload());
+          parent_reload();
           this.parent_container = parent_container;
           this.container = parent_container.find('.subunitdock');
           this.container.masonry({
@@ -138,7 +156,7 @@
           el = $(template({
             dat: dat
           }));
-          this.container.append(el).masonry('appended', el, true);
+          this.container.append(el).masonry('appended', el, true).masonry();
           return el.find(".sparkline").sparkline(_.shuffle([15, 16, 17, 19, 19, 15, 13, 12, 12, 14, 16, 17, 19, 30, 13, 35, 40, 30, 35, 35, 35, 22]), {
             type: 'line',
             lineColor: '#333333',
@@ -192,15 +210,18 @@
             });
           });
         },
-        reload: function(now) {
+        reload: _.debounce(function(now) {
           var reset;
           reset = _.bind((function(_this) {
             return function() {
               return _this.container.masonry();
             };
           })(this), this);
-          return _.delay(reset, 600);
-        }
+          _.delay(reset, 600);
+          _.delay(reset, 1000);
+          _.delay(reset, 2000);
+          return _.delay(reset, 3000);
+        }, 100)
       }
     },
     nav_menu: function() {

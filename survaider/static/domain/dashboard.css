@@ -28,7 +28,13 @@ body {
   min-height: 100vh;
   margin-bottom: 100px;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1366px) {
+  body {
+    width: 1366px;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 1365px) {
   body {
     width: 1024px;
     margin: 0 auto;
@@ -317,6 +323,15 @@ div.card section.status ul {
 div.card section.status ul li {
   margin: 0 0 5px 0;
 }
+div.card section.status .survey-unit-btn {
+  padding: 5px 10px;
+  border-radius: 3px;
+  background: #2C3552;
+  text-align: center;
+  color: #ffffff;
+  margin-top: 5px;
+  display: inline-block;
+}
 div.card section.status a.less {
   color: #FFFFFF;
   position: absolute;
@@ -427,6 +442,7 @@ div.card div.subunit-container {
   width: 570px;
   float: right;
   display: none;
+  position: relative;
 }
 div.card.expanded div.subunit-container {
   display: inline-block;

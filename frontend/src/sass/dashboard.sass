@@ -28,7 +28,11 @@ body
   min-height: 100vh
   margin-bottom: 100px
 
-  @media (min-width: 1024px)
+  @media (min-width: 1366px)
+    width: 1366px
+    margin: 0 auto
+
+  @media (max-width: 1365px)
     width: 1024px
     margin: 0 auto
 
@@ -292,6 +296,15 @@ div.card
       li
         margin: 0 0 5px 0
 
+    .survey-unit-btn
+      padding: 5px 10px
+      border-radius: 3px
+      background: #2C3552
+      text-align: center
+      color: #ffffff
+      margin-top: 5px
+      display: inline-block
+
     a.less
       color: #FFFFFF
       position: absolute
@@ -394,6 +407,7 @@ div.card
     width: $width * 2 + 30
     float: right
     display: none
+    position: relative
 
   &.expanded
     div.subunit-container
