@@ -247,6 +247,11 @@ class Survey(db.Document):
     def hidden(self, value):
         self.metadata['hidden'] = value
 
+    @property
+    def units(self):
+        dat = SurveyUnit.objects(referenced = self)
+        return [_.repr for _ in dat if not _.hidden]
+
     def save(self, **kwargs):
         self.metadata['modified'] = datetime.datetime.now()
         super(Survey, self).save(**kwargs)
@@ -272,6 +277,7 @@ class Survey(db.Document):
             'is_paused': self.paused,
             'is_active': self.active,
             'imgs': self.img_uploads,
+            'units': self.units,
             'has_response_cap': self.response_cap,
             'has_obtained_responses': self.obtained_responses,
             'has_expired': self.expires <= datetime.datetime.now(),
@@ -400,6 +406,32 @@ class SurveyUnit(Survey):
         if self.referenced:
             self.structure = self.referenced.structure
             self.metadata.update(self.referenced.metadata)
+
+    @property
+    def units(self):
+        "SurveyUnits cannot have Units."
+        return None
+
+    @property
+    def repr(self):
+        return {
+            'id': str(self),
+            'unit_name': self.unit_name,
+            'name': self.metadata['name'],
+            'is_gamified': self.gamified_enabled,
+            'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
+            'uri_game': '/survey/s:{0}/gamified'.format(str(self)),
+            'uri_edit': '/survey/s:{0}/edit'.format(str(self)),
+            'uri_responses': '/survey/s:{0}/analysis'.format(str(self)),
+            'is_paused': self.paused,
+            'is_active': self.active,
+            'has_response_cap': self.response_cap,
+            'has_obtained_responses': self.obtained_responses,
+            'has_expired': self.expires <= datetime.datetime.now(),
+            'expires': str(self.expires),
+            'created_on': str(self.added),
+            'last_modified': str(self.modified),
+        }
 
     @queryset_manager
     def objects(doc_cls, queryset):

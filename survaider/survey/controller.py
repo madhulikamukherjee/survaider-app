@@ -20,7 +20,7 @@ from survaider import app
 from survaider.minions.exceptions import APIException, ViewException
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
 
 class SurveyController(Resource):
 
@@ -54,13 +54,7 @@ class SurveyController(Resource):
             svey.created_by.append(usr)
             svey.save()
 
-            ret = {
-                'id': str(svey),
-                'uri': '/survey/s:{0}'.format(str(svey)),
-                'uri_edit': '/survey/s:{0}/edit'.format(str(svey)),
-            }
-
-            return ret, 200
+            return svey.repr, 200
         else:
             raise APIException("Login Required", 401)
 
@@ -177,6 +171,53 @@ class SurveyMetaController(Resource):
                     }
                     return ret, 200
                 raise APIException("TypeError: Invalid swag value.", 400)
+
+            elif action == 'unit_name':
+                if type(svey) is not SurveyUnit:
+                    raise APIException("Action valid for Survey Units only.", 400)
+
+                args = self.post_args()
+                dat = args['swag']
+
+                if not len(dat) > 0:
+                    raise APIException("TypeError: Invalid swag value.", 400)
+
+                svey.unit_name = dat
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+
+                return ret, 200
+
+            elif action == 'unit_addition':
+                if type(svey) is SurveyUnit:
+                    raise APIException("Action valid for Root Survey only.", 400)
+
+                args = self.post_args()
+                dat = args['swag']
+
+                if not len(dat) > 0:
+                    raise APIException("TypeError: Invalid swag value.", 400)
+
+                usvey = SurveyUnit()
+                usr   = User.objects(id = current_user.id).first()
+                usvey.unit_name = dat
+                usvey.referenced = svey
+                usvey.created_by.append(usr)
+                usvey.save()
+                usvey.reload()
+
+                ret = {
+                    'id': str(svey),
+                    'unit': usvey.repr,
+                    'saved': True,
+                }
+
+                return ret, 200
 
             elif action == 'survey_name':
                 args = self.post_args()
