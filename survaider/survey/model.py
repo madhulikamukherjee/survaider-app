@@ -337,15 +337,15 @@ class Survey(db.Document):
             }
         def game(field):
             typ = field['field_type']
-            if typ in game_map and 'options' in field['field_options']:
-                op_len = len(field['field_options']['options'])
+            if typ in game_map:
+                op = field['field_options'].get('options', [])
+
+                op_len = len(op)
                 games = []
 
                 for game, constr in game_map[typ].items():
                     if constr[0] <= op_len <= constr[1]:
                         games.append(game)
-
-                print(games)
 
                 return random.choice(games)
 
