@@ -912,6 +912,13 @@ var Boner = {
         this.opt = opt;
         this.dz.on('addedfile', (function(_this) {
           return function(file) {
+            if (file.cropped) {
+
+            }
+          };
+        })(this));
+        this.dz.on('thumbnail', (function(_this) {
+          return function(file) {
             var cancel_bound_btn, cancel_btn_handler, done_bound_btn, done_btn_handler, img, reader;
             if (file.cropped) {
               return;
