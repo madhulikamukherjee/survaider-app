@@ -68,8 +68,26 @@ class Survey(db.Document):
         return HashId.encode(self.id)
 
     @property
+    def resolved_root(self):
+        return self
+
+    @property
     def cols(self):
         return [_['cid'] for _ in self.structure['fields']]
+
+    @property
+    def notification_hooks(self):
+        rules = {}
+        for field in self.structure['fields']:
+            if field.get('notifications', False) is True:
+                options = enumerate(field['field_options'].get('options', []))
+                store = []
+                for i, option in options:
+                    if option.get('notify', False) is True:
+                        store.append("a_{0}".format(i + 1))
+                rules[field['cid']] = store
+
+        return rules
 
     @property
     def questions(self):
@@ -284,6 +302,7 @@ class Survey(db.Document):
             'expires': str(self.expires),
             'created_on': str(self.added),
             'last_modified': str(self.modified),
+            'r': self.notification_hooks
         }
 
     @property
@@ -413,6 +432,10 @@ class SurveyUnit(Survey):
         return None
 
     @property
+    def resolved_root(self):
+        return self.referenced.resolved_root
+
+    @property
     def repr(self):
         return {
             'id': str(self),
@@ -453,6 +476,10 @@ class Response(db.Document):
             self.save()
         else:
             raise TypeError("Question ID is invalid")
+
+        if qid in self.parent_survey.notification_hooks:
+            if qres in self.parent_survey.notification_hooks[qid]:
+                print("Will emit a Notification!")
 
     @property
     def added(self):
