@@ -894,6 +894,9 @@ var Boner = {
         var show_bounce;
         this.dzbtn = Ladda.create(document.querySelector('#sb-dz-attach'));
         this.dzbtnel = $('#sb-dz-attach');
+        this.cropmodal = $('div#sb-attach').find('.crop');
+        this.cropcontainer = $('div#sb-attach').find('.croparea');
+        this.cropdone = $('div#sb-attach').find('.sb-crop-done');
         this.dz = new Dropzone('div#sb-attach', {
           url: opt.img_upload,
           paramName: 'swag',
@@ -903,12 +906,55 @@ var Boner = {
           clickable: '#sb-dz-attach',
           previewTemplate: '',
           previewsContainer: false,
-          autoQueue: true
+          autoProcessQueue: false,
+          autoQueue: false
         });
         this.opt = opt;
         this.dz.on('addedfile', (function(_this) {
           return function(file, e) {
+            console.log("added");
+            if (!file.cropped) {
+              return;
+            }
             return _this.dzbtn.start();
+          };
+        })(this));
+        this.dz.on('thumbnail', (function(_this) {
+          return function(file) {
+            var cachedName, cachedType, click_bounce, click_handler, img, reader;
+            if (file.cropped) {
+              return;
+            }
+            _this.cropcontainer.html('');
+            img = $('<img class="original" />');
+            reader = new FileReader;
+            cachedName = file.name;
+            cachedType = file.type;
+            _this.dz.removeFile(file);
+            reader.onloadend = function() {
+              _this.cropcontainer.html(img);
+              img.attr('src', reader.result);
+              return img.cropper({
+                aspectRatio: 1,
+                autoCropArea: 1,
+                movable: true,
+                cropBoxResizable: true
+              });
+            };
+            reader.readAsDataURL(file);
+            _this.cropmodal.addClass('open');
+            click_handler = function() {
+              var blob, newfile;
+              blob = img.cropper('getCroppedCanvas').toDataURL();
+              newfile = new File([this.dataURItoBlob(blob, cachedType)], cachedName, {
+                type: cachedType
+              });
+              newfile.cropped = true;
+              this.dz.processFile(newfile);
+              return this.cropmodal.removeClass('open');
+            };
+            click_bounce = _.bind(click_handler, _this);
+            return _this.cropdone.on('click', _.debounce(click_bounce, 500));
           };
         })(this));
         this.dz.on('sending', (function(_this) {
@@ -1021,6 +1067,20 @@ var Boner = {
         })(this), this);
         this.callback = false;
         return _.delay(df, 1000);
+      },
+      dataURItoBlob: function(dataURI, type) {
+        var ab, byteString, i, ia;
+        byteString = atob(dataURI.split(',')[1]);
+        ab = new ArrayBuffer(byteString.length);
+        ia = new Uint8Array(ab);
+        i = 0;
+        while (i < byteString.length) {
+          ia[i] = byteString.charCodeAt(i);
+          i++;
+        }
+        return new Blob([ab], {
+          type: type
+        });
       }
     };
 
@@ -1503,7 +1563,7 @@ this["Formbuilder"]["templates"]["partials/edit_field"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n                <div class=\'sb-field-options\' id=\'editField\'>\n                  <div class=\'sb-edit-field-wrapper\'></div>\n                  <div class="sb-field-options-done">\n                      <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                  </div>\n                </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</div>\n\n      <div class="container sb-attach right" id="sb-attach">\n        <div class="row">\n          <div class="col-xs-12">\n            <span class="font-montserrat text-uppercase bold">Attach an Image</span><br>\n            <div class="sb-images">\n              <div class="sb-images-container">\n                <select class="image-picker show-html" id="sb-thumbnails"></select>\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="row">\n          <div class="col-xs-12 m-t-10 sm-m-t-10">\n            <a class="btn btn-primary font-montserrat btn-sm ladda-button"\n               id="sb-dz-attach"\n               data-style="expand-left">\n               <span class="ladda-label">Upload</span>\n            </a>\n            <small><span class="font-montserrat text-uppercase bold">You may also Drag and Drop the image here.</span></small>\n            <div class="pull-right">\n              <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5" onclick="Formbuilder.uploads.hide();">Done</button>\n            </div>\n          </div>\n        </div>\n      </div>\n';
+__p += '\n<div class="modal fade slide-right" id="sb_edit_model" tabindex="-1" role="dialog" aria-hidden="true">\n  <div class="modal-dialog modal-sm">\n    <div class="modal-content-wrapper">\n      <div class="modal-content">\n        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>\n        </button>\n        <div class="container-xs-height full-height">\n          <div class="row-xs-height">\n            <div class="modal-body col-xs-height col-middle">\n              <div class=\'sb-field-options\' id=\'editField\'>\n                <div class=\'sb-edit-field-wrapper\'></div>\n                <div class="sb-field-options-done">\n                  <button onclick=\'$("#sb_edit_model").modal("hide");\' class="btn btn-success font-montserrat btn-block m-t-10">Done</button>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<div class="container sb-attach right" id="sb-attach">\n  <div class="row">\n    <div class="col-xs-12">\n      <span class="font-montserrat text-uppercase bold">Attach an Image</span><br>\n      <div class="sb-images">\n        <div class="sb-images-container">\n          <select class="image-picker show-html" id="sb-thumbnails"></select>\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class="row">\n    <div class="col-xs-12 m-t-10 sm-m-t-10">\n      <a class="btn btn-primary font-montserrat btn-sm ladda-button"\n         id="sb-dz-attach"\n         data-style="expand-left">\n         <span class="ladda-label">Upload</span>\n      </a>\n      <small><span class="font-montserrat text-uppercase bold">You may also Drag and Drop the image here.</span></small>\n      <div class="pull-right">\n        <button type="button" class="btn btn-primary font-montserrat btn-sm m-t-5" onclick="Formbuilder.uploads.hide();">Done</button>\n      </div>\n    </div>\n  </div>\n  <div class="crop">\n    <div class="tools">\n      <div class="col-xs-6">\n        <p>Move and adjust the size to resize your picture.</p>\n      </div>\n      <div class="col-xs-6">\n        <div class="pull-right">\n          <button type="button" class="btn btn-dark font-montserrat btn-sm">Cancel</button>\n          <button type="button" class="btn btn-primary font-montserrat btn-sm sb-crop-done">Done</button>\n        </div>\n      </div>\n    </div>\n    <div class="croparea">\n    </div>\n  </div>\n</div>\n';
 
 }
 return __p
