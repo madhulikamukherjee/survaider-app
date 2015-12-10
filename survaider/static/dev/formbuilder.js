@@ -902,30 +902,19 @@ var Boner = {
           paramName: 'swag',
           maxFilesize: 4,
           acceptedFiles: 'image/*',
-          uploadMultiple: false,
           clickable: '#sb-dz-attach',
           previewTemplate: '',
           previewsContainer: false,
-          autoProcessQueue: false,
-          autoQueue: false
+          autoQueue: false,
+          autoProcessQueue: true
         });
         this.opt = opt;
         this.dz.on('addedfile', (function(_this) {
-          return function(file, e) {
-            console.log("added");
-            if (!file.cropped) {
-              return;
-            }
-            return _this.dzbtn.start();
-          };
-        })(this));
-        this.dz.on('thumbnail', (function(_this) {
           return function(file) {
-            var cachedName, cachedType, click_bounce, click_handler, img, reader;
+            var cachedName, cachedType, click_bounce, click_debounce, click_handler, img, reader;
             if (file.cropped) {
               return;
             }
-            _this.cropcontainer.html('');
             img = $('<img class="original" />');
             reader = new FileReader;
             cachedName = file.name;
@@ -936,30 +925,38 @@ var Boner = {
               img.attr('src', reader.result);
               return img.cropper({
                 aspectRatio: 1,
-                autoCropArea: 1,
                 movable: true,
-                cropBoxResizable: true
+                viewMode: 1,
+                cropBoxResizable: true,
+                autoCropArea: 0.8,
+                background: false
               });
             };
             reader.readAsDataURL(file);
             _this.cropmodal.addClass('open');
             click_handler = function() {
-              var blob, newfile;
-              blob = img.cropper('getCroppedCanvas').toDataURL();
-              newfile = new File([this.dataURItoBlob(blob, cachedType)], cachedName, {
-                type: cachedType
-              });
-              newfile.cropped = true;
-              this.dz.processFile(newfile);
-              return this.cropmodal.removeClass('open');
+              return img.cropper('getCroppedCanvas').toBlob((function(_this) {
+                return function(blob) {
+                  var newfile;
+                  newfile = new File([blob], file.name, {
+                    type: file.type
+                  });
+                  newfile.status = file.status;
+                  newfile.accepted = file.accepted;
+                  newfile.upload = file.upload;
+                  newfile.cropped = true;
+                  _this.dz.addFile(newfile);
+                  _this.dz.enqueueFile(newfile);
+                  _this.cropmodal.removeClass('open');
+                  img.cropper('destroy');
+                  _this.cropcontainer.html('');
+                  return _this.cropdone.off();
+                };
+              })(this));
             };
             click_bounce = _.bind(click_handler, _this);
-            return _this.cropdone.on('click', _.debounce(click_bounce, 500));
-          };
-        })(this));
-        this.dz.on('sending', (function(_this) {
-          return function(file) {
-            return _this.dzbtnel.attr('disabled', 'true');
+            click_debounce = _.debounce(click_bounce, 100);
+            return _this.cropdone.on('click', click_debounce);
           };
         })(this));
         this.dz.on('totaluploadprogress', (function(_this) {
@@ -975,6 +972,7 @@ var Boner = {
         this.dz.on('error', (function(_this) {
           return function(file, e, xhr) {
             _this.dzbtn.stop();
+            _this.dz.removeAllFiles();
             if (xhr != null) {
               e = e.message;
             }
@@ -993,7 +991,7 @@ var Boner = {
           return function(file, e) {
             var js;
             _this.dzbtn.stop();
-            _this.dz.removeFile(file);
+            _this.dz.removeAllFiles();
             js = JSON.parse(file.xhr.response);
             return _this.add_thumbnail({
               uri: js.temp_uri,
