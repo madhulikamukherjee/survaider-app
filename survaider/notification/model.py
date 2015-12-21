@@ -5,6 +5,7 @@
 from datetime import datetime, timedelta
 
 from survaider.user.model import User
+from survaider.survey.model import Survey, Response
 from survaider import db, app
 
 class Notification(db.Document):
@@ -38,4 +39,4 @@ class SurveyResponseNotification(Notification):
     transmit = db.BooleanField(default = False)
 
 class SurveyResponseNotificationAggregation(object):
-
+    pass
