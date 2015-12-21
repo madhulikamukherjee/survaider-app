@@ -38,5 +38,17 @@ class SurveyResponseNotification(Notification):
     response = db.ReferenceField(Response, required = True)
     transmit = db.BooleanField(default = False)
 
+    @property
+    def repr(self):
+        doc = {
+            'acquired':     self.acquired,
+            'flagged':      self.flagged,
+            'survey':       self.survey,
+            'root_survey':  self.survey.resolved_root,
+            'response':     self.response,
+            'payload':      self.payload,
+        }
+        return doc
+
 class SurveyResponseNotificationAggregation(object):
     pass

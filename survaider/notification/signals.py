@@ -4,4 +4,5 @@
 
 from blinker import signal
 
-survey_response_notify = signal('survaider.notification.survey_response')
+survey_response_notify   = signal('notification.survey_response')
+survey_response_transmit = signal('notification.survey_response.transmit')

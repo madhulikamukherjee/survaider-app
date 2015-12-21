@@ -7,6 +7,7 @@ from blinker import signal
 from survaider import app
 from survaider.notification.model import SurveyResponseNotification
 from survaider.notification.signals import survey_response_notify
+from survaider.notification.signals import survey_response_transmit
 
 def create_response_notification(survey, **kwargs):
     for user in survey.created_by:
@@ -29,3 +30,4 @@ def transmit_response_notification(response):
 
 def register():
     survey_response_notify.connect(create_response_notification)
+    survey_response_transmit.connect(transmit_response_notification)
