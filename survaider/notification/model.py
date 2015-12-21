@@ -49,6 +49,3 @@ class SurveyResponseNotification(Notification):
             'payload':      self.payload,
         }
         return doc
-
-class SurveyResponseNotificationAggregation(object):
-    pass

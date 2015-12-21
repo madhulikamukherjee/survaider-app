@@ -3,6 +3,7 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from blinker import signal
+from flask_restful import Resource, reqparse
 
 from survaider import app
 from survaider.notification.model import SurveyResponseNotification
@@ -31,3 +32,10 @@ def transmit_response_notification(response):
 def register():
     survey_response_notify.connect(create_response_notification)
     survey_response_transmit.connect(transmit_response_notification)
+
+class NotificationAggregation(Resource):
+    def get(self):
+        pass
+
+    def post(self):
+        pass
