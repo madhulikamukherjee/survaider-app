@@ -9,7 +9,7 @@ from survaider.survey.model import Survey, Response
 from survaider import db, app
 
 class Notification(db.Document):
-    destined = db.ReferenceField(User, required = True)
+    destined = db.ReferenceField(User)
     acquired = db.DateTimeField(default = datetime.now)
     released = db.DateTimeField(default = datetime.max)
     payload  = db.DictField()

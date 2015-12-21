@@ -480,7 +480,10 @@ class Response(db.Document):
 
         if qid in self.parent_survey.notification_hooks:
             if qres in self.parent_survey.notification_hooks[qid]:
-                survey_response_notify.send(self, "LOL")
+                survey_response_notify.send(self.parent_survey,
+                                            response = self,
+                                            qid = qid,
+                                            qres = qres)
 
     @property
     def added(self):
