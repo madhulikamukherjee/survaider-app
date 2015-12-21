@@ -16,6 +16,7 @@ from mongoengine.queryset import queryset_manager
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
 from survaider.user.model import User
+from survaider.notification.signals import survey_response_notify
 from survaider import db, app
 
 class Survey(db.Document):
@@ -479,7 +480,10 @@ class Response(db.Document):
 
         if qid in self.parent_survey.notification_hooks:
             if qres in self.parent_survey.notification_hooks[qid]:
-                print("Will emit a Notification!")
+                survey_response_notify.send(self.parent_survey,
+                                            response = self,
+                                            qid = qid,
+                                            qres = qres)
 
     @property
     def added(self):

@@ -5,10 +5,11 @@
 from datetime import datetime, timedelta
 
 from survaider.user.model import User
+from survaider.survey.model import Survey, Response
 from survaider import db, app
 
 class Notification(db.Document):
-    destined = db.ReferenceField(User, required = True)
+    destined = db.ReferenceField(User)
     acquired = db.DateTimeField(default = datetime.now)
     released = db.DateTimeField(default = datetime.max)
     payload  = db.DictField()
@@ -37,5 +38,14 @@ class SurveyResponseNotification(Notification):
     response = db.ReferenceField(Response, required = True)
     transmit = db.BooleanField(default = False)
 
-class SurveyResponseNotificationAggregation(object):
-
+    @property
+    def repr(self):
+        doc = {
+            'acquired':     self.acquired,
+            'flagged':      self.flagged,
+            'survey':       self.survey,
+            'root_survey':  self.survey.resolved_root,
+            'response':     self.response,
+            'payload':      self.payload,
+        }
+        return doc
