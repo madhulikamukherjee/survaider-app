@@ -43,6 +43,9 @@ module.exports = (grunt) ->
           '<%= build %>/domain/analytics.js': [
             'src/coffee/analytics.coffee'
           ]
+          '<%= build %>/domain/notification.js': [
+            'src/coffee/notification.coffee'
+          ]
           '<%= build %>/domain/builder.js': [
             'src/coffee/builder.coffee'
           ]
@@ -59,7 +62,8 @@ module.exports = (grunt) ->
             filename.slice(filename.indexOf(signalStr)+signalStr.length, filename.indexOf(".html"))
 
         files:
-          '<%= build %>/domain/templates.js': 'src/templates/*.html'
+          '<%= build %>/domain/template.dashboard.js': 'src/templates/dashboard.*.html'
+          '<%= build %>/domain/template.notification.js': 'src/templates/notification.*.html'
 
     concat:
       all:
@@ -100,7 +104,20 @@ module.exports = (grunt) ->
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
-            '<%= build %>/domain/templates.js'
+            '<%= build %>/domain/templates.dashboard.js'
+          ]
+          '<%= build%>/domain/notification.vendor.js': [
+            'bower_components/jquery/jquery.js'
+            'bower_components/underscore/underscore.js'
+            'bower_components/backbone/backbone.js'
+            'bower_components/moment/moment.js'
+            'bower_components/sweetalert/dist/sweetalert.min.js'
+            'bower_components/livestamp/livestamp.js'
+            'bower_components/numeral/numeral.js'
+            'bower_components/Waves/dist/waves.js'
+            'bower_components/masonry/dist/masonry.pkgd.js'
+            'bower_components/jquery.sparkline/index.js'
+            '<%= build %>/domain/templates.notification.js'
           ]
           '<%= build%>/domain/analytics.vendor.js': [
             'bower_components/moment/moment.js'
@@ -176,6 +193,10 @@ module.exports = (grunt) ->
             'bower_components/sweetalert/dist/sweetalert.css'
             'bower_components/font-awesome/css/font-awesome.css'
           ]
+          '<%= build%>/domain/notification.vendor.css': [
+            'bower_components/sweetalert/dist/sweetalert.css'
+            'bower_components/font-awesome/css/font-awesome.css'
+          ]
           '<%= build%>/domain/analytics.vendor.css': [
             'bower_components/datatables/media/css/jquery.dataTables.css'
             'reporting/css/vendor/angular-charts.css'
@@ -244,6 +265,7 @@ module.exports = (grunt) ->
         files:
           '<%= build %>/css/survaider.styles.css': 'assets/css/survaider.sass'
           '<%= build %>/domain/dashboard.css': 'src/sass/dashboard.sass'
+          '<%= build %>/domain/notification.css': 'src/sass/notification.sass'
           '<%= build %>/domain/analytics.css': 'src/sass/analytics.sass'
           '<%= build %>/domain/builder.css': 'src/sass/builder.sass'
           '<%= build %>/domain/login.css': 'src/sass/login.sass'

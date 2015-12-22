@@ -3,7 +3,9 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 from datetime import datetime, timedelta
+from mongoengine.queryset import queryset_manager
 
+from survaider.minions.helpers import HashId
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response
 from survaider import db, app
@@ -33,19 +35,45 @@ class Notification(db.Document):
             #  race conditions and prevents other bugs, in general.
             self.released = datetime.now() - timedelta(seconds = 2)
 
+    @queryset_manager
+    def past(doc_cls, queryset):
+        return queryset.order_by('-acquired')
+
+    @staticmethod
+    def unflagged_count():
+        return Notification.past(released__gt = datetime.now()).count()
+
 class SurveyResponseNotification(Notification):
     survey   = db.ReferenceField(Survey, required = True)
     response = db.ReferenceField(Response, required = True)
     transmit = db.BooleanField(default = False)
 
     @property
+    def resolved_payload(self):
+        fields = self.survey.resolved_root.struct.get('fields', [])
+        payload = []
+        flat_payload = [_ for _ in self.payload]
+        for field in fields:
+            "Look for matching questions, resolve options"
+            "Todo: Resolve Answers "
+            if field.get('cid') in flat_payload:
+                payload.append({
+                    'cid':      field.get('cid'),
+                    'label':    field.get('label'),
+                    'response': self.payload.get(field['cid'])
+                })
+        return payload
+
+    @property
     def repr(self):
         doc = {
-            'acquired':     self.acquired,
+            'id':           str(self),
+            'acquired':     str(self.acquired),
             'flagged':      self.flagged,
-            'survey':       self.survey,
-            'root_survey':  self.survey.resolved_root,
-            'response':     self.response,
-            'payload':      self.payload,
+            'survey':       str(self.survey),
+            'root_survey':  str(self.survey.resolved_root),
+            'response':     str(self.response),
+            'payload':      self.resolved_payload,
+            'type':         self.__class__.__name__,
         }
         return doc
