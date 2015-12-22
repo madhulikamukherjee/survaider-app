@@ -6,6 +6,7 @@ import datetime
 import dateutil.parser
 
 from blinker import signal
+from flask import Flask, Blueprint, render_template, request, jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
@@ -14,6 +15,8 @@ from survaider.minions.exceptions import APIException, ViewException
 from survaider.notification.model import SurveyResponseNotification, Notification
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
+
+notification = Blueprint('notifications', __name__, template_folder = 'templates')
 
 def create_response_notification(survey, **kwargs):
     for user in survey.created_by:
@@ -77,3 +80,7 @@ class NotificationAggregation(Resource):
 
     def post(self):
         pass
+
+@notification.route('/')
+def notification_home():
+    return render_template("index.html", title = "Notification")

@@ -1,0 +1,22 @@
+{% extends 'beta.master.html' %}
+
+{% block head_css %}
+  <link href="{{ url_for('static', filename='domain/dashboard.vendor.css') }}" rel="stylesheet" type="text/css" />
+  <link href="{{ url_for('static', filename='domain/dashboard.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block header %}
+  <br>
+  <br>
+{% endblock %}
+
+{% block main_sections %}
+  <section class="dock">
+    <h1 class="hr"><span>Notifications</span></h1>
+  </section>
+{% endblock %}
+
+{% block body_js %}
+  <script src="{{ url_for('static', filename='domain/dashboard.vendor.js') }}" type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='domain/dashboard.js') }}" type="text/javascript"></script>
+{% endblock %}

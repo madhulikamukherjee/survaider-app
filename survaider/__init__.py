@@ -24,11 +24,13 @@ def create_app():
     from .REST.controller import api
     from survaider.minions.exceptions import ViewException
     from .minions.helpers import Routines
-    from .notification.controller import register as register_notifications
+    from .notification.controller import (notification,
+                                          register as register_notifications)
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')
     app.register_blueprint(srvy, url_prefix = '/survey')
+    app.register_blueprint(notification, url_prefix = '/notification')
 
     register_notifications()
 
