@@ -1,0 +1,79 @@
+{% from 'macros.html' import favicons %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta charset="utf-8" />
+  <title>Survaider</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  {{ favicons() }}
+  <meta content="" name="description" />
+  <meta content="Prashant Sinha" name="author" />
+
+  {% block head_css %}
+  {% endblock %}
+</head>
+
+<body>
+  <header>
+    <nav class="cd-stretchy-nav">
+      <a class="cd-nav-trigger" href="#0">
+        Menu
+        <span aria-hidden="true"></span>
+      </a>
+
+      <span class="user-trigger">{{ g.user.email }}</span>
+
+      <ul>
+        <li>
+          <a href="/dashboard" class="active">
+            <span>Dashboard</span>
+            <i class="fa fa-cube"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#0">
+            <span>Account Settings</span>
+            <i class="fa fa-cog"></i>
+          </a>
+        </li>
+        <li>
+          <a href="#0">
+            <span>Support</span>
+            <i class="fa fa-question-circle"></i>
+          </a>
+        </li>
+        <li>
+          <a href="/logout">
+            <span>Logout</span>
+            <i class="fa fa-sign-out"></i>
+          </a>
+        </li>
+      </ul>
+
+      <span aria-hidden="true" class="stretchy-nav-bg"></span>
+    </nav>
+
+    <br>
+    <br>
+    <img src="{{ url_for('static', filename = 'img/icon.png') }}" alt="Survaider Logo" height="60px">
+
+    {% block header %}
+    {% endblock %}
+
+  </header>
+
+  {% block main_sections %}
+  {% endblock %}
+
+  <footer>
+    <p>Copyright © 2015 Survaider. All rights reserved.</p>
+    <p><a href="#">Terms of use</a> | <a href="#">Privacy Policy</a></p>
+    <p>Made with Love at University of Delhi</p>
+  </footer>
+
+  {% block body_js %}
+  {% endblock %}
+</body>
+</html>

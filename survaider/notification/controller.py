@@ -11,7 +11,7 @@ from flask.ext.security import current_user, login_required
 
 from survaider import app
 from survaider.minions.exceptions import APIException, ViewException
-from survaider.notification.model import SurveyResponseNotification
+from survaider.notification.model import SurveyResponseNotification, Notification
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
@@ -58,7 +58,7 @@ class NotificationAggregation(Resource):
             )
 
             notif_list = [_.repr for _ in notifications.limit(5)]
-            next_page = None
+            next_page = False
             try:
                 next_page = notif_list[-1]['acquired']
             except Exception:
@@ -68,7 +68,8 @@ class NotificationAggregation(Resource):
             doc = {
                 'remaininglen': notifications.count(),
                 'next': next_page,
-                'data': notif_list
+                'data': notif_list,
+                'new': Notification.unflagged_count()
             }
             return doc
 

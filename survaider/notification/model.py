@@ -39,6 +39,10 @@ class Notification(db.Document):
     def past(doc_cls, queryset):
         return queryset.order_by('-acquired')
 
+    @staticmethod
+    def unflagged_count():
+        return Notification.past(released__gt = datetime.now()).count()
+
 class SurveyResponseNotification(Notification):
     survey   = db.ReferenceField(Survey, required = True)
     response = db.ReferenceField(Response, required = True)
