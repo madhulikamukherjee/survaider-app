@@ -45,6 +45,22 @@ class SurveyResponseNotification(Notification):
     transmit = db.BooleanField(default = False)
 
     @property
+    def resolved_payload(self):
+        fields = self.survey.resolved_root.struct.get('fields', [])
+        payload = []
+        flat_payload = [_ for _ in self.payload]
+        for field in fields:
+            "Look for matching questions, resolve options"
+            "Todo: Resolve Answers "
+            if field.get('cid') in flat_payload:
+                payload.append({
+                    'cid':      field.get('cid'),
+                    'label':    field.get('label'),
+                    'response': self.payload.get(field['cid'])
+                })
+        return payload
+
+    @property
     def repr(self):
         doc = {
             'id':           str(self),
@@ -53,7 +69,7 @@ class SurveyResponseNotification(Notification):
             'survey':       str(self.survey),
             'root_survey':  str(self.survey.resolved_root),
             'response':     str(self.response),
-            'payload':      self.payload,
+            'payload':      self.resolved_payload,
             'type':         self.__class__.__name__,
         }
         return doc

@@ -57,11 +57,17 @@ class NotificationAggregation(Resource):
                 acquired__lt = time_begin
             )
 
-            notif_list = [_.repr for _ in notifications.limit(5)]# if not _.hidden]
-            # next_page = notif_list[-1]['acquired']
+            notif_list = [_.repr for _ in notifications.limit(5)]
+            next_page = None
+            try:
+                next_page = notif_list[-1]['acquired']
+            except Exception:
+                "No next page URI"
+                pass
+
             doc = {
                 'remaininglen': notifications.count(),
-                # 'next': next_page,
+                'next': next_page,
                 'data': notif_list
             }
             return doc
