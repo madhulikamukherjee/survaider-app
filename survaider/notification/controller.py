@@ -16,7 +16,7 @@ from survaider.notification.model import SurveyResponseNotification, Notificatio
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
-notification = Blueprint('notifications', __name__, template_folder = 'templates')
+notification = Blueprint('notify', __name__, template_folder = 'templates')
 
 def create_response_notification(survey, **kwargs):
     for user in survey.created_by:
