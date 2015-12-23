@@ -32,12 +32,7 @@
             return _this.container.masonry();
           };
         })(this), this);
-        _.delay(reset, 500);
-        _.delay(reset, 1500);
-        _.delay(reset, 2500);
-        if (now) {
-          return _.delay(reset, 50);
-        }
+        return _.delay(reset, 500);
       }, 500)
     },
     nav_menu: function() {

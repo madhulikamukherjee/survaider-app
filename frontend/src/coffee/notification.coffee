@@ -10,7 +10,6 @@ NotificationHelper =
     append: (dat) ->
       template = Survaider.Templates['notification.survey.response.tile']
       attrs =
-        # narrow: if dat.has_response_cap is 2 ** 32 then 'narrow' else ''
         expand: if true then 'expanded' else ''
         narrow: if true then '' else 'narrow'
 
@@ -25,11 +24,6 @@ NotificationHelper =
       , @
 
       _.delay reset, 500
-      _.delay reset, 1500
-      _.delay reset, 2500
-
-      if now
-        _.delay reset, 50
     , 500
 
   nav_menu: ->
