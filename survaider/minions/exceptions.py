@@ -3,11 +3,11 @@
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
 class APIException(Exception):
-    def __init__(self, message, status_code, payload = None):
+    def __init__(self, message, status_code, **kwargs):
         Exception.__init__(self)
         self.message     = message
         self.status_code = status_code
-        self.payload     = payload
+        self.payload     = kwargs
 
     def to_dict(self):
         rv = dict(self.payload or ())

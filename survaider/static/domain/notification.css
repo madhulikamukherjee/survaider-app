@@ -66,7 +66,7 @@ h1.hr::after {
 section.dock {
   width: 100%;
 }
-section.dock div#card_dock {
+section.dock div.deck, section.dock div.options {
   margin: 0 auto;
 }
 section.dock div.alt-text {
@@ -576,6 +576,7 @@ button.create, input.create {
   width: 70px;
   text-align: center;
   margin: 150px auto;
+  margin-left: -35px;
 }
 .spinner > div {
   width: 18px;

@@ -42,7 +42,7 @@ def register():
     survey_response_transmit.connect(transmit_response_notification)
 
 class NotificationAggregation(Resource):
-    def get(self, kind, time_offset = None):
+    def get(self, kind = None, time_offset = None):
         if not current_user.is_authenticated():
             raise APIException("Login Required", 401)
 
@@ -76,7 +76,9 @@ class NotificationAggregation(Resource):
             }
             return doc
 
-        raise APIException("Must specify a valid option", 400)
+        raise APIException("Must specify a valid option", 400,
+            usage = {'surveyresponsenotification': 'Survey Responses'}
+        )
 
     def post(self):
         pass
