@@ -1,0 +1,27 @@
+<li class="notification survey-response" data-card="parent">
+  <small><span data-livestamp="<%= dat.acquired %>">(Loading)</span></small>
+  <h1><%= dat.root.name %></h1>
+  <small><%= dat.root.id %></small>
+  <small><%= dat.survey %></small>
+  <% if (dat.flagged){ %>
+    Read
+  <% } else { %>
+    Unread
+  <% } %>
+
+  <% if (dat.root.active){ %>
+    Active
+  <% } else { %>
+    Inactive
+  <% } %>
+
+  <ul>
+    <% _.each(dat.payload, function(doc) { %>
+      <li>
+        <h2><%= doc.label %></h2>
+        <small><%= doc.cid %></small>
+        <p><%= doc.response %></p>
+      </li>
+    <% }); %>
+  </ul>
+</li>

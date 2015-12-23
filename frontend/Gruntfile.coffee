@@ -104,7 +104,7 @@ module.exports = (grunt) ->
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
-            '<%= build %>/domain/templates.dashboard.js'
+            '<%= build %>/domain/template.dashboard.js'
           ]
           '<%= build%>/domain/notification.vendor.js': [
             'bower_components/jquery/jquery.js'
@@ -117,7 +117,7 @@ module.exports = (grunt) ->
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
-            '<%= build %>/domain/templates.notification.js'
+            '<%= build %>/domain/template.notification.js'
           ]
           '<%= build%>/domain/analytics.vendor.js': [
             'bower_components/moment/moment.js'

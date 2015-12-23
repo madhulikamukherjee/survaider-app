@@ -33,6 +33,7 @@ api.add_resource(ResponseDocumentController,
                 )
 
 api.add_resource(NotificationAggregation,
+                 '/notification',
                  '/notification/<string:kind>',
                  '/notification/<string:kind>/<string:time_offset>')
 

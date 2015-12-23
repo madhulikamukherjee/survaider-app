@@ -71,7 +71,11 @@ class SurveyResponseNotification(Notification):
             'acquired':     str(self.acquired),
             'flagged':      self.flagged,
             'survey':       str(self.survey),
-            'root_survey':  str(self.survey.resolved_root),
+            'root': {
+                'id':       str(self.survey.resolved_root),
+                'name':     self.survey.metadata.get('name'),
+                'active':   self.survey.active,
+            },
             'response':     str(self.response),
             'payload':      self.resolved_payload,
             'type':         self.__class__.__name__,
