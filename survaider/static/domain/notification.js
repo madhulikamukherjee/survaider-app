@@ -4,12 +4,7 @@
   NotificationHelper = {
     notification_tiles: {
       init: function() {
-        this.container = $('#card_dock');
-        return this.container.masonry({
-          columnWidth: 1,
-          itemSelector: "div[data-card=parent]",
-          isFitWidth: true
-        });
+        return this.container = $('#card_dock');
       },
       append: function(dat) {
         var attrs, el, template;
@@ -22,18 +17,9 @@
           dat: dat,
           attrs: attrs
         }));
-        this.container.append(el).masonry('appended', el, true).masonry();
+        this.container.append(el);
         return Waves.attach(el.find('.parent-unit'));
-      },
-      reload: _.debounce(function(now) {
-        var reset;
-        reset = _.bind((function(_this) {
-          return function() {
-            return _this.container.masonry();
-          };
-        })(this), this);
-        return _.delay(reset, 500);
-      }, 500)
+      }
     },
     nav_menu: function() {
       var stretchyNavs;
@@ -60,7 +46,7 @@
     Waves.init();
     $.getJSON('/api/notification/surveyresponsenotification', function(data) {
       var dat, i, len, ref, results;
-      ref = data.data.reverse();
+      ref = data.data;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
         dat = ref[i];

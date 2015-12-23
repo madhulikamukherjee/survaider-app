@@ -2,10 +2,6 @@ NotificationHelper =
   notification_tiles:
     init: ->
       @container = $('#card_dock')
-      @container.masonry
-        columnWidth: 1
-        itemSelector: "div[data-card=parent]"
-        isFitWidth: true
 
     append: (dat) ->
       template = Survaider.Templates['notification.survey.response.tile']
@@ -14,17 +10,9 @@ NotificationHelper =
         narrow: if true then '' else 'narrow'
 
       el = $ template dat: dat, attrs: attrs
-      @container.append(el).masonry('appended', el, true).masonry()
+      @container.append(el)
 
       Waves.attach el.find '.parent-unit'
-
-    reload: _.debounce (now) ->
-      reset = _.bind () =>
-        @container.masonry()
-      , @
-
-      _.delay reset, 500
-    , 500
 
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0
@@ -45,8 +33,7 @@ $(document).ready ->
 
   $.getJSON '/api/notification/surveyresponsenotification', (data) ->
     # $('.spinner').hide()
-
-    NotificationHelper.notification_tiles.append(dat) for dat in data.data.reverse()
+    NotificationHelper.notification_tiles.append(dat) for dat in data.data
 
   NotificationHelper.nav_menu()
 
