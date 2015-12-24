@@ -391,20 +391,17 @@ class Survey(db.Document):
         rt = {}
         cp = self.struct['fields']
 
-        def field_options(opt):
-            options = []
-            if 'options' in opt:
-                for op in opt['options']:
-                    #: Can make more changes here.
-                    options.append(op)
-            return options
         def logic(id_next):
             return {
                 'va': id_next
             }
 
         for i in range(len(cp)):
-            # cp[i]['field_options'] = field_options(cp[i]['field_options'])
+            option_len = len(cp[i]['field_options'].get('options', []))
+            for j in range(option_len):
+                img = cp[i]['field_options']['options'][j].get('img_uri', None)
+                if img is not None:
+                    cp[i]['field_options']['options'][j]['img_uri'] = Uploads.url_for_surveyimg(img)
             cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
 
         rt['fields'] = cp
