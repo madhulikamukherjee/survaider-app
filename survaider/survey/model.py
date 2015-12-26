@@ -15,6 +15,7 @@ from jsonschema import validate, ValidationError
 from mongoengine.queryset import queryset_manager
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
+from survaider.minions.attachment import Image as AttachmentImage
 from survaider.user.model import User
 from survaider.notification.signals import survey_response_notify
 from survaider import db, app
@@ -60,6 +61,7 @@ class Survey(db.Document):
 
     metadata    = db.DictField()
     structure   = db.DictField()
+    attachments = db.ListField(db.ReferenceField(AttachmentImage))
 
     created_by  = db.ListField(db.ReferenceField(User))
 
@@ -246,17 +248,7 @@ class Survey(db.Document):
 
     @property
     def img_uploads(self):
-        dat = self.metadata['img_uploads'] if 'img_uploads' in self.metadata else []
-        ret = lambda x: {'uri': Uploads.url_for_surveyimg(x), 'name': x}
-        return [ret(_) for _ in dat]
-
-    @img_uploads.setter
-    def img_uploads(self, value):
-        if 'img_uploads' in self.metadata:
-            self.metadata['img_uploads'].append(value)
-        else:
-            self.metadata['img_uploads'] = []
-            self.metadata['img_uploads'].append(value)
+        return [_.repr for _ in self.attachments]
 
     @property
     def hidden(self):
@@ -303,7 +295,6 @@ class Survey(db.Document):
             'expires': str(self.expires),
             'created_on': str(self.added),
             'last_modified': str(self.modified),
-            'r': self.notification_hooks
         }
 
     @property
