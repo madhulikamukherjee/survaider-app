@@ -81,3 +81,6 @@ class SurveyResponseNotification(Notification):
             'type':         self.__class__.__name__,
         }
         return doc
+
+class UserMessage(Notification):
+    origin = db.ReferenceField(User)
