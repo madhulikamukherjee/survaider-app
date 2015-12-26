@@ -292,7 +292,7 @@ class SurveyMetaController(Resource):
                 dat = args['swag']
 
                 try:
-                    im_id = HashId.decode(survey_id)
+                    im_id = HashId.decode(dat)
                     img = AttachmentImage.objects(id = im_id).first()
 
                     if img is None:
