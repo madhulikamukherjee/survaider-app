@@ -60,6 +60,7 @@ class Survey(db.Document):
 
     metadata    = db.DictField()
     structure   = db.DictField()
+    # attachments = db.ListField(db.ReferenceField())
 
     created_by  = db.ListField(db.ReferenceField(User))
 
