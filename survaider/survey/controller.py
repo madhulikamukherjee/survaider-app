@@ -18,6 +18,7 @@ from flask.ext.security import current_user, login_required
 
 from survaider import app
 from survaider.minions.exceptions import APIException, ViewException
+from survaider.minions.attachment import Image as AttachmentImage
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
@@ -236,17 +237,20 @@ class SurveyMetaController(Resource):
 
             elif action == 'img_upload':
                 try:
-                    f_name = "{0}.".format(str(uuid4()))
-                    filename = Uploads().img.save(request.files['swag'],
-                                                  name = f_name)
-                    svey.img_uploads = filename
+                    uploaded_img = AttachmentImage()
+                    usr = User.objects(id = current_user.id).first()
+                    uploaded_img.owner = usr
+                    uploaded_img.file = request.files['swag']
+                    uploaded_img.save()
+                    svey.attachments.append(uploaded_img)
                     svey.save()
 
                     ret = {
                         'id': str(svey),
                         'field': action,
-                        'access_id': filename,
-                        'temp_uri': Uploads.url_for_surveyimg(filename),
+                        'access_id': str(uploaded_img),
+                        'temp_uri': uploaded_img.file,
+                        'metadata': uploaded_img.repr,
                         'saved': True,
                     }
                     return ret, 200

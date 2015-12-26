@@ -56,6 +56,8 @@ class Obfuscate(object):
         return Obfuscate._obfuscate(ciphertext).decode('utf8')
 
 class Uploads(object):
+    "Deprecated."
+
     def __init__(self):
         self.img = UploadSet('surveyimg', IMAGES)
         configure_uploads(app, (self.img))

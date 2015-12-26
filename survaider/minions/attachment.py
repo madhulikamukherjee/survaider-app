@@ -6,11 +6,11 @@ import datetime
 import uuid
 
 from mongoengine.queryset import queryset_manager
+from flask.ext.security import current_user
 from flask.ext.uploads import UploadSet, IMAGES, configure_uploads,\
                               patch_request_class
 
 from survaider.user.model import User
-from survaider.survey.model import Survey
 from survaider.minions.helpers import HashId
 from survaider import db, app
 
@@ -35,8 +35,6 @@ class Attachment(db.Document):
         return queryset.filter(hidden = False)
 
 class Image(Attachment):
-    survey = db.ReferenceField(Survey)
-
     @property
     def file(self):
         base_u = app.config['UPLOADS_DEFAULT_URL']
@@ -55,10 +53,11 @@ class Image(Attachment):
         doc = {
             'id':       str(self),
             'added':    str(self.added),
-            'survey':   str(self.survey),
-            'owner':    str(self.owner),
-            'modified': str(self.modified)
-            'file':     self.file,
+            'cu_owner': current_user == self.owner,
+            'owner':    str(self.owner),    #: Should be disabled
+            'modified': str(self.modified),
+            'name':     self.filename,
+            'uri':      self.file,
             'type':     self.__class__.__name__,
         }
 

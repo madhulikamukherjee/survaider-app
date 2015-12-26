@@ -12,6 +12,7 @@ from survaider.social.model import Connection
 from survaider.admin.model import BaseView
 from survaider.notification.model import Notification
 from survaider.notification.model import SurveyResponseNotification
+from survaider.minions.attachment import Image as AttachmentImage
 
 from survaider import app
 
@@ -34,3 +35,4 @@ admin.add_view(SurveyView(SurveyUnit))
 admin.add_view(BaseView(Response))
 admin.add_view(BaseView(Notification))
 admin.add_view(BaseView(SurveyResponseNotification))
+admin.add_view(BaseView(AttachmentImage))
