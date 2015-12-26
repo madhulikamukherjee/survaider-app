@@ -192,6 +192,7 @@ $(document).ready ->
   json_uri = UriTemplate.expand('/api/survey/{s_id}/json?editing=true', s_id: s_id)
   payload_update_uri = UriTemplate.expand('/api/survey/{s_id}/struct', s_id: s_id)
   im_upload_uri = UriTemplate.expand('/api/survey/{s_id}/img_upload', s_id: s_id)
+  im_delete_uri = UriTemplate.expand('/api/survey/{s_id}/img', s_id: s_id)
   im_list_uri   = UriTemplate.expand('/api/survey/{s_id}/repr', s_id: s_id)
 
   $.getJSON json_uri, (data) ->
@@ -202,6 +203,7 @@ $(document).ready ->
       endpoints:
         img_upload: im_upload_uri
         img_list:   im_list_uri
+        img_delete_uri: im_delete_uri
 
     fb.on 'save', (payload) ->
       $.post payload_update_uri, { swag: payload }, (data) ->
