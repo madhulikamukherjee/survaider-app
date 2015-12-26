@@ -24,6 +24,31 @@ def runserver():
                 threaded = app.config['THREADED'])
 
 @manager.command
+def migrate_db():
+    "Against Commit: c46d853c2949cc78ba86c0a8a618cf3ba0a3e44b"
+    create_app()
+    from survaider.survey.model import Survey
+    from survaider.minions.attachment import Image
+    c2 = 0
+    for svey in Survey.objects():
+        #: Take the Old Uploaded images and move them to the Images DB
+        old_img = svey.metadata.get('img_uploads', [])
+        u = svey.created_by[0]
+        c1 = 0
+        for img in old_img:
+            i = Image()
+            i.owner = u
+            i.filename = img
+            i.save()
+            svey.attachments.append(i)
+            c1 += 1
+        if 'img_uploads' in svey.metadata:
+            del svey.metadata['img_uploads']
+        svey.save()
+        c2 += 1
+        print("Updated {0} entries in Survey {1}".format(c1, c2))
+
+@manager.command
 def create_user():
     from survaider.security.controller import user_datastore
 

@@ -269,7 +269,7 @@
   window.Builder = Builder;
 
   $(document).ready(function() {
-    var im_list_uri, im_upload_uri, json_uri, payload_update_uri, s_id;
+    var im_delete_uri, im_list_uri, im_upload_uri, json_uri, payload_update_uri, s_id;
     s_id = UriTemplate.extract('/survey/s:{s_id}/edit', window.location.pathname).s_id;
     json_uri = UriTemplate.expand('/api/survey/{s_id}/json?editing=true', {
       s_id: s_id
@@ -278,6 +278,9 @@
       s_id: s_id
     });
     im_upload_uri = UriTemplate.expand('/api/survey/{s_id}/img_upload', {
+      s_id: s_id
+    });
+    im_delete_uri = UriTemplate.expand('/api/survey/{s_id}/img', {
       s_id: s_id
     });
     im_list_uri = UriTemplate.expand('/api/survey/{s_id}/repr', {
@@ -291,7 +294,8 @@
         screens: data.screens,
         endpoints: {
           img_upload: im_upload_uri,
-          img_list: im_list_uri
+          img_list: im_list_uri,
+          img_delete_uri: im_delete_uri
         }
       });
       fb.on('save', function(payload) {

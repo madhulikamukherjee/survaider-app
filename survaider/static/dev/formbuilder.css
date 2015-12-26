@@ -796,6 +796,7 @@
 .sb-images .sb-images-container ul.thumbnails.image_picker_selector li .thumbnail {
   padding: 6px;
   border: 1px solid #dddddd;
+  position: relative;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -806,6 +807,25 @@
 }
 .sb-images .sb-images-container ul.thumbnails.image_picker_selector li .thumbnail.selected {
   background: #0088cc;
+}
+.sb-images .sb-images-container ul.thumbnails.image_picker_selector li .thumbnail:hover a.image_picker_delete {
+  opacity: 1;
+}
+.sb-images .sb-images-container ul.thumbnails.image_picker_selector li a.image_picker_delete {
+  position: absolute;
+  opacity: 0;
+  bottom: 0;
+  right: 0;
+  background: #48B0F7;
+  padding: 2px;
+  color: #FFF;
+  font-size: 12px;
+  text-align: center;
+  width: 21px;
+  border-radius: 2px;
+}
+.sb-images .sb-images-container ul.thumbnails.image_picker_selector li a.image_picker_delete:hover {
+  background: #f00;
 }
 
 .dropzone {
