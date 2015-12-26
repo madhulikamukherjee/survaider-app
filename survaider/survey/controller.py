@@ -288,7 +288,34 @@ class SurveyMetaController(Resource):
                 return ret, 200
 
             elif action == 'img':
-                raise APIException("Method not Implemented.", 500)
+                args = self.post_args()
+                dat = args['swag']
+
+                try:
+                    im_id = HashId.decode(survey_id)
+                    img = AttachmentImage.objects(id = im_id).first()
+
+                    if img is None:
+                        raise TypeError
+
+                    if img.hidden:
+                        raise APIException("This Image has already been deleted", 404)
+
+                    img.hidden = True
+                    svey.attachments.remove(img)
+                    img.save()
+                    svey.save()
+
+                    ret = {
+                        'id': str(svey),
+                        'img_id': str(img),
+                        'field': action,
+                        'saved': True,
+                    }
+                    return ret, 200
+
+                except (TypeError, ValueError):
+                    raise APIException("Invalid Image ID", 404)
 
         else:
             raise APIException("Login Required", 401)

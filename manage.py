@@ -46,7 +46,7 @@ def migrate_db():
             del svey.metadata['img_uploads']
         svey.save()
         c2 += 1
-        print("Updated {0} entries in Survey {1}", c1, c2)
+        print("Updated {0} entries in Survey {1}".format(c1, c2))
 
 @manager.command
 def create_user():
