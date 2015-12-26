@@ -10,13 +10,15 @@ from flask.ext.uploads import UploadSet, IMAGES, configure_uploads,\
                               patch_request_class
 
 from survaider.user.model import User
+from survaider.survey.model import Survey
 from survaider.minions.helpers import HashId
 from survaider import db, app
 
 class Attachment(db.Document):
     added    = db.DateTimeField(default = datetime.datetime.now)
     modified = db.DateTimeField()
-    owner    = db.ListField(db.ReferenceField(User))
+    filename = db.StringField(required = True)
+    owner    = db.ReferenceField(User)
     hidden   = db.BooleanField(default = False)
 
     meta = {'allow_inheritance': True, 'strict': False}
@@ -33,17 +35,31 @@ class Attachment(db.Document):
         return queryset.filter(hidden = False)
 
 class Image(Attachment):
-
-    @property
-    def url(self):
-        pass
+    survey = db.ReferenceField(Survey)
 
     @property
     def file(self):
-        pass
+        base_u = app.config['UPLOADS_DEFAULT_URL']
+        return "{0}/surveyimg/{1}".format(base_u, self.filename)
 
     @file.setter
-    def file(self, value):
+    def file(self, file_content):
         uploader = UploadSet('surveyimg', IMAGES)
         configure_uploads(app, (uploader))
         patch_request_class(app, 16 * 1024 * 1024) #: 16 MB limit.
+        self.filename = uploader.save(file_content,
+                                      name = "{0}.".format(str(self)))
+
+    @property
+    def repr(self):
+        doc = {
+            'id':       str(self),
+            'added':    str(self.added),
+            'survey':   str(self.survey),
+            'owner':    str(self.owner),
+            'modified': str(self.modified)
+            'file':     self.file,
+            'type':     self.__class__.__name__,
+        }
+
+        return doc
