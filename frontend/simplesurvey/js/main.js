@@ -1,8 +1,8 @@
-(function(angular, Waypoint, $, window, UriTemplate){
+(function(angular, $, window, UriTemplate){
 
   'use strict';
 
-  var $app = angular.module('SurvaiderForms', ['ui.sortable', 'ngAnimate']);
+  var $app = angular.module('SurvaiderForms', ['ui.sortable']);
 
   $app.controller('FormController', function($scope, $http, $rootScope){
 
@@ -676,4 +676,4 @@
 
   });
 
-})(angular, Waypoint, $, window, UriTemplate);
+})(angular, $, window, UriTemplate);
