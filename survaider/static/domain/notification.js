@@ -44,7 +44,7 @@
   $(document).ready(function() {
     NotificationHelper.notification_tiles.init();
     Waves.init();
-    $.getJSON('/api/notification/surveyresponsenotification', function(data) {
+    $.getJSON('/api/notifications/surveyresponsenotification', function(data) {
       var dat, i, len, ref, results;
       ref = data.data;
       results = [];

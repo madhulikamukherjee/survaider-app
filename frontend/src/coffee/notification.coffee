@@ -31,7 +31,7 @@ $(document).ready ->
   NotificationHelper.notification_tiles.init()
   Waves.init()
 
-  $.getJSON '/api/notification/surveyresponsenotification', (data) ->
+  $.getJSON '/api/notifications/surveyresponsenotification', (data) ->
     # $('.spinner').hide()
     NotificationHelper.notification_tiles.append(dat) for dat in data.data
 

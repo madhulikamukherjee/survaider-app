@@ -10,7 +10,7 @@ from survaider.minions.exceptions import APIException
 from survaider.survey.controller import SurveyController, ResponseController
 from survaider.survey.controller import SurveyMetaController, ResponseAggregationController
 from survaider.survey.controller import ResponseDocumentController
-from survaider.notification.controller import NotificationAggregation
+from survaider.notification.controller import NotificationController, NotificationAggregation
 
 api = Api(app, prefix = '/api')
 
@@ -32,10 +32,14 @@ api.add_resource(ResponseDocumentController,
                  '/survey/<string:survey_id>/response/<string:response_id>'
                 )
 
+api.add_resource(NotificationController,
+                 '/notification/<string:notification_id>',
+                 '/notification/<string:notification_id>/<string:action>')
+
 api.add_resource(NotificationAggregation,
-                 '/notification',
-                 '/notification/<string:kind>',
-                 '/notification/<string:kind>/<string:time_offset>')
+                 '/notifications',
+                 '/notifications/<string:kind>',
+                 '/notifications/<string:kind>/<string:time_offset>')
 
 @app.errorhandler(APIException)
 def handle_api_exception(error):

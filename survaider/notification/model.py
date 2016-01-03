@@ -82,5 +82,22 @@ class SurveyResponseNotification(Notification):
         }
         return doc
 
-class UserMessage(Notification):
-    origin = db.ReferenceField(User)
+class Ticket(Notification):
+    origin          = db.ReferenceField(User)
+    completed       = db.BooleanField(default = False)
+    complete_time   = db.DateTimeField()
+
+    @property
+    def repr(self):
+        doc = {
+            'id':               str(self),
+            'acquired':         str(self.acquired),
+            'flagged':          self.flagged,
+            'origin':           self.origin.repr,
+            'targets':          self.destined.repr,
+            'completed':        self.completed,
+            'complete_time':    str(self.complete_time),
+            'payload':          self.payload,
+            'type':             self.__class__.__name__,
+        }
+        return doc

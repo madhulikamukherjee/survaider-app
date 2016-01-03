@@ -11,8 +11,11 @@ from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
 from survaider import app
+from survaider.minions.helpers import api_get_object
+from survaider.minions.decorators import api_login_required
 from survaider.minions.exceptions import APIException, ViewException
-from survaider.notification.model import SurveyResponseNotification, Notification
+from survaider.notification.model import (SurveyResponseNotification,
+                                          Notification as Notification)
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
@@ -37,15 +40,28 @@ def create_response_notification(survey, **kwargs):
 def transmit_response_notification(response):
     pass
 
+def create_ticket_notification(response):
+    pass
+
 def register():
     survey_response_notify.connect(create_response_notification)
     survey_response_transmit.connect(transmit_response_notification)
 
-class NotificationAggregation(Resource):
-    def get(self, kind = None, time_offset = None):
-        if not current_user.is_authenticated():
-            raise APIException("Login Required", 401)
+class NotificationController(Resource):
+    @api_login_required
+    def get(self, notification_id):
+        notf = api_get_object(Notification.objects, notification_id)
+        return notf.repr
 
+    @api_login_required
+    def post(self, notification_id):
+        notf = api_get_object(Notification.objects, notification_id)
+        pass
+
+class NotificationAggregation(Resource):
+
+    @api_login_required
+    def get(self, kind = None, time_offset = None):
         if time_offset is None:
             time_offset = str(datetime.datetime.now())
 
@@ -53,6 +69,28 @@ class NotificationAggregation(Resource):
             time_begin = dateutil.parser.parse(time_offset)
         except ValueError:
             raise APIException("Invalid Offset Time", 400)
+
+        if kind is None:
+            notifications = Notification.past(
+                destined = current_user.id,
+                acquired__lt = time_begin
+            )
+
+            notif_list = [_.repr for _ in notifications.limit(5)]
+            next_page = False
+            try:
+                next_page = notif_list[-1]['acquired']
+            except Exception:
+                "No next page URI"
+                pass
+
+            doc = {
+                'remaininglen': notifications.count(),
+                'next': next_page,
+                'data': notif_list,
+                'new': Notification.unflagged_count()
+            }
+            return doc
 
         if kind == 'surveyresponsenotification':
             notifications = SurveyResponseNotification.past(
@@ -80,6 +118,7 @@ class NotificationAggregation(Resource):
             usage = {'surveyresponsenotification': 'Survey Responses'}
         )
 
+    @api_login_required
     def post(self):
         pass
 
