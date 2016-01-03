@@ -16,7 +16,7 @@ from survaider.minions.decorators import api_login_required
 from survaider.minions.exceptions import APIException, ViewException
 from survaider.notification.model import (SurveyResponseNotification,
                                           Notification,
-                                          Ticket)
+                                          SurveyTicket)
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
@@ -48,10 +48,10 @@ def register():
     survey_response_notify.connect(create_response_notification)
     survey_response_transmit.connect(transmit_response_notification)
 
-class TicketController(Resource):
+class SurveyTicketController(Resource):
     @api_login_required
     def get(self, ticket_id = None, action = None):
-        tkt = api_get_object(Ticket.objects, ticket_id)
+        tkt = api_get_object(SurveyTicket.objects, ticket_id)
         return tkt.repr
 
     def create_tkt_args(self):
@@ -62,9 +62,9 @@ class TicketController(Resource):
     @api_login_required
     def post(self, ticket_id = None, action = None):
         if ticket_id is None:
-            "Create a new Ticket"
+            "Create a new Survey Ticket"
             pass
-        tkt = api_get_object(Ticket.objects, ticket_id)
+        tkt = api_get_object(SurveyTicket.objects, ticket_id)
 
         if action == "mark_done":
             pass

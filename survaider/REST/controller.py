@@ -13,7 +13,7 @@ from survaider.survey.controller import (SurveyMetaController,
 from survaider.survey.controller import ResponseDocumentController
 from survaider.notification.controller import (NotificationController,
                                                NotificationAggregation,
-                                               TicketController)
+                                               SurveyTicketController)
 
 api = Api(app, prefix = '/api')
 
@@ -39,10 +39,10 @@ api.add_resource(NotificationController,
                  '/notification/<string:notification_id>',
                  '/notification/<string:notification_id>/<string:action>')
 
-api.add_resource(TicketController,
-                 '/ticket',
-                 '/ticket/<string:ticket_id>',
-                 '/ticket/<string:ticket_id>/<string:action>')
+api.add_resource(SurveyTicketController,
+                 '/surveyticket',
+                 '/surveyticket/<string:ticket_id>',
+                 '/surveyticket/<string:ticket_id>/<string:action>')
 
 api.add_resource(NotificationAggregation,
                  '/notifications',

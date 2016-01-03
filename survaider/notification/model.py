@@ -73,19 +73,16 @@ class SurveyResponseNotification(Notification):
             'acquired':     str(self.acquired),
             'flagged':      self.flagged,
             'survey':       str(self.survey),
-            'root': {
-                'id':       str(self.survey.resolved_root),
-                'name':     self.survey.metadata.get('name'),
-                'active':   self.survey.active,
-            },
+            'root':         self.survey.resolved_root.tiny_repr,
             'response':     str(self.response),
             'payload':      self.resolved_payload,
             'type':         self.__class__.__name__,
         }
         return doc
 
-class Ticket(Notification):
+class SurveyTicket(Notification):
     origin          = db.ReferenceField(User)
+    survey          = db.ReferenceField(Survey, required = True)
     completed       = db.BooleanField(default = False)
     complete_time   = db.DateTimeField()
 
@@ -95,6 +92,7 @@ class Ticket(Notification):
             'id':               str(self),
             'acquired':         str(self.acquired),
             'flagged':          self.flagged,
+            'survey':           str(self.survey),
             'origin':           self.origin.repr,
             'targets':          self.destined.repr,
             'completed':        self.completed,

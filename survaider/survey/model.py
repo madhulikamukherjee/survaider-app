@@ -298,6 +298,14 @@ class Survey(db.Document):
         }
 
     @property
+    def tiny_repr(self):
+        return {
+            'id':       str(self),
+            'name':     self.metadata['name'],
+            'active':   self.active,
+        }
+
+    @property
     def render_json(self):
         game_map = {
             'short_text': {
