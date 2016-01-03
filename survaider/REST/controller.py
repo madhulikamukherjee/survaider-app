@@ -8,9 +8,12 @@ from flask_restful import Resource, Api
 from survaider import app
 from survaider.minions.exceptions import APIException
 from survaider.survey.controller import SurveyController, ResponseController
-from survaider.survey.controller import SurveyMetaController, ResponseAggregationController
+from survaider.survey.controller import (SurveyMetaController,
+                                         ResponseAggregationController)
 from survaider.survey.controller import ResponseDocumentController
-from survaider.notification.controller import NotificationController, NotificationAggregation
+from survaider.notification.controller import (NotificationController,
+                                               NotificationAggregation,
+                                               TicketController)
 
 api = Api(app, prefix = '/api')
 
@@ -35,6 +38,11 @@ api.add_resource(ResponseDocumentController,
 api.add_resource(NotificationController,
                  '/notification/<string:notification_id>',
                  '/notification/<string:notification_id>/<string:action>')
+
+api.add_resource(TicketController,
+                 '/ticket',
+                 '/ticket/<string:ticket_id>',
+                 '/ticket/<string:ticket_id>/<string:action>')
 
 api.add_resource(NotificationAggregation,
                  '/notifications',

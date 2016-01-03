@@ -15,7 +15,8 @@ from survaider.minions.helpers import api_get_object
 from survaider.minions.decorators import api_login_required
 from survaider.minions.exceptions import APIException, ViewException
 from survaider.notification.model import (SurveyResponseNotification,
-                                          Notification as Notification)
+                                          Notification,
+                                          Ticket)
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
@@ -47,14 +48,37 @@ def register():
     survey_response_notify.connect(create_response_notification)
     survey_response_transmit.connect(transmit_response_notification)
 
+class TicketController(Resource):
+    @api_login_required
+    def get(self, ticket_id = None, action = None):
+        tkt = api_get_object(Ticket.objects, ticket_id)
+        return tkt.repr
+
+    def create_tkt_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('ticket_message', type = str, required = True)
+        return parser.parse_args()
+
+    @api_login_required
+    def post(self, ticket_id = None, action = None):
+        if ticket_id is None:
+            "Create a new Ticket"
+            pass
+        tkt = api_get_object(Ticket.objects, ticket_id)
+
+        if action == "mark_done":
+            pass
+
+        raise APIException("Must specify valid option", 400)
+
 class NotificationController(Resource):
     @api_login_required
-    def get(self, notification_id):
+    def get(self, notification_id, action = None):
         notf = api_get_object(Notification.objects, notification_id)
         return notf.repr
 
     @api_login_required
-    def post(self, notification_id):
+    def post(self, notification_id, action):
         notf = api_get_object(Notification.objects, notification_id)
         pass
 

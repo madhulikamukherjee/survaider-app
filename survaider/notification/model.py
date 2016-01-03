@@ -5,13 +5,15 @@
 from datetime import datetime, timedelta
 from mongoengine.queryset import queryset_manager
 
+from flask.ext.security import current_user
+
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response
 from survaider import db, app
 
 class Notification(db.Document):
-    destined = db.ReferenceField(User)
+    destined = db.ListField(db.ReferenceField(User))
     acquired = db.DateTimeField(default = datetime.now)
     released = db.DateTimeField(default = datetime.max)
     payload  = db.DictField()
