@@ -69,14 +69,14 @@ class SurveyResponseNotification(Notification):
     @property
     def repr(self):
         doc = {
-            'id':           str(self),
-            'acquired':     str(self.acquired),
-            'flagged':      self.flagged,
-            'survey':       str(self.survey),
-            'root':         self.survey.resolved_root.tiny_repr,
-            'response':     str(self.response),
-            'payload':      self.resolved_payload,
-            'type':         self.__class__.__name__,
+            'id':       str(self),
+            'acquired': str(self.acquired),
+            'flagged':  self.flagged,
+            'survey':   str(self.survey),
+            'root':     self.survey.resolved_root.tiny_repr,
+            'response': str(self.response),
+            'payload':  self.resolved_payload,
+            'type':     self.__class__.__name__,
         }
         return doc
 
@@ -87,13 +87,13 @@ class SurveyTicket(Notification):
     @property
     def repr(self):
         doc = {
-            'id':               str(self),
-            'acquired':         str(self.acquired),
-            'flagged':          self.flagged,
-            'survey_unit':     [_.tiny_repr for _ in self.survey_unit],
-            'origin':           self.origin.repr,
-            'targets':          [_.repr for _ in self.destined],
-            'payload':          self.payload,
-            'type':             self.__class__.__name__,
+            'id':           str(self),
+            'acquired':     str(self.acquired),
+            'flagged':      self.flagged,
+            'survey_unit':  [_.tiny_repr for _ in self.survey_unit],
+            'origin':       self.origin.repr,
+            'targets':      [_.repr for _ in self.destined],
+            'payload':      self.payload,
+            'type':         self.__class__.__name__,
         }
         return doc
