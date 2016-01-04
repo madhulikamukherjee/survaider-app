@@ -263,6 +263,11 @@ class Survey(db.Document):
         dat = SurveyUnit.objects(referenced = self)
         return [_.repr for _ in dat if not _.hidden]
 
+    @property
+    def units_as_objects(self):
+        dat = SurveyUnit.objects(referenced = self)
+        return [_ for _ in dat if not _.hidden]
+
     def save(self, **kwargs):
         self.metadata['modified'] = datetime.datetime.now()
         super(Survey, self).save(**kwargs)

@@ -9,7 +9,7 @@ from flask.ext.security import current_user
 
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response
+from survaider.survey.model import Survey, SurveyUnit, Response
 from survaider import db, app
 
 class Notification(db.Document):
@@ -81,10 +81,8 @@ class SurveyResponseNotification(Notification):
         return doc
 
 class SurveyTicket(Notification):
-    origin          = db.ReferenceField(User)
-    survey          = db.ReferenceField(Survey, required = True)
-    completed       = db.BooleanField(default = False)
-    complete_time   = db.DateTimeField()
+    origin      = db.ReferenceField(User)
+    survey_unit = db.ListField(db.ReferenceField(SurveyUnit))
 
     @property
     def repr(self):
@@ -92,11 +90,9 @@ class SurveyTicket(Notification):
             'id':               str(self),
             'acquired':         str(self.acquired),
             'flagged':          self.flagged,
-            'survey':           str(self.survey),
+            'survey_unit':     [_.tiny_repr for _ in self.survey_unit],
             'origin':           self.origin.repr,
-            'targets':          self.destined.repr,
-            'completed':        self.completed,
-            'complete_time':    str(self.complete_time),
+            'targets':          [_.repr for _ in self.destined],
             'payload':          self.payload,
             'type':             self.__class__.__name__,
         }
