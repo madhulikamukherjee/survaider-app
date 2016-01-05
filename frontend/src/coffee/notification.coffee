@@ -3,6 +3,9 @@ class SurveyTicketNotification extends Backbone.Model
   defaults:
     type: 'SurveyTicket'
 
+  initialize: ->
+    @template = Survaider.Templates['notification.survey.ticket.tile']
+
 class SurveyResponseNotification extends Backbone.Model
   defaults:
     type: 'SurveyResponseNotification'
@@ -56,11 +59,6 @@ class Notification
 
 window.Notification = Notification
 
-if module?
-  module.exports = Notification
-else
-  window.Notification = Notification
-
 NotificationHelper =
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0
@@ -81,7 +79,7 @@ $(document).ready ->
   # NotificationHelper.notification_tiles.init()
   # Waves.init()
 
-  $.getJSON '/api/notifications/surveyresponsenotification', (data) ->
+  $.getJSON '/api/notifications', (data) ->
     # $('.spinner').hide()
     # NotificationHelper.notification_tiles.append(dat) for dat in data.data
     notif = new Notification

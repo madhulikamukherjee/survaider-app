@@ -14,6 +14,10 @@
       type: 'SurveyTicket'
     };
 
+    SurveyTicketNotification.prototype.initialize = function() {
+      return this.template = Survaider.Templates['notification.survey.ticket.tile'];
+    };
+
     return SurveyTicketNotification;
 
   })(Backbone.Model);
@@ -136,12 +140,6 @@
 
   window.Notification = Notification;
 
-  if (typeof module !== "undefined" && module !== null) {
-    module.exports = Notification;
-  } else {
-    window.Notification = Notification;
-  }
-
   NotificationHelper = {
     nav_menu: function() {
       var stretchyNavs;
@@ -166,7 +164,7 @@
   };
 
   $(document).ready(function() {
-    $.getJSON('/api/notifications/surveyresponsenotification', function(data) {
+    $.getJSON('/api/notifications', function(data) {
       var notif;
       return notif = new Notification({
         selector: '#card_dock',
