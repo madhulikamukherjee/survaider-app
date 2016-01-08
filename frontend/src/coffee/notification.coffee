@@ -21,6 +21,9 @@ class NotificationCollection extends Backbone.Collection
       when 'SurveyResponseNotification'
         return new SurveyResponseNotification attr, options
 
+  comparator: (model) ->
+    moment(model.get 'acquired').unix()
+
 class NotificationView extends Backbone.View
 
   initialize: (options) ->
@@ -31,23 +34,33 @@ class NotificationView extends Backbone.View
     return @
 
 class NotificationDock extends Backbone.View
+  events:
+    'click [data-backbone-call=next]': 'load_notifications'
+
   initialize: (options) ->
     {selector, @notif, @bootstrapData} = options
     @collection = new NotificationCollection
     @collection.bind 'add', @addOne, @
     @setElement $ selector
     @render()
+    @load_old_disable = no
     @load_notifications()
 
   template: Survaider.Templates['notification.dock']
 
-  load_notifications: (time_end) ->
+  load_notifications: () ->
     uri = '/api/notifications'
-    uri += "/#{time_end}" if time_end?
+    uri += "/#{@time_end}" if @time_end?
+
+    return if @load_old_disable is yes
 
     $.getJSON uri
     .done (data) =>
       @collection.add data.data
+      @time_end = data.next
+      if data.next is false
+        @load_old_disable = yes
+
     .fail (data) =>
       console.log data
 

@@ -23111,7 +23111,7 @@ this["Survaider"]["Templates"]["notification.dock"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<ul></ul>\n<a href="#">Next</a>\n';
+__p += '<ul></ul>\n<a href="javascript:void(0)" data-backbone-call="next">Next</a>\n';
 
 }
 return __p

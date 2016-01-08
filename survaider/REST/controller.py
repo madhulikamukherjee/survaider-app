@@ -46,8 +46,7 @@ api.add_resource(SurveyTicketController,
 
 api.add_resource(NotificationAggregation,
                  '/notifications',
-                 '/notifications/<string:kind>',
-                 '/notifications/<string:kind>/<string:time_offset>')
+                 '/notifications/<string:time_offset>')
 
 @app.errorhandler(APIException)
 def handle_api_exception(error):

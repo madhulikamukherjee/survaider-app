@@ -57,6 +57,10 @@
       }
     };
 
+    NotificationCollection.prototype.comparator = function(model) {
+      return moment(model.get('acquired')).unix();
+    };
+
     return NotificationCollection;
 
   })(Backbone.Collection);
@@ -90,6 +94,10 @@
       return NotificationDock.__super__.constructor.apply(this, arguments);
     }
 
+    NotificationDock.prototype.events = {
+      'click [data-backbone-call=next]': 'load_notifications'
+    };
+
     NotificationDock.prototype.initialize = function(options) {
       var selector;
       selector = options.selector, this.notif = options.notif, this.bootstrapData = options.bootstrapData;
@@ -97,20 +105,28 @@
       this.collection.bind('add', this.addOne, this);
       this.setElement($(selector));
       this.render();
+      this.load_old_disable = false;
       return this.load_notifications();
     };
 
     NotificationDock.prototype.template = Survaider.Templates['notification.dock'];
 
-    NotificationDock.prototype.load_notifications = function(time_end) {
+    NotificationDock.prototype.load_notifications = function() {
       var uri;
       uri = '/api/notifications';
-      if (time_end != null) {
-        uri += "/" + time_end;
+      if (this.time_end != null) {
+        uri += "/" + this.time_end;
+      }
+      if (this.load_old_disable === true) {
+        return;
       }
       return $.getJSON(uri).done((function(_this) {
         return function(data) {
-          return _this.collection.add(data.data);
+          _this.collection.add(data.data);
+          _this.time_end = data.next;
+          if (data.next === false) {
+            return _this.load_old_disable = true;
+          }
         };
       })(this)).fail((function(_this) {
         return function(data) {
