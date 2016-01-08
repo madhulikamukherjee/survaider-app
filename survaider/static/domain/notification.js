@@ -1,5 +1,5 @@
 (function() {
-  var Notification, NotificationCollection, NotificationDock, NotificationHelper, NotificationView, SurveyResponseNotification, SurveyTicketNotification,
+  var Notification, NotificationCollection, NotificationDock, NotificationHelper, NotificationRouter, NotificationView, SurveyResponseNotification, SurveyTicketNotification,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty;
 
@@ -94,14 +94,35 @@
       var selector;
       selector = options.selector, this.notif = options.notif, this.bootstrapData = options.bootstrapData;
       this.collection = new NotificationCollection;
-      this.collection.reset(this.bootstrapData);
+      this.collection.bind('add', this.addOne, this);
       this.setElement($(selector));
       this.render();
-      return this.addAll();
+      return this.load_notifications();
+    };
+
+    NotificationDock.prototype.template = Survaider.Templates['notification.dock'];
+
+    NotificationDock.prototype.load_notifications = function(time_end) {
+      var uri;
+      uri = '/api/notifications';
+      if (time_end != null) {
+        uri += "/" + time_end;
+      }
+      return $.getJSON(uri).done((function(_this) {
+        return function(data) {
+          return _this.collection.add(data.data);
+        };
+      })(this)).fail((function(_this) {
+        return function(data) {
+          return console.log(data);
+        };
+      })(this));
     };
 
     NotificationDock.prototype.render = function() {
-      return this.$el.html('');
+      this.$el.html(this.template());
+      this.view_dock = this.$el.find('ul');
+      return this;
     };
 
     NotificationDock.prototype.addOne = function(fieldDat, _, options) {
@@ -110,16 +131,32 @@
         model: fieldDat,
         parentView: this
       });
-      return this.$el.append(view.render().el);
-    };
-
-    NotificationDock.prototype.addAll = function() {
-      return this.collection.each(this.addOne, this);
+      return this.view_dock.append(view.render().el);
     };
 
     return NotificationDock;
 
   })(Backbone.View);
+
+  NotificationRouter = (function(superClass) {
+    extend(NotificationRouter, superClass);
+
+    function NotificationRouter() {
+      return NotificationRouter.__super__.constructor.apply(this, arguments);
+    }
+
+    NotificationRouter.prototype.routes = {
+      '': 'init',
+      ':time': 'timeappend'
+    };
+
+    NotificationRouter.prototype.init = function() {};
+
+    NotificationRouter.prototype.timeappend = function(time) {};
+
+    return NotificationRouter;
+
+  })(Backbone.Router);
 
   Notification = (function() {
     function Notification(opts) {
@@ -164,12 +201,9 @@
   };
 
   $(document).ready(function() {
-    $.getJSON('/api/notifications', function(data) {
-      var notif;
-      return notif = new Notification({
-        selector: '#card_dock',
-        bootstrapData: data.data
-      });
+    var notif;
+    notif = new Notification({
+      selector: '#card_dock'
     });
     return NotificationHelper.nav_menu();
   });

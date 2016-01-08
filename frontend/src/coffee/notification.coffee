@@ -34,22 +34,42 @@ class NotificationDock extends Backbone.View
   initialize: (options) ->
     {selector, @notif, @bootstrapData} = options
     @collection = new NotificationCollection
-    @collection.reset(@bootstrapData)
+    @collection.bind 'add', @addOne, @
     @setElement $ selector
     @render()
-    @addAll()
+    @load_notifications()
+
+  template: Survaider.Templates['notification.dock']
+
+  load_notifications: (time_end) ->
+    uri = '/api/notifications'
+    uri += "/#{time_end}" if time_end?
+
+    $.getJSON uri
+    .done (data) =>
+      @collection.add data.data
+    .fail (data) =>
+      console.log data
 
   render: ->
-    @$el.html('')
+    @$el.html @template()
+    @view_dock = @$el.find('ul')
+    @
 
   addOne: (fieldDat, _, options) ->
     view = new NotificationView
       model: fieldDat
       parentView: @
-    @$el.append view.render().el
+    @view_dock.append view.render().el
 
-  addAll: ->
-    @collection.each @addOne, @
+class NotificationRouter extends Backbone.Router
+  routes:
+    '': 'init'
+    ':time': 'timeappend'
+
+  init: ->
+
+  timeappend: (time) ->
 
 class Notification
   constructor: (opts={}) ->
@@ -79,12 +99,12 @@ $(document).ready ->
   # NotificationHelper.notification_tiles.init()
   # Waves.init()
 
-  $.getJSON '/api/notifications', (data) ->
+  # $.getJSON '/api/notifications', (data) ->
     # $('.spinner').hide()
     # NotificationHelper.notification_tiles.append(dat) for dat in data.data
-    notif = new Notification
-      selector: '#card_dock'
-      bootstrapData: data.data
+  notif = new Notification
+    selector: '#card_dock'
+      # bootstrapData: data.data
 
   NotificationHelper.nav_menu()
 
