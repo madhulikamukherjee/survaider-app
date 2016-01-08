@@ -23167,19 +23167,23 @@ __p += '<li class="notification survey-ticket" data-card="parent">\n  <small><sp
 ((__t = ( dat.acquired )) == null ? '' : __t) +
 '">(Loading)</span></small>\n\n  <ul>\n    ';
  _.each(dat.survey_unit, function(doc) { ;
-__p += '\n      <li>\n        <h2>' +
+__p += '\n      <li>\n        <span>' +
 ((__t = ( doc.name )) == null ? '' : __t) +
-'</h2>\n        <small>' +
+'</span>\n        <small>' +
 ((__t = ( doc.id )) == null ? '' : __t) +
 '</small>\n      </li>\n    ';
  }); ;
 __p += '\n  </ul>\n  <ul>\n    ';
  _.each(dat.targets, function(doc) { ;
-__p += '\n      <li>\n        <h2>' +
-((__t = ( doc.email )) == null ? '' : __t) +
-'</h2>\n        <small>' +
+__p += '\n      <li data-user-id="' +
 ((__t = ( doc.id )) == null ? '' : __t) +
-'</small>\n      </li>\n    ';
+'">\n        <span>' +
+((__t = ( doc.email )) == null ? '' : __t) +
+'</span>\n        ';
+ if (dat.origin == doc.id) { ;
+__p += '\n          <span>Owner</span>\n        ';
+ } ;
+__p += '\n      </li>\n    ';
  }); ;
 __p += '\n  </ul>\n  <p class="message">' +
 ((__t = ( dat.payload.original_msg )) == null ? '' : __t) +

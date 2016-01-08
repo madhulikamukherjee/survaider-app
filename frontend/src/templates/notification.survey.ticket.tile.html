@@ -4,16 +4,18 @@
   <ul>
     <% _.each(dat.survey_unit, function(doc) { %>
       <li>
-        <h2><%= doc.name %></h2>
+        <span><%= doc.name %></span>
         <small><%= doc.id %></small>
       </li>
     <% }); %>
   </ul>
   <ul>
     <% _.each(dat.targets, function(doc) { %>
-      <li>
-        <h2><%= doc.email %></h2>
-        <small><%= doc.id %></small>
+      <li data-user-id="<%= doc.id %>">
+        <span><%= doc.email %></span>
+        <% if (dat.origin == doc.id) { %>
+          <span>Owner</span>
+        <% } %>
       </li>
     <% }); %>
   </ul>

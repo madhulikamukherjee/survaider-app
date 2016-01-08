@@ -91,6 +91,7 @@ class SurveyTicket(Notification):
             'id':           str(self),
             'acquired':     str(self.acquired),
             'flagged':      self.flagged,
+            'root_survey':  self.survey_unit[-1].resolved_root.tiny_repr,
             'survey_unit':  [_.tiny_repr for _ in self.survey_unit],
             'origin':       str(self.origin),
             'cur_is_orgn':  current_user.id == self.origin.id,

@@ -458,6 +458,14 @@ class SurveyUnit(Survey):
             'last_modified': str(self.modified),
         }
 
+    @property
+    def tiny_repr(self):
+        return {
+            'id':       str(self),
+            'name':     self.unit_name,
+            'active':   self.active,
+        }
+
     @queryset_manager
     def objects(doc_cls, queryset):
         return queryset.filter()
