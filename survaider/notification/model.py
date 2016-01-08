@@ -86,12 +86,14 @@ class SurveyTicket(Notification):
 
     @property
     def repr(self):
+
         doc = {
             'id':           str(self),
             'acquired':     str(self.acquired),
             'flagged':      self.flagged,
             'survey_unit':  [_.tiny_repr for _ in self.survey_unit],
-            'origin':       self.origin.repr,
+            'origin':       str(self.origin),
+            'cur_is_orgn':  current_user.id == self.origin.id,
             'targets':      [_.repr for _ in self.destined],
             'payload':      self.payload,
             'type':         self.__class__.__name__,

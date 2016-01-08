@@ -637,5 +637,24 @@ button.create, input.create {
     transform: scale(1);
   }
 }
+div.deck ul {
+  list-style: none;
+  padding: 0;
+}
+
+li.notification {
+  background: #FFFFFF;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 10px;
+}
+li.notification p.message {
+  background: #3498db;
+  color: #FFFFFF;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-block;
+}
 
 /*# sourceMappingURL=notification.css.map */

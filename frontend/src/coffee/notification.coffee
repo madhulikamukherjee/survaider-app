@@ -30,7 +30,7 @@ class NotificationView extends Backbone.View
     {@parentView} = options
 
   render: ->
-    @$el.html @model.template({dat: @model.attributes})
+    @setElement(@model.template({dat: @model.attributes}))
     return @
 
 class NotificationDock extends Backbone.View

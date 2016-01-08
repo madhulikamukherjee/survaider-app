@@ -1,7 +1,5 @@
-<li class="notification survey-response" data-card="parent">
+<li class="notification survey-ticket" data-card="parent">
   <small><span data-livestamp="<%= dat.acquired %>">(Loading)</span></small>
-  <small><%= dat.origin.id %></small>
-  <small><%= dat.origin.email %></small>
 
   <ul>
     <% _.each(dat.survey_unit, function(doc) { %>
@@ -11,5 +9,14 @@
       </li>
     <% }); %>
   </ul>
-  <p><%= dat.payload.original_msg %></p>
+  <ul>
+    <% _.each(dat.targets, function(doc) { %>
+      <li>
+        <h2><%= doc.email %></h2>
+        <small><%= doc.id %></small>
+      </li>
+    <% }); %>
+  </ul>
+  <p class="message"><%= dat.payload.original_msg %></p>
+  <a href="#">Mark Finished</a>
 </li>

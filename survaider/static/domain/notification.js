@@ -77,7 +77,7 @@
     };
 
     NotificationView.prototype.render = function() {
-      this.$el.html(this.model.template({
+      this.setElement(this.model.template({
         dat: this.model.attributes
       }));
       return this;
