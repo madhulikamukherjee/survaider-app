@@ -648,14 +648,14 @@ li.notification {
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 10px;
+  color: #555;
+}
+li.notification strong {
+  color: #000;
 }
 li.notification section.title {
   position: relative;
   font-size: 12px;
-  color: #555;
-}
-li.notification section.title strong {
-  color: #000;
 }
 li.notification section.title i.icon {
   background: #34495e;
@@ -678,6 +678,13 @@ li.notification section.title button {
   top: 0;
   padding: 0;
   border: none;
+}
+li.notification section.main {
+  margin: 10px 0;
+}
+li.notification section.main h2, li.notification section.main h3 {
+  margin: 0;
+  font-weight: 200;
 }
 li.notification section.main li {
   max-width: 68em;
@@ -706,6 +713,9 @@ li.notification section.main li div.answer {
 }
 li.notification section.main li div.answer:last-child {
   margin-right: 0;
+}
+li.notification section.main li:nth-child(odd) {
+  background: #EEE;
 }
 li.notification p.message {
   background: #3498db;
