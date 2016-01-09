@@ -647,6 +647,65 @@ li.notification {
   border: 1px solid;
   border-radius: 4px;
   padding: 10px;
+  margin-bottom: 10px;
+}
+li.notification section.title {
+  position: relative;
+  font-size: 12px;
+  color: #555;
+}
+li.notification section.title strong {
+  color: #000;
+}
+li.notification section.title i.icon {
+  background: #34495e;
+  color: #FFFFFF;
+  float: left;
+  font-size: 20px;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+li.notification section.title p {
+  margin: 0;
+}
+li.notification section.title button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0;
+  border: none;
+}
+li.notification section.main li {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+}
+li.notification section.main li::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+li.notification section.main li div.question {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 48.82117%;
+}
+li.notification section.main li div.question:last-child {
+  margin-right: 0;
+}
+li.notification section.main li div.answer {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 48.82117%;
+}
+li.notification section.main li div.answer:last-child {
+  margin-right: 0;
 }
 li.notification p.message {
   background: #3498db;

@@ -1,5 +1,13 @@
 <li class="notification survey-ticket" data-card="parent">
-  <small><span data-livestamp="<%= dat.acquired %>">(Loading)</span></small>
+  <section class="title">
+    <i class="fa fa-bookmark icon"></i>
+    <p>Ticket ID: <strong><%= dat.id %></strong></p>
+    <p>
+      <i class="fa fa-clock-o"></i>
+      <span data-livestamp="<%= dat.acquired %>"><%= dat.acquired %></span>
+    </p>
+    <button><i class="fa fa-times"></i></button>
+  </section>
 
   <p data-survey-id="<%= dat.root_survey.id %>">Main Survey: <%= dat.root_survey.name %></p>
 
