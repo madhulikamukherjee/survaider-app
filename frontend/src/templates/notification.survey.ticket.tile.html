@@ -1,6 +1,8 @@
 <li class="notification survey-ticket" data-card="parent">
   <small><span data-livestamp="<%= dat.acquired %>">(Loading)</span></small>
 
+  <p data-survey-id="<%= dat.root_survey.id %>">Main Survey: <%= dat.root_survey.name %></p>
+
   <ul>
     <% _.each(dat.survey_unit, function(doc) { %>
       <li>

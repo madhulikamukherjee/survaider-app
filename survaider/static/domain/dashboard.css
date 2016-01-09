@@ -728,6 +728,15 @@ div.card {
 div.card i {
   margin-right: 5px;
 }
+div.card ul.clear {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+}
+div.card ul.clear li {
+  display: inline-block;
+}
 div.card section.frontmatter {
   background: #FFFFFF;
   color: #000;

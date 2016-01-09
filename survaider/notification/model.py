@@ -59,10 +59,17 @@ class SurveyResponseNotification(Notification):
             "Look for matching questions, resolve options"
             "Todo: Resolve Answers "
             if field.get('cid') in flat_payload:
+                q_field = field.get('field_options', {}).get('options', [])
+                try:
+                    res = self.payload.get(field['cid'])[2:].split('###')
+                    res_label = [q_field[int(_) - 1].get('label') for _ in res]
+                except Exception:
+                    res_label = [""]
                 payload.append({
                     'cid':      field.get('cid'),
                     'label':    field.get('label'),
-                    'response': self.payload.get(field['cid'])
+                    'response': self.payload.get(field['cid']),
+                    'res_label': res_label,
                 })
         return payload
 
@@ -72,10 +79,11 @@ class SurveyResponseNotification(Notification):
             'id':       str(self),
             'acquired': str(self.acquired),
             'flagged':  self.flagged,
-            'survey':   str(self.survey),
+            'survey':   self.survey.tiny_repr,
             'root':     self.survey.resolved_root.tiny_repr,
             'response': str(self.response),
             'payload':  self.resolved_payload,
+            'pl':self.payload,
             'type':     self.__class__.__name__,
         }
         return doc

@@ -30,6 +30,7 @@ def create_response_notification(survey, **kwargs):
     ).modify(
         upsert  = True,
         new     = True,
+        set__acquired   = datetime.datetime.now(),
         set__response   = kwargs['response'],
         set__survey     = survey,
         set__destined   = survey.created_by

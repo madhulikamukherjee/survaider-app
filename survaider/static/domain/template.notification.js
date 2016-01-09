@@ -43,7 +43,7 @@ __p += '\n      <li>\n        <h2>' +
 '</h2>\n        <small>' +
 ((__t = ( doc.cid )) == null ? '' : __t) +
 '</small>\n        <p>' +
-((__t = ( doc.response )) == null ? '' : __t) +
+((__t = ( doc.res_label )) == null ? '' : __t) +
 '</p>\n      </li>\n    ';
  }); ;
 __p += '\n  </ul>\n</li>\n';
@@ -59,7 +59,11 @@ function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<li class="notification survey-ticket" data-card="parent">\n  <small><span data-livestamp="' +
 ((__t = ( dat.acquired )) == null ? '' : __t) +
-'">(Loading)</span></small>\n\n  <ul>\n    ';
+'">(Loading)</span></small>\n\n  <p data-survey-id="' +
+((__t = ( dat.root_survey.id )) == null ? '' : __t) +
+'">Main Survey: ' +
+((__t = ( dat.root_survey.name )) == null ? '' : __t) +
+'</p>\n\n  <ul>\n    ';
  _.each(dat.survey_unit, function(doc) { ;
 __p += '\n      <li>\n        <span>' +
 ((__t = ( doc.name )) == null ? '' : __t) +
