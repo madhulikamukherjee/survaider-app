@@ -1826,7 +1826,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '\n<div class="form-group required">\n    <select data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.VALIDATION )) == null ? '' : __t) +
-'\'>\n      <option value="text">Text</option>\n      <option value="email">Email</option>\n      <option value="telephone">Phone Number</option>\n    </select>\n</div>\n';
+'\'>\n      <option value="text">Text</option>\n      <option value="email">Email</option>\n      <option value="telephone">Phone Number</option>\n    <option value="date">Date</option>\n    </select>\n</div>\n';
 
 }
 return __p
