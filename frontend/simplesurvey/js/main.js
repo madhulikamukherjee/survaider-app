@@ -73,12 +73,10 @@
     $scope.$on('rendered', function(){
       $scope.rendered = true;
 
+      $('#sv-app-loading').addClass('hide');
+
       changeActiveSlideType('header');
       changeActiveSlideElement($('#header-slide'));
-
-      $(function() {
-        $( "#slider" ).slider();
-      });
 
       setupEventListeners();
 
@@ -451,10 +449,11 @@
     // REQUEST MARK
     var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
     var json_uri = UriTemplate.expand("/api/survey/{s_id}/deepjson", {s_id: s_id}),
-        payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
+    payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
          .success(function(data, status, header, config){
+
            $scope.survey_title = data.survey_title;
            $scope.survey_description = data.survey_description;
            $scope.survey_footer = data.survey_footer;
@@ -466,7 +465,7 @@
            data.fields.forEach(function(question, index){
              switch (question.field_type) {
                case "short_text":
-                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
+                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description, question.field_options.validation);
                  $scope.questions.push(tempQuestion);
 
                  break;
@@ -546,8 +545,8 @@
 
          });
 
-        // Send a get request in beginning to start a session
-         $http.get(payload_update_uri + '?new=true')
+        //Send a get request in beginning to start a session
+        $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
          
                   console.log(data);
@@ -647,9 +646,9 @@
           // $http.get('survey/' + s_id + '/response/finish'); <--- THIS IS NOT CORRECT.
            $http.get(payload_update_uri + '?new=false')
               .success(function(data, status, header, config){
-         
+
                   console.log(data);
-         
+
               }
           );
          }

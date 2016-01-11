@@ -38,7 +38,12 @@
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <main ng-controller="FormController">
+               <main ng-controller="FormController">
+
+
+          <div id="sv-app-loading">
+            <h1>Loading.....</h1>
+          </div>
 
           <section class="sv-page-ontop sv-header-page sv-page sv-page-1 sv-page-current" id="header-slide">
             <h1 class="sv-survey-title" ng-bind="survey_title"></h1>
@@ -48,9 +53,6 @@
             </a>
             <button type="button" class="sv-button sv-button-large" ng-click="moveHeaderSlide()">Start Survey</button>
 
-            <!-- Gray Star Image Load Hack(For Rating and Group Rating Questions) -->
-            <img class="star-image-hack" src="/static/img/star-gray.png" />
-            <img class="star-image-hack" src="/static/img/star-black.png" />
 
           </section>
 
@@ -82,15 +84,39 @@
 
                   <div class="sv-question-switch" ng-switch-when="short_text">
 
-                    <div class="sv-short-text-input">
+                    <div class="sv-short-text-input" ng-switch on="question.validation">
 
-                      <span class="input input--madoka">
+                      <span class="input input--madoka" ng-switch-when="text">
                         <input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
                         <label class="input__label input__label--madoka" for="short-text-{{question.id}}">
                           <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
                             <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
                           </svg>
                         </label>
+                      </span>
+
+                      <span class="input input--madoka" ng-switch-when="email">
+                        <input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
+                        <label class="input__label input__label--madoka" for="short-text-{{question.id}}">
+                          <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
+                            <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
+                          </svg>
+                        </label>
+                      </span>
+
+                      <span class="input input--madoka" ng-switch-when="telephone">
+                        <input class="input__field input__field--madoka" type="text" id="short-text-{{question.id}}" ng-keydown="changeInQuestion($questionIndex, question.id)" ng-model="question.response" type="text" name="question-{{question.id}}-short_text" autofocus="autofocus" placeholder="Enter Here" />
+                        <label class="input__label input__label--madoka" for="short-text-{{question.id}}">
+                          <svg class="graphic graphic--madoka" width="100%" height="100%" viewBox="0 0 404 77" preserveAspectRatio="none">
+                            <path d="m0,0l404,0l0,77l-404,0l0,-77z"/>
+                          </svg>
+                        </label>
+                      </span>
+
+                      <span class="short_text_date" ng-switch-when="date">
+                        <div class="date-wrapper">
+                          <input id="short-text-{{question.id}}" type="date" ng-model="question.response" ng-change="changeInQuestion($questionIndex, question.id)" placeholder="Hello">
+                        </div>
                       </span>
 
                     </div>

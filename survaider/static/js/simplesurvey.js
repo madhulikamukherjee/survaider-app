@@ -41563,10 +41563,11 @@ Question.prototype.incomplete = function(){
   this.isCompleted = false;
 }
 ;
-function ShortTextQuestion(label, required, cid, field_type, next, description){
+function ShortTextQuestion(label, required, cid, field_type, next, description, validation){
   Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.minimumResponseLength = 1;
+  this.validation = validation;
 }
 
 
@@ -41581,7 +41582,7 @@ ShortTextQuestion.prototype.change = function(){
 
 ShortTextQuestion.prototype.checkIfCompleted = function(){
 
-  if (this.response.length >= this.minimumResponseLength) {
+  if (this.response && this.response.toLocaleString().length >= this.minimumResponseLength) {
     this.completed();
     return true;
   }
@@ -42097,12 +42098,10 @@ LongTextQuestion.prototype.generateResponse = function(){
     $scope.$on('rendered', function(){
       $scope.rendered = true;
 
+      $('#sv-app-loading').addClass('hide');
+
       changeActiveSlideType('header');
       changeActiveSlideElement($('#header-slide'));
-
-      $(function() {
-        $( "#slider" ).slider();
-      });
 
       setupEventListeners();
 
@@ -42475,10 +42474,11 @@ LongTextQuestion.prototype.generateResponse = function(){
     // REQUEST MARK
     var s_id = UriTemplate.extract("/survey/s:{s_id}/simple", window.location.pathname).s_id;
     var json_uri = UriTemplate.expand("/api/survey/{s_id}/deepjson", {s_id: s_id}),
-        payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
+    payload_update_uri = UriTemplate.expand("/api/survey/{s_id}/response", {s_id: s_id});
 
     $http.get(json_uri)
          .success(function(data, status, header, config){
+
            $scope.survey_title = data.survey_title;
            $scope.survey_description = data.survey_description;
            $scope.survey_footer = data.survey_footer;
@@ -42490,7 +42490,7 @@ LongTextQuestion.prototype.generateResponse = function(){
            data.fields.forEach(function(question, index){
              switch (question.field_type) {
                case "short_text":
-                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
+                 var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description, question.field_options.validation);
                  $scope.questions.push(tempQuestion);
 
                  break;
@@ -42570,8 +42570,8 @@ LongTextQuestion.prototype.generateResponse = function(){
 
          });
 
-        // Send a get request in beginning to start a session
-         $http.get(payload_update_uri + '?new=true')
+        //Send a get request in beginning to start a session
+        $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
          
                   console.log(data);
@@ -42671,9 +42671,9 @@ LongTextQuestion.prototype.generateResponse = function(){
           // $http.get('survey/' + s_id + '/response/finish'); <--- THIS IS NOT CORRECT.
            $http.get(payload_update_uri + '?new=false')
               .success(function(data, status, header, config){
-         
+
                   console.log(data);
-         
+
               }
           );
          }
