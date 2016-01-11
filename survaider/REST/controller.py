@@ -10,7 +10,9 @@ from survaider.minions.exceptions import APIException
 from survaider.survey.controller import SurveyController, ResponseController
 from survaider.survey.controller import SurveyMetaController, ResponseAggregationController
 from survaider.survey.controller import ResponseDocumentController
+from survaider.survey.controller import ResponseAPIController
 from survaider.notification.controller import NotificationAggregation
+
 
 api = Api(app, prefix = '/api')
 
@@ -36,8 +38,23 @@ api.add_resource(NotificationAggregation,
                  '/notification',
                  '/notification/<string:kind>',
                  '/notification/<string:kind>/<string:time_offset>')
+# API FOR DATA RESPONSES --- Creating New Classes //Zurez
+# api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')
 
-@app.errorhandler(APIException)
+api.add_resource(ResponseAPIController,"/rapi/<string:survey_id>/<string:uuid>/response")
+class Amazing(Resource):
+    """docstring for Amazing"""
+    def get(self):
+        return "lol"
+
+api.add_resource(Amazing,"/zurez")
+
+
+        
+
+###############################
+
+
 def handle_api_exception(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code

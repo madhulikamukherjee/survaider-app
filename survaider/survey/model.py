@@ -576,3 +576,36 @@ class ResponseAggregation(object):
     @property
     def count(self):
         return Response.objects(parent_survey = self.survey).count()
+# Zurez
+import pymongo
+from bson.json_util import dumps
+def d(data):return json.loads(dumps(data))
+
+connection= pymongo.MongoClient('localhost', 27017)
+db = connection['qwer']
+survey= db.response
+
+
+class DataSort(object):
+    """docstring for DataSort"""
+
+    def __init__(self,survey_id,uuid):
+        self.sid= survey_id
+        # self.sid="56582299857c5616113814ae"
+        self.uuid= uuid
+    def get_survey(self):
+        survey= db.survey.find({"_id":ObjectId(self.sid)}) #Got the particular survey.
+        return survey
+    def get_response(self):
+        response= db.response.find({"parent_survey":ObjectId(self.sid)})
+        return d(response)
+    def get_uuid_label(self):
+        """labels: question text ; options ; etc"""
+        #Extract the particular cid from the survey structure
+        raw_label=db.survey.find() #returns empty
+        raw_label=db.survey.find({"_id":ObjectId(self.sid)})
+        aList= d(raw_label)[0]['structure']['fields'] #A backup liseturn aList
+        for i in aList:
+            if i['cid']==self.uuid:
+                return i
+                # Zurez

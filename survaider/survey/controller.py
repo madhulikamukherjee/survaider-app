@@ -22,6 +22,7 @@ from survaider.minions.attachment import Image as AttachmentImage
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
+from survaider.survey.model import DataSort
 
 class SurveyController(Resource):
 
@@ -497,6 +498,157 @@ class ResponseDocumentController(Resource):
             raise APIException(ret, 404)
 
         return json.loads(res.to_json()), 201
+
+
+# Zurez
+import pymongo
+from bson.json_util import dumps
+def d(data):return json.loads(dumps(data))
+
+class ResponseAPIController(Resource):
+    """docstring for RAPI"""
+    def get(self,survey_id,uuid):
+        survey_id=HashId.decode(survey_id)  #Uncomment on Production
+        # survey_id="IamASurveyId"
+
+        lol= DataSort(survey_id,uuid)
+        survey_data = lol.get_uuid_label()
+        
+        j_data= d(survey_data)
+        
+        # Get Responses for  a cid
+        response_data= d(lol.get_response())
+        #return j_data['field_options']['options'][0]['label']
+        # Options
+
+        try:
+            options=[]
+            option_code={}
+            for i in range(len(j_data['field_options']['options'])):
+
+                options.append(j_data['field_options']['options'][i]['label'])
+                option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
+
+        except:
+
+            return "error"
+        
+        #Response Count
+        temp= []
+        for i in range(len(response_data)):
+
+            temp.append(response_data[i]['responses'][uuid])
+        
+        
+
+        #eturn j_data['field_type']
+        options_count={}
+        if j_data['field_type'] not in ["ranking","rating","group_rating"]:
+            for i in temp:
+                if i in options_count:pass
+                else:options_count[i]= temp.count(i)
+
+        elif j_data['field_type'] in ["ranking"]:
+            for i in temp:
+                aTempList= i.split("###")
+                for j in aTempList:
+                    bTempList= j.split("##")
+                    l = bTempList[0]
+                    if l in options_count:
+                        
+                        options_count[l]= int(options_count[l])+len(aTempList)-int(bTempList[1])
+                    else:
+                        options_count[l]=len(aTempList)-int(bTempList[1])
+
+        # elif j_data['field_type']=="rating":
+        #   for i in temp:
+        #       aTempList= i.split("###") #Check if this breaks the logic
+        #       for j in aTempList:
+        #           bTempList= j.split("##")
+        #           if j in options_count:
+        #               options_count[j]= int(options_count[j])+ int(bTempList[1])
+        #           else:
+        #               options_count[j]= int(bTempList[1])
+        elif j_data['field_type']=="group_rating":
+            for i in temp:
+                aTempList= i.split("###")
+                #options_count={}
+
+                for j in aTempList:
+                    bTempList= j.split("##")
+                    l = bTempList[0]
+                    
+                    #o_c= {a_1:}
+                    k= bTempList[1]
+                    if l in options_count:
+                        
+                        if k in options_count[l]:
+                            options_count[l][k]+=1
+                        else:
+                            options_count[l][k]=1
+                    else:
+                        options_count[l]={}
+                        options_count[l][k]=1
+
+
+        elif j_data['field_type']=="rating":
+            for i in temp:
+                if str(i) in options_count:
+                    options_count[str(i)] +=1
+                else:
+                    options_count[str(i)]=1
+                # if int(i)>6:
+                #   if "above_5" in options_count:
+                #       options_count["above_5"]= options_count["above_5"]+1
+                #   else:
+                #       options_count["above_5"]=1
+                # elif int(i)<6 and int(i)>3 :
+                #   if "above_3" in options_count:
+                #       options_count["above_3"]= options_count["above_3"]+1
+                #   else:
+                #       options_count["above_3"]=1
+                # elif int(i)<=3:
+                #   if "below_3" in options_count:
+                #       options_count["below_3"]= options_count["below_3"]+1
+                #   else:
+                #       options_count["below_3"]=1
+
+
+        elif j_data['field_type']=="short_text":
+            return "lol"
+
+        response= {}
+        if j_data['field_type']=="rating":
+            avg= 0
+            for i in temp: avg= avg + int(i)
+            response['avg_rating']= float(avg)/float(len(temp))
+        if j_data['field_type']=="group_rating":
+            avg={}
+            for key in options_count:
+                counter=0
+                for bkey in options_count[key]:
+                    if int(bkey)!=0:
+                        counter+= float(bkey) * options_count[key][bkey]
+                    else:
+                        pass
+                avg[key]= float(counter)/len(temp) 
+
+                # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
+            response['avg_rating']=avg
+
+        response['cid']= uuid
+        # survey_id= j_data['survey_id']
+        response['survey_id']=survey_id
+        response['label']=j_data['label']
+        response['type']=j_data['field_type']
+        response['option_code']=option_code
+        response['option_count']=options_count
+        #return option_code
+        response['total_resp']=len(temp)
+        response['garbage']= temp
+
+        return d(response)
+# //Zurez
 
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
