@@ -1,6 +1,6 @@
 function RatingQuestion(label, required, cid, field_type, next, description){
   Question.call(this, label, required, cid, field_type, next, description);
-  this.response = "";
+  this.response = 0;
 }
 
 RatingQuestion.prototype = Object.create(Question.prototype);
@@ -14,7 +14,7 @@ RatingQuestion.prototype.change = function(){
 
 RatingQuestion.prototype.checkIfCompleted = function(){
 
-  if (this.response.length >= 1) {
+  if (this.response > 0) {
     this.completed();
     return true;
   }

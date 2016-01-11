@@ -1,1 +1,214 @@
-!function(e){var t={sectionContainer:"section",easing:"ease",animationTime:1e3,pagination:true,updateURL:false,keyboard:true,beforeMove:null,afterMove:null,loop:true,responsiveFallback:false,direction:"vertical"};e.fn.swipeEvents=function(){return this.each(function(){function i(e){var i=e.originalEvent.touches;if(i&&i.length){t=i[0].pageX;n=i[0].pageY;r.bind("touchmove",s)}}function s(e){var i=e.originalEvent.touches;if(i&&i.length){var o=t-i[0].pageX;var u=n-i[0].pageY;if(o>=50){r.trigger("swipeLeft")}if(o<=-50){r.trigger("swipeRight")}if(u>=50){r.trigger("swipeUp")}if(u<=-50){r.trigger("swipeDown")}if(Math.abs(o)>=50||Math.abs(u)>=50){r.unbind("touchmove",s)}}}var t,n,r=e(this);r.bind("touchstart",i)})};e.fn.onepage_scroll=function(n){function o(){var t=false;var n=typeof r.responsiveFallback;if(n=="number"){t=e(window).width()<r.responsiveFallback}if(n=="boolean"){t=r.responsiveFallback}if(n=="function"){valFunction=r.responsiveFallback();t=valFunction;typeOFv=typeof t;if(typeOFv=="number"){t=e(window).width()<valFunction}}if(t){e("body").addClass("disabled-onepage-scroll");e(document).unbind("mousewheel DOMMouseScroll MozMousePixelScroll");i.swipeEvents().unbind("swipeDown swipeUp")}else{if(e("body").hasClass("disabled-onepage-scroll")){e("body").removeClass("disabled-onepage-scroll");e("html, body, .wrapper").animate({scrollTop:0},"fast")}i.swipeEvents().bind("swipeDown",function(t){if(!e("body").hasClass("disabled-onepage-scroll"))t.preventDefault();i.moveUp()}).bind("swipeUp",function(t){if(!e("body").hasClass("disabled-onepage-scroll"))t.preventDefault();i.moveDown()});e(document).bind("mousewheel DOMMouseScroll MozMousePixelScroll",function(e){e.preventDefault();var t=e.originalEvent.wheelDelta||-e.originalEvent.detail;u(e,t)})}}function u(e,t){deltaOfInterest=t;var n=(new Date).getTime();if(n-lastAnimation<quietPeriod+r.animationTime){e.preventDefault();return}if(deltaOfInterest<0){i.moveDown()}else{i.moveUp()}lastAnimation=n}var r=e.extend({},t,n),i=e(this),s=e(r.sectionContainer);total=s.length,status="off",topPos=0,leftPos=0,lastAnimation=0,quietPeriod=500,paginationList="";e.fn.transformPage=function(t,n,r){if(typeof t.beforeMove=="function")t.beforeMove(r);if(e("html").hasClass("ie8")){if(t.direction=="horizontal"){var s=i.width()/100*n;e(this).animate({left:s+"px"},t.animationTime)}else{var s=i.height()/100*n;e(this).animate({top:s+"px"},t.animationTime)}}else{e(this).css({"-webkit-transform":t.direction=="horizontal"?"translate3d("+n+"%, 0, 0)":"translate3d(0, "+n+"%, 0)","-webkit-transition":"all "+t.animationTime+"ms "+t.easing,"-moz-transform":t.direction=="horizontal"?"translate3d("+n+"%, 0, 0)":"translate3d(0, "+n+"%, 0)","-moz-transition":"all "+t.animationTime+"ms "+t.easing,"-ms-transform":t.direction=="horizontal"?"translate3d("+n+"%, 0, 0)":"translate3d(0, "+n+"%, 0)","-ms-transition":"all "+t.animationTime+"ms "+t.easing,transform:t.direction=="horizontal"?"translate3d("+n+"%, 0, 0)":"translate3d(0, "+n+"%, 0)",transition:"all "+t.animationTime+"ms "+t.easing})}e(this).one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",function(e){if(typeof t.afterMove=="function")t.afterMove(r)})};e.fn.moveDown=function(){var t=e(this);index=e(r.sectionContainer+".active").data("index");current=e(r.sectionContainer+"[data-index='"+index+"']");next=e(r.sectionContainer+"[data-index='"+(index+1)+"']");if(next.length<1){if(r.loop==true){pos=0;next=e(r.sectionContainer+"[data-index='1']")}else{return}}else{pos=index*100*-1}if(typeof r.beforeMove=="function")r.beforeMove(next.data("index"));current.removeClass("active");next.addClass("active");if(r.pagination==true){e(".onepage-pagination li a"+"[data-index='"+index+"']").removeClass("active");e(".onepage-pagination li a"+"[data-index='"+next.data("index")+"']").addClass("active")}e("body")[0].className=e("body")[0].className.replace(/\bviewing-page-\d.*?\b/g,"");e("body").addClass("viewing-page-"+next.data("index"));if(history.replaceState&&r.updateURL==true){var n=window.location.href.substr(0,window.location.href.indexOf("#"))+"#"+(index+1);history.pushState({},document.title,n)}t.transformPage(r,pos,next.data("index"))};e.fn.moveUp=function(){var t=e(this);index=e(r.sectionContainer+".active").data("index");current=e(r.sectionContainer+"[data-index='"+index+"']");next=e(r.sectionContainer+"[data-index='"+(index-1)+"']");if(next.length<1){if(r.loop==true){pos=(total-1)*100*-1;next=e(r.sectionContainer+"[data-index='"+total+"']")}else{return}}else{pos=(next.data("index")-1)*100*-1}if(typeof r.beforeMove=="function")r.beforeMove(next.data("index"));current.removeClass("active");next.addClass("active");if(r.pagination==true){e(".onepage-pagination li a"+"[data-index='"+index+"']").removeClass("active");e(".onepage-pagination li a"+"[data-index='"+next.data("index")+"']").addClass("active")}e("body")[0].className=e("body")[0].className.replace(/\bviewing-page-\d.*?\b/g,"");e("body").addClass("viewing-page-"+next.data("index"));if(history.replaceState&&r.updateURL==true){var n=window.location.href.substr(0,window.location.href.indexOf("#"))+"#"+(index-1);history.pushState({},document.title,n)}t.transformPage(r,pos,next.data("index"))};e.fn.moveTo=function(t){current=e(r.sectionContainer+".active");next=e(r.sectionContainer+"[data-index='"+t+"']");if(next.length>0){if(typeof r.beforeMove=="function")r.beforeMove(next.data("index"));current.removeClass("active");next.addClass("active");e(".onepage-pagination li a"+".active").removeClass("active");e(".onepage-pagination li a"+"[data-index='"+t+"']").addClass("active");e("body")[0].className=e("body")[0].className.replace(/\bviewing-page-\d.*?\b/g,"");e("body").addClass("viewing-page-"+next.data("index"));pos=(t-1)*100*-1;if(history.replaceState&&r.updateURL==true){var n=window.location.href.substr(0,window.location.href.indexOf("#"))+"#"+(t-1);history.pushState({},document.title,n)}i.transformPage(r,pos,t)}};i.addClass("onepage-wrapper").css("position","relative");e.each(s,function(t){e(this).css({position:"absolute",top:topPos+"%"}).addClass("section").attr("data-index",t+1);e(this).css({position:"absolute",left:r.direction=="horizontal"?leftPos+"%":0,top:r.direction=="vertical"||r.direction!="horizontal"?topPos+"%":0});if(r.direction=="horizontal")leftPos=leftPos+100;else topPos=topPos+100;if(r.pagination==true){paginationList+="<li><a data-index='"+(t+1)+"' href='#"+(t+1)+"'></a></li>"}});i.swipeEvents().bind("swipeDown",function(t){if(!e("body").hasClass("disabled-onepage-scroll"))t.preventDefault();i.moveUp()}).bind("swipeUp",function(t){if(!e("body").hasClass("disabled-onepage-scroll"))t.preventDefault();i.moveDown()});if(r.pagination==true){if(e("ul.onepage-pagination").length<1)e("<ul class='onepage-pagination'></ul>").prependTo("body");if(r.direction=="horizontal"){posLeft=i.find(".onepage-pagination").width()/2*-1;i.find(".onepage-pagination").css("margin-left",posLeft)}else{posTop=i.find(".onepage-pagination").height()/2*-1;i.find(".onepage-pagination").css("margin-top",posTop)}e("ul.onepage-pagination").html(paginationList)}if(window.location.hash!=""&&window.location.hash!="#1"){init_index=window.location.hash.replace("#","");if(parseInt(init_index)<=total&&parseInt(init_index)>0){e(r.sectionContainer+"[data-index='"+init_index+"']").addClass("active");e("body").addClass("viewing-page-"+init_index);if(r.pagination==true)e(".onepage-pagination li a"+"[data-index='"+init_index+"']").addClass("active");next=e(r.sectionContainer+"[data-index='"+init_index+"']");if(next){next.addClass("active");if(r.pagination==true)e(".onepage-pagination li a"+"[data-index='"+init_index+"']").addClass("active");e("body")[0].className=e("body")[0].className.replace(/\bviewing-page-\d.*?\b/g,"");e("body").addClass("viewing-page-"+next.data("index"));if(history.replaceState&&r.updateURL==true){var a=window.location.href.substr(0,window.location.href.indexOf("#"))+"#"+init_index;history.pushState({},document.title,a)}}pos=(init_index-1)*100*-1;i.transformPage(r,pos,init_index)}else{e(r.sectionContainer+"[data-index='1']").addClass("active");e("body").addClass("viewing-page-1");if(r.pagination==true)e(".onepage-pagination li a"+"[data-index='1']").addClass("active")}}else{e(r.sectionContainer+"[data-index='1']").addClass("active");e("body").addClass("viewing-page-1");if(r.pagination==true)e(".onepage-pagination li a"+"[data-index='1']").addClass("active")}if(r.pagination==true){e(".onepage-pagination li a").click(function(){var t=e(this).data("index");i.moveTo(t)})}e(document).bind("mousewheel DOMMouseScroll MozMousePixelScroll",function(t){t.preventDefault();var n=t.originalEvent.wheelDelta||-t.originalEvent.detail;if(!e("body").hasClass("disabled-onepage-scroll"))u(t,n)});if(r.responsiveFallback!=false){e(window).resize(function(){o()});o()}if(r.keyboard==true){e(document).keydown(function(t){var n=t.target.tagName.toLowerCase();if(!e("body").hasClass("disabled-onepage-scroll")){switch(t.which){case 38:if(n!="input"&&n!="textarea")i.moveUp();break;case 40:if(n!="input"&&n!="textarea")i.moveDown();break;case 32:if(n!="input"&&n!="textarea")i.moveDown();break;case 33:if(n!="input"&&n!="textarea")i.moveUp();break;case 34:if(n!="input"&&n!="textarea")i.moveDown();break;case 36:i.moveTo(1);break;case 35:i.moveTo(total);break;default:return}}})}return false}}(window.jQuery)
+/*
+ jQuery UI Slider plugin wrapper
+*/
+angular.module('ui.slider', []).value('uiSliderConfig',{}).directive('uiSlider', ['uiSliderConfig', '$timeout', function(uiSliderConfig, $timeout) {
+    uiSliderConfig = uiSliderConfig || {};
+    return {
+        require: 'ngModel',
+        compile: function() {
+            var preLink = function (scope, elm, attrs, ngModel) {
+
+                function parseNumber(n, decimals) {
+                    return (decimals) ? parseFloat(n) : parseInt(n, 10);
+                }
+
+                var directiveOptions = angular.copy(scope.$eval(attrs.uiSlider));
+                var options = angular.extend(directiveOptions || {}, uiSliderConfig);
+                // Object holding range values
+                var prevRangeValues = {
+                    min: null,
+                    max: null
+                };
+
+                // convenience properties
+                var properties = ['min', 'max', 'step', 'lowerBound', 'upperBound'];
+                var useDecimals = (!angular.isUndefined(attrs.useDecimals)) ? true : false;
+
+                var init = function() {
+                    // When ngModel is assigned an array of values then range is expected to be true.
+                    // Warn user and change range to true else an error occurs when trying to drag handle
+                    if (angular.isArray(ngModel.$viewValue) && options.range !== true) {
+                        console.warn('Change your range option of ui-slider. When assigning ngModel an array of values then the range option should be set to true.');
+                        options.range = true;
+                    }
+
+                    // Ensure the convenience properties are passed as options if they're defined
+                    // This avoids init ordering issues where the slider's initial state (eg handle
+                    // position) is calculated using widget defaults
+                    // Note the properties take precedence over any duplicates in options
+                    angular.forEach(properties, function(property) {
+                        if (angular.isDefined(attrs[property])) {
+                            options[property] = parseNumber(attrs[property], useDecimals);
+                        }
+                    });
+
+                    elm.slider(options);
+                    init = angular.noop;
+                };
+
+                // Find out if decimals are to be used for slider
+                angular.forEach(properties, function(property) {
+                    // support {{}} and watch for updates
+                    attrs.$observe(property, function(newVal) {
+                        if (!!newVal) {
+                            init();
+                            options[property] = parseNumber(newVal, useDecimals);
+                            elm.slider('option', property, parseNumber(newVal, useDecimals));
+                            ngModel.$render();
+                        }
+                    });
+                });
+                attrs.$observe('disabled', function(newVal) {
+                    init();
+                    elm.slider('option', 'disabled', !!newVal);
+                });
+
+                // Watch ui-slider (byVal) for changes and update
+                scope.$watch(attrs.uiSlider, function(newVal) {
+                    init();
+                    if(newVal !== undefined) {
+                      elm.slider('option', newVal);
+                    }
+                }, true);
+
+                // Late-bind to prevent compiler clobbering
+                $timeout(init, 0, true);
+
+                // Update model value from slider
+                elm.bind('slide', function(event, ui) {
+                    var valuesChanged;
+
+                    if (ui.values) {
+                        var boundedValues = ui.values.slice();
+
+                        if (options.lowerBound && boundedValues[0] < options.lowerBound) {
+                            boundedValues[0] = Math.max(boundedValues[0], options.lowerBound);
+                        }
+                        if (options.upperBound && boundedValues[1] > options.upperBound) {
+                            boundedValues[1] = Math.min(boundedValues[1], options.upperBound);
+                        }
+
+                        if (boundedValues[0] !== ui.values[0] || boundedValues[1] !== ui.values[1]) {
+                            valuesChanged = true;
+                            ui.values = boundedValues;
+                        }
+                    } else {
+                        var boundedValue = ui.value;
+
+                        if (options.lowerBound && boundedValue < options.lowerBound) {
+                            boundedValue = Math.max(boundedValue, options.lowerBound);
+                        }
+                        if (options.upperBound && boundedValue > options.upperBound) {
+                            boundedValue = Math.min(boundedValue, options.upperBound);
+                        }
+
+                        if (boundedValue !== ui.value) {
+                            valuesChanged = true;
+                            ui.value = boundedValue;
+                        }
+                    }
+
+
+                    ngModel.$setViewValue(ui.values || ui.value);
+                    scope.$apply();
+
+                    if (valuesChanged) {
+                        setTimeout(function() {
+                            elm.slider('value', ui.values || ui.value);
+                        }, 0);
+
+                        return false;
+                    }
+                });
+
+                // Update slider from model value
+                ngModel.$render = function() {
+                    init();
+                    var method = options.range === true ? 'values' : 'value';
+
+                    if (options.range !== true && isNaN(ngModel.$viewValue) && !(ngModel.$viewValue instanceof Array)) {
+                        ngModel.$viewValue = 0;
+                    }
+                    else if (options.range && !angular.isDefined(ngModel.$viewValue)) {
+                            ngModel.$viewValue = [0,0];
+                    }
+
+                    // Do some sanity check of range values
+                    if (options.range === true) {
+                        // previously, the model was a string b/c it was in a text input, need to convert to a array.
+                        // make sure input exists, comma exists once, and it is a string.
+                        if (ngModel.$viewValue && angular.isString(ngModel.$viewValue) && (ngModel.$viewValue.match(/,/g) || []).length === 1) {
+                            // transform string model into array.
+                            var valueArr = ngModel.$viewValue.split(',');
+                            ngModel.$viewValue = [Number(valueArr[0]), Number(valueArr[1])];
+                        }
+                        // Check outer bounds for min and max values
+                        if (angular.isDefined(options.min) && options.min > ngModel.$viewValue[0]) {
+                            ngModel.$viewValue[0] = options.min;
+                        }
+                        if (angular.isDefined(options.max) && options.max < ngModel.$viewValue[1]) {
+                            ngModel.$viewValue[1] = options.max;
+                        }
+
+                        // Check min and max range values
+                        if (ngModel.$viewValue[0] > ngModel.$viewValue[1]) {
+                            // Min value should be less to equal to max value
+                            if (prevRangeValues.min >= ngModel.$viewValue[1]) {
+                                ngModel.$viewValue[1] = prevRangeValues.min;
+                            }
+                            // Max value should be less to equal to min value
+                            if (prevRangeValues.max <= ngModel.$viewValue[0]) {
+                                ngModel.$viewValue[0] = prevRangeValues.max;
+                            }
+                        }
+
+                        // Store values for later user
+                        prevRangeValues.min = ngModel.$viewValue[0];
+                        prevRangeValues.max = ngModel.$viewValue[1];
+
+                    }
+                    elm.slider(method, ngModel.$viewValue);
+                };
+
+                scope.$watch(attrs.ngModel, function() {
+                    if (options.range === true) {
+                        ngModel.$render();
+                    }
+                }, true);
+
+                function destroy() {
+                    if (elm.hasClass('ui-slider')) {
+                        elm.slider('destroy');
+                    }
+                }
+
+                scope.$on("$destroy", destroy);
+                elm.one('$destroy', destroy);
+            };
+
+            var postLink = function (scope, element, attrs, ngModel) {
+                // Add tick marks if 'tick' and 'step' attributes have been setted on element.
+                // Support horizontal slider bar so far. 'tick' and 'step' attributes are required.
+                var options = angular.extend({}, scope.$eval(attrs.uiSlider));
+                var properties = ['max', 'step', 'tick'];
+                angular.forEach(properties, function(property) {
+                    if (angular.isDefined(attrs[property])) {
+                        options[property] = attrs[property];
+                    }
+                });
+                if (angular.isDefined(options['tick']) && angular.isDefined(options['step'])) {
+                    var total = parseInt(parseInt(options['max'])/parseInt(options['step']));
+                    for (var i = total; i >= 0; i--) {
+                        var left = ((i / total) * 100) + '%';
+                        $("<div/>").addClass("ui-slider-tick").appendTo(element).css({left: left});
+                    };
+                }
+            }
+
+            return {
+                pre: preLink,
+                post: postLink
+            };
+        }
+    };
+}]);

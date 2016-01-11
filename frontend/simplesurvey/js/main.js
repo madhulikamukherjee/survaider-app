@@ -2,7 +2,7 @@
 
   'use strict';
 
-  var $app = angular.module('SurvaiderForms', ['ui.sortable']);
+  var $app = angular.module('SurvaiderForms', ['ui.slider','ngDraggable']);
 
   $app.controller('FormController', function($scope, $http, $rootScope){
 
@@ -19,12 +19,36 @@
     }
 
 
-    $scope.sortableOptions = {
-      stop: function(e, ui) {
+    // $scope.sortableOptions = {
+    //   stop: function(e, ui) {
+    //     var rankingQuestion = $scope.activeSlide.question;
+    //     rankingQuestion.completed();
+    //   }
+    // };
+
+    $scope.rankingMobileSlider = {
+         options: {
+              stop: function (event, ui) {
+                var index = ui.handle.parentElement.getAttribute('data-question-index'),
+                    id = ui.handle.parentElement.getAttribute('data-question-id');
+                    console.log(index);
+                    console.log(id);
+                    console.log();
+                $scope.changeInQuestion(index, id);
+                $scope.$apply();
+              }
+      }
+    }
+
+    $scope.onDropComplete = function (subparts, index, obj, evt) {
+        var otherObj = subparts[index];
+        var otherIndex = subparts.indexOf(obj);
+        subparts[index] = obj;
+        subparts[otherIndex] = otherObj;
         var rankingQuestion = $scope.activeSlide.question;
         rankingQuestion.completed();
-      }
-    };
+        console.log(rankingQuestion.generateResponse());
+    }
 
     function Slide(){
       this.slideType = '';
@@ -52,6 +76,9 @@
       changeActiveSlideType('header');
       changeActiveSlideElement($('#header-slide'));
 
+      $(function() {
+        $( "#slider" ).slider();
+      });
 
       setupEventListeners();
 
@@ -200,6 +227,8 @@
       if (!question.isCompleted && question.isRequired) {
         return false;
       }
+
+      console.log(question);
 
       checkTheNumberOfRemainingQuestions();
 
@@ -453,7 +482,6 @@
                  var tempQuestion = new YesNoQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
                  for (var i = 0; i < question.field_options.options.length; i++) {
-                  console.log(question.field_options.options[i]);
                    tempQuestion.insertOption(question.field_options.options[i]);
                  }
 
@@ -518,12 +546,12 @@
 
          });
 
-        //  Send a get request in beginning to start a session
+        // Send a get request in beginning to start a session
          $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
-
+         
                   console.log(data);
-
+         
               }
           );
 
@@ -583,6 +611,7 @@
          $scope.changeInQuestion = function(questionIndex, questionId){
            var question = $scope.questions[questionIndex],
            questionElement = $('#question-' + questionId);
+           console.log(question);
 
            if (question.checkIfCompleted()) {
              questionElement.addClass('completed-question');
@@ -615,7 +644,14 @@
 
            //MARK :- TheFinalPostLink
 
-           $http.get('survey/' + s_id + '/response/finish');
+          // $http.get('survey/' + s_id + '/response/finish'); <--- THIS IS NOT CORRECT.
+           $http.get(payload_update_uri + '?new=false')
+              .success(function(data, status, header, config){
+         
+                  console.log(data);
+         
+              }
+          );
          }
 
          function generateTheJSON(){
@@ -656,7 +692,6 @@
       if (scope.$last) {
         scope.$emit('rendered');
       }
-
     }
   });
 
