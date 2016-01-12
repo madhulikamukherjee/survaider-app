@@ -9,6 +9,8 @@ ALL_TASKS = [
   'copy:fontsfa'
   'copy:fontspages'
   'copy:simplesurvey'
+  'copy:new_homepage'
+  'copy:new_homepage_template'
 ]
 
 PROXY_TASKS = [
@@ -242,6 +244,14 @@ module.exports = (grunt) ->
         expand: true
         src: 'simplesurvey/index.simplesurvey.html'
         dest: '<%= build %>'
+      new_homepage:
+        expand: true
+        cwd: 'homepage_pages'
+        src: '**/*'
+        dest: '<%= build %>'
+      new_homepage_template:
+        src: 'homepage_pages/index.homepage.pages.html'
+        dest: '<%= templates %>'
 
       proxy_main:
         expand: true

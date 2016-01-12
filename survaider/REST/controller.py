@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
+import requests
 
 from flask import jsonify
 from flask_restful import Resource, Api
@@ -42,18 +43,25 @@ api.add_resource(NotificationAggregation,
 # api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')
 
 api.add_resource(ResponseAPIController,"/rapi/<string:survey_id>/<string:uuid>/response")
-class Amazing(Resource):
-    """docstring for Amazing"""
-    def get(self):
-        return "lol"
-
-api.add_resource(Amazing,"/zurez")
-
-
-        
 
 ###############################
 
+class TemporaryEmailHandler(Resource):
+    def get(self, u_email_id):
+        r = requests.post(
+            "https://api.mailgun.net/v3/sandbox5d4604e611c54873b7eb557e1393ef79.mailgun.org/messages",
+            auth = ("api", "key-3e1ac26b280f0006fcefb105256342d1"),
+            data = {
+                "from": "Mailgun Sandbox <postmaster@sandbox5d4604e611c54873b7eb557e1393ef79.mailgun.org>",
+                "to": "Madhulika Mukherjee <madhulika.91@gmail.com>",
+                "subject": "Survaider New Subscription",
+                "text": "Hello.\n\rYou have new Subscription by `{0}`.".format(u_email_id)
+            }
+        )
+        return r.json()
+
+api.add_resource(TemporaryEmailHandler,
+                 '/subscribe/email:<string:u_email_id>')
 
 def handle_api_exception(error):
     response = jsonify(error.to_dict())
