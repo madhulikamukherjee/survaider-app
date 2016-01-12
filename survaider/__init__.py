@@ -81,7 +81,7 @@ def create_app():
             "Load the dashboard"
             return dashboard_home()
         # return security_login()
-        return render_template('homepage_pages/index.homepage.pages.html')
+        return render_template('index.homepage.pages.html')
 
 if __name__ == '__main__':
     create_app()

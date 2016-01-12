@@ -248,10 +248,10 @@ module.exports = (grunt) ->
         expand: true
         cwd: 'homepage_pages'
         src: '**/*'
-        dest: '<%= build %>'
+        dest: '<%= build %>/homepage_pages'
       new_homepage_template:
         src: 'homepage_pages/index.homepage.pages.html'
-        dest: '<%= templates %>'
+        dest: '<%= templates %>/index.homepage.pages.html'
 
       proxy_main:
         expand: true
