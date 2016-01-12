@@ -55,7 +55,9 @@
     "Waves": "waves#~0.7.4",
     "jquery.sparkline": "http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js",
     "jquery-ias": "~2.2.1",
-    "backbone.paginator": "~2.0.2"
+    "backbone.paginator": "~2.0.2",
+    "tether-drop": "~1.4.2",
+    "vex": "~2.3.3"
   },
   "resolutions": {
     "jquery": "~2.0.3",

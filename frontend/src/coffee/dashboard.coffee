@@ -59,6 +59,9 @@ DashboardHelper =
 
       el.find("a.more").on 'click', =>
         el.removeClass('narrow')
+
+      el.find("a.more").on 'click', =>
+        el.removeClass('narrow')
         if units
           el.addClass('expanded')
         fn = _.bind ->
@@ -70,6 +73,13 @@ DashboardHelper =
         _.delay fn, 1000
 
         @reload()
+
+      el.find("a.share-btn").on 'click', (e) =>
+        vex.dialog.confirm
+          message: 'Are you absolutely sure you want to destroy the alien planet?'
+          className: 'vex-theme-default'
+          callback: (value) ->
+            console.log if value then 'Successfully destroyed the planet.' else 'Chicken.'
 
       el.find("a.less").on 'click', (e) =>
         el.addClass('narrow')

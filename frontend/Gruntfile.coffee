@@ -104,6 +104,7 @@ module.exports = (grunt) ->
             'bower_components/Waves/dist/waves.js'
             'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
+            'bower_components/vex/js/vex.combined.min.js'
             '<%= build %>/domain/template.dashboard.js'
           ]
           '<%= build%>/domain/notification.vendor.js': [
@@ -192,6 +193,9 @@ module.exports = (grunt) ->
           '<%= build%>/domain/dashboard.vendor.css': [
             'bower_components/sweetalert/dist/sweetalert.css'
             'bower_components/font-awesome/css/font-awesome.css'
+            'bower_components/vex/css/vex.css'
+            'bower_components/vex/css/vex-theme-default.css'
+            'bower_components/vex/css/vex-theme-top.css'
           ]
           '<%= build%>/domain/notification.vendor.css': [
             'bower_components/sweetalert/dist/sweetalert.css'

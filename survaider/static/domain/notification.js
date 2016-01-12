@@ -191,8 +191,6 @@
 
   })();
 
-  window.Notification = Notification;
-
   NotificationHelper = {
     nav_menu: function() {
       var stretchyNavs;
@@ -223,6 +221,8 @@
     });
     return NotificationHelper.nav_menu();
   });
+
+  window.Notification = Notification;
 
   window.NotificationHelper = NotificationHelper;
 

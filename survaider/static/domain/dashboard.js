@@ -69,6 +69,11 @@
         });
         el.find("a.more").on('click', (function(_this) {
           return function() {
+            return el.removeClass('narrow');
+          };
+        })(this));
+        el.find("a.more").on('click', (function(_this) {
+          return function() {
             var fn;
             el.removeClass('narrow');
             if (units) {
@@ -82,6 +87,17 @@
             }, _this);
             _.delay(fn, 1000);
             return _this.reload();
+          };
+        })(this));
+        el.find("a.share-btn").on('click', (function(_this) {
+          return function(e) {
+            return vex.dialog.confirm({
+              message: 'Are you absolutely sure you want to destroy the alien planet?',
+              className: 'vex-theme-default',
+              callback: function(value) {
+                return console.log(value ? 'Successfully destroyed the planet.' : 'Chicken.');
+              }
+            });
           };
         })(this));
         el.find("a.less").on('click', (function(_this) {

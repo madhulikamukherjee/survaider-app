@@ -90,8 +90,6 @@ class Notification
     args = _.extend opts, {notif: @}
     @mainView = new NotificationDock args
 
-window.Notification = Notification
-
 NotificationHelper =
   nav_menu: ->
     if $('.cd-stretchy-nav').length > 0
@@ -109,16 +107,10 @@ NotificationHelper =
           stretchyNavs.removeClass('nav-is-visible')
 
 $(document).ready ->
-  # NotificationHelper.notification_tiles.init()
-  # Waves.init()
-
-  # $.getJSON '/api/notifications', (data) ->
-    # $('.spinner').hide()
-    # NotificationHelper.notification_tiles.append(dat) for dat in data.data
   notif = new Notification
     selector: '#card_dock'
-      # bootstrapData: data.data
 
   NotificationHelper.nav_menu()
 
+window.Notification = Notification
 window.NotificationHelper = NotificationHelper

@@ -34,9 +34,7 @@ __p += '\n      </ul>\n    </section>\n    <section class="footer">\n      <sect
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '">\n            <li><i class="fa fa-edit"></i> Edit</li>\n          </a>\n        </ul>\n      </section>\n      <section class="actions">\n        <ul class="clear">\n          <li>\n            <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#settings">\n              <i class="fa fa-cog"></i> Settings\n            </a>\n          </li>\n          <li>\n            <a href="' +
-((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n              <i class="fa fa-share-alt"></i> Share\n            </a>\n          </li>\n          <li>\n            <a href="' +
+'#settings">\n              <i class="fa fa-cog"></i> Settings\n            </a>\n          </li>\n          <li>\n            <a href="javascript:void(0)" class="share-btn">\n              <i class="fa fa-share-alt"></i> Share\n            </a>\n          </li>\n          <li>\n            <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '#share">\n              <i class="fa fa-star"></i> Preview\n            </a>\n          </li>\n        </ul>\n      </section>\n    </section>\n  </div>\n  <div class="subunit-container">\n  </div>\n</div>\n';
 
