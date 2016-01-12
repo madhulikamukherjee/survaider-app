@@ -42490,6 +42490,7 @@ LongTextQuestion.prototype.generateResponse = function(){
            data.fields.forEach(function(question, index){
              switch (question.field_type) {
                case "short_text":
+                  if(!question.field_options.validation) { question.field_options.validation = "text"; }
                  var tempQuestion = new ShortTextQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description, question.field_options.validation);
                  $scope.questions.push(tempQuestion);
 
