@@ -15,3 +15,6 @@ def api_login_required(func):
             raise APIException("Login Required", 401)
         return func(*args, **kwargs)
     return returned_wrapper
+
+def action(holder, base, id):
+    pass
