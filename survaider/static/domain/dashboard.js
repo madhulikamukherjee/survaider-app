@@ -1,5 +1,5 @@
 (function() {
-  var DashboardHelper;
+  var Dashboard, DashboardHelper;
 
   DashboardHelper = {
     create_survey: function() {
@@ -260,29 +260,76 @@
     }
   };
 
-  $(document).ready(function() {
-    DashboardHelper.survey_tiles.init();
-    Waves.init();
-    $.getJSON('/api/survey', function(data) {
-      var dat, i, len, ref, results;
-      $('.spinner').hide();
-      if (data.data.length === 0) {
-        $('.alt-text').fadeIn();
-      }
-      ref = data.data.reverse();
+  Dashboard = (function() {
+    function Dashboard() {
+      this.container = $('#card_dock');
+      this.dashboard = {};
+    }
+
+    Dashboard.prototype.init = function() {
+      this.fetch();
+      return console.log(this.dashboard);
+    };
+
+    Dashboard.prototype.process_data = function(dat) {
+      var i, len, ref, results, s;
+      ref = dat.data;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
-        dat = ref[i];
-        results.push(DashboardHelper.survey_tiles.append(dat));
+        s = ref[i];
+        switch (s.meta.type) {
+          case "Survey":
+            if (!_.has(this.dashboard, s.id)) {
+              this.dashboard[s.id] = {};
+            }
+            results.push(this.dashboard[s.id] = _.extend(this.dashboard[s.id], s));
+            break;
+          case "Survey.SurveyUnit":
+            if (_.has(this.dashboard, s.rootid)) {
+              if (!_.has(this.dashboard[s.rootid], 'units')) {
+                this.dashboard[s.rootid].units = [];
+              }
+              results.push(this.dashboard[s.rootid].units.push(s));
+            } else {
+              results.push(this.dashboard[s.rootid] = {
+                id: s.rootid,
+                meta: {
+                  name: s.meta.rootname
+                },
+                units: [s]
+              });
+            }
+            break;
+          default:
+            results.push(void 0);
+        }
       }
       return results;
-    });
-    $('#survaider_form').submit(function(e) {
-      e.preventDefault();
-      return DashboardHelper.create_survey();
-    });
+    };
+
+    Dashboard.prototype.fetch = function() {
+      return $.getJSON('/api/survey').success((function(_this) {
+        return function(data) {
+          if (data.data.length === 0) {
+            $('.alt-text').fadeIn();
+          }
+          return _this.process_data(data);
+        };
+      })(this));
+    };
+
+    return Dashboard;
+
+  })();
+
+  $(document).ready(function() {
+    var dbd;
+    dbd = new Dashboard;
+    dbd.init();
     return DashboardHelper.nav_menu();
   });
+
+  window.Dashboard = Dashboard;
 
   window.DashboardHelper = DashboardHelper;
 

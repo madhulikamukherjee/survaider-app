@@ -209,23 +209,67 @@ DashboardHelper =
       $(document).on 'click', (event) ->
         !$(event.target).is('.cd-nav-trigger') and !$(event.target).is('.cd-nav-trigger span') and stretchyNavs.removeClass('nav-is-visible')
 
+class Dashboard
+  constructor: ->
+    @container = $('#card_dock')
+    @dashboard = {}
+
+  init: ->
+    @fetch()
+    console.log @dashboard
+
+  process_data: (dat) ->
+    #: Processes the data and adds it to the dashboard collection.
+    for s in dat.data
+      switch s.meta.type
+        when "Survey"
+          #: Add the Root Survey
+          if not _.has(@dashboard, s.id)
+            @dashboard[s.id] = {}
+          @dashboard[s.id] = _.extend(@dashboard[s.id], s)
+
+        when "Survey.SurveyUnit"
+          #: Add TO Survey
+          if _.has(@dashboard, s.rootid)
+            #: Check if the Root has unit list
+            if not _.has(@dashboard[s.rootid], 'units')
+              @dashboard[s.rootid].units = []
+            @dashboard[s.rootid].units.push s
+          else
+            #: Nope. Create the Intermediate Survey obj
+            @dashboard[s.rootid] =
+              id: s.rootid
+              meta:
+                name: s.meta.rootname
+              units: [s]
+
+  fetch: ->
+    $.getJSON '/api/survey'
+    .success (data) =>
+      if data.data.length is 0
+        $('.alt-text').fadeIn()
+      @process_data data
 
 $(document).ready ->
-  DashboardHelper.survey_tiles.init()
-  Waves.init()
+  # DashboardHelper.survey_tiles.init()
+  # Waves.init()
 
-  $.getJSON '/api/survey', (data) ->
-    $('.spinner').hide()
+  # $.getJSON '/api/survey', (data) ->
+  #   $('.spinner').hide()
 
-    if data.data.length is 0
-      $('.alt-text').fadeIn()
+  #   if data.data.length is 0
+  #     $('.alt-text').fadeIn()
 
-    DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
+  #   DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
 
-  $('#survaider_form').submit (e) ->
-    e.preventDefault()
-    DashboardHelper.create_survey()
+  # $('#survaider_form').submit (e) ->
+  #   e.preventDefault()
+  #   DashboardHelper.create_survey()
+
+  dbd = new Dashboard
+  dbd.init()
 
   DashboardHelper.nav_menu()
 
+window.Dashboard = Dashboard
 window.DashboardHelper = DashboardHelper

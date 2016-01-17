@@ -96,7 +96,6 @@ module.exports = (grunt) ->
           '<%= build%>/domain/dashboard.vendor.js': [
             'bower_components/jquery/jquery.js'
             'bower_components/underscore/underscore.js'
-            'bower_components/backbone/backbone.js'
             'bower_components/moment/moment.js'
             'bower_components/sweetalert/dist/sweetalert.min.js'
             'bower_components/livestamp/livestamp.js'
@@ -105,6 +104,7 @@ module.exports = (grunt) ->
             'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
             'bower_components/vex/js/vex.combined.min.js'
+            'bower_components/rivets/dist/rivets.bundled.min.js'
             '<%= build %>/domain/template.dashboard.js'
           ]
           '<%= build%>/domain/notification.vendor.js': [

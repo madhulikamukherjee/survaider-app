@@ -57,7 +57,8 @@
     "jquery-ias": "~2.2.1",
     "backbone.paginator": "~2.0.2",
     "tether-drop": "~1.4.2",
-    "vex": "~2.3.3"
+    "vex": "~2.3.3",
+    "rivets": "~0.8.1"
   },
   "resolutions": {
     "jquery": "~2.0.3",

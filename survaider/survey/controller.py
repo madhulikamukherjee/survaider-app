@@ -32,34 +32,29 @@ class SurveyController(Resource):
         parser.add_argument('s_name', type = str, required = True)
         return parser.parse_args()
 
+    @api_login_required
     def get(self):
-        if current_user.is_authenticated():
-            svey = Survey.root(created_by = current_user.id)
+        svey = Survey.objects(created_by = current_user.id)
 
-            survey_list = [_.repr for _ in svey if not _.hidden]
+        survey_list = [_.repr_sm for _ in svey if not _.hidden]
 
-            ret = {
-                "data": survey_list,
-                "owner": str(current_user.id),
-                "survey_count": len(survey_list),
-            }
+        ret = {
+            "data": survey_list,
+            "survey_count": len(survey_list),
+        }
 
-            return ret, 200
-        else:
-            raise APIException("Login Required", 401)
+        return ret, 200
 
+    @api_login_required
     def post(self):
-        if current_user.is_authenticated():
-            args = self.post_args()
-            svey = Survey()
-            usr  = User.objects(id = current_user.id).first()
-            svey.metadata['name'] = args['s_name']
-            svey.created_by.append(usr)
-            svey.save()
+        args = self.post_args()
+        svey = Survey()
+        usr  = User.objects(id = current_user.id).first()
+        svey.metadata['name'] = args['s_name']
+        svey.created_by.append(usr)
+        svey.save()
 
-            return svey.repr, 200
-        else:
-            raise APIException("Login Required", 401)
+        return svey.repr, 200
 
 class SurveyMetaController(Resource):
 
