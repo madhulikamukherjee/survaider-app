@@ -21220,6 +21220,16 @@ return Outlayer;
 this["Survaider"] = this["Survaider"] || {};
 this["Survaider"]["Templates"] = this["Survaider"]["Templates"] || {};
 
+this["Survaider"]["Templates"]["dashboard.dock"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<section role="survey-list" id="surveys">\n\n  <div data-card="parent" role="survey" rv-each-survey="surveys">\n    <h1 class="hr" role="card-title"><span rv-text="survey.meta.name"></span></h1>\n\n    <section role="row">\n      <section role="parent-card" rv-show="survey.access.owner">\n        <div role="card">\n          <ul role="info">\n            <li role="survey-name" rv-text="survey.meta.name"></li>\n            <li role="date" rv-data-livestamp="survey.info.added"></li>\n          </ul>\n          <ul role="analytics">\n            <li role="response-count"\n                rv-hide="survey.status.unit_count"\n                rv-text="survey.status.response_count"></li>\n\n            <li role="response-count"\n                rv-show="survey.status.unit_count"\n                rv-text="survey.status.response_count_agg"></li>\n\n            <li role="status">\n              <span class="tag" rv-show="survey.status.active" rv-on-click="surveys.echo">Active</span>\n              <span class="tag" rv-show="survey.status.expired">Expired</span>\n              <span class="tag" rv-show="survey.status.paused">Paused</span>\n            </li>\n          </ul>\n          <ul role="buttons">\n            <li><a href="#">Preview</a></li>\n            <li><a href="#">Analytics</a></li>\n            <li><a href="#">Settings</a></li>\n          </ul>\n        </div>\n      </section>\n      <section role="unit-dock">\n        <div role="card" rv-each-unit="survey.units">\n          <ul role="info">\n            <li role="survey-name" rv-text="unit.meta.name"></li>\n            <li role="date" rv-data-livestamp="unit.info.added"></li>\n            <li rv-show="unit.fake">FAKE!</li>\n          </ul>\n          <ul role="analytics">\n            <li role="response-count" rv-text="unit.status.response_count"></li>\n            <li role="status">\n              <span class="tag" rv-show="unit.status.active">Active</span>\n              <span class="tag" rv-show="unit.status.expired">Expired</span>\n              <span class="tag" rv-show="unit.status.paused">Paused</span>\n            </li>\n          </ul>\n          <ul role="buttons">\n            <li><a href="#">Preview</a></li>\n            <li><a href="#">Analytics</a></li>\n            <li><a href="#">Settings</a></li>\n          </ul>\n        </div>\n      </section>\n    </section>\n  </div>\n</section>\n\n';
+
+}
+return __p
+};
+
 this["Survaider"]["Templates"]["dashboard.tiles"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;

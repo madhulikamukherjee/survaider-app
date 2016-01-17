@@ -1153,6 +1153,7 @@ div[role="survey"] div[role="card"] {
   background: #2E96D6;
   border-radius: 5px;
   padding: 10px;
+  margin-bottom: 20px;
 }
 div[role="survey"] div[role="card"] ul {
   list-style-type: none;

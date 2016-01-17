@@ -1,0 +1,60 @@
+<section role="survey-list" id="surveys">
+
+  <div data-card="parent" role="survey" rv-each-survey="surveys">
+    <h1 class="hr" role="card-title"><span rv-text="survey.meta.name"></span></h1>
+
+    <section role="row">
+      <section role="parent-card" rv-show="survey.access.owner">
+        <div role="card">
+          <ul role="info">
+            <li role="survey-name" rv-text="survey.meta.name"></li>
+            <li role="date" rv-data-livestamp="survey.info.added"></li>
+          </ul>
+          <ul role="analytics">
+            <li role="response-count"
+                rv-hide="survey.status.unit_count"
+                rv-text="survey.status.response_count"></li>
+
+            <li role="response-count"
+                rv-show="survey.status.unit_count"
+                rv-text="survey.status.response_count_agg"></li>
+
+            <li role="status">
+              <span class="tag" rv-show="survey.status.active" rv-on-click="surveys.echo">Active</span>
+              <span class="tag" rv-show="survey.status.expired">Expired</span>
+              <span class="tag" rv-show="survey.status.paused">Paused</span>
+            </li>
+          </ul>
+          <ul role="buttons">
+            <li><a href="#">Preview</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+        </div>
+      </section>
+      <section role="unit-dock">
+        <div role="card" rv-each-unit="survey.units">
+          <ul role="info">
+            <li role="survey-name" rv-text="unit.meta.name"></li>
+            <li role="date" rv-data-livestamp="unit.info.added"></li>
+            <li rv-show="unit.fake">FAKE!</li>
+          </ul>
+          <ul role="analytics">
+            <li role="response-count" rv-text="unit.status.response_count"></li>
+            <li role="status">
+              <span class="tag" rv-show="unit.status.active">Active</span>
+              <span class="tag" rv-show="unit.status.expired">Expired</span>
+              <span class="tag" rv-show="unit.status.paused">Paused</span>
+            </li>
+          </ul>
+          <ul role="buttons">
+            <li><a href="#">Preview</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+        </div>
+      </section>
+    </section>
+  </div>
+</section>
+

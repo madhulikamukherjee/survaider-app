@@ -209,14 +209,24 @@ DashboardHelper =
       $(document).on 'click', (event) ->
         !$(event.target).is('.cd-nav-trigger') and !$(event.target).is('.cd-nav-trigger span') and stretchyNavs.removeClass('nav-is-visible')
 
+class Survey
+  constructor: ->
+    @surveys = []
+    @surveys.echo = @echo
+
+  echo: =>
+    console.log @surveys
+
 class Dashboard
   constructor: ->
     @container = $('#card_dock')
-    @dashboard = {}
+    @container.html Survaider.Templates['dashboard.dock']()
+    @dashboard = new Survey
 
   init: ->
+    @rv_container = rivets.bind $('#surveys'), @dashboard
+
     @fetch()
-    console.log @dashboard
 
   process_data: (dat) ->
     #: Processes the data and adds it to the dashboard collection.
@@ -224,24 +234,48 @@ class Dashboard
       switch s.meta.type
         when "Survey"
           #: Add the Root Survey
-          if not _.has(@dashboard, s.id)
-            @dashboard[s.id] = {}
-          @dashboard[s.id] = _.extend(@dashboard[s.id], s)
+          index = _.findIndex @dashboard.surveys, (d) ->
+            d?.id is s.id
+          if index > -1
+            @dashboard.surveys[index] = _.extend(@dashboard.surveys[index], s)
+          else
+            @dashboard.surveys.push _.extend({units: []}, s)
+
+          if s.status.unit_count > 0
+            #: Create a fake Unit!
+            index = _.findIndex @dashboard.surveys, (d) ->
+              d?.id is s.id
+            @dashboard.surveys[index].units.push _.extend s, fake: yes
+            @dashboard.surveys[index].contains_fake = yes
 
         when "Survey.SurveyUnit"
           #: Add TO Survey
-          if _.has(@dashboard, s.rootid)
-            #: Check if the Root has unit list
-            if not _.has(@dashboard[s.rootid], 'units')
-              @dashboard[s.rootid].units = []
-            @dashboard[s.rootid].units.push s
+          index = _.findIndex @dashboard.surveys, (d) ->
+            d?.id is s.rootid
+
+          if index > -1
+            #: We found an existing Survey. Awesome. Add to its units.
+            index_unit = _.findIndex @dashboard.surveys[index].units,
+            (d) -> d?.id is s.id
+
+            if index_unit == -1
+              @dashboard.surveys[index].units.push s
+
+            p_c = _.reduce @dashboard.surveys[index].units
+            , (m, v) ->
+              m + v.status.response_count
+            ,0
+
+
+            @dashboard.surveys[index].status.response_count_agg = p_c
+
           else
-            #: Nope. Create the Intermediate Survey obj
-            @dashboard[s.rootid] =
-              id: s.rootid
+            #: Nope. CLONE the s, Not REFER.
+            cpy = _.extend JSON.parse(JSON.stringify(s)),
               meta:
                 name: s.meta.rootname
-              units: [s]
+            cpy.units = [s]
+            @dashboard.surveys.push cpy
 
   fetch: ->
     $.getJSON '/api/survey'
@@ -249,23 +283,9 @@ class Dashboard
       if data.data.length is 0
         $('.alt-text').fadeIn()
       @process_data data
+    console.log @dashboard.surveys
 
 $(document).ready ->
-  # DashboardHelper.survey_tiles.init()
-  # Waves.init()
-
-  # $.getJSON '/api/survey', (data) ->
-  #   $('.spinner').hide()
-
-  #   if data.data.length is 0
-  #     $('.alt-text').fadeIn()
-
-  #   DashboardHelper.survey_tiles.append(dat) for dat in data.data.reverse()
-
-  # $('#survaider_form').submit (e) ->
-  #   e.preventDefault()
-  #   DashboardHelper.create_survey()
-
   dbd = new Dashboard
   dbd.init()
 

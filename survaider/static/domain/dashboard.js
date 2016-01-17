@@ -1,5 +1,6 @@
 (function() {
-  var Dashboard, DashboardHelper;
+  var Dashboard, DashboardHelper, Survey,
+    bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   DashboardHelper = {
     create_survey: function() {
@@ -260,44 +261,86 @@
     }
   };
 
+  Survey = (function() {
+    function Survey() {
+      this.echo = bind(this.echo, this);
+      this.surveys = [];
+      this.surveys.echo = this.echo;
+    }
+
+    Survey.prototype.echo = function() {
+      return console.log(this.surveys);
+    };
+
+    return Survey;
+
+  })();
+
   Dashboard = (function() {
     function Dashboard() {
       this.container = $('#card_dock');
-      this.dashboard = {};
+      this.container.html(Survaider.Templates['dashboard.dock']());
+      this.dashboard = new Survey;
     }
 
     Dashboard.prototype.init = function() {
-      this.fetch();
-      return console.log(this.dashboard);
+      this.rv_container = rivets.bind($('#surveys'), this.dashboard);
+      return this.fetch();
     };
 
     Dashboard.prototype.process_data = function(dat) {
-      var i, len, ref, results, s;
+      var cpy, i, index, index_unit, len, p_c, ref, results, s;
       ref = dat.data;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
         s = ref[i];
         switch (s.meta.type) {
           case "Survey":
-            if (!_.has(this.dashboard, s.id)) {
-              this.dashboard[s.id] = {};
+            index = _.findIndex(this.dashboard.surveys, function(d) {
+              return (d != null ? d.id : void 0) === s.id;
+            });
+            if (index > -1) {
+              this.dashboard.surveys[index] = _.extend(this.dashboard.surveys[index], s);
+            } else {
+              this.dashboard.surveys.push(_.extend({
+                units: []
+              }, s));
             }
-            results.push(this.dashboard[s.id] = _.extend(this.dashboard[s.id], s));
+            if (s.status.unit_count > 0) {
+              index = _.findIndex(this.dashboard.surveys, function(d) {
+                return (d != null ? d.id : void 0) === s.id;
+              });
+              this.dashboard.surveys[index].units.push(_.extend(s, {
+                fake: true
+              }));
+              results.push(this.dashboard.surveys[index].contains_fake = true);
+            } else {
+              results.push(void 0);
+            }
             break;
           case "Survey.SurveyUnit":
-            if (_.has(this.dashboard, s.rootid)) {
-              if (!_.has(this.dashboard[s.rootid], 'units')) {
-                this.dashboard[s.rootid].units = [];
+            index = _.findIndex(this.dashboard.surveys, function(d) {
+              return (d != null ? d.id : void 0) === s.rootid;
+            });
+            if (index > -1) {
+              index_unit = _.findIndex(this.dashboard.surveys[index].units, function(d) {
+                return (d != null ? d.id : void 0) === s.id;
+              });
+              if (index_unit === -1) {
+                this.dashboard.surveys[index].units.push(s);
               }
-              results.push(this.dashboard[s.rootid].units.push(s));
+              p_c = _.reduce(this.dashboard.surveys[index].units, function(m, v) {
+                return m + v.status.response_count;
+              }, 0);
+              results.push(this.dashboard.surveys[index].status.response_count_agg = p_c);
             } else {
-              results.push(this.dashboard[s.rootid] = {
-                id: s.rootid,
+              cpy = _.extend(JSON.parse(JSON.stringify(s)), {
                 meta: {
                   name: s.meta.rootname
-                },
-                units: [s]
+                }
               });
+              cpy.units = [s];
+              results.push(this.dashboard.surveys.push(cpy));
             }
             break;
           default:
@@ -308,7 +351,7 @@
     };
 
     Dashboard.prototype.fetch = function() {
-      return $.getJSON('/api/survey').success((function(_this) {
+      $.getJSON('/api/survey').success((function(_this) {
         return function(data) {
           if (data.data.length === 0) {
             $('.alt-text').fadeIn();
@@ -316,6 +359,7 @@
           return _this.process_data(data);
         };
       })(this));
+      return console.log(this.dashboard.surveys);
     };
 
     return Dashboard;
