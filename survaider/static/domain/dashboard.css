@@ -1103,4 +1103,97 @@ div.card .primary {
   color: #2E96D6;
 }
 
+div[role="survey"] {
+  position: relative;
+  min-width: 500px;
+}
+div[role="survey"] section[role="row"] {
+  display: block;
+}
+div[role="survey"] section[role="row"]::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+div[role="survey"] section[role="row"] section[role="parent-card"] {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 23.23176%;
+}
+div[role="survey"] section[role="row"] section[role="parent-card"]:last-child {
+  margin-right: 0;
+}
+div[role="survey"] section[role="row"] section[role="unit-dock"] {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 74.41059%;
+  display: block;
+}
+div[role="survey"] section[role="row"] section[role="unit-dock"]:last-child {
+  margin-right: 0;
+}
+div[role="survey"] section[role="row"] section[role="unit-dock"]::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+div[role="survey"] section[role="row"] section[role="unit-dock"] div[role="card"] {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 23.23176%;
+  font-size: 0.8em;
+}
+div[role="survey"] section[role="row"] section[role="unit-dock"] div[role="card"]:last-child {
+  margin-right: 0;
+}
+div[role="survey"] div[role="card"] {
+  background: #2E96D6;
+  border-radius: 5px;
+  padding: 10px;
+}
+div[role="survey"] div[role="card"] ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+div[role="survey"] div[role="card"] ul[role="info"] {
+  border-bottom: 1px solid #FFFFFF;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+}
+div[role="survey"] div[role="card"] ul[role="info"] li[role="survey-name"] {
+  font-size: 2em;
+}
+div[role="survey"] div[role="card"] ul[role="info"] li[role="date"] {
+  font-size: 0.8em;
+}
+div[role="survey"] div[role="card"] ul[role="analytics"] {
+  text-align: center;
+  margin-bottom: 10px;
+}
+div[role="survey"] div[role="card"] ul[role="analytics"] li[role="response-count"] {
+  font-size: 2em;
+}
+div[role="survey"] div[role="card"] ul[role="buttons"] {
+  text-align: center;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  overflow: scroll;
+}
+div[role="survey"] div[role="card"] ul[role="buttons"] > li {
+  display: inline-block;
+  display: inline-flex;
+  margin: 0 5px;
+}
+div[role="survey"] div[role="card"] ul[role="buttons"] a {
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #FFF;
+  border-radius: 2px;
+}
+
 /*# sourceMappingURL=dashboard.css.map */
