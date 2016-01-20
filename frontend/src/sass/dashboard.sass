@@ -449,27 +449,32 @@ div[role="survey"]
     section[role="parent-card"]
       @include span-columns(3)
 
+      div[role="card"]
+        background: #66CC99
+
     section[role="unit-dock"]
       @include span-columns(9)
       @include row
 
       div[role="card"]
+        background: #A2DED0
         @include span-columns(3)
         font-size: 0.8em
 
   div[role="card"]
-    background: #2E96D6
+    background: #FFFFFF
     border-radius: 5px
-    padding: 10px
     margin-bottom: 20px
+    overflow: hidden
 
     ul
       @include clear-ul
 
       &[role="info"]
-        border-bottom: 1px solid #FFFFFF
+        border-bottom: 1px solid #000000
         margin-bottom: 5px
         padding-bottom: 5px
+        padding: 10px 10px 5px 10px
 
         li[role="survey-name"]
           font-size: 2em
@@ -479,13 +484,24 @@ div[role="survey"]
 
       &[role="analytics"]
         text-align: center
-        margin-bottom: 10px
+        margin-bottom: 20px
+        padding: 0px 10px 0px 10px
         li[role="response-count"]
           font-size: 2em
+          margin-bottom: 10px
 
       &[role="buttons"]
         text-align: center
+        background: #03C9A9
         @include navigation-list
+        padding: 10px 10px
 
         a
           @include sm-button
+          font-size: 12px
+
+    span.tag
+      background: #F5AB35
+      padding: 2px 5px
+      color: #FFFFFF
+      border-radius: 2px

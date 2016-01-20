@@ -1124,6 +1124,9 @@ div[role="survey"] section[role="row"] section[role="parent-card"] {
 div[role="survey"] section[role="row"] section[role="parent-card"]:last-child {
   margin-right: 0;
 }
+div[role="survey"] section[role="row"] section[role="parent-card"] div[role="card"] {
+  background: #66CC99;
+}
 div[role="survey"] section[role="row"] section[role="unit-dock"] {
   float: left;
   display: block;
@@ -1140,6 +1143,7 @@ div[role="survey"] section[role="row"] section[role="unit-dock"]::after {
   display: table;
 }
 div[role="survey"] section[role="row"] section[role="unit-dock"] div[role="card"] {
+  background: #A2DED0;
   float: left;
   display: block;
   margin-right: 2.35765%;
@@ -1150,10 +1154,10 @@ div[role="survey"] section[role="row"] section[role="unit-dock"] div[role="card"
   margin-right: 0;
 }
 div[role="survey"] div[role="card"] {
-  background: #2E96D6;
+  background: #FFFFFF;
   border-radius: 5px;
-  padding: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 div[role="survey"] div[role="card"] ul {
   list-style-type: none;
@@ -1161,9 +1165,10 @@ div[role="survey"] div[role="card"] ul {
   margin: 0;
 }
 div[role="survey"] div[role="card"] ul[role="info"] {
-  border-bottom: 1px solid #FFFFFF;
+  border-bottom: 1px solid #000000;
   margin-bottom: 5px;
   padding-bottom: 5px;
+  padding: 10px 10px 5px 10px;
 }
 div[role="survey"] div[role="card"] ul[role="info"] li[role="survey-name"] {
   font-size: 2em;
@@ -1173,17 +1178,21 @@ div[role="survey"] div[role="card"] ul[role="info"] li[role="date"] {
 }
 div[role="survey"] div[role="card"] ul[role="analytics"] {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  padding: 0px 10px 0px 10px;
 }
 div[role="survey"] div[role="card"] ul[role="analytics"] li[role="response-count"] {
   font-size: 2em;
+  margin-bottom: 10px;
 }
 div[role="survey"] div[role="card"] ul[role="buttons"] {
   text-align: center;
+  background: #03C9A9;
   list-style-type: none;
   padding: 0;
   margin: 0;
   overflow: scroll;
+  padding: 10px 10px;
 }
 div[role="survey"] div[role="card"] ul[role="buttons"] > li {
   display: inline-block;
@@ -1193,7 +1202,14 @@ div[role="survey"] div[role="card"] ul[role="buttons"] > li {
 div[role="survey"] div[role="card"] ul[role="buttons"] a {
   padding: 5px 10px;
   text-decoration: none;
-  color: #FFF;
+  color: inherit;
+  border-radius: 2px;
+  font-size: 12px;
+}
+div[role="survey"] div[role="card"] span.tag {
+  background: #F5AB35;
+  padding: 2px 5px;
+  color: #FFFFFF;
   border-radius: 2px;
 }
 

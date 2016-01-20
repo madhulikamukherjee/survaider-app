@@ -20,7 +20,7 @@
                 rv-text="survey.status.response_count_agg"></li>
 
             <li role="status">
-              <span class="tag" rv-show="survey.status.active" rv-on-click="surveys.echo">Active</span>
+              <span class="tag" rv-show="survey.status.active">Active</span>
               <span class="tag" rv-show="survey.status.expired">Expired</span>
               <span class="tag" rv-show="survey.status.paused">Paused</span>
             </li>
@@ -28,7 +28,7 @@
           <ul role="buttons">
             <li><a href="#">Preview</a></li>
             <li><a href="#">Analytics</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="javascript:void(0);" rv-on-click="surveys.settings">Settings</a></li>
           </ul>
         </div>
       </section>
@@ -36,8 +36,8 @@
         <div role="card" rv-each-unit="survey.units">
           <ul role="info">
             <li role="survey-name" rv-text="unit.meta.name"></li>
-            <li role="date" rv-data-livestamp="unit.info.added"></li>
-            <li rv-show="unit.fake">FAKE!</li>
+            <!-- <li role="date" rv-data-livestamp="unit.info.added"></li> -->
+            <li rv-show="unit.fake">(Parent Survey)</li>
           </ul>
           <ul role="analytics">
             <li role="response-count" rv-text="unit.status.response_count"></li>

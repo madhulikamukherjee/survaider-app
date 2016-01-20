@@ -263,13 +263,18 @@
 
   Survey = (function() {
     function Survey() {
-      this.echo = bind(this.echo, this);
+      this.settings = bind(this.settings, this);
       this.surveys = [];
-      this.surveys.echo = this.echo;
+      this.surveys.settings = this.settings;
     }
 
-    Survey.prototype.echo = function() {
-      return console.log(this.surveys);
+    Survey.prototype.settings = function(e, tile) {
+      vex.dialog.open({
+        message: 'Edit your Survaider',
+        className: 'vex-theme-default',
+        input: Survaider.Templates['dashboard.survey.settings']()
+      });
+      return console.log(e, f, this.surveys);
     };
 
     return Survey;

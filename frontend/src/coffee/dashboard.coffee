@@ -212,10 +212,15 @@ DashboardHelper =
 class Survey
   constructor: ->
     @surveys = []
-    @surveys.echo = @echo
+    @surveys.settings = @settings
 
-  echo: =>
-    console.log @surveys
+  settings: (e, tile) =>
+    vex.dialog.open
+      message: 'Edit your Survaider'
+      className: 'vex-theme-default'
+      input: Survaider.Templates['dashboard.survey.settings']()
+
+    console.log e, f, @surveys
 
 class Dashboard
   constructor: ->
