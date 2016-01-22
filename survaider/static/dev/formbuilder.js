@@ -448,7 +448,9 @@
     };
 
     ViewFieldView.prototype.render = function() {
-      this.$el.addClass('response-field-' + this.model.get(Formbuilder.options.mappings.FIELD_TYPE)).data('cid', this.model.cid).attr('data-cid', this.model.cid).html(Formbuilder.templates["view/base" + (!this.model.is_input() ? '_non_input' : '')]({
+      var _t;
+      _t = this.model.get(Formbuilder.options.mappings.FIELD_TYPE);
+      this.$el.addClass("response-field-" + _t).data('cid', this.model.cid).attr('data-cid', this.model.cid).html(Formbuilder.templates["view/base"]({
         rf: this.model
       }));
       return this;
@@ -462,6 +464,18 @@
       var cb, x;
       e.preventDefault();
       e.stopPropagation();
+      if (this.model.get('field_options.deletable')) {
+        swal({
+          title: "Cannot delete this field",
+          text: "Fields of this type cannot be deleted. You may, however, move.",
+          type: "error",
+          showCancelButton: false,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Okay",
+          closeOnConfirm: true
+        });
+        return;
+      }
       cb = (function(_this) {
         return function() {
           _this.parentView.handleFormUpdate();
@@ -561,23 +575,7 @@
         this.model.trigger("change:" + Formbuilder.options.mappings.OPTIONS);
         return this.forceRender();
       }, this);
-      if (Formbuilder.options.limit_map[field_type] && op_len >= Formbuilder.options.limit_map[field_type].max) {
-        return swal({
-          title: "Are you sure?",
-          text: "Gamified surveys only support " + op_len + " options for '" + field_type + "' fields.",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Yes, proceed!",
-          closeOnConfirm: true
-        }, function(ok) {
-          if (ok === true) {
-            return routine();
-          }
-        });
-      } else {
-        return routine();
-      }
+      return routine();
     };
 
     EditFieldView.prototype.removeOption = function(e) {
@@ -586,18 +584,6 @@
       index = this.$el.find(".js-remove-option").index($el);
       op_len = $el.parent().parent().find('.option').length;
       field_type = this.model.get(Formbuilder.options.mappings.FIELD_TYPE);
-      if (Formbuilder.options.limit_map[field_type] && op_len <= Formbuilder.options.limit_map[field_type].min) {
-        swal({
-          title: "No options!",
-          text: "Minimum two options are required.",
-          type: "error",
-          showCancelButton: false,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Okay",
-          closeOnConfirm: true
-        });
-        return;
-      }
       options = this.model.get(Formbuilder.options.mappings.OPTIONS);
       options.splice(index, 1);
       this.model.set(Formbuilder.options.mappings.OPTIONS, options);
@@ -626,17 +612,15 @@
       ol_val = target.find('input[data-sb-attach=uri]').val();
       t = target.offset().top + (target.outerHeight() * 0.125) - $(window).scrollTop();
       r = $(window).width() - target.offsetParent().offset().left + 10;
-      callback = _.debounce((function(_this) {
-        return function(uridat) {
-          var uri;
-          uri = target.find('input[data-sb-attach=uri]');
-          if (uridat !== "") {
-            return uri.val(uridat).trigger('input');
-          } else {
-            return uri.val("").trigger('input');
-          }
-        };
-      })(this), 500);
+      callback = _.debounce(function(uridat) {
+        var uri;
+        uri = target.find('input[data-sb-attach=uri]');
+        if (uridat !== "") {
+          return uri.val(uridat).trigger('input');
+        } else {
+          return uri.val("").trigger('input');
+        }
+      }, 500);
       return Formbuilder.uploads.show(t, r, 'right', callback, ol_val);
     };
 
@@ -1140,43 +1124,6 @@
       }
     };
 
-    Formbuilder.richtext = {
-      template: {
-        "font-styles": function() {
-          return "<li class=\"dropdown\">\n  <a data-toggle=\"dropdown\" class=\"btn btn-default dropdown-toggle \">\n    <span class=\"editor-icon editor-icon-headline\">\n    </span>\n    <span class=\"current-font\">\n      Normal\n    </span>\n    <b class=\"caret\">\n    </b>\n  </a>\n  <ul class=\"dropdown-menu\">\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"p\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        Normal\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h1\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        1\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h2\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        2\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h3\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        3\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h4\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        4\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h5\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        5\n      </a>\n    </li>\n    <li>\n      <a tabindex=\"-1\" data-wysihtml5-command-value=\"h6\" data-wysihtml5-command=\"formatBlock\" href=\"javascript:;\" unselectable=\"on\">\n        6\n      </a>\n    </li>\n  </ul>\n</li>";
-        },
-        emphasis: function() {
-          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"CTRL+B\" data-wysihtml5-command=\"bold\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-bold\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"CTRL+I\" data-wysihtml5-command=\"italic\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-italic\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"CTRL+U\" data-wysihtml5-command=\"underline\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-underline\">\n      </i>\n    </a>\n  </div>\n</li>";
-        },
-        blockquote: function() {
-          return "<li>\n  <a tabindex=\"-1\" data-wysihtml5-display-format-name=\"false\" data-wysihtml5-command-value=\"blockquote\" data-wysihtml5-command=\"formatBlock\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n    <i class=\"editor-icon editor-icon-quote\">\n    </i>\n  </a>\n</li>";
-        },
-        lists: function() {
-          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Unordered list\" data-wysihtml5-command=\"insertUnorderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ul\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Ordered list\" data-wysihtml5-command=\"insertOrderedList\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-ol\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Outdent\" data-wysihtml5-command=\"Outdent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-outdent\">\n      </i>\n    </a>\n    <a tabindex=\"-1\" title=\"Indent\" data-wysihtml5-command=\"Indent\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-indent\">\n      </i>\n    </a>\n  </div>\n</li>";
-        },
-        html: function() {
-          return "<li>\n  <div class=\"btn-group\">\n    <a tabindex=\"-1\" title=\"Edit HTML\" data-wysihtml5-action=\"change_view\" class=\"btn  btn-default\" href=\"javascript:;\" unselectable=\"on\">\n      <i class=\"editor-icon editor-icon-html\">\n      </i>\n    </a>\n  </div>\n</li>";
-        }
-      },
-      init: function() {
-        return $('#sb-edit-rich').wysihtml5({
-          html: true,
-          customTemplates: this.template,
-          toolbar: {
-            'font-styles': true,
-            emphasis: true,
-            lists: false,
-            html: false,
-            link: false,
-            image: false,
-            color: false,
-            blockquote: true,
-            size: 'sm'
-          }
-        });
-      }
-    };
-
     Formbuilder.uploads = {
       init: function(opt) {
         var show_bounce;
@@ -1453,7 +1400,6 @@
       });
       this.mainView = new BuilderView(args);
       this.screenView = new ScreenView(args);
-      Formbuilder.richtext.init(args.endpoints);
       Formbuilder.uploads.init(args.endpoints);
     }
 
