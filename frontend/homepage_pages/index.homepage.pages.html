@@ -22,8 +22,6 @@
   <link href="/static/homepage_pages/assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
   <link href="/static/homepage_pages/assets/plugins/timeline.css" rel="stylesheet" type="text/css" />
   <link href="/static/homepage_pages/assets/plugins/style.css" rel="stylesheet" type="text/css" />
-   <!--  <link href="/static/homepage_pages/assets/plugins/parallax.css" rel="stylesheet" type="text/css" />
-   <link href="/static/homepage_pages/assets/plugins/timeline.css" rel="stylesheet" type="text/css" /> -->
 
    <!-- END PLUGINS -->
    <!-- BEGIN PAGES CSS -->
@@ -80,7 +78,10 @@
       <div class="header-inner">
          <ul class="menu">
           <li>
-           <a href="index.html" data-text="Home" class="active">Home </a>
+           <a href="#" data-text="Home" class="active">Home </a>
+        </li>
+        <li>
+           <a href="http://blog.survaider.com" target="_blank" data-text="Blog">Blog </a>
         </li>
         <li>
            <a class="btn btn-bordered fs-12 btn-white hidden-sm hidden-xs" href="/login" data-text="Buy now">Log In</a>
@@ -105,47 +106,55 @@
                   <div class="row">
                     <div class="col-md-12 col-md-offset-0">
                       <h1 class="light text-white m-t-5" data-swiper-parallax="-15%">
-                         Take actions backed by location based customer feedback</h1>
+                         Measuring customer experience made simple</h1>
                       </div>
                    </div>
                    <div class="row">
                     <div class="col-md-6 col-md-offset-3">
                       <h3 class="light text-white m-t-5" data-swiper-parallax="-15%">
-                         Measure and improve feedback across all units from various channels</h3>
+                         Measure and improve the level of service quality across all your customer touch points</h3>
                       </div>
                    </div>
                    <br><br>
 
                    <!-- START MODAL-->
-                   <div class="mymodal move-top" id="sign-up-modal">
+                    <!-- <div class="mymodal move-top" id="sign-up-modal">
                      <button class="close" onclick="mymodal.close()">close</button>
                      <h1>We want to know more about your organisation</h1>
                      <p>Sign up and give us some time to get back to you!</p>
                      <input type="email" class="dark-outline" id="email_signup">
                      <button class="dark-outline" id="btn-sub" onclick="sign_up();">Proceed</button>
+                  </div> -->
+                  <!-- END MODAL-->
+
+                  <!-- START MODAL-->
+                   <div class="mymodal move-top" id="sign-up-modal">
+                     <button class="close" onclick="mymodal.close()">close</button>
+                     <h1>We want to know more about your organisation</h1>
+                     <p>Sign up and give us some time to get back to you!</p>
+                       <form action="/usr/thankyou" method="POST" target="_blank">
+                         <input type="email" class="dark-outline" name="email_signup">
+                         <input type="submit" value="Submit" class="dark-outline">
+                      </form>
                   </div>
                   <!-- END MODAL-->
 
-
                   <div class="col-sm-6 col-sm-offset-3 text-center">
-                     <button class="light-outline" onclick="mymodal.open();"><h3>Start your free trial!</h3></button>
+                     <button class="light-outline" onclick="mymodal.open();" style="height:70px;">Start your free trial!</button>
                   </div>
+                </div>
 
-
-
-               </div>
-
-      </div>
-      </div>
-      </div>
-      <!-- END CONTENT -->
-      </div>
-      </div>
-      <div class="op-left bottom-right full-width full-vh z-index-1" data-vide-bg="/static/homepage_pages/assets/video/hero.mp4" data-vide-options="loop: true, muted: false, position: 50% 0%">
-      </div>
-      <div class="bottom-right full-width full-vh z-index-1 hidden demo-video-placeholder" data-pages-bg-image="/static/homepage_pages/assets/images/Screenshot.jpg"></div>
-      <a id="start_tour" href="#" class="btn btn-lg btn-black demo-btn-tour font-montserrat all-caps no-border fs-13">Start tour</a>
-      <div class="video-overlay z-index-1"></div>
+                </div>
+                </div>
+                </div>
+                <!-- END CONTENT -->
+                </div>
+                </div>
+                <div class="op-left bottom-right full-width full-vh z-index-1" data-vide-bg="/static/homepage_pages/assets/video/hero.mp4" data-vide-options="loop: true, muted: false, position: 50% 0%">
+                </div>
+                <div class="bottom-right full-width full-vh z-index-1 hidden demo-video-placeholder" data-pages-bg-image="/static/homepage_pages/assets/images/Screenshot.jpg"></div>
+                <a id="start_tour" href="#" class="btn btn-lg btn-black demo-btn-tour font-montserrat all-caps no-border fs-13">Start tour</a>
+                <div class="video-overlay z-index-1"></div>
       </section>
       <!-- END JUMBOTRON -->
       <!-- BEGIN INTRO CONTENT -->
@@ -361,16 +370,29 @@
          <div class="container">
           <div class="row">
            <div class="col-sm-10 col-sm-offset-1">
-            <h6 class="block-title m-b-0 text-white text-center">Request for a demo</h6>
-            <h1 class="text-white text-center m-t-5">Make a request and we'll get in touch with you</h1>
+            <h6 class="block-title m-b-0 text-white text-center">Want to start measuring and improving customer satisfaction?</h6>
+            <h1 class="text-white text-center m-t-5">Apply for Survaider closed beta now!</h1>
             <p class="small hint-text p-t-0 text-white text-center ">Don't worry, we value your privacy! None of your details will be shared with anyone else.</p>
-            <div class="form-group form-group-default input-group  m-t-40 bg-transparent b-a b-transparent-white">
-             <label>Email Address</label>
-             <input type="email" class="form-control text-white" placeholder="Example@gmail.com" id="emaildiv">
-             <span class="input-group-btn">
-              <button class="btn btn-white m-r-10 btn-cons" type="button" id="emailbutton" onclick="sign_up2();">Send!</button>
-           </span>
-        </div>
+<!--             <div class="form-group form-group-default input-group  m-t-40 bg-transparent b-a b-transparent-white">
+                 <label>Email Address</label>
+                 <input type="email" class="form-control text-white" placeholder="name@example.com" id="emaildiv">
+                 <span class="input-group-btn">
+                  <button class="btn btn-white m-r-10 btn-cons" type="button" id="emailbutton" onclick="sign_up2();">Send!</button>
+                 </span>
+            </div> -->
+
+
+      <!--       <form class="form-group form-group-default input-group  m-t-40 bg-transparent b-a b-transparent-white" action="/usr/thankyou" method="POST" target="_blank">
+                 <label>Email Address</label>
+                 <input type="email" class="form-control text-white" placeholder="name@example.com" name="email_signup">
+                 <span class="input-group-btn">
+                  <input type="submit" value="Submit" class="dark-outline">
+                 </span>
+            </form> -->
+
+            <div class="col-sm-6 col-sm-offset-3 text-center">
+                     <button class="light-outline" onclick="mymodal.open();" id="TakeToTop_hack" style="height:70px;">Start your free trial!</button>
+                  </div>
       </div>
       </div>
       </div>
@@ -416,48 +438,56 @@
         }
       };
 
-      var sign_up = function () {
-         "use strict";
-         var uri = "/api/subscribe/email:" + $("#email_signup").val();
-         $.ajax({
-           url: uri,
-           method : "GET",
-           beforeSend: function () {
-             $("#btn-sub").text("Working");
-             $("#btn-sub").attr("disabled", "");
-          }
-       }).done(function () {
-        $("#btn-sub").text("Done!");
-        $("#btn-sub").removeAttr("disabled");
-        setTimeout(function() {
-          mymodal.close();
-       }, 1000);
-      }).fail(function () {
-        $("#btn-sub").text("Please try again");
-        $("#btn-sub").removeAttr("disabled");
-      });
-      return false;
-      };
 
-      var sign_up2 = function () {
-         "use strict";
-         var uri = "/api/subscribe/email:" + $("#emaildiv").val();
-         $.ajax({
-           url: uri,
-           method : "GET",
-           beforeSend: function () {
-             $("#emailbutton").text("Working");
-             $("#emailbutton").attr("disabled", "");
-          }
-       }).done(function () {
-        $("#emailbutton").text("Done!");
-        $("#emailbutton").removeAttr("disabled");
-      }).fail(function () {
-        $("#emailbutton").text("Please try again");
-        $("#emailbutton").removeAttr("disabled");
+      
+$( document ).ready(function() {
+    $("#TakeToTop_hack").click( function() {
+        $(window).scrollTop(0);
       });
-      return false;
-      };
+});
+      // var sign_up = function () {
+      //    "use strict";
+      //    var uri = "/api/subscribe/email:" + $("#email_signup").val();
+      //    $.ajax({
+      //      url: uri,
+      //      method : "GET",
+      //      beforeSend: function () {
+      //        $("#btn-sub").text("Working");
+      //        $("#btn-sub").attr("disabled", "");
+      //     }
+      //  }).done(function () {
+      //   $("#btn-sub").text("Done!");
+      //   // window.open('/templates/thankyou.html');
+      //   $("#btn-sub").removeAttr("disabled");
+      //   setTimeout(function() {
+      //     mymodal.close();
+      //  }, 1000);
+      // }).fail(function () {
+      //   $("#btn-sub").text("Please try again");
+      //   $("#btn-sub").removeAttr("disabled");
+      // });
+      // return false;
+      // };
+
+      // var sign_up2 = function () {
+      //    "use strict";
+      //    var uri = "/api/subscribe/email:" + $("#emaildiv").val();
+      //    $.ajax({
+      //      url: uri,
+      //      method : "GET",
+      //      beforeSend: function () {
+      //        $("#emailbutton").text("Working");
+      //        $("#emailbutton").attr("disabled", "");
+      //     }
+      //  }).done(function () {
+      //   $("#emailbutton").text("Done!");
+      //   $("#emailbutton").removeAttr("disabled");
+      // }).fail(function () {
+      //   $("#emailbutton").text("Please try again");
+      //   $("#emailbutton").removeAttr("disabled");
+      // });
+      // return false;
+      // };
 
 
 

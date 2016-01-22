@@ -103,7 +103,7 @@ button.light-outline,
 button.light-outline:hover,
 .button.light-outline:hover {
     background: #FFFFFF;
-    color: #000000;
+    color: #000000 !important;
 }
 /*input {
     font-size: 14px;
