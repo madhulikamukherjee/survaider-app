@@ -1881,7 +1881,8 @@ return __p
 
 this["Formbuilder"]["templates"]["view/base"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n        <div class="meta">\n            <p class="section">Question </p>\n\n            ' +
 ((__t = ( Formbuilder.templates['view/label']({rf: rf}) )) == null ? '' : __t) +
@@ -1889,9 +1890,13 @@ __p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n     
 ((__t = ( rf.cid )) == null ? '' : __t) +
 '" ></button>\n        </div>\n        <div class="logic">\n            <p class="section">Options</p>\n            ' +
 ((__t = ( Formbuilder.fields[rf.get(Formbuilder.options.mappings.FIELD_TYPE)].view({rf: rf}) )) == null ? '' : __t) +
-'\n        </div>\n        ' +
+'\n        </div>\n        ';
+ if (!(rf.get('deletable') === false)) { ;
+__p += '\n        ' +
 ((__t = ( Formbuilder.templates['view/duplicate_remove']({rf: rf}) )) == null ? '' : __t) +
-'\n    </div>\n</div>\n';
+'\n        ';
+ } ;
+__p += '\n    </div>\n</div>\n';
 
 }
 return __p
