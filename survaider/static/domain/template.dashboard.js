@@ -1,6 +1,16 @@
 this["Survaider"] = this["Survaider"] || {};
 this["Survaider"]["Templates"] = this["Survaider"]["Templates"] || {};
 
+this["Survaider"]["Templates"]["dashboard.build.dropdown"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<div>\n  <section>\n    <h1>Lets get started with measuring customer satisfaction!</h1>\n    <p>\n      <span class=\'orb\'>1</span>\n      Identify the key parameters that will affect your customer satisfaction, and add them here so that your visitors can rate you on it.</p>\n    <p class="small">For example, Hotel ABC may identify four parameters like "Room Service", "Checkout process", "Cleanliness", "WiFi".</p>\n  </section>\n  <section>\n    <select multiple="multiple" required name="s_tags" style="width: 100%">\n      <option value="Room Service">Room Service</option>\n      <option value="WiFi">WiFi</option>\n    </select>\n    <br>\n    <br>\n    <p>\n      <span class=\'orb\'>2</span>\n      <label>Give your Survey a memorable Name</label>\n      <input type="text" name="s_name" required placeholder="Survey Name">\n    </p>\n  </section>\n</div>\n';
+
+}
+return __p
+};
+
 this["Survaider"]["Templates"]["dashboard.dock"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;

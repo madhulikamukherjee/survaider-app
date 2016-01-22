@@ -410,7 +410,7 @@ footer a {
   animation-delay: 0.2s;
 }
 
-button, input {
+button {
   padding: 10px 20px;
   border-radius: 4px;
   background: transparent;
@@ -418,10 +418,10 @@ button, input {
   font-family: "Montserrat";
   font-size: 14px;
 }
-button.lg, input.lg {
+button.lg {
   font-size: 18px;
 }
-button.create, input.create {
+button.create {
   background: #2E96D6;
 }
 

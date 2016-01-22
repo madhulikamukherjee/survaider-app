@@ -23,6 +23,7 @@ from survaider.minions.attachment import Image as AttachmentImage
 from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
+from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
 
 class SurveyController(Resource):
@@ -30,6 +31,8 @@ class SurveyController(Resource):
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('s_name', type = str, required = True)
+        parser.add_argument('s_tags', type = str, required = True,
+                            action = 'append')
         return parser.parse_args()
 
     @api_login_required
@@ -51,6 +54,17 @@ class SurveyController(Resource):
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
         svey.metadata['name'] = args['s_name']
+
+        struct_dict = starter_template
+        opt = []
+        for option in args['s_tags']:
+            opt.append({
+                'checked': False,
+                'label': option
+            })
+
+        struct_dict['fields'][0]['field_options']['options'] = opt
+        svey.struct = struct_dict
         svey.created_by.append(usr)
         svey.save()
 

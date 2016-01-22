@@ -97,14 +97,12 @@ module.exports = (grunt) ->
             'bower_components/jquery/jquery.js'
             'bower_components/underscore/underscore.js'
             'bower_components/moment/moment.js'
-            'bower_components/sweetalert/dist/sweetalert.min.js'
             'bower_components/livestamp/livestamp.js'
             'bower_components/numeral/numeral.js'
-            'bower_components/Waves/dist/waves.js'
-            'bower_components/masonry/dist/masonry.pkgd.js'
             'bower_components/jquery.sparkline/index.js'
             'bower_components/vex/js/vex.combined.min.js'
             'bower_components/rivets/dist/rivets.bundled.min.js'
+            'bower_components/select2/dist/js/select2.js'
             '<%= build %>/domain/template.dashboard.js'
           ]
           '<%= build%>/domain/notification.vendor.js': [
@@ -196,6 +194,7 @@ module.exports = (grunt) ->
             'bower_components/vex/css/vex.css'
             'bower_components/vex/css/vex-theme-default.css'
             'bower_components/vex/css/vex-theme-top.css'
+            'bower_components/select2/dist/css/select2.css'
           ]
           '<%= build%>/domain/notification.vendor.css': [
             'bower_components/sweetalert/dist/sweetalert.css'

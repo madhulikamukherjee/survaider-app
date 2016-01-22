@@ -3,244 +3,6 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   DashboardHelper = {
-    create_survey: function() {
-      'use strict';
-      var dat;
-      dat = $('#survaider_form').serialize();
-      $('#exec_create_survaider').attr('disabled', true).text('Processing');
-      return $.ajax({
-        type: 'POST',
-        url: '/api/survey',
-        data: dat
-      }).done(function(data) {
-        return swal({
-          title: 'Built!',
-          text: 'Proceed to adding the stuff.',
-          type: 'success',
-          confirmButtonText: 'Edit Structure',
-          closeOnConfirm: true
-        }, function() {
-          return window.location = data.uri_edit;
-        });
-      }).fail(function(data) {
-        return swal({
-          title: 'Error',
-          type: 'error'
-        });
-      });
-    },
-    survey_tiles: {
-      init: function() {
-        this.container = $('#card_dock');
-        return this.container.masonry({
-          columnWidth: 1,
-          itemSelector: "div[data-card=parent]",
-          isFitWidth: true
-        });
-      },
-      append: function(dat) {
-        var attrs, el, subroutine, template, units;
-        units = dat.units.length > 0;
-        template = Survaider.Templates['dashboard.tiles'];
-        attrs = {
-          expand: units ? 'expanded' : '',
-          narrow: units ? '' : 'narrow'
-        };
-        el = $(template({
-          dat: dat,
-          attrs: attrs
-        }));
-        this.container.append(el).masonry('appended', el, true).masonry();
-        subroutine = (function(_this) {
-          return function(dat) {
-            var cnt, subunit;
-            subunit = _this.units;
-            cnt = _this.container.find(el).find('.subunit-container');
-            return subunit.init(cnt, dat, _.bind(_this.reload, _this));
-          };
-        })(this);
-        if (units) {
-          subroutine(dat);
-        }
-        Waves.attach(el.find('.parent-unit'));
-        el.on('click', function() {
-          if (el.hasClass('narrow')) {
-            return el.find('a.more').click();
-          }
-        });
-        el.find("a.more").on('click', (function(_this) {
-          return function() {
-            return el.removeClass('narrow');
-          };
-        })(this));
-        el.find("a.more").on('click', (function(_this) {
-          return function() {
-            var fn;
-            el.removeClass('narrow');
-            if (units) {
-              el.addClass('expanded');
-            }
-            fn = _.bind(function() {
-              if (units) {
-                subunit.reload();
-                return this.reload();
-              }
-            }, _this);
-            _.delay(fn, 1000);
-            return _this.reload();
-          };
-        })(this));
-        el.find("a.share-btn").on('click', (function(_this) {
-          return function(e) {
-            return vex.dialog.confirm({
-              message: 'Are you absolutely sure you want to destroy the alien planet?',
-              className: 'vex-theme-default',
-              callback: function(value) {
-                return console.log(value ? 'Successfully destroyed the planet.' : 'Chicken.');
-              }
-            });
-          };
-        })(this));
-        el.find("a.less").on('click', (function(_this) {
-          return function(e) {
-            el.addClass('narrow');
-            if (units) {
-              el.removeClass('expanded');
-            }
-            e.stopPropagation();
-            return _this.reload();
-          };
-        })(this));
-        return el.find("a.survey-unit-btn").on('click', (function(_this) {
-          return function() {
-            return _this.units.add(dat, function(data) {
-              dat.units.push(data.unit);
-              el.addClass('expanded');
-              subroutine(dat);
-              el.find("a.survey-unit-btn").hide();
-              return _this.reload();
-            });
-          };
-        })(this));
-      },
-      reload: _.debounce(function(now) {
-        var reset;
-        reset = _.bind((function(_this) {
-          return function() {
-            return _this.container.masonry();
-          };
-        })(this), this);
-        _.delay(reset, 500);
-        _.delay(reset, 1500);
-        _.delay(reset, 2500);
-        if (now) {
-          return _.delay(reset, 50);
-        }
-      }, 500),
-      units: {
-        init: function(parent_container, data, parent_reload) {
-          var dat, el, i, len, ref, template;
-          template = Survaider.Templates['dashboard.unit'];
-          el = $(template({
-            dat: data
-          }));
-          parent_container.append(el);
-          parent_reload();
-          this.parent_container = parent_container;
-          this.container = parent_container.find('.subunitdock');
-          this.container.masonry({
-            columnWidth: 1,
-            itemSelector: "div[data-card=unit]",
-            isFitWidth: true
-          });
-          ref = data.units.reverse();
-          for (i = 0, len = ref.length; i < len; i++) {
-            dat = ref[i];
-            this.append(dat);
-          }
-          return parent_container.find('.btn-subunit').on('click', (function(_this) {
-            return function() {
-              return _this.add(data, function(dat) {
-                _this.append(dat.unit);
-                return parent_reload();
-              });
-            };
-          })(this));
-        },
-        append: function(dat) {
-          var el, template;
-          template = Survaider.Templates['dashboard.unit.tiles'];
-          el = $(template({
-            dat: dat
-          }));
-          this.container.append(el).masonry('appended', el, true).masonry();
-          return el.find(".sparkline").sparkline(_.shuffle([15, 16, 17, 19, 19, 15, 13, 12, 12, 14, 16, 17, 19, 30, 13, 35, 40, 30, 35, 35, 35, 22]), {
-            type: 'line',
-            lineColor: '#333333',
-            fillColor: '#00bfbf',
-            spotColor: '#7f007f',
-            width: '200px',
-            height: '50px',
-            chartRangeMin: 0,
-            drawNormalOnTop: false,
-            disableInteraction: true
-          });
-        },
-        add: function(binding, callback) {
-          return swal({
-            title: "Create a Survey Unit",
-            text: "Please provide Survey Unit name for '" + binding.name + "'.",
-            type: 'input',
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true,
-            inputPlaceholder: 'Unit Name'
-          }, function(inputValue) {
-            if (inputValue === false) {
-              return false;
-            }
-            if (inputValue === '') {
-              swal.showInputError('You need to write something!');
-              return false;
-            }
-            return $.ajax({
-              url: "/api/survey/" + binding.id + "/unit_addition",
-              data: {
-                swag: inputValue
-              },
-              method: 'POST'
-            }).done(function(dat) {
-              return swal({
-                title: "Unit Created!",
-                type: "success",
-                confirmButtonText: 'Done',
-                closeOnConfirm: true,
-                showCancelButton: false
-              }, function() {
-                return callback(dat);
-              });
-            }).fail(function() {
-              return swal({
-                title: "Sorry, something went wrong. Please try again, or contact Support.",
-                type: "error"
-              });
-            });
-          });
-        },
-        reload: _.debounce(function(now) {
-          var reset;
-          reset = _.bind((function(_this) {
-            return function() {
-              return _this.container.masonry();
-            };
-          })(this), this);
-          _.delay(reset, 600);
-          _.delay(reset, 1000);
-          _.delay(reset, 2000);
-          return _.delay(reset, 3000);
-        }, 100)
-      }
-    },
     nav_menu: function() {
       var stretchyNavs;
       if ($('.cd-stretchy-nav').length > 0) {
@@ -290,7 +52,12 @@
 
     Dashboard.prototype.init = function() {
       this.rv_container = rivets.bind($('#surveys'), this.dashboard);
-      return this.fetch();
+      this.fetch();
+      return this.bind_events();
+    };
+
+    Dashboard.prototype.bind_events = function() {
+      return $("#build_survey").on('click', this.create_survey);
     };
 
     Dashboard.prototype.process_data = function(dat) {
@@ -356,7 +123,7 @@
     };
 
     Dashboard.prototype.fetch = function() {
-      $.getJSON('/api/survey').success((function(_this) {
+      return $.getJSON('/api/survey').success((function(_this) {
         return function(data) {
           if (data.data.length === 0) {
             $('.alt-text').fadeIn();
@@ -364,7 +131,46 @@
           return _this.process_data(data);
         };
       })(this));
-      return console.log(this.dashboard.surveys);
+    };
+
+    Dashboard.prototype.create_survey = function() {
+      vex.dialog.buttons.YES.text = 'Proceed';
+      vex.dialog.buttons.NO.text = 'Cancel';
+      return vex.dialog.open({
+        className: 'vex-theme-top',
+        message: Survaider.Templates['dashboard.build.dropdown'](),
+        afterOpen: function() {
+          return $("select[name='s_tags']").select2({
+            tags: true,
+            tokenSeparators: [',', ' ', ';']
+          });
+        },
+        showCloseButton: true,
+        escapeButtonCloses: false,
+        overlayClosesOnClick: false,
+        onSubmit: function(event) {
+          var $vexContent;
+          event.preventDefault();
+          event.stopPropagation();
+          $vexContent = $(this).parent();
+          return $.post('/api/survey', $(".vex-dialog-form").serialize()).done(function(data) {
+            vex.close($vexContent.data().vex.id);
+            return vex.dialog.alert({
+              className: 'vex-theme-default',
+              message: 'Created. Proceed here',
+              callback: function(value) {
+                return window.location = data.uri_edit;
+              }
+            });
+          }).fail(function(data) {
+            vex.close($vexContent.data().vex.id);
+            return vex.dialog.alert({
+              className: 'vex-theme-default',
+              message: 'Server Error. Please try again.'
+            });
+          });
+        }
+      });
     };
 
     return Dashboard;

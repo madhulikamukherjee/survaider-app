@@ -410,7 +410,7 @@ footer a {
   animation-delay: 0.2s;
 }
 
-button, input {
+button {
   padding: 10px 20px;
   border-radius: 4px;
   background: transparent;
@@ -418,10 +418,10 @@ button, input {
   font-family: "Montserrat";
   font-size: 14px;
 }
-button.lg, input.lg {
+button.lg {
   font-size: 18px;
 }
-button.create, input.create {
+button.create {
   background: #2E96D6;
 }
 
@@ -715,394 +715,6 @@ section.dock div.alt-text {
   }
 }
 
-div.card {
-  position: relative;
-  color: #FFFFFF;
-  font-size: 12px;
-  font-weight: 300;
-  margin: 10px;
-  display: flex;
-  overflow: inherit;
-  z-index: 6;
-}
-div.card i {
-  margin-right: 5px;
-}
-div.card ul.clear {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: block;
-}
-div.card ul.clear li {
-  display: inline-block;
-}
-div.card section.frontmatter {
-  background: #FFFFFF;
-  color: #000;
-  padding: 15px 15px 0 15px;
-  -webkit-transition: padding 0.5s;
-  -moz-transition: padding 0.5s;
-  transition: padding 0.5s;
-  position: relative;
-}
-div.card section.frontmatter h1 {
-  margin: 0;
-  font-weight: 400;
-  font-size: 26px;
-}
-div.card section.frontmatter small {
-  font-size: 14px;
-  margin: 0 0 5px 0;
-  position: relative;
-  display: block;
-}
-div.card section.frontmatter small span.status-expanded {
-  opacity: 1;
-}
-div.card section.frontmatter small ul.status-narrow {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  text-align: justify;
-  position: absolute;
-  width: 100%;
-  top: 0;
-  opacity: 0;
-}
-div.card section.frontmatter small ul.status-narrow li {
-  display: inline-block;
-}
-div.card section.frontmatter small ul.status-narrow:after, div.card section.frontmatter small ul.status-narrow:before {
-  content: "";
-}
-div.card section.frontmatter small ul.status-narrow:after {
-  display: inline-block;
-  width: 100%;
-}
-div.card section.frontmatter small ul.status-narrow:before {
-  display: block;
-}
-div.card section.frontmatter small span.status-expanded, div.card section.frontmatter small ul.status-narrow {
-  -webkit-transition: opacity 0.5s;
-  -moz-transition: opacity 0.5s;
-  transition: opacity 0.5s;
-}
-div.card section.frontmatter a.more {
-  position: absolute;
-  right: -15px;
-  opacity: 0;
-  color: #000000;
-  bottom: 20px;
-  -webkit-transition: right 0.5s, opacity 0.5s;
-  -moz-transition: right 0.5s, opacity 0.5s;
-  transition: right 0.5s, opacity 0.5s;
-}
-div.card section.frontmatter ul.statistics {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0 0 0;
-  position: relative;
-}
-div.card section.frontmatter ul.statistics li {
-  display: inline-block;
-  width: 50%;
-}
-div.card section.frontmatter ul.statistics li h1 {
-  font-size: 14px;
-  font-weight: 400;
-  text-transform: uppercase;
-}
-div.card section.frontmatter ul.statistics li h2 {
-  margin: 0;
-  padding-top: 10px;
-  position: absolute;
-  font-size: 24px;
-  font-weight: 400;
-  color: #fff;
-  -webkit-transition: color 0.5s, padding 0.5s;
-  -moz-transition: color 0.5s, padding 0.5s;
-  transition: color 0.5s, padding 0.5s;
-}
-div.card section.frontmatter ul.statistics li:nth-child(even) {
-  float: right;
-  text-align: right;
-}
-div.card section.frontmatter ul.statistics li:nth-child(even) h2 {
-  right: 0;
-}
-div.card section.frontmatter ul.statistics li:last-child {
-  right: 0;
-  opacity: 1;
-  -webkit-transition: right 0.5s, opacity 0.5s;
-  -moz-transition: right 0.5s, opacity 0.5s;
-  transition: right 0.5s, opacity 0.5s;
-}
-div.card section.frontmatter:after, div.card section.frontmatter:before {
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  height: 4px;
-  content: "";
-  -webkit-transition: bottom 0.5s, height 0.2s;
-  -moz-transition: bottom 0.5s, height 0.2s;
-  transition: bottom 0.5s, height 0.2s;
-}
-div.card section.frontmatter:after {
-  background: #39C4AC;
-  width: 50%;
-}
-div.card section.frontmatter:before {
-  background: #245582;
-  width: 100%;
-}
-div.card section.status {
-  padding: 55px 15px 15px 15px;
-}
-div.card section.status h1 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-div.card section.status ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-div.card section.status ul li {
-  margin: 0 0 5px 0;
-}
-div.card section.status .survey-unit-btn {
-  padding: 5px 10px;
-  border-radius: 3px;
-  background: #2C3552;
-  text-align: center;
-  color: #ffffff;
-  margin-top: 5px;
-  display: inline-block;
-}
-div.card section.status a.less {
-  color: #FFFFFF;
-  position: absolute;
-  right: 15px;
-  font-size: 12px;
-  text-transform: none;
-  font-weight: 300;
-}
-div.card section.footer {
-  padding: 0 15px 15px 15px;
-}
-div.card section.footer a {
-  color: #FFFFFF;
-}
-div.card section.footer section.destinations {
-  margin-bottom: 10px;
-}
-div.card section.footer section.destinations li {
-  width: 118px;
-  text-align: center;
-  padding: 10px 0;
-  border-radius: 3px;
-  background: #2C3552;
-}
-div.card section.footer section.actions {
-  text-align: center;
-}
-div.card section.footer section.actions li:first-child {
-  float: left;
-}
-div.card section.footer section.actions li:last-child {
-  float: right;
-}
-div.card section.status, div.card section.footer {
-  max-height: 200px;
-  -webkit-transform: scale(1);
-  -moz-transform: scale(1);
-  -ms-transform: scale(1);
-  -o-transform: scale(1);
-  transform: scale(1);
-  -webkit-transition: max-height 0.5s, padding 0.5s, -webkit-transform 0.5s;
-  -moz-transition: max-height 0.5s, padding 0.5s, -moz-transform 0.5s;
-  transition: max-height 0.5s, padding 0.5s, transform 0.5s;
-}
-div.card .waves-ripple {
-  background: #333D5E;
-}
-div.card.narrow {
-  z-index: 5;
-  cursor: pointer;
-}
-div.card.narrow section.frontmatter {
-  padding-bottom: 44px;
-}
-div.card.narrow section.frontmatter:before, div.card.narrow section.frontmatter:after {
-  bottom: 0;
-}
-div.card.narrow section.frontmatter small span.status-expanded {
-  opacity: 0;
-}
-div.card.narrow section.frontmatter small ul.status-narrow {
-  opacity: 1;
-}
-div.card.narrow section.frontmatter ul.statistics > li h2 {
-  color: #000;
-  padding-top: 0;
-}
-div.card.narrow section.frontmatter ul.statistics > li:last-child {
-  position: absolute;
-  opacity: 0;
-  right: -50%;
-}
-div.card.narrow section.frontmatter a.more {
-  right: 15px;
-  opacity: 1;
-}
-div.card.narrow section.status, div.card.narrow section.footer {
-  -webkit-transform: scale(1.5);
-  -moz-transform: scale(1.5);
-  -ms-transform: scale(1.5);
-  -o-transform: scale(1.5);
-  transform: scale(1.5);
-  max-height: 0px;
-  padding: 0px;
-  overflow: hidden;
-}
-div.card.narrow div.subunit-container {
-  display: none !important;
-}
-div.card.narrow:hover section.frontmatter:before, div.card.narrow:hover section.frontmatter:after {
-  height: 10px;
-}
-div.card div.parent-unit {
-  width: 270px;
-  display: table;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
-  background: #333D5E;
-  border-radius: 3px;
-  overflow: hidden;
-  -webkit-transition: box-shadow 0.2s;
-  -moz-transition: box-shadow 0.2s;
-  transition: box-shadow 0.2s;
-}
-div.card div.parent-unit:hover {
-  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
-}
-div.card div.subunit-container {
-  width: 570px;
-  float: right;
-  display: none;
-  position: relative;
-}
-div.card.expanded div.subunit-container {
-  display: inline-block;
-  padding: 0 10px 10px 10px;
-  overflow: auto;
-}
-div.card.expanded div.subunit-container h1 {
-  margin: 10px 0 5px 0;
-}
-div.card.expanded div.subunit-container h1.hr span {
-  margin-left: 10px;
-}
-div.card.unit {
-  display: inline-block;
-  border-radius: 3px;
-  width: 200px;
-  background: #2E96D6;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
-  -webkit-transition: background 0.2s;
-  -moz-transition: background 0.2s;
-  transition: background 0.2s;
-}
-div.card.unit:hover {
-  background: #333D5E;
-}
-div.card.unit section.matter {
-  padding: 10px 10px 0 10px;
-}
-div.card.unit section.matter h2, div.card.unit section.matter h3 {
-  margin: 0;
-  font-weight: 300;
-}
-div.card.unit section.matter ul {
-  margin-top: 10px;
-}
-div.card.unit section.matter ul li {
-  position: relative;
-}
-div.card.unit section.matter ul li h1 {
-  font-size: 11px;
-  font-weight: 300;
-  text-transform: uppercase;
-}
-div.card.unit section.matter ul li h2 {
-  position: absolute;
-  width: 100%;
-}
-div.card.unit section.matter ul li:last-child {
-  float: right;
-  text-align: right;
-}
-div.card.unit canvas {
-  margin-bottom: -4px;
-}
-div.card.unit section.foot {
-  padding: 0 10px 10px 10px;
-  background: #00bfbf;
-  text-align: right;
-  color: #ffffff;
-}
-div.card.unit section.foot a {
-  color: #ffffff;
-}
-div.card.unit section.foot li:first-child {
-  float: left;
-}
-div.card.unit section.foot li:last-child {
-  float: none;
-}
-div.card button.btn-subunit {
-  position: absolute;
-  right: 20px;
-  top: 0;
-  background: #33495F;
-  border: 1px solid #ffffff;
-  color: #ffffff;
-  padding: 6px 10px;
-  text-decoration: uppercase;
-  -webkit-transition: background 0.2s, color 0.2s;
-  -moz-transition: background 0.2s, color 0.2s;
-  transition: background 0.2s, color 0.2s;
-}
-div.card button.btn-subunit:hover {
-  background: #ffffff;
-  color: #000000;
-}
-div.card button.btn-subunit:focus {
-  background: #2E96D6;
-  color: #ffffff;
-  outline: none;
-}
-div.card a {
-  text-decoration: none;
-}
-div.card .alert {
-  color: #EA4B36;
-}
-div.card .warning {
-  color: #F1C600;
-}
-div.card .idle {
-  color: #00BA9B;
-}
-div.card .primary {
-  color: #2E96D6;
-}
-
 div[role="survey"] {
   position: relative;
   min-width: 500px;
@@ -1211,6 +823,51 @@ div[role="survey"] div[role="card"] span.tag {
   padding: 2px 5px;
   color: #FFFFFF;
   border-radius: 2px;
+}
+
+.vex {
+  z-index: 900;
+}
+.vex.vex-theme-top .vex-content {
+  background: #FFFFFF;
+  font-family: "Montserrat";
+  font-size: 15px;
+  font-weight: 200;
+}
+.vex.vex-theme-top .vex-content h1 {
+  margin: 0 0 10px 0;
+  line-height: 30px;
+}
+.vex.vex-theme-top .vex-content p {
+  margin: 5px 0;
+}
+.vex.vex-theme-top .vex-content p.small {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.vex.vex-theme-top .vex-content .orb {
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  font-size: 18px;
+  text-align: center;
+  margin: 0 10px 10px 0;
+  border-radius: 50%;
+  background: #A2DED0;
+  font-weight: 500;
+  color: #000;
+  float: left;
+}
+.vex.vex-theme-top .vex-content input[name='s_name'] {
+  font-size: 15px;
+  padding: 10px 0;
+  background: #FFFFFF;
+  border: none;
+  border-bottom: 2px solid #AAA;
+}
+.vex.vex-theme-top .vex-content input[name='s_name']:focus, .vex.vex-theme-top .vex-content input[name='s_name']:hover {
+  outline: none;
+  border-bottom: 2px solid #000;
 }
 
 /*# sourceMappingURL=dashboard.css.map */

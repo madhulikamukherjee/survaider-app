@@ -64,381 +64,6 @@ section.dock
     @media (max-width: 550px)
       width: 100%
 
-div.card
-  $width: 270px
-  $pad_u: 15px
-  $alert:   #EA4B36
-  $warning: #F1C600
-  $primary: #2E96D6
-  $idle:    #00BA9B
-
-  position: relative
-  color: #FFFFFF
-  font-size: 12px
-  font-weight: 300
-  margin: 10px
-  display: flex
-  overflow: inherit
-  z-index: 6
-
-  i
-    margin-right: 5px
-
-  ul.clear
-    list-style: none
-    margin: 0
-    padding: 0
-    display: block
-
-    li
-      display: inline-block
-
-  section.frontmatter
-    background: #FFFFFF
-    color: #000
-    padding: $pad_u $pad_u 0 $pad_u
-    @include transition(padding 0.5s)
-
-    position: relative
-
-    h1
-      margin: 0
-      font-weight: 400
-      font-size: 26px
-
-    small
-      font-size: 14px
-      margin: 0 0 5px 0
-      position: relative
-      display: block
-
-      span.status-expanded
-        opacity: 1
-
-      ul.status-narrow
-        padding: 0
-        margin: 0
-        list-style: none
-        text-align: justify
-        position: absolute
-        width: 100%
-        top: 0
-        opacity: 0
-
-        li
-          display: inline-block
-
-        &:after, &:before
-          content: ""
-
-        &:after
-          display: inline-block
-          width: 100%
-
-        &:before
-          display: block
-
-      span.status-expanded, ul.status-narrow
-        @include transition(opacity 0.5s)
-
-    a.more
-      position: absolute
-      right: -$pad_u
-      opacity: 0
-      color: #000000
-      bottom: 20px
-      @include transition(right 0.5s, opacity 0.5s)
-
-    ul.statistics
-      list-style: none
-      padding: 0
-      margin: 20px 0 0 0
-      position: relative
-
-      li
-        display: inline-block
-        width: 50%
-
-        h1
-          font-size: 14px
-          font-weight: 400
-          text-transform: uppercase
-
-        h2
-          margin: 0
-          padding-top: 10px
-          position: absolute
-          font-size: 24px
-          font-weight: 400
-          color: #fff
-          @include transition(color 0.5s, padding 0.5s)
-
-        &:nth-child(even)
-          float: right
-          text-align: right
-
-          h2
-            right: 0
-
-        &:last-child
-          right: 0
-          opacity: 1
-          @include transition(right 0.5s, opacity 0.5s)
-
-    &:after, &:before
-      position: absolute
-      bottom: -4px
-      left: 0
-      height: 4px
-      content: ""
-      @include transition(bottom 0.5s, height 0.2s)
-
-    &:after
-      background: #39C4AC
-      width: 50%
-
-    &:before
-      background: #245582
-      width: 100%
-
-  section.status
-    padding: 55px $pad_u $pad_u $pad_u
-
-    h1
-      margin: 0
-      font-size: 14px
-      font-weight: 400
-      text-transform: uppercase
-      margin-bottom: 10px
-
-    ul
-      list-style: none
-      padding: 0
-      margin: 0
-
-      li
-        margin: 0 0 5px 0
-
-    .survey-unit-btn
-      padding: 5px 10px
-      border-radius: 3px
-      background: #2C3552
-      text-align: center
-      color: #ffffff
-      margin-top: 5px
-      display: inline-block
-
-    a.less
-      color: #FFFFFF
-      position: absolute
-      right: $pad_u
-      font-size: 12px
-      text-transform: none
-      font-weight: 300
-
-  section.footer
-    padding: 0 $pad_u $pad_u $pad_u
-
-    a
-      color: #FFFFFF
-
-    section.destinations
-      margin-bottom: 10px
-
-      li
-        width: (($width - $pad_u * 2) / 2 - 2)
-        text-align: center
-        padding: 10px 0
-        border-radius: 3px
-        background: #2C3552
-
-    section.actions
-      text-align: center
-
-      li
-        &:first-child
-          float: left
-
-        &:last-child
-          float: right
-
-  section.status, section.footer
-    max-height: 200px
-    @include transform(scale(1))
-    @include transition(max-height 0.5s, padding 0.5s, transform 0.5s)
-
-  .waves-ripple
-    background: #333D5E
-
-  &.narrow
-    z-index: 5
-    cursor: pointer
-
-    section.frontmatter
-      padding-bottom: 44px
-
-      &:before, &:after
-        bottom: 0
-
-      small
-        span.status-expanded
-          opacity: 0
-        ul.status-narrow
-          opacity: 1
-
-      ul.statistics > li
-        h2
-          color: #000
-          padding-top: 0
-
-        &:last-child
-          position: absolute
-          opacity: 0
-          right: -50%
-
-      a.more
-        right: $pad_u
-        opacity: 1
-
-    section.status, section.footer
-      @include transform(scale(1.5))
-      max-height: 0px
-      padding: 0px
-      overflow: hidden
-
-    div.subunit-container
-      display: none !important
-
-    &:hover
-      section.frontmatter
-        &:before, &:after
-          height: 10px
-
-  div.parent-unit
-    width: $width
-    display: table
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4)
-    background: #333D5E
-    border-radius: 3px
-    overflow: hidden
-    @include transition(box-shadow 0.2s)
-
-    &:hover
-      box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7)
-
-  div.subunit-container
-    width: $width * 2 + 30
-    float: right
-    display: none
-    position: relative
-
-  &.expanded
-    div.subunit-container
-      display: inline-block
-      padding: 0 10px 10px 10px
-      overflow: auto
-
-      h1
-        margin: 10px 0 5px 0
-
-        &.hr
-          span
-            margin-left: 10px
-
-  &.unit
-    display: inline-block
-    border-radius: 3px
-    width: 200px
-    background: $primary
-    overflow: hidden
-    cursor: pointer
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5)
-
-    @include transition(background 0.2s)
-
-    &:hover
-      background: #333D5E
-
-    section.matter
-      padding: 10px 10px 0 10px
-
-      h2, h3
-        margin: 0
-        font-weight: 300
-
-      ul
-        margin-top: 10px
-
-        li
-          position: relative
-
-          h1
-            font-size: 11px
-            font-weight: 300
-            text-transform: uppercase
-
-          h2
-            position: absolute
-            width: 100%
-
-          &:last-child
-            float: right
-            text-align: right
-
-    canvas
-      margin-bottom: -4px
-
-    section.foot
-      padding: 0 10px 10px 10px
-      background: #00bfbf
-      text-align: right
-      color: #ffffff
-
-      a
-        color: #ffffff
-
-      li
-        &:first-child
-          float: left
-        &:last-child
-          float: none
-
-  button.btn-subunit
-    position: absolute
-    right: 20px
-    top: 0
-    background: $base
-    border: 1px solid #ffffff
-    color: #ffffff
-    padding: 6px 10px
-    text-decoration: uppercase
-
-    @include transition(background 0.2s, color 0.2s)
-
-    &:hover
-      background: #ffffff
-      color: #000000
-
-    &:focus
-      background: $primary
-      color: #ffffff
-      outline: none
-
-  a
-    text-decoration: none
-
-  .alert
-    color: $alert
-
-  .warning
-    color: $warning
-
-  .idle
-    color: $idle
-
-  .primary
-    color: $primary
-
 div[role="survey"]
   position: relative
   min-width: 500px
@@ -505,3 +130,49 @@ div[role="survey"]
       padding: 2px 5px
       color: #FFFFFF
       border-radius: 2px
+
+.vex
+  z-index: 900
+
+  &.vex-theme-top
+    .vex-content
+      background: #FFFFFF
+      font-family: 'Montserrat'
+
+      h1
+        margin: 0 0 10px 0
+        line-height: 30px
+
+      p
+        margin: 5px 0
+
+      p.small
+        font-size: 15px
+        margin-bottom: 10px
+
+      .orb
+        width: 30px
+        height: 30px
+        padding: 5px
+        font-size: 18px
+        text-align: center
+        margin: 0 10px 10px 0
+        border-radius: 50%
+        background: #A2DED0
+        font-weight: 500
+        color: #000
+        float: left
+
+      font-size: 15px
+      font-weight: 200
+
+      input[name='s_name']
+        font-size: 15px
+        padding: 10px 0
+        background: #FFFFFF
+        border: none
+        border-bottom: 2px solid #AAA
+
+        &:focus, &:hover
+          outline: none
+          border-bottom: 2px solid #000

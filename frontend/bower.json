@@ -58,12 +58,14 @@
     "backbone.paginator": "~2.0.2",
     "tether-drop": "~1.4.2",
     "vex": "~2.3.3",
-    "rivets": "~0.8.1"
+    "rivets": "~0.8.1",
+    "select2": "~4.0.1"
   },
   "resolutions": {
     "jquery": "~2.0.3",
     "backbone": "~1.2.3",
     "underscore": ">=1.7.0",
-    "jquery.sparkline": "~2.1.2"
+    "jquery.sparkline": "~2.1.2",
+    "select2": "~4.0.1"
   }
 }
