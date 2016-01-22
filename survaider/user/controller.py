@@ -22,7 +22,11 @@ def some_name():
 			"from": "Mailgun Sandbox <postmaster@sandbox5d4604e611c54873b7eb557e1393ef79.mailgun.org>",
 			"to": "Madhulika Mukherjee <madhulika.91@gmail.com>",
 			"subject": "Survaider New Subscription",
-			"text": "Hello.\n\rYou have new Subscription by `{0}`.".format(request.form['email_signup'])
+			"text": "Hello.\n\rYou have new Subscription by `{0}`, from organisation {1}. Email ID: {2}".format(request.form['name'],request.form['organisation'],request.form['email_signup'])
 			}
 			)
 	return render_template("thankyou.html")
+
+@usr.route('/contact')
+def some_name2():
+	return render_template("contact.html")

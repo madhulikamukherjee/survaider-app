@@ -13,6 +13,8 @@ ALL_TASKS = [
   'copy:new_homepage_template'
   'copy:new_thankyou'
   'copy:new_thankyou_template'
+  'copy:new_contact'
+  'copy:new_contact_template'
 ]
 
 PROXY_TASKS = [
@@ -262,6 +264,14 @@ module.exports = (grunt) ->
       new_thankyou_template:
         src: 'homepage_pages/thankyou.html'
         dest: '<%= templates %>/thankyou.html'
+      new_contact:
+        expand: true
+        cwd: 'homepage_pages'
+        src: '**/*'
+        dest: '<%= build %>/homepage_pages'
+      new_contact_template:
+        src: 'homepage_pages/contact.html'
+        dest: '<%= templates %>/contact.html'
 
       proxy_main:
         expand: true

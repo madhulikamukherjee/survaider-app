@@ -63,7 +63,7 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
             <!-- BEGIN LOGO -->
             <img src="/static/homepage_pages/assets/images/logo.png" width="152" height="100%" data-src-retina="/static/homepage_pages/assets/images/logo_white_2x.png" alt="">
          </div>
-      </div>
+          </div>
       <!-- BEGIN HEADER TOGGLE FOR MOBILE & TABLET -->
       <div class="pull-right">
         <div class="header-inner">
@@ -127,18 +127,8 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
                    </div>
                    <br><br>
 
-                   <!-- START MODAL-->
-                    <!-- <div class="mymodal move-top" id="sign-up-modal">
-                     <button class="close" onclick="mymodal.close()">close</button>
-                     <h1>We want to know more about your organisation</h1>
-                     <p>Sign up and give us some time to get back to you!</p>
-                     <input type="email" class="dark-outline" id="email_signup">
-                     <button class="dark-outline" id="btn-sub" onclick="sign_up();">Proceed</button>
-                  </div> -->
-                  <!-- END MODAL-->
-
                   <!-- START MODAL-->
-                   <div class="mymodal move-top" id="sign-up-modal">
+                  <!--  <div class="mymodal move-top" id="sign-up-modal">
                      <button class="close" onclick="mymodal.close()">close</button>
                      <h1>We want to know more about your organisation</h1>
                      <p>Sign up and give us some time to get back to you!</p>
@@ -146,12 +136,17 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
                          <input type="email" class="dark-outline" name="email_signup">
                          <input type="submit" value="Submit" class="dark-outline">
                       </form>
-                  </div>
+                  </div> -->
                   <!-- END MODAL-->
 
-                  <div class="col-sm-6 col-sm-offset-3 text-center">
+                  <!-- <div class="col-sm-6 col-sm-offset-3 text-center">
                      <button class="light-outline" onclick="mymodal.open();" style="height:70px;">Start your free trial!</button>
+                  </div> -->
+
+                  <div class="col-sm-6 col-sm-offset-3 text-center">
+                     <button class="light-outline" style="height:70px;"><a href="/usr/contact">Start your free trial!</a></button>
                   </div>
+
                 </div>
 
                 </div>
@@ -400,8 +395,11 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
                  </span>
             </form> -->
 
-            <div class="col-sm-6 col-sm-offset-3 text-center">
+<!--             <div class="col-sm-6 col-sm-offset-3 text-center">
                      <button class="light-outline" onclick="mymodal.open();" id="TakeToTop_hack" style="height:70px;">Start your free trial!</button>
+                  </div> -->
+                  <div class="col-sm-6 col-sm-offset-3 text-center">
+                     <button class="light-outline" style="height:70px;"><a href="/usr/contact">Start your free trial!</a></button>
                   </div>
       </div>
       </div>
@@ -434,27 +432,27 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
       <script src="/static/homepage_pages/assets/js/HoverLogic.js" type="text/javascript"></script>
 
       <script type="text/javascript">
-      var active = 1;
-      var mymodal = {
-         hook_id: "#sign-up-modal",
-         open: function () {
-           $(this.hook_id).attr("class", "mymodal visible");
-        },
-        close: function () {
-           $(this.hook_id).attr("class", "mymodal move-bottom");
-           window.setTimeout(function () {
-             $(mymodal.hook_id).attr("class", "mymodal move-top");
-          }, 500);
-        }
-      };
+//       var active = 1;
+//       var mymodal = {
+//          hook_id: "#sign-up-modal",
+//          open: function () {
+//            $(this.hook_id).attr("class", "mymodal visible");
+//         },
+//         close: function () {
+//            $(this.hook_id).attr("class", "mymodal move-bottom");
+//            window.setTimeout(function () {
+//              $(mymodal.hook_id).attr("class", "mymodal move-top");
+//           }, 500);
+//         }
+//       };
 
 
       
-$( document ).ready(function() {
-    $("#TakeToTop_hack").click( function() {
-        $(window).scrollTop(0);
-      });
-});
+// $( document ).ready(function() {
+//     $("#TakeToTop_hack").click( function() {
+//         $(window).scrollTop(0);
+//       });
+// });
       // var sign_up = function () {
       //    "use strict";
       //    var uri = "/api/subscribe/email:" + $("#email_signup").val();
