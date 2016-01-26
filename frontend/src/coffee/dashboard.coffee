@@ -18,6 +18,7 @@ class Survey
     @surveys.settings = @settings
 
   settings: (e, tile) =>
+    self = @
     vex.dialog.buttons.YES.text = 'Done'
     vex.dialog.open
       className: 'vex-theme-top'
@@ -33,6 +34,8 @@ class Survey
         event.preventDefault()
         event.stopPropagation()
         $vexContent = $(@).parent()
+
+        console.log "final", self.surveys[tile.index]
 
 class Dashboard
   constructor: ->
@@ -75,6 +78,13 @@ class Dashboard
             .endOf('month')
             .add(1, 'months')
             .toISOString()
+
+    rivets.formatters.check_response_cap =
+      read: (v) ->
+        if v is 2**32 then false else true
+
+      publish: (v) ->
+        unless v then 2**32 else 2000
 
   bind_events: ->
     $("#build_survey").on 'click', @create_survey

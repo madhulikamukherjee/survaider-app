@@ -31,6 +31,8 @@
     }
 
     Survey.prototype.settings = function(e, tile) {
+      var self;
+      self = this;
       vex.dialog.buttons.YES.text = 'Done';
       return vex.dialog.open({
         className: 'vex-theme-top',
@@ -49,7 +51,8 @@
           var $vexContent;
           event.preventDefault();
           event.stopPropagation();
-          return $vexContent = $(this).parent();
+          $vexContent = $(this).parent();
+          return console.log("final", self.surveys[tile.index]);
         }
       });
     };
@@ -90,7 +93,7 @@
           return moment(v).toISOString();
         }
       };
-      return rivets.formatters.check_expires = {
+      rivets.formatters.check_expires = {
         read: function(v) {
           var ex_date;
           ex_date = moment(v);
@@ -105,6 +108,22 @@
             return "9999-12-31 23:59:59.999999";
           } else {
             return moment().endOf('month').add(1, 'months').toISOString();
+          }
+        }
+      };
+      return rivets.formatters.check_response_cap = {
+        read: function(v) {
+          if (v === Math.pow(2, 32)) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        publish: function(v) {
+          if (!v) {
+            return Math.pow(2, 32);
+          } else {
+            return 2000;
           }
         }
       };

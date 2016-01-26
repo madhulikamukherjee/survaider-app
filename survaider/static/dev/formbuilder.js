@@ -1891,7 +1891,7 @@ __p += '<div class=\'subtemplate-wrapper\'>\n    <div class="field-card">\n     
 '" ></button>\n        </div>\n        <div class="logic">\n            <p class="section">Options</p>\n            ' +
 ((__t = ( Formbuilder.fields[rf.get(Formbuilder.options.mappings.FIELD_TYPE)].view({rf: rf}) )) == null ? '' : __t) +
 '\n        </div>\n        ';
- if (!(rf.get('deletable') === false)) { ;
+ if (!(rf.get('field_options.deletable') === false)) { ;
 __p += '\n        ' +
 ((__t = ( Formbuilder.templates['view/duplicate_remove']({rf: rf}) )) == null ? '' : __t) +
 '\n        ';

@@ -85,20 +85,21 @@ starter_template = {
             "cid": "73cc8a14-9cff-4a55-a9dc-d723ce382eb5",
             "field_options": {
                 "options": [
-                ]
+                ],
+                "deletable": False,
             },
             "field_type": "group_rating",
             "label": "Rate your experience on the following parameters",
             "required": True,
-            "deletable": False,
         },
         {
             "cid": "9ca9c60c-587c-4848-8002-31708b5dcbf1",
-            "field_options": {},
+            "field_options": {
+                "deletable": False,
+            },
             "field_type": "rating",
             "label": "How likely, on a scale of 0 to 10, are you to recommend our services to a friend or colleague?",
             "required": True,
-            "deletable": False,
         }
     ],
     "screens": [
