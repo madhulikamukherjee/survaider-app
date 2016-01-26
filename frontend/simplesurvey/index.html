@@ -10,6 +10,7 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
         <link rel="stylesheet" href="css/normalize.css">
+        <link href='https://fonts.googleapis.com/css?family=Raleway:400,300' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="css/vendor/jquery-ui.min.css">
         <link rel="stylesheet" href="css/vendor/jquery-ui.structure.min.css">
@@ -33,7 +34,8 @@
             <button type="button" class="sv-button sv-button-large" ng-click="moveHeaderSlide()">Start Survey</button>
 
             <!-- Gray Star Image Load Hack(For Rating and Group Rating Questions) -->
-            <img id="star-image-hack" src="img/star-gray.png" />
+            <img class="star-image-hack" src="img/star-gray.png" />
+            <img class="star-image-hack" src="img/star-black.png" />
 
           </section>
 
@@ -52,6 +54,7 @@
                 <header class="sv-question-header">
                   <span class="sv-question-index" ng-bind="$index+1"></span>
                   <h1 ng-bind="question.label" class="sv-question-title"></h1>
+                  <h3 class="sv-question-description" ng-bind="question.description" ng-show="question.description != null"></h3>
                 </header>
 
                 <!-- End Question Header -->
@@ -139,10 +142,18 @@
 
                     <div class="sv-rating-radio-group">
 
-                      <div class="sv-question-rating-input" ng-repeat="n in [1,2,3,4,5,6,7,8,9,10]">
+                      <div class="sv-question-rating-input ranking-desktop" ng-repeat="n in [1,2,3,4,5,6,7,8,9,10]">
                         <input ng-click="changeInQuestion($questionIndex, question.id); animateToNext($questionIndex, question.id)" ng-model="question.response" type="radio" name="question-{{question.id}}-rating" value="{{n}}" id="question-{{question.id}}-rating-{{$index}}">
                         <label ng-class="{ 'active' : $index+1 <= question.response }" for="question-{{question.id}}-rating-{{$index}}"></label>
                       </div>
+
+                      <div class="ranking-mobile">
+                        <div class="ranking-mobile-rank-show">
+                          <span ng-bind="question.response"></span>
+                        </div>
+                        <div data-question-index="{{$questionIndex}}" data-question-id="{{question.id}}" ui-slider="rankingMobileSlider.options" min="0" max="10" ng-model="question.response"></div>
+                      </div>
+
 
                     </div>
 
@@ -195,11 +206,11 @@
                     <div class="sv-ranking-group">
                       <div class="sv-question-ranking-input-subparts-group" ui-sortable="sortableOptions" ng-model="question.subparts">
                         <!-- Defined a variable $numberOfOptions to create 'n' number of radio buttons in nested loop for ranking using ng-init directive -->
-                        <div class="sv-question-ranking-input" ng-init="$numberOfOptions = question.subparts.length" ng-repeat="option in question.subparts">
+                        <div class="sv-question-ranking-input" ng-init="$numberOfOptions = question.subparts.length" ng-repeat="option in question.subparts" ng-drop="true" ng-drop-success="onDropComplete(question.subparts, $index, $data, $event)">
 
                           <!-- Begin Subpart -->
 
-                          <div class="sv-ranking-option">
+                          <div ng-drag="true" ng-drag-data="option" class="sv-ranking-option">
 
                             <header class="sv-question-subpart-header">
 
@@ -232,7 +243,7 @@
 
                   </div>
 
-                  <div class="sv-input-done" ng-if="question.type != 'ranking'">
+                  <div class="sv-input-done" ng-if="!question.isRequired && question.type != 'ranking'">
                     <button class="sv-button sv-button-medium" id="question-{{question.id}}-done" ng-click="moveToNext(question)" ng-show="question.isCompleted">Done</button>
                   </div>
 
@@ -299,7 +310,7 @@
                   <span ng-if="numberOfQuestionsRemaining > 1 && activeSlide.slideType == 'question'">{{numberOfQuestionsRemaining}} questions are remaining</span>
                   <span class="sv-made-with-survaider" ng-if="activeSlide.slideType != 'question'">
                     <span>Made with Survaider</span>
-                    <img src="img/survaider-logo.png" alt="" />
+                    <img src="img/icon.png" alt="" />
                   </span>
                 </p>
               </div>
@@ -318,11 +329,11 @@
         <!-- angular -->
         <script src="js/vendor/angular-1.4.7/angular.js"></script>
         <script src="js/vendor/angular-1.4.7/angular-animate.js"></script>
+        <script src="js/vendor/ngDraggable.js"></script>
+        <script src="js/vendor/slider.js"></script>
 
         <!-- extra -->
         <script src="js/vendor/sortable.js"></script>
-        <script src="js/vendor/waypoints.js"></script>
-        <script src="js/vendor/classie.js"></script>
 
         <!-- models -->
         <script src="js/app/models/Question.js"></script>

@@ -9,6 +9,12 @@ ALL_TASKS = [
   'copy:fontsfa'
   'copy:fontspages'
   'copy:simplesurvey'
+  'copy:new_homepage'
+  'copy:new_homepage_template'
+  'copy:new_thankyou'
+  'copy:new_thankyou_template'
+  'copy:new_contact'
+  'copy:new_contact_template'
 ]
 
 PROXY_TASKS = [
@@ -150,15 +156,14 @@ module.exports = (grunt) ->
           separator: ';\n'
         files:
           '<%= build%>/js/simplesurvey.js': [
-            'simplesurvey/js/vendor/modernizr-2.8.3.min.js'
             'simplesurvey/js/vendor/jquery.js'
             'simplesurvey/js/vendor/jquery-ui.min.js'
+            'bower_components/uri-template.js/dist/uri-template.js'
             'simplesurvey/js/vendor/angular-1.4.7/angular.js'
             'simplesurvey/js/vendor/angular-1.4.7/angular-animate.js'
+            'simplesurvey/js/vendor/ngDraggable.js'
+            'simplesurvey/js/vendor/slider.js'
             'simplesurvey/js/vendor/sortable.js'
-            'simplesurvey/js/vendor/waypoints.js'
-            'simplesurvey/js/vendor/classie.js'
-            'bower_components/uri-template.js/dist/uri-template.js'
             'simplesurvey/js/app/models/Question.js'
             'simplesurvey/js/app/models/ShortTextQuestion.js'
             'simplesurvey/js/app/models/YesNoQuestion.js'
@@ -248,6 +253,30 @@ module.exports = (grunt) ->
         expand: true
         src: 'simplesurvey/index.simplesurvey.html'
         dest: '<%= build %>'
+      new_homepage:
+        expand: true
+        cwd: 'homepage_pages'
+        src: '**/*'
+        dest: '<%= build %>/homepage_pages'
+      new_homepage_template:
+        src: 'homepage_pages/index.homepage.pages.html'
+        dest: '<%= templates %>/index.homepage.pages.html'
+      new_thankyou:
+        expand: true
+        cwd: 'homepage_pages'
+        src: '**/*'
+        dest: '<%= build %>/homepage_pages'
+      new_thankyou_template:
+        src: 'homepage_pages/thankyou.html'
+        dest: '<%= templates %>/thankyou.html'
+      new_contact:
+        expand: true
+        cwd: 'homepage_pages'
+        src: '**/*'
+        dest: '<%= build %>/homepage_pages'
+      new_contact_template:
+        src: 'homepage_pages/contact.html'
+        dest: '<%= templates %>/contact.html'
 
       proxy_main:
         expand: true

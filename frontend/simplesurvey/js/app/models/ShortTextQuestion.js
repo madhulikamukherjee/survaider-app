@@ -1,7 +1,8 @@
-function ShortTextQuestion(label, required, cid, field_type, next, description){
+function ShortTextQuestion(label, required, cid, field_type, next, description, validation){
   Question.call(this, label, required, cid, field_type, next, description);
   this.response = "";
   this.minimumResponseLength = 1;
+  this.validation = validation;
 }
 
 
@@ -16,7 +17,7 @@ ShortTextQuestion.prototype.change = function(){
 
 ShortTextQuestion.prototype.checkIfCompleted = function(){
 
-  if (this.response.length >= this.minimumResponseLength) {
+  if (this.response && this.response.toLocaleString().length >= this.minimumResponseLength) {
     this.completed();
     return true;
   }
