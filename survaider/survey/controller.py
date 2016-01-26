@@ -218,7 +218,7 @@ class SurveyMetaController(Resource):
 
             ret = {
                 'id': str(svey),
-                'unit': usvey.repr,
+                'unit': usvey.repr_sm,
                 'saved': True,
             }
 
@@ -514,9 +514,9 @@ class ResponseAPIController(Resource):
 
         lol= DataSort(survey_id,uuid)
         survey_data = lol.get_uuid_label()
-        
+
         j_data= d(survey_data)
-        
+
         # Get Responses for  a cid
         response_data= d(lol.get_response())
         #return j_data['field_options']['options'][0]['label']
@@ -533,14 +533,14 @@ class ResponseAPIController(Resource):
         except:
 
             return "error"
-        
+
         #Response Count
         temp= []
         for i in range(len(response_data)):
 
             temp.append(response_data[i]['responses'][uuid])
-        
-        
+
+
 
         #eturn j_data['field_type']
         options_count={}
@@ -556,7 +556,7 @@ class ResponseAPIController(Resource):
                     bTempList= j.split("##")
                     l = bTempList[0]
                     if l in options_count:
-                        
+
                         options_count[l]= int(options_count[l])+len(aTempList)-int(bTempList[1])
                     else:
                         options_count[l]=len(aTempList)-int(bTempList[1])
@@ -578,11 +578,11 @@ class ResponseAPIController(Resource):
                 for j in aTempList:
                     bTempList= j.split("##")
                     l = bTempList[0]
-                    
+
                     #o_c= {a_1:}
                     k= bTempList[1]
                     if l in options_count:
-                        
+
                         if k in options_count[l]:
                             options_count[l][k]+=1
                         else:
@@ -632,7 +632,7 @@ class ResponseAPIController(Resource):
                         counter+= float(bkey) * options_count[key][bkey]
                     else:
                         pass
-                avg[key]= float(counter)/len(temp) 
+                avg[key]= float(counter)/len(temp)
 
                 # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
             response['avg_rating']=avg

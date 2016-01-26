@@ -25,9 +25,11 @@
 
   Survey = (function() {
     function Survey() {
+      this.add_unit = bind(this.add_unit, this);
       this.settings = bind(this.settings, this);
       this.surveys = [];
       this.surveys.settings = this.settings;
+      this.surveys.add_unit = this.add_unit;
     }
 
     Survey.prototype.settings = function(e, tile) {
@@ -53,6 +55,59 @@
           event.stopPropagation();
           $vexContent = $(this).parent();
           return console.log("final", self.surveys[tile.index]);
+        }
+      });
+    };
+
+    Survey.prototype.add_unit = function(e, tile) {
+      var self;
+      self = this;
+      vex.dialog.buttons.YES.text = 'Done';
+      return vex.dialog.open({
+        className: 'vex-theme-top',
+        showCloseButton: false,
+        escapeButtonCloses: false,
+        overlayClosesOnClick: false,
+        message: Survaider.Templates['dashboard.survey.unit'](),
+        afterOpen: (function(_this) {
+          return function() {
+            return rivets.bind($('#unit_modal'), {
+              survey: _this.surveys[tile.index]
+            });
+          };
+        })(this),
+        onSubmit: function(event) {
+          var $vexContent;
+          event.preventDefault();
+          event.stopPropagation();
+          $vexContent = $(this).parent();
+          return $.post("/api/survey/" + self.surveys[tile.index].id + "/unit_addition", $(".vex-dialog-form").serialize()).done(function(data) {
+            var cpy;
+            vex.close($vexContent.data().vex.id);
+            if (self.surveys[tile.index].units.length === 0) {
+              cpy = _.extend(JSON.parse(JSON.stringify(data.unit)), {
+                meta: {
+                  name: data.unit.meta.rootname
+                },
+                fake: true
+              });
+              self.surveys[tile.index].units.push(cpy);
+              self.surveys[tile.index].units.push(data.unit);
+              self.surveys[tile.index].contains_fake = true;
+            } else {
+              self.surveys[tile.index].units.push(data.unit);
+            }
+            return vex.dialog.alert({
+              className: 'vex-theme-default',
+              message: 'Created a new Unit.'
+            });
+          }).fail(function(data) {
+            vex.close($vexContent.data().vex.id);
+            return vex.dialog.alert({
+              className: 'vex-theme-default',
+              message: 'Server Error. Please try again.'
+            });
+          });
         }
       });
     };

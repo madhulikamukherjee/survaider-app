@@ -858,14 +858,14 @@ div[role="survey"] div[role="card"] span.tag {
   color: #000;
   float: left;
 }
-.vex.vex-theme-top .vex-content input[name='s_name'] {
+.vex.vex-theme-top .vex-content input[name='s_name'], .vex.vex-theme-top .vex-content input[name='swag'] {
   font-size: 15px;
   padding: 10px 0;
   background: #FFFFFF;
   border: none;
   border-bottom: 2px solid #AAA;
 }
-.vex.vex-theme-top .vex-content input[name='s_name']:focus, .vex.vex-theme-top .vex-content input[name='s_name']:hover {
+.vex.vex-theme-top .vex-content input[name='s_name']:focus, .vex.vex-theme-top .vex-content input[name='s_name']:hover, .vex.vex-theme-top .vex-content input[name='swag']:focus, .vex.vex-theme-top .vex-content input[name='swag']:hover {
   outline: none;
   border-bottom: 2px solid #000;
 }

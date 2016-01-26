@@ -16,6 +16,7 @@ class Survey
   constructor: ->
     @surveys = []
     @surveys.settings = @settings
+    @surveys.add_unit = @add_unit
 
   settings: (e, tile) =>
     self = @
@@ -36,6 +37,50 @@ class Survey
         $vexContent = $(@).parent()
 
         console.log "final", self.surveys[tile.index]
+
+  add_unit: (e, tile) =>
+    self = @
+    vex.dialog.buttons.YES.text = 'Done'
+    vex.dialog.open
+      className: 'vex-theme-top'
+      showCloseButton: no
+      escapeButtonCloses: no
+      overlayClosesOnClick: no
+      message: Survaider.Templates['dashboard.survey.unit']()
+      afterOpen: =>
+        rivets.bind $('#unit_modal'),
+          survey: @surveys[tile.index]
+      onSubmit: (event) ->
+        event.preventDefault()
+        event.stopPropagation()
+        $vexContent = $(@).parent()
+
+        $.post("/api/survey/#{self.surveys[tile.index].id}/unit_addition",
+               $(".vex-dialog-form").serialize())
+          .done (data) ->
+            vex.close $vexContent.data().vex.id
+
+            if self.surveys[tile.index].units.length == 0
+              #: Add a fake unit, and this one.
+              cpy = _.extend JSON.parse(JSON.stringify(data.unit)),
+                meta:
+                  name: data.unit.meta.rootname
+                fake: yes
+              self.surveys[tile.index].units.push cpy
+              self.surveys[tile.index].units.push data.unit
+              self.surveys[tile.index].contains_fake = yes
+
+            else self.surveys[tile.index].units.push data.unit
+
+            vex.dialog.alert
+              className: 'vex-theme-default'
+              message: 'Created a new Unit.'
+
+          .fail (data) ->
+            vex.close $vexContent.data().vex.id
+            vex.dialog.alert
+              className: 'vex-theme-default'
+              message: 'Server Error. Please try again.'
 
 class Dashboard
   constructor: ->
