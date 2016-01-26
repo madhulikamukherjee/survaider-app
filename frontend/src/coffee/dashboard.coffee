@@ -18,12 +18,21 @@ class Survey
     @surveys.settings = @settings
 
   settings: (e, tile) =>
+    vex.dialog.buttons.YES.text = 'Done'
     vex.dialog.open
-      message: 'Edit your Survaider'
-      className: 'vex-theme-default'
-      input: Survaider.Templates['dashboard.survey.settings']()
+      className: 'vex-theme-top'
+      message: Survaider.Templates['dashboard.survey.settings']()
+      showCloseButton: no
+      escapeButtonCloses: no
+      overlayClosesOnClick: no
+      afterOpen: =>
+        rivets.bind $('#settings'),
+          survey: @surveys[tile.index]
 
-    console.log e, f, @surveys
+      onSubmit: ->
+        event.preventDefault()
+        event.stopPropagation()
+        $vexContent = $(@).parent()
 
 class Dashboard
   constructor: ->
@@ -32,9 +41,40 @@ class Dashboard
     @dashboard = new Survey
 
   init: ->
+    @init_formatters()
     @rv_container = rivets.bind $('#surveys'), @dashboard
     @fetch()
     @bind_events()
+
+  init_formatters: ->
+    rivets.formatters.edit_uri = (v) ->
+      "/survey/s:#{v}/edit"
+
+    rivets.formatters.analytics_uri = (v) ->
+      "/survey/s:#{v}/analysis"
+
+    rivets.formatters.survey_uri = (v) ->
+      "/survey/s:#{v}/simple"
+
+    rivets.formatters.expires =
+      read: (v) ->
+        moment(v).format('YYYY MM DD')
+
+      publish: (v) ->
+        moment(v).toISOString()
+
+    rivets.formatters.check_expires =
+      read: (v) ->
+        ex_date = moment(v)
+        return if ex_date.isAfter('9000-01-01', 'year') then false else true
+      publish: (v) ->
+        unless v
+          "9999-12-31 23:59:59.999999"
+        else
+          moment()
+            .endOf('month')
+            .add(1, 'months')
+            .toISOString()
 
   bind_events: ->
     $("#build_survey").on 'click', @create_survey

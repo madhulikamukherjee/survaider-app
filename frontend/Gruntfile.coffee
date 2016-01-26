@@ -103,6 +103,7 @@ module.exports = (grunt) ->
             'bower_components/vex/js/vex.combined.min.js'
             'bower_components/rivets/dist/rivets.bundled.min.js'
             'bower_components/select2/dist/js/select2.js'
+            'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js'
             '<%= build %>/domain/template.dashboard.js'
           ]
           '<%= build%>/domain/notification.vendor.js': [
@@ -194,6 +195,7 @@ module.exports = (grunt) ->
             'bower_components/vex/css/vex.css'
             'bower_components/vex/css/vex-theme-default.css'
             'bower_components/vex/css/vex-theme-top.css'
+            'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css'
             'bower_components/select2/dist/css/select2.css'
           ]
           '<%= build%>/domain/notification.vendor.css': [

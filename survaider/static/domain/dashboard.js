@@ -31,12 +31,27 @@
     }
 
     Survey.prototype.settings = function(e, tile) {
-      vex.dialog.open({
-        message: 'Edit your Survaider',
-        className: 'vex-theme-default',
-        input: Survaider.Templates['dashboard.survey.settings']()
+      vex.dialog.buttons.YES.text = 'Done';
+      return vex.dialog.open({
+        className: 'vex-theme-top',
+        message: Survaider.Templates['dashboard.survey.settings'](),
+        showCloseButton: false,
+        escapeButtonCloses: false,
+        overlayClosesOnClick: false,
+        afterOpen: (function(_this) {
+          return function() {
+            return rivets.bind($('#settings'), {
+              survey: _this.surveys[tile.index]
+            });
+          };
+        })(this),
+        onSubmit: function() {
+          var $vexContent;
+          event.preventDefault();
+          event.stopPropagation();
+          return $vexContent = $(this).parent();
+        }
       });
-      return console.log(e, f, this.surveys);
     };
 
     return Survey;
@@ -51,9 +66,48 @@
     }
 
     Dashboard.prototype.init = function() {
+      this.init_formatters();
       this.rv_container = rivets.bind($('#surveys'), this.dashboard);
       this.fetch();
       return this.bind_events();
+    };
+
+    Dashboard.prototype.init_formatters = function() {
+      rivets.formatters.edit_uri = function(v) {
+        return "/survey/s:" + v + "/edit";
+      };
+      rivets.formatters.analytics_uri = function(v) {
+        return "/survey/s:" + v + "/analysis";
+      };
+      rivets.formatters.survey_uri = function(v) {
+        return "/survey/s:" + v + "/simple";
+      };
+      rivets.formatters.expires = {
+        read: function(v) {
+          return moment(v).format('YYYY MM DD');
+        },
+        publish: function(v) {
+          return moment(v).toISOString();
+        }
+      };
+      return rivets.formatters.check_expires = {
+        read: function(v) {
+          var ex_date;
+          ex_date = moment(v);
+          if (ex_date.isAfter('9000-01-01', 'year')) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        publish: function(v) {
+          if (!v) {
+            return "9999-12-31 23:59:59.999999";
+          } else {
+            return moment().endOf('month').add(1, 'months').toISOString();
+          }
+        }
+      };
     };
 
     Dashboard.prototype.bind_events = function() {
