@@ -1,0 +1,67 @@
+<div id="settings">
+  <section role="title">
+    <h5>Modify your <strong>Survaider</strong></h5>
+  </section>
+  <section role="body">
+    <div>
+      <div>
+        <label>Name
+          <input type="text" rv-value="survey.meta.name">
+        </label>
+      </div>
+      <div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" rv-checked="survey.info.expires | check_expires">
+              Set an Expiry Date</label>
+            <input type="text"
+              class="date"
+              rv-show="survey.info.expires | check_expires"
+              rv-value="survey.info.expires | expires"
+              data-provide="datepicker"
+              data-date-format="yyyy mm dd">
+          </div>
+        </div>
+        <div>
+          <div>
+            <label>
+              <input type="checkbox" rv-checked="survey.status.response_cap | check_response_cap">
+              Set Response Limit
+            </label>
+            <input type="number"
+              rv-show="survey.status.response_cap | check_response_cap"
+              rv-value="survey.status.response_cap">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <div>
+          <div class="pull-left">
+            <label>
+              <input type="checkbox" rv-checked="survey.status.paused">
+              <span class="label" rv-hide="survey.status.paused">
+                <i class="fa fa-pause"></i>
+                <span>Pause</span>
+              </span>
+              <span class="label" rv-show="survey.status.paused">
+                <i class="fa fa-play"></i>
+                <span>Unpause</span>
+              </span>
+            </label>
+
+<!--             <a href="#">
+              <span class="label">
+                <i class="fa fa-trash"></i>
+                <span>Delete</span>
+              </span>
+            </a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

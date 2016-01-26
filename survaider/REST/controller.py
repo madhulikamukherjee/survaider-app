@@ -9,10 +9,14 @@ from flask_restful import Resource, Api
 from survaider import app
 from survaider.minions.exceptions import APIException
 from survaider.survey.controller import SurveyController, ResponseController
-from survaider.survey.controller import SurveyMetaController, ResponseAggregationController
+from survaider.survey.controller import (SurveyMetaController,
+                                         ResponseAggregationController)
 from survaider.survey.controller import ResponseDocumentController
+from survaider.notification.controller import (NotificationController,
+                                               NotificationAggregation,
+                                               SurveyTicketController)
+
 from survaider.survey.controller import ResponseAPIController
-from survaider.notification.controller import NotificationAggregation
 
 
 api = Api(app, prefix = '/api')
@@ -35,10 +39,20 @@ api.add_resource(ResponseDocumentController,
                  '/survey/<string:survey_id>/response/<string:response_id>'
                 )
 
+api.add_resource(NotificationController,
+                 '/notification/<string:notification_id>',
+                 '/notification/<string:notification_id>/<string:action>')
+
+api.add_resource(SurveyTicketController,
+                 '/surveyticket',
+                 '/surveyticket/<string:ticket_id>',
+                 '/surveyticket/<string:ticket_id>/<string:action>')
+
 api.add_resource(NotificationAggregation,
                  '/notification',
                  '/notification/<string:kind>',
                  '/notification/<string:kind>/<string:time_offset>')
+
 # API FOR DATA RESPONSES --- Creating New Classes //Zurez
 # api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')
 

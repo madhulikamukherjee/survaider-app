@@ -5,13 +5,15 @@
 from datetime import datetime, timedelta
 from mongoengine.queryset import queryset_manager
 
+from flask.ext.security import current_user
+
 from survaider.minions.helpers import HashId
 from survaider.user.model import User
-from survaider.survey.model import Survey, Response
+from survaider.survey.model import Survey, SurveyUnit, Response
 from survaider import db, app
 
 class Notification(db.Document):
-    destined = db.ReferenceField(User)
+    destined = db.ListField(db.ReferenceField(User))
     acquired = db.DateTimeField(default = datetime.now)
     released = db.DateTimeField(default = datetime.max)
     payload  = db.DictField()
@@ -57,27 +59,52 @@ class SurveyResponseNotification(Notification):
             "Look for matching questions, resolve options"
             "Todo: Resolve Answers "
             if field.get('cid') in flat_payload:
+                q_field = field.get('field_options', {}).get('options', [])
+                try:
+                    res = self.payload.get(field['cid'])[2:].split('###')
+                    res_label = [q_field[int(_) - 1].get('label') for _ in res]
+                except Exception:
+                    res_label = [""]
                 payload.append({
                     'cid':      field.get('cid'),
                     'label':    field.get('label'),
-                    'response': self.payload.get(field['cid'])
+                    'response': self.payload.get(field['cid']),
+                    'res_label': res_label,
                 })
         return payload
 
     @property
     def repr(self):
         doc = {
+            'id':       str(self),
+            'acquired': str(self.acquired),
+            'flagged':  self.flagged,
+            'survey':   self.survey.tiny_repr,
+            'root':     self.survey.resolved_root.tiny_repr,
+            'response': str(self.response),
+            'payload':  self.resolved_payload,
+            'pl':self.payload,
+            'type':     self.__class__.__name__,
+        }
+        return doc
+
+class SurveyTicket(Notification):
+    origin      = db.ReferenceField(User)
+    survey_unit = db.ListField(db.ReferenceField(SurveyUnit))
+
+    @property
+    def repr(self):
+
+        doc = {
             'id':           str(self),
             'acquired':     str(self.acquired),
             'flagged':      self.flagged,
-            'survey':       str(self.survey),
-            'root': {
-                'id':       str(self.survey.resolved_root),
-                'name':     self.survey.metadata.get('name'),
-                'active':   self.survey.active,
-            },
-            'response':     str(self.response),
-            'payload':      self.resolved_payload,
+            'root_survey':  self.survey_unit[-1].resolved_root.tiny_repr,
+            'survey_unit':  [_.tiny_repr for _ in self.survey_unit],
+            'origin':       str(self.origin),
+            'cur_is_orgn':  current_user.id == self.origin.id,
+            'targets':      [_.repr for _ in self.destined],
+            'payload':      self.payload,
             'type':         self.__class__.__name__,
         }
         return doc

@@ -410,7 +410,7 @@ footer a {
   animation-delay: 0.2s;
 }
 
-button, input {
+button {
   padding: 10px 20px;
   border-radius: 4px;
   background: transparent;
@@ -418,10 +418,10 @@ button, input {
   font-family: "Montserrat";
   font-size: 14px;
 }
-button.lg, input.lg {
+button.lg {
   font-size: 18px;
 }
-button.create, input.create {
+button.create {
   background: #2E96D6;
 }
 
@@ -636,6 +636,94 @@ button.create, input.create {
     -o-transform: scale(1);
     transform: scale(1);
   }
+}
+div.deck ul {
+  list-style: none;
+  padding: 0;
+}
+
+li.notification {
+  background: #FFFFFF;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  color: #555;
+}
+li.notification strong {
+  color: #000;
+}
+li.notification section.title {
+  position: relative;
+  font-size: 12px;
+}
+li.notification section.title i.icon {
+  background: #34495e;
+  color: #FFFFFF;
+  float: left;
+  font-size: 20px;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+li.notification section.title p {
+  margin: 0;
+}
+li.notification section.title button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0;
+  border: none;
+}
+li.notification section.main {
+  margin: 10px 0;
+}
+li.notification section.main h2, li.notification section.main h3 {
+  margin: 0;
+  font-weight: 200;
+}
+li.notification section.main li {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+}
+li.notification section.main li::after {
+  clear: both;
+  content: "";
+  display: table;
+}
+li.notification section.main li div.question {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 48.82117%;
+}
+li.notification section.main li div.question:last-child {
+  margin-right: 0;
+}
+li.notification section.main li div.answer {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 48.82117%;
+}
+li.notification section.main li div.answer:last-child {
+  margin-right: 0;
+}
+li.notification section.main li:nth-child(odd) {
+  background: #EEE;
+}
+li.notification p.message {
+  background: #3498db;
+  color: #FFFFFF;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-block;
 }
 
 /*# sourceMappingURL=notification.css.map */

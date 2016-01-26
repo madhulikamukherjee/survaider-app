@@ -1,0 +1,34 @@
+<li class="notification survey-ticket" data-card="parent">
+  <section class="title">
+    <i class="fa fa-bookmark icon"></i>
+    <p>Ticket ID: <strong><%= dat.id %></strong></p>
+    <p>
+      <i class="fa fa-clock-o"></i>
+      <span data-livestamp="<%= dat.acquired %>"><%= dat.acquired %></span>
+    </p>
+    <button><i class="fa fa-times"></i></button>
+  </section>
+
+  <p data-survey-id="<%= dat.root_survey.id %>">Main Survey: <%= dat.root_survey.name %></p>
+
+  <ul>
+    <% _.each(dat.survey_unit, function(doc) { %>
+      <li>
+        <span><%= doc.name %></span>
+        <small><%= doc.id %></small>
+      </li>
+    <% }); %>
+  </ul>
+  <ul>
+    <% _.each(dat.targets, function(doc) { %>
+      <li data-user-id="<%= doc.id %>">
+        <span><%= doc.email %></span>
+        <% if (dat.origin == doc.id) { %>
+          <span>Owner</span>
+        <% } %>
+      </li>
+    <% }); %>
+  </ul>
+  <p class="message"><%= dat.payload.original_msg %></p>
+  <a href="#">Mark Finished</a>
+</li>

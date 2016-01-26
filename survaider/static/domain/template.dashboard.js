@@ -1,16 +1,44 @@
 this["Survaider"] = this["Survaider"] || {};
 this["Survaider"]["Templates"] = this["Survaider"]["Templates"] || {};
 
+this["Survaider"]["Templates"]["dashboard.build.dropdown"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<div>\n  <section>\n    <h1>Lets get started with measuring customer satisfaction!</h1>\n    <p>\n      <span class=\'orb\'>1</span>\n      Identify the key parameters that will affect your customer satisfaction, and add them here so that your visitors can rate you on it.</p>\n    <p class="small">For example, Hotel ABC may identify four parameters like "Room Service", "Checkout process", "Cleanliness", "WiFi".</p>\n  </section>\n  <section>\n    <select multiple="multiple" required name="s_tags" style="width: 100%">\n      <option value="Room Service">Room Service</option>\n      <option value="WiFi">WiFi</option>\n    </select>\n    <br>\n    <br>\n    <p>\n      <span class=\'orb\'>2</span>\n      <label>Give your Survey a memorable Name</label>\n      <input type="text" name="s_name" required placeholder="Survey Name">\n    </p>\n  </section>\n</div>\n';
+
+}
+return __p
+};
+
+this["Survaider"]["Templates"]["dashboard.dock"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<section role="survey-list" id="surveys">\n\n  <div data-card="parent" role="survey" rv-each-survey="surveys">\n    <h1 class="hr" role="card-title">\n      <span rv-text="survey.meta.name"></span>\n    </h1>\n\n    <section role="row">\n      <section role="parent-card" rv-show="survey.access.owner">\n        <div role="card">\n          <ul role="info">\n            <li role="survey-name" rv-text="survey.meta.name"></li>\n            <li role="date" rv-data-livestamp="survey.info.added"></li>\n          </ul>\n          <ul role="analytics">\n            <li role="response-count"\n                rv-hide="survey.status.unit_count"\n                rv-text="survey.status.response_count"></li>\n\n            <li role="response-count"\n                rv-show="survey.status.unit_count"\n                rv-text="survey.status.response_count_agg"></li>\n\n            <li role="status">\n              <span class="tag" rv-show="survey.status.active">Active</span>\n              <span class="tag" rv-show="survey.status.expired">Expired</span>\n              <span class="tag" rv-show="survey.status.paused">Paused</span>\n            </li>\n          </ul>\n          <ul role="buttons">\n            <li><a rv-href="survey.id | edit_uri">Edit</a></li>\n            <li><a rv-href="survey.id | survey_uri" rv-hide="survey.status.unit_count">Preview</a></li>\n            <li><a rv-href="survey.id | analytics_uri">Analytics</a></li>\n            <li><a href="javascript:void(0);" rv-on-click="surveys.settings">Settings</a></li>\n          </ul>\n        </div>\n      </section>\n      <section role="unit-dock">\n        <div role="card" rv-each-unit="survey.units">\n          <ul role="info">\n            <li role="survey-name" rv-text="unit.meta.name"></li>\n            <!-- <li role="date" rv-data-livestamp="unit.info.added"></li> -->\n            <li rv-show="unit.fake">(Parent Survey)</li>\n          </ul>\n          <ul role="analytics">\n            <li role="response-count" rv-text="unit.status.response_count"></li>\n            <li role="status">\n              <span class="tag" rv-show="unit.status.active">Active</span>\n              <span class="tag" rv-show="unit.status.expired">Expired</span>\n              <span class="tag" rv-show="unit.status.paused">Paused</span>\n            </li>\n          </ul>\n          <ul role="buttons">\n            <li><a rv-href="unit.id | survey_uri">Preview</a></li>\n            <li><a rv-href="unit.id | analytics_uri">Analytics</a></li>\n            <li><a href="javascript:void(0);" rv-on-click="unit.settings">Settings</a></li>\n          </ul>\n        </div>\n      </section>\n    </section>\n  </div>\n</section>\n\n';
+
+}
+return __p
+};
+
+this["Survaider"]["Templates"]["dashboard.survey.settings"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<div id="settings">\n  <section role="title">\n    <h5>Modify your <strong>Survaider</strong></h5>\n  </section>\n  <section role="body">\n    <div>\n      <div>\n        <label>Name\n          <input type="text" rv-value="survey.meta.name">\n        </label>\n      </div>\n      <div>\n        <div>\n          <div>\n            <label>\n              <input type="checkbox" rv-checked="survey.info.expires | check_expires">\n              Set an Expiry Date</label>\n            <input type="text"\n              class="date"\n              rv-show="survey.info.expires | check_expires"\n              rv-value="survey.info.expires | expires"\n              data-provide="datepicker"\n              data-date-format="yyyy mm dd">\n          </div>\n        </div>\n        <div>\n          <div>\n            <label>\n              <input type="checkbox" rv-checked="survey.status.response_cap | check_response_cap">\n              Set Response Limit\n            </label>\n            <input type="number"\n              rv-show="survey.status.response_cap | check_response_cap"\n              rv-value="survey.status.response_cap">\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div>\n      <div>\n        <div>\n          <div class="pull-left">\n            <label>\n              <input type="checkbox" rv-checked="survey.status.paused">\n              <span class="label" rv-hide="survey.status.paused">\n                <i class="fa fa-pause"></i>\n                <span>Pause</span>\n              </span>\n              <span class="label" rv-show="survey.status.paused">\n                <i class="fa fa-play"></i>\n                <span>Unpause</span>\n              </span>\n            </label>\n\n<!--             <a href="#">\n              <span class="label">\n                <i class="fa fa-trash"></i>\n                <span>Delete</span>\n              </span>\n            </a> -->\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</div>\n';
+
+}
+return __p
+};
+
 this["Survaider"]["Templates"]["dashboard.tiles"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
 with (obj) {
-__p += '<div class="card ' +
-((__t = ( attrs.narrow )) == null ? '' : __t) +
-' ' +
-((__t = ( attrs.expand )) == null ? '' : __t) +
-'" data-card="parent">\n  <div class="parent-unit">\n    <section class="frontmatter">\n      <h1>' +
+__p += '<div data-card="parent" role="survey">\n  <h1 class="hr" role="card-title"><span>' +
+((__t = ( dat.name )) == null ? '' : __t) +
+'</span></h1>\n\n  <section role="row">\n    <section role="parent-card">\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n    </section>\n    <section role="unit-dock">\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n\n      <div role="card">\n        <ul role="info">\n          <li role="survey-name">Name</li>\n          <li role="date">Name</li>\n        </ul>\n        <ul role="analytics">\n          <li role="response-count">200</li>\n          <li role="status"><span class="tag">Active</span></li>\n        </ul>\n        <ul role="buttons">\n          <li><a href="#">Preview</a></li>\n          <li><a href="#">Analytics</a></li>\n          <li><a href="#">Settings</a></li>\n        </ul>\n      </div>\n    </section>\n  </section>\n\n<!--   <div class="parent-unit">\n    <section class="frontmatter">\n      <h1>' +
 ((__t = ( dat.name )) == null ? '' : __t) +
 '</h1>\n\n      <small>\n        <span class="status-expanded">\n          Created\n          <strong>\n            <span data-livestamp="' +
 ((__t = ( dat.created_on )) == null ? '' : __t) +
@@ -34,11 +62,9 @@ __p += '\n      </ul>\n    </section>\n    <section class="footer">\n      <sect
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
 '">\n            <li><i class="fa fa-edit"></i> Edit</li>\n          </a>\n        </ul>\n      </section>\n      <section class="actions">\n        <ul class="clear">\n          <li>\n            <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#settings">\n              <i class="fa fa-cog"></i> Settings\n            </a>\n          </li>\n          <li>\n            <a href="' +
+'#settings">\n              <i class="fa fa-cog"></i> Settings\n            </a>\n          </li>\n          <li>\n            <a href="javascript:void(0)" class="share-btn">\n              <i class="fa fa-share-alt"></i> Share\n            </a>\n          </li>\n          <li>\n            <a href="' +
 ((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n              <i class="fa fa-share-alt"></i> Share\n            </a>\n          </li>\n          <li>\n            <a href="' +
-((__t = ( dat.uri_edit )) == null ? '' : __t) +
-'#share">\n              <i class="fa fa-star"></i> Preview\n            </a>\n          </li>\n        </ul>\n      </section>\n    </section>\n  </div>\n  <div class="subunit-container">\n  </div>\n</div>\n';
+'#share">\n              <i class="fa fa-star"></i> Preview\n            </a>\n          </li>\n        </ul>\n      </section>\n    </section>\n  </div>\n  <div class="subunit-container">\n  </div> -->\n</div>\n';
 
 }
 return __p

@@ -13,6 +13,7 @@ from flask.ext.uploads import UploadSet, IMAGES, configure_uploads,\
                               patch_request_class
 
 from survaider import app
+from survaider.minions.exceptions import APIException, ViewException
 
 class HashId(object):
     hashids = Hashids(salt = current_app.config.get('HASHIDS_SALT'))
@@ -87,3 +88,15 @@ class Routines(object):
         except Exception:
             return "NA"
 
+def api_get_object(collection, oid):
+    try:
+        oid = HashId.decode(oid)
+        obj = collection(id = oid).first()
+
+        if obj is None:
+            raise TypeError
+        return obj
+
+    except TypeError:
+        print(oid, collection)
+        raise APIException("Invalid Object ID", 404)

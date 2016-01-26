@@ -1,27 +1,34 @@
 <li class="notification survey-response" data-card="parent">
-  <small><span data-livestamp="<%= dat.acquired %>">(Loading)</span></small>
-  <h1><%= dat.root.name %></h1>
-  <small><%= dat.root.id %></small>
-  <small><%= dat.survey %></small>
-  <% if (dat.flagged){ %>
-    Read
-  <% } else { %>
-    Unread
-  <% } %>
+  <section class="title">
+    <i class="fa fa-bolt icon"></i>
+    <p>Subscribed Notification</p>
+    <p>
+      <i class="fa fa-clock-o"></i>
+      <span data-livestamp="<%= dat.acquired %>"><%= dat.acquired %></span>
+    </p>
+    <button><i class="fa fa-times"></i></button>
+  </section>
 
-  <% if (dat.root.active){ %>
-    Active
-  <% } else { %>
-    Inactive
-  <% } %>
+  <section class="main">
+    <h2>Response at <strong><%= dat.survey.name %></strong>.</h2>
+    <% if (dat.root.id !== dat.survey.id) { %>
+    <h3>Main Survey: <%= dat.root.name %></h3>
+    <% }; %>
 
-  <ul>
-    <% _.each(dat.payload, function(doc) { %>
-      <li>
-        <h2><%= doc.label %></h2>
-        <small><%= doc.cid %></small>
-        <p><%= doc.response %></p>
-      </li>
-    <% }); %>
-  </ul>
+    <ul>
+      <% _.each(dat.payload, function(doc) { %>
+        <li>
+          <div class="question">
+            <%= doc.label %>
+          </div>
+          <div class="answer"><%= doc.res_label %></div>
+        </li>
+      <% }); %>
+    </ul>
+  </section>
+
+  <section class="">
+    <button>Analytics</button>
+    <button>More Details</button>
+  </section>
 </li>

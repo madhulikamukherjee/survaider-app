@@ -17,10 +17,13 @@ from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 
 from survaider import app
+from survaider.minions.decorators import api_login_required
 from survaider.minions.exceptions import APIException, ViewException
 from survaider.minions.attachment import Image as AttachmentImage
+from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
+from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
 from survaider.survey.model import DataSort
 
@@ -29,36 +32,44 @@ class SurveyController(Resource):
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('s_name', type = str, required = True)
+        parser.add_argument('s_tags', type = str, required = True,
+                            action = 'append')
         return parser.parse_args()
 
+    @api_login_required
     def get(self):
-        if current_user.is_authenticated():
-            svey = Survey.root(created_by = current_user.id)
+        svey = Survey.objects(created_by = current_user.id)
 
-            survey_list = [_.repr for _ in svey if not _.hidden]
+        survey_list = [_.repr_sm for _ in svey if not _.hidden]
 
-            ret = {
-                "data": survey_list,
-                "owner": str(current_user.id),
-                "survey_count": len(survey_list),
-            }
+        ret = {
+            "data": survey_list,
+            "survey_count": len(survey_list),
+        }
 
-            return ret, 200
-        else:
-            raise APIException("Login Required", 401)
+        return ret, 200
 
+    @api_login_required
     def post(self):
-        if current_user.is_authenticated():
-            args = self.post_args()
-            svey = Survey()
-            usr  = User.objects(id = current_user.id).first()
-            svey.metadata['name'] = args['s_name']
-            svey.created_by.append(usr)
-            svey.save()
+        args = self.post_args()
+        svey = Survey()
+        usr  = User.objects(id = current_user.id).first()
+        svey.metadata['name'] = args['s_name']
 
-            return svey.repr, 200
-        else:
-            raise APIException("Login Required", 401)
+        struct_dict = starter_template
+        opt = []
+        for option in args['s_tags']:
+            opt.append({
+                'checked': False,
+                'label': option
+            })
+
+        struct_dict['fields'][0]['field_options']['options'] = opt
+        svey.struct = struct_dict
+        svey.created_by.append(usr)
+        svey.save()
+
+        return svey.repr, 200
 
 class SurveyMetaController(Resource):
 
@@ -104,163 +115,153 @@ class SurveyMetaController(Resource):
 
         raise APIException("Must specify a valid option", 400)
 
+    @api_login_required
     def post(self, survey_id, action):
-        if current_user.is_authenticated():
+        svey = api_get_object(Survey.objects, survey_id)
+
+        if svey.hidden:
+            raise APIException("This Survey has been deleted", 404)
+
+        if action == 'struct':
+            args = self.post_args()
+            svey.struct = json.loads(args['swag'])
+            svey.save()
+
+            ret = {
+                'id': str(svey),
+                'saved': True,
+            }
+
+            return ret, 200
+
+        elif action == 'expires':
+            args = self.post_args()
+            dat = args['swag']
+            svey.expires = dateutil.parser.parse(dat)
+            svey.save()
+
+            ret = {
+                'id': str(svey),
+                'field': action,
+                'saved': True,
+            }
+            return ret, 200
+
+        elif action == 'paused':
+            args = self.post_args()
+            dat = json.loads(args['swag'])
+            if type(dat) is bool:
+                svey.paused = dat
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+                return ret, 200
+            raise APIException("TypeError: Invalid swag value.", 400)
+
+        elif action == 'response_cap':
+            args = self.post_args()
+            dat = json.loads(args['swag'])
+            if type(dat) is int:
+                svey.response_cap = dat
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+                return ret, 200
+            raise APIException("TypeError: Invalid swag value.", 400)
+
+        elif action == 'unit_name':
+            if type(svey) is not SurveyUnit:
+                raise APIException("Action valid for Survey Units only.", 400)
+
+            args = self.post_args()
+            dat = args['swag']
+
+            if not len(dat) > 0:
+                raise APIException("TypeError: Invalid swag value.", 400)
+
+            svey.unit_name = dat
+            svey.save()
+
+            ret = {
+                'id': str(svey),
+                'field': action,
+                'saved': True,
+            }
+
+            return ret, 200
+
+        elif action == 'unit_addition':
+            if type(svey) is SurveyUnit:
+                raise APIException("Action valid for Root Survey only.", 400)
+
+            args = self.post_args()
+            dat = args['swag']
+
+            if not len(dat) > 0:
+                raise APIException("TypeError: Invalid swag value.", 400)
+
+            usvey = SurveyUnit()
+            usr   = User.objects(id = current_user.id).first()
+            usvey.unit_name = dat
+            usvey.referenced = svey
+            usvey.created_by.append(usr)
+            usvey.save()
+            usvey.reload()
+
+            ret = {
+                'id': str(svey),
+                'unit': usvey.repr,
+                'saved': True,
+            }
+
+            return ret, 200
+
+        elif action == 'survey_name':
+            args = self.post_args()
+            dat = args['swag']
+            if len(dat) > 0:
+                svey.metadata['name'] = dat
+                svey.save()
+
+                ret = {
+                    'id': str(svey),
+                    'field': action,
+                    'saved': True,
+                }
+                return ret, 200
+            raise APIException("TypeError: Invalid swag value.", 400)
+
+        elif action == 'img_upload':
             try:
-                s_id = HashId.decode(survey_id)
-                svey = Survey.objects(id = s_id).first()
-
-                if svey is None:
-                    raise TypeError
-
-                if svey.hidden:
-                    raise APIException("This Survey has been deleted", 404)
-
-            except TypeError:
-                raise APIException("Invalid Survey ID", 404)
-
-            if action == 'struct':
-                args = self.post_args()
-                svey.struct = json.loads(args['swag'])
-                svey.save()
-
-                ret = {
-                    'id': str(svey),
-                    'saved': True,
-                }
-
-                return ret, 200
-
-            elif action == 'expires':
-                args = self.post_args()
-                dat = args['swag']
-                svey.expires = dateutil.parser.parse(dat)
+                uploaded_img = AttachmentImage()
+                usr = User.objects(id = current_user.id).first()
+                uploaded_img.owner = usr
+                uploaded_img.file = request.files['swag']
+                uploaded_img.save()
+                svey.attachments.append(uploaded_img)
                 svey.save()
 
                 ret = {
                     'id': str(svey),
                     'field': action,
+                    'access_id': str(uploaded_img),
+                    'temp_uri': uploaded_img.file,
+                    'metadata': uploaded_img.repr,
                     'saved': True,
                 }
                 return ret, 200
+            except Exception as e:
+                raise APIException("Upload Error; {0}".format(str(e)), 400)
 
-            elif action == 'paused':
-                args = self.post_args()
-                dat = json.loads(args['swag'])
-                if type(dat) is bool:
-                    svey.paused = dat
-                    svey.save()
-
-                    ret = {
-                        'id': str(svey),
-                        'field': action,
-                        'saved': True,
-                    }
-                    return ret, 200
-                raise APIException("TypeError: Invalid swag value.", 400)
-
-            elif action == 'response_cap':
-                args = self.post_args()
-                dat = json.loads(args['swag'])
-                if type(dat) is int:
-                    svey.response_cap = dat
-                    svey.save()
-
-                    ret = {
-                        'id': str(svey),
-                        'field': action,
-                        'saved': True,
-                    }
-                    return ret, 200
-                raise APIException("TypeError: Invalid swag value.", 400)
-
-            elif action == 'unit_name':
-                if type(svey) is not SurveyUnit:
-                    raise APIException("Action valid for Survey Units only.", 400)
-
-                args = self.post_args()
-                dat = args['swag']
-
-                if not len(dat) > 0:
-                    raise APIException("TypeError: Invalid swag value.", 400)
-
-                svey.unit_name = dat
-                svey.save()
-
-                ret = {
-                    'id': str(svey),
-                    'field': action,
-                    'saved': True,
-                }
-
-                return ret, 200
-
-            elif action == 'unit_addition':
-                if type(svey) is SurveyUnit:
-                    raise APIException("Action valid for Root Survey only.", 400)
-
-                args = self.post_args()
-                dat = args['swag']
-
-                if not len(dat) > 0:
-                    raise APIException("TypeError: Invalid swag value.", 400)
-
-                usvey = SurveyUnit()
-                usr   = User.objects(id = current_user.id).first()
-                usvey.unit_name = dat
-                usvey.referenced = svey
-                usvey.created_by.append(usr)
-                usvey.save()
-                usvey.reload()
-
-                ret = {
-                    'id': str(svey),
-                    'unit': usvey.repr,
-                    'saved': True,
-                }
-
-                return ret, 200
-
-            elif action == 'survey_name':
-                args = self.post_args()
-                dat = args['swag']
-                if len(dat) > 0:
-                    svey.metadata['name'] = dat
-                    svey.save()
-
-                    ret = {
-                        'id': str(svey),
-                        'field': action,
-                        'saved': True,
-                    }
-                    return ret, 200
-                raise APIException("TypeError: Invalid swag value.", 400)
-
-            elif action == 'img_upload':
-                try:
-                    uploaded_img = AttachmentImage()
-                    usr = User.objects(id = current_user.id).first()
-                    uploaded_img.owner = usr
-                    uploaded_img.file = request.files['swag']
-                    uploaded_img.save()
-                    svey.attachments.append(uploaded_img)
-                    svey.save()
-
-                    ret = {
-                        'id': str(svey),
-                        'field': action,
-                        'access_id': str(uploaded_img),
-                        'temp_uri': uploaded_img.file,
-                        'metadata': uploaded_img.repr,
-                        'saved': True,
-                    }
-                    return ret, 200
-                except Exception as e:
-                    raise APIException("Upload Error; {0}".format(str(e)), 400)
-
-            raise APIException("Must specify a valid option", 400)
-        else:
-            raise APIException("Login Required", 401)
+        raise APIException("Must specify a valid option", 400)
 
     def delete(self, survey_id, action = 'self'):
         if current_user.is_authenticated():

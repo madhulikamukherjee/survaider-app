@@ -18,7 +18,7 @@ class Role(db.Document, RoleMixin):
     metadata    = db.DictField()
 
     def __unicode__(self):
-        return self.name
+        return HashId.encode(self.id)
 
 class User(db.Document, UserMixin):
     email           = db.EmailField(unique = True, required = True)
@@ -33,4 +33,13 @@ class User(db.Document, UserMixin):
     roles           = db.ListField(db.ReferenceField(Role), default = [])
 
     def __unicode__(self):
-        return self.email
+        return HashId.encode(self.id)
+
+    @property
+    def repr(self):
+        doc = {
+            'id':       str(self),
+            'email':    self.email,
+        }
+        return doc
+

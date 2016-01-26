@@ -15,48 +15,15 @@ from jsonschema import validate, ValidationError
 from mongoengine.queryset import queryset_manager
 
 from survaider.minions.helpers import HashId, Obfuscate, Uploads
+from survaider.minions.contextresolver import current_user
 from survaider.minions.attachment import Image as AttachmentImage
 from survaider.user.model import User
 from survaider.notification.signals import survey_response_notify
+from survaider.survey.structuretemplate import survey_struct_schema
+from survaider.survey.structuretemplate import starter_template
 from survaider import db, app
 
 class Survey(db.Document):
-    default_fields = [
-        {
-            'required': True,
-            'field_options': {},
-            'label': 'What is your name?',
-            'cid': 'c2',
-            'field_type': 'short_text',
-        }, {
-            'required': True,
-            'field_options': {'options': [{'label': 'Yes', 'checked': False},
-                              {'label': 'No', 'checked': False}]},
-            'label': 'Have you gone on Facebook ever before?',
-            'cid': 'c6',
-            'field_type': 'yes_no',
-        }, {
-            'required': True,
-            'field_options': {'options': [{'label': 'Reading about friends',
-                              'checked': False},
-                              {'label': 'Chatting with friends',
-                              'checked': False}, {'label': 'Finding new people'
-                              , 'checked': False},
-                              {'label': 'Reading (news, articles)',
-                              'checked': False}, {'label': 'Shopping',
-                              'checked': False}]},
-            'label': 'What do you primarily use Facebook for?',
-            'cid': 'c10',
-            'field_type': 'multiple_choice',
-        }
-    ]
-    default_screens = [
-        'Default Title',
-        'Default Description',
-        'Default Footer',
-    ]
-    default_links = None
-
     added       = db.DateTimeField(default = datetime.datetime.now)
 
     metadata    = db.DictField()
@@ -137,110 +104,26 @@ class Survey(db.Document):
     @property
     def struct(self):
         ret = {}
-        ret['fields'] = self.structure['fields'] if 'fields' in self.structure else self.default_fields
-        ret['screens'] = self.structure['screens'] if 'screens' in self.structure else self.default_screens
-        ret['links'] = self.structure['links'] if 'links' in self.structure else self.default_links
+        ret['fields'] = self.structure.get('fields',
+                                           starter_template['fields'])
+        ret['screens'] = self.structure.get('screens',
+                                           starter_template['screens'])
+        ret['links'] = self.structure.get('links', None)
+
         return ret
 
     @struct.setter
     def struct(self, value):
-        schema = {
-            "$schema": "http://json-schema.org/draft-04/schema#",
-
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "cid": {
-                                "type": "string"
-                            },
-                            "field_options": {
-                                "type": "object",
-                                "properties": {
-                                    "options": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "checked": {
-                                                    "type": "boolean"
-                                                },
-                                                "img_enabled": {
-                                                    "type": "boolean"
-                                                },
-                                                "img_uri": {
-                                                    "type": "string"
-                                                },
-                                                "notify": {
-                                                    "type": "boolean"
-                                                },
-                                                "label": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "required": ["label"]
-                                        }
-                                    }
-                                }
-                            },
-                            "field_type": {
-                                "type": "string"
-                            },
-                            "label": {
-                                "type": "string"
-                            },
-                            "required": {
-                                "type": "boolean"
-                            },
-                            "notifications": {
-                                "type": "boolean"
-                            },
-                            "richtext": {
-                                "type": "boolean"
-                            },
-                        },
-                        "required": ["cid", "field_type", "label", "required"]
-                    }
-                },
-                "links": {
-                    "type": "null"
-                },
-                "screens": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": ["fields", "screens"]
-        }
         try:
-            validate(value, schema)
+            validate(value, survey_struct_schema)
             self.structure.update(value)
         except ValidationError as e:
             raise TypeError('Struct value invalid' + str(e))
 
+    #: DEPRECATED
     @property
     def gamified_enabled(self):
-        field_lim = {
-            'yes_no': [2, 3],
-            'single_choice': [2, 5],
-            'multiple_choice': [2, 5],
-            'ranking': [2, 6],
-            'group_rating': [2, 3],
-        }
-        for field in self.struct['fields']:
-            if field['field_type'] in field_lim:
-                if not 'options' in field['field_options']:
-                    return False
-                count = len(field['field_options']['options'])
-                lower, upper = field_lim[field['field_type']]
-                if not lower <= count <= upper:
-                    return False
-        return True
+        return False
 
     @property
     def modified(self):
@@ -263,6 +146,15 @@ class Survey(db.Document):
         dat = SurveyUnit.objects(referenced = self)
         return [_.repr for _ in dat if not _.hidden]
 
+    @property
+    def unit_count(self):
+        return SurveyUnit.objects(referenced = self).count()
+
+    @property
+    def units_as_objects(self):
+        dat = SurveyUnit.objects(referenced = self)
+        return [_ for _ in dat if not _.hidden]
+
     def save(self, **kwargs):
         self.metadata['modified'] = datetime.datetime.now()
         super(Survey, self).save(**kwargs)
@@ -275,6 +167,7 @@ class Survey(db.Document):
     def root(doc_cls, queryset):
         return queryset.filter(_cls = 'Survey')
 
+    #: DEPRECATION WARNING: WILL BE CHANGED.
     @property
     def repr(self):
         return {
@@ -298,82 +191,55 @@ class Survey(db.Document):
         }
 
     @property
-    def render_json(self):
-        game_map = {
-            'short_text': {
-                'text_scene': [0, 0]
+    def repr_sm(self):
+        return {
+            'id': str(self),
+            'meta': {
+                'name': self.metadata['name'],
+                'type': self._cls,
             },
-            'long_text': {
-                'suggestions': [0, 0]
+            'status': {
+                'paused': self.paused,
+                'active': self.active,
+                'response_cap': self.response_cap,
+                'response_count': self.obtained_responses,
+                'expired': self.expires <= datetime.datetime.now(),
+                'unit_count': self.unit_count,
             },
-            'yes_no': {
-                'car': [2, 2],
-                'happy_or_sad': [3, 3]
+            'access': {
+                'accessible': [_.repr for _ in self.created_by],
+                'editable': True, #: Root Survey
+                'owner': True,
             },
-            'single_choice': {
-                'catapult': [2, 4],
-                'fish_scene_one': [2, 5],
-                'bird_tunnel': [2, 4]
-            },
-            'multiple_choice': {
-                'balloon': [2, 5],
-                'fish_scene_two': [2, 5]
-            },
-            'ranking': {
-                'stairs': [2, 6]
-            },
-            'rating': {
-                'scroll_scene': [0, 0]
-            },
-            'group_rating': {
-                'star_game': [2, 3]
+            'info': {
+                'expires': str(self.expires),
+                'added': str(self.added),
+                'modified': str(self.modified),
             }
         }
 
-        if not self.gamified_enabled:
-            raise TypeError("This survey does not have a Gamified Representation.")
+    @property
+    def tiny_repr(self):
+        return {
+            'id':       str(self),
+            'name':     self.metadata['name'],
+            'active':   self.active,
+        }
 
+    #: DEPRECATED
+    @property
+    def render_json(self):
+        #: DEPRECATION WARNING: This method will be removed.
         rt = {}
-        cp = self.struct['fields']
-
-        def field_options(opt):
-            options = []
-            if 'options' in opt:
-                for op in opt['options']:
-                    options.append(op['label'])
-            return options
-        def logic(id_next):
-            return {
-                'va': id_next
-            }
-        def game(field):
-            typ = field['field_type']
-            if typ in game_map:
-                op = field['field_options'].get('options', [])
-
-                op_len = len(op)
-                games = []
-
-                for game, constr in game_map[typ].items():
-                    if constr[0] <= op_len <= constr[1]:
-                        games.append(game)
-
-                return random.choice(games)
-
-        for i in range(len(cp)):
-            # cp[i]['field_options'] = field_options(cp[i]['field_options'])
-            cp[i]['gametype'] = game(cp[i])
-            cp[i]['next'] = logic('end' if (i + 1) >= len(cp) else cp[i + 1]['cid'])
-
-        rt['fields'] = cp
-        rt['game_title'] = self.struct['screens'][0]
-        rt['game_description'] = self.struct['screens'][1]
-        rt['game_footer'] = self.struct['screens'][2]
-
-        give_img = len(self.struct['screens']) >= 4 and len(self.struct['screens'][3]) > 1
-
-        rt['survey_logo'] = Uploads.url_for_surveyimg(self.struct['screens'][3]) if give_img else False
-
+        rt['fields'] = []
+        rt['game_title'] = ""
+        rt['game_description'] = ""
+        rt['game_footer'] = ""
+        rt['survey_logo'] = ""
+        rt['WARNING'] = "This Feature has been deprecated.\
+            It will be removed in coming versions.\
+            This API Call has been preserved for backwards\
+            compatibility."
         return rt
 
     @property
@@ -443,6 +309,44 @@ class SurveyUnit(Survey):
             'expires': str(self.expires),
             'created_on': str(self.added),
             'last_modified': str(self.modified),
+        }
+
+    @property
+    def repr_sm(self):
+        return {
+            'id': str(self),
+            'rootid': str(self.resolved_root),
+            'meta': {
+                'name': self.unit_name,
+                'rootname': self.resolved_root.metadata['name'],
+                'type': self._cls,
+            },
+            'status': {
+                'paused': self.paused,
+                'active': self.active,
+                'response_cap': self.response_cap,
+                'response_count': self.obtained_responses,
+                'expired': self.expires <= datetime.datetime.now(),
+                'unit_count': False,
+            },
+            'access': {
+                'accessible': [_.repr for _ in self.created_by],
+                'editable': False, #: Unit Survey
+                'owner': current_user() in self.resolved_root.created_by,
+            },
+            'info': {
+                'expires': str(self.expires),
+                'added': str(self.added),
+                'modified': str(self.modified),
+            }
+        }
+
+    @property
+    def tiny_repr(self):
+        return {
+            'id':       str(self),
+            'name':     self.unit_name,
+            'active':   self.active,
         }
 
     @queryset_manager

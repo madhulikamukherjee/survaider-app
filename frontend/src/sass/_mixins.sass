@@ -1,0 +1,18 @@
+@mixin clear-ul
+  list-style-type: none
+  padding: 0
+  margin: 0
+
+@mixin navigation-list
+  @include clear-ul
+  overflow: scroll
+  > li
+    display: inline-block
+    display: inline-flex
+    margin: 0 5px
+
+@mixin sm-button
+  padding: 5px 10px
+  text-decoration: none
+  color: inherit
+  border-radius: 2px
