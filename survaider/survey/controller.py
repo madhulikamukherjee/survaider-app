@@ -25,7 +25,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort
+from survaider.survey.model import DataSort,IrapiData,Dashboard
 
 class SurveyController(Resource):
 
@@ -505,20 +505,393 @@ class ResponseDocumentController(Resource):
 import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
+class DashboardAPIController(Resource):
+    """docstring for DashboardAPIController"""
+    def logic(self,survey_id,parent_survey,aggregate):
+        """
+        Logic : The child needs to copy their parents survey structure , pass the parent survey strc
+        """
 
+
+        lol= IrapiData(survey_id,1,1,aggregate)
+        csi= lol.get_child_data(survey_id)[0]#child survey info
+
+        response_data= d(lol.get_data())
+       # return len(response_data)
+        # survey_strct= d(lol.survey_strct())
+        if parent_survey==survey_id:
+            survey_strct= d(lol.survey_strct())
+           
+        elif parent_survey!=survey_id:
+            s= IrapiData(parent_survey,1,1,aggregate)
+            survey_strct=d(s.survey_strct())
+
+        try:
+            survey_name= csi['unit_name']
+            # return survey_name
+            created_by=csi['created_by'][0]['$oid']
+            # return csi
+            
+        except:
+            survey_name="Parent Survey"
+            created_by="Not Applicable"
+        # else:pass
+        #return survey_strct
+        """ALT"""
+        cids= []
+        # return survey_strct
+        for i in survey_strct:
+            # return i
+            x= i['field_options']
+            if "deletable" in x:
+                # return x['options']
+            
+                cids.append(i['cid'])
+        
+        # 
+
+        
+        """ END"""
+        res=[]
+        r= {}
+        for cid in cids:
+            alol = DataSort(parent_survey,cid,aggregate)
+            survey_data= alol.get_uuid_label()#?So wrong
+            # return survey_data
+            #I have the total responses
+            j_data= d(survey_data)
+            
+            # return survey_data[0]['field_options']
+            if "options" in survey_data['field_options']:
+                
+                try:
+                    options=[]
+                    option_code={}
+                    for i in range(len(j_data['field_options']['options'])):
+                        options.append(j_data['field_options']['options'][i]['label'])
+                        option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
+                except :
+                    pass
+            #Response Count
+            else:pass
+            # return option_code
+            temp= []
+
+            for i in response_data:
+                # temp.append(i)
+                if cid in i['responses']:
+                    temp.append(i['responses'][cid])
+            # return temp
+            options_count={}
+            
+            if j_data['field_type']=="group_rating":
+
+                for i in temp:
+                    # return i
+                    aTempList= i.split("###")
+                    # return aTempList
+                    for j in aTempList:
+                        bTempList= j.split("##")
+
+                        l= bTempList[0]
+                        k= bTempList[1]
+                        if l in options_count:
+                            if k in options_count[l]:
+                                options_count[l][k]+=1
+                            else:
+                                options_count[l][k]=1
+                        else:
+                            options_count[l]={}
+                            options_count[l][k]=1
+                avg={}
+                for key in options_count:
+                    counter=0
+                    for bkey in options_count[key]:
+                        
+                        if int(bkey)!=0:
+                            counter+= float(bkey) * options_count[key][bkey]
+                        else:pass
+                        avg[key]= round(float(counter)/len(temp),2)
+
+            # return option_code, options_count
+            # for i in range(len(response_data)):
+            #     temp.append(response_data[i]['responses'][cid])
+            # return temp[9]
+            elif j_data['field_type']=="rating":
+                for i in temp:
+                    if str(i) in options_count:
+                        options_count[str(i)]+=1
+                    else:
+                        options_count[str(i)]=1
+                # avg= 0.0
+                ll= 0
+                for j in temp:ll= float(ll)+float(j)
+
+                # avg = round(float(avg)/float(len(temp)))
+                avg=round(ll/len(temp),2)
+                # return avg
+            response={}
+            response['cid']= cid
+            try:
+                response['avg_rating']=avg
+
+            except:pass
+            if j_data['field_type']=="group_rating":
+                response['options_code']=option_code
+            else:pass
+            # response['survey_id']=survey_id
+            response['options_count']=options_count
+            response['label']=survey_data['label']
+            try:
+                response['unit_name']=survey_name
+                response['created_by']=created_by
+            except:pass
+            res.append(response)
+        # try:
+        #     res['unit_name']=survey_name
+        #     res['created_by']=created_by
+        # except:pass
+        
+        return res
+    def get(self,survey_id,aggregate="false"):
+        ##First get for all surveys
+        survey_id=HashId.decode(survey_id)
+        # survey_id=HashId.decode("goojkg5jyVnGj9V6Lnw")
+        # parent_survey=survey_id
+        # survey_id= HashId.decode("3NNl87yvoZXN4lypAjq")
+    
+        parent_survey= survey_id
+        l = IrapiData(survey_id,1,1,aggregate)
+        # survey_strct= l.survey_strct()
+        
+
+        
+        #Check if survey has children.
+        #Check for parent too.
+        flag0= l.get_parent()
+
+        if flag0!=False:
+            """There is a parent"""
+            parent_survey= flag0
+        
+        flag= l.flag()
+        
+        if flag ==False:
+            r= {}
+
+            r['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+            return r
+        else:
+
+            if aggregate=="true":
+                
+                response={}
+                response['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+            
+            # return self.logic(survey_id,parent_survey)
+            # response={}
+                units=[]
+            
+                for i in flag:
+                    units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
+                # return response
+            
+                response['units']=units
+                
+                return response
+            else:
+                r= {}
+                r['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+                return r
+
+
+
+        
+
+
+
+"""InclusiveResponse"""
+class IRAPI(Resource):
+    """
+    docstring for IRAPI-  Inclusive-RAPI
+    returns json response 
+    """
+    def get(self,survey_id,start=None,end=None,aggregate="false"):
+        try:
+            survey_id=HashId.decode(survey_id)
+           
+        except ValueError:
+            return "No survey_id or uuid provided"
+
+        lol = IrapiData(survey_id,start,end,aggregate)
+        all_responses= lol.get_data()
+        #return all_responses
+        all_survey= lol.get_uuid_labels()
+        
+        if "referenced" in all_survey[0]:
+
+            parent_survey= all_survey[0]['referenced']['$oid']
+            
+            # parent_survey= HashId.decode(parent_survey)
+            s= IrapiData(parent_survey,start,end)
+            all_survey=s.get_uuid_labels()
+
+            
+            
+        else:
+           
+            all_survey= lol.get_uuid_labels()
+        # return all_responses
+        
+        # try:
+        #     all_survey=all_survey[0]
+        # except :
+        #     pass
+        ret=[]
+        # return all_survey
+        for i in range(len(all_survey)):
+            
+            j_data=all_survey[i]
+            
+            uuid= j_data['cid']
+            response_data=all_responses
+
+            try:
+                options=[]
+                option_code={}
+                for i in range(len(j_data['field_options']['options'])):
+                    options.append(j_data['field_options']['options'][i]['label'])
+                    option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
+            except:pass
+            """Response Count """
+            temp=[]
+            
+            for a in range(len(response_data)):
+                temp.append(response_data[a]['responses'][uuid])
+
+            """Option Count"""
+            options_count={}
+            if j_data['field_type'] not in ["ranking","rating","group_rating"]:
+                for b in temp:
+                    if b in options_count:pass
+                    else:options_count[b]=temp.count(b)
+
+            elif j_data['field_type'] in ["ranking"]:
+                for c in temp:
+                    aTempList=c.split("###")
+                    for d in aTempList:
+                        bTempList=d.split("##")
+                        e= bTempList[0]
+                        if e in options_count:
+                            options_count[e]=int(options_count[e])+len(aTempList)-int(bTempList[1])
+                        else:
+                            options_count[e]=len(aTempList)-int(bTempList[1])
+            elif j_data['field_type']=="group_rating":
+                for f in temp:
+                    aTempList=f.split("###")
+                    for g in aTempList:
+                        bTempList=g.split("##")
+                        l= bTempList[0]
+                        k=bTempList[1]
+                        if l in options_count:
+                            if k in options_count[l]:
+                                options_count[l][k]+=1
+                            else:options_count[l][k]=1
+                        else:
+                            options_count[l]={}
+                            options_count[l][k]=1
+            elif j_data['field_type']=="rating":
+                for i in temp:
+                    i = str(i)
+                    if i in options_count:
+                        options_count[i]+=1
+                    else:options_count[i]=1
+            #return options_count
+            response={}
+            response['cid']=uuid
+            response['label']=j_data['label']
+            response['type']=j_data['field_type']
+            response['option_code']=option_code
+            response['options_count']=options_count
+            response['total_resp']= len(temp)
+            if j_data['field_type']=="rating":
+                avg=0
+                for i in temp: avg+=int(i)
+                # response['avg_rating']= float(avg)/float(len(temp))
+                response['avg_rating']= float(avg)/len(temp)
+            if j_data['field_type']=="group_rating":
+                avg={}
+                for key in options_count:
+                    counter=0
+                    for bkey in options_count[key]:
+                        if int(bkey)!=0:
+                            counter+=float(bkey)*options_count[key][bkey]
+                        else:pass
+                    avg[key]= round(float(counter)/len(temp),2)
+                response['avg_rating']=avg
+            ret.append(response)
+        return ret
+
+
+
+    #       response= {}
+    #       if j_data['field_type']=="rating":
+    #           avg= 0
+    #           for i in temp: avg= avg + int(i)
+    #           response['avg_rating']= float(avg)/float(len(temp))
+    #       if j_data['field_type']=="group_rating":
+    #           avg={}
+    #           for key in options_count:
+    #               counter=0
+    #               for bkey in options_count[key]:
+    #                   if int(bkey)!=0:
+    #                       counter+= float(bkey) * options_count[key][bkey]
+    #                   else:
+    #                       pass
+    #               avg[key]= float(counter)/len(temp) 
+
+    #               # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
+    #           response['avg_rating']=avg
+
+    #       response['cid']= uuid
+    #       # survey_id= j_data['survey_id']
+    #       response['survey_id']=survey_id
+    #       response['label']=j_data['label']
+    #       response['type']=j_data['field_type']
+    #       response['option_code']=option_code
+    #       response['option_count']=options_count
+    #       response['total_resp']=len(temp)
+    #       response['garbage']= temp
+
+    #       ret.append(response)
+    # #return ret
+
+        
 class ResponseAPIController(Resource):
     """docstring for RAPI"""
-    def get(self,survey_id,uuid):
+    def get(self,survey_id,uuid,aggregate="false"):
         survey_id=HashId.decode(survey_id)  #Uncomment on Production
         # survey_id="IamASurveyId"
 
-        lol= DataSort(survey_id,uuid)
-        survey_data = lol.get_uuid_label()
+        lol= DataSort(survey_id,uuid,aggregate)
+        all_survey= lol.get_survey()
+        if "referenced" in all_survey[0]:
+           # return "reference"
+            parent_survey= all_survey[0]['referenced']['$oid']
+            
+            # parent_survey= HashId.decode(parent_survey)
+            s= DataSort(parent_survey,uuid)
+            survey_data= s.get_uuid_label()
 
+            
+            
+        else:
+           
+            survey_data= lol.get_uuid_label()
         j_data= d(survey_data)
-
+        #return j_data
         # Get Responses for  a cid
-        response_data= d(lol.get_response())
+        response_data= lol.get_data()
         #return j_data['field_options']['options'][0]['label']
         # Options
 
@@ -536,6 +909,7 @@ class ResponseAPIController(Resource):
 
         #Response Count
         temp= []
+        
         for i in range(len(response_data)):
 
             temp.append(response_data[i]['responses'][uuid])
@@ -615,14 +989,14 @@ class ResponseAPIController(Resource):
                 #       options_count["below_3"]=1
 
 
-        elif j_data['field_type']=="short_text":
-            return "lol"
+        # elif j_data['field_type']=="short_text":
+        #     return "lol"
 
         response= {}
         if j_data['field_type']=="rating":
             avg= 0
             for i in temp: avg= avg + int(i)
-            response['avg_rating']= float(avg)/float(len(temp))
+            response['avg_rating']= round(float(avg)/float(len(temp)))
         if j_data['field_type']=="group_rating":
             avg={}
             for key in options_count:
@@ -632,7 +1006,7 @@ class ResponseAPIController(Resource):
                         counter+= float(bkey) * options_count[key][bkey]
                     else:
                         pass
-                avg[key]= float(counter)/len(temp)
+                avg[key]= round(float(counter)/len(temp),2)
 
                 # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
             response['avg_rating']=avg

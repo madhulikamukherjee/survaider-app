@@ -488,27 +488,175 @@ def d(data):return json.loads(dumps(data))
 connection= pymongo.MongoClient('localhost', 27017)
 db = connection['qwer']
 survey= db.response
+class IrapiData(object):
+    """docstring for IrapiData"""
+    def __init__(self, survey_id,start,end,aggregate):
+        self.sid= survey_id
+        self.start=start
+        self.end=end
+        self.agg= aggregate
+    def flag(self):
+        # raw= db.survey.find({"_id":ObjectId(self.sid)})
+        # js= d(raw)
+        dat = SurveyUnit.objects(referenced = self.sid)
+        js= [_.repr for _ in dat if not _.hidden]
+        if len(js)!=0:
+            children=[]
+            for i in js:
+                children.append(i['id'])
+            return children
+        else:
+            return False
 
+    def get_multi_data(self,aList):
+        js=[]
+        # return aLists
+        for i in aList:
+            i= HashId.decode(i)
+            raw= db.response.find({"parent_survey":ObjectId(i)})
+            js= js +d(raw)
+        return js  
+    def get_child_data(self,survey_id):
+        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        return d(raw)
+    def get_data(self):
+        dat = SurveyUnit.objects(referenced = self.sid)
+        # return [_.repr for _ in dat if not _.hidden]
+        flag= self.flag()
+        #return "ggg"
+        if flag==False:
+            raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+            js= d(raw)
+
+            return js
+        else:
+            if self.agg=="true":
+                
+                "WIll return all the responses "
+                raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+                js= d(raw)
+                js = js+ self.get_multi_data(flag)
+                return js
+            else:
+                
+                raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+                js= d(raw)
+                return js
+    def get_parent(self):
+        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        js= d(raw)[0]
+        # return js['referenced']
+        if "referenced" in js:#Needs 0
+            return js['referenced']['$oid']
+        else:
+            return False
+    def get_uuid_labels(self):
+        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        
+        m= int(self.start)-1
+        n=int(self.end)+1
+        # return d(raw)[0]['structure']['fields'][a:b]
+
+        if "fields" in d(raw)[0]['structure']:
+            # raw= db.survey.find({"_id":ObjectId(self.sid)
+            a= d(db.survey.find({"_id":ObjectId(self.sid)}))[0]
+            if m==-1 and n==1:
+                return a['structure']['fields']
+            else: return a['structure']['fields'][m:n]
+            a= db.survey.find({"_id":ObjectId(self.sid)})
+            return d(a)[0]['structure']['fields'][m:n]
+
+        return d(db.survey.find({"_id":ObjectId(self.sid)}))
+    def survey_strct(self):
+
+        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        # raw= db.survey.find({"$and":[{"_id":ObjectId(self.sid)},{"structure.fields.field_options.options.label":"Room Service"}]})
+        # return d(raw)
+        js=d(raw)[0]['structure']['fields']
+        # js= d(raw)
+        return js
+    def ret(self):
+        try:
+            raw= db.survey.find({"_id":ObjectId(self.sid)})
+            return d(raw)
+        except:return "Errors"
+
+class Dashboard(IrapiData):
+    """docstring for Dashboard"""
+    def __init__(self,survey_id):
+        self.sid= survey_id
+    
+    
 
 class DataSort(object):
     """docstring for DataSort"""
 
-    def __init__(self,survey_id,uuid):
+    def __init__(self,survey_id,uuid,aggregate):
         self.sid= survey_id
         # self.sid="56582299857c5616113814ae"
         self.uuid= uuid
+        self.agg= aggregate
     def get_survey(self):
         survey= db.survey.find({"_id":ObjectId(self.sid)}) #Got the particular survey.
-        return survey
+        return d(survey)
     def get_response(self):
         response= db.response.find({"parent_survey":ObjectId(self.sid)})
         return d(response)
+    def flag(self):
+        # raw= db.survey.find({"_id":ObjectId(self.sid)})
+        # js= d(raw)
+        dat = SurveyUnit.objects(referenced = self.sid)
+        js= [_.repr for _ in dat if not _.hidden]
+        if len(js)!=0:
+            children=[]
+            for i in js:
+                children.append(i['id'])
+            return children
+        else:
+            return False
+
+    def get_multi_data(self,aList):
+        js=[]
+        # return aLists
+        for i in aList:
+            i= HashId.decode(i)
+            raw= db.response.find({"parent_survey":ObjectId(i)})
+            js= js +d(raw)
+        return js  
+    def get_child_data(self,survey_id):
+        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        return d(raw)
+    def get_data(self):
+        dat = SurveyUnit.objects(referenced = self.sid)
+        # return [_.repr for _ in dat if not _.hidden]
+        flag= self.flag()
+        # return flag
+        if flag==False:
+            raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+            js= d(raw)
+
+            return js
+        else:
+            if self.agg=="true":
+                "WIll return all the responses "
+                raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+                js= d(raw)
+                js = js+ self.get_multi_data(flag)
+                return js
+            else:
+                raw= db.response.find({"parent_survey":ObjectId(self.sid)})
+                js= d(raw)
+                return js
+
+
     def get_uuid_label(self):
         """labels: question text ; options ; etc"""
         #Extract the particular cid from the survey structure
         raw_label=db.survey.find() #returns empty
         raw_label=db.survey.find({"_id":ObjectId(self.sid)})
         aList= d(raw_label)[0]['structure']['fields'] #A backup liseturn aList
+        # aList= d(raw_label)
+        # return aList
         for i in aList:
             if i['cid']==self.uuid:
                 return i

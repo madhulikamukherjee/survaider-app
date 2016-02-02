@@ -16,7 +16,7 @@ from survaider.notification.controller import (NotificationController,
                                                NotificationAggregation,
                                                SurveyTicketController)
 
-from survaider.survey.controller import ResponseAPIController
+from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI
 
 
 api = Api(app, prefix = '/api')
@@ -56,8 +56,9 @@ api.add_resource(NotificationAggregation,
 # API FOR DATA RESPONSES --- Creating New Classes //Zurez
 # api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')
 
-api.add_resource(ResponseAPIController,"/rapi/<string:survey_id>/<string:uuid>/response")
-
+api.add_resource(ResponseAPIController,"/rapi/<string:survey_id>/<string:uuid>/response","/rapi/<string:survey_id>/<string:uuid>/response/<string:aggregate>")
+api.add_resource(DashboardAPIController,"/dashboard/<string:survey_id>/response","/dashboard/<string:survey_id>/response/<string:aggregate>")
+api.add_resource(IRAPI,"/irapi/<string:survey_id>/<string:start>/<string:end>/response","/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
 ###############################
 
 class TemporaryEmailHandler(Resource):
