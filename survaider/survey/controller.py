@@ -695,7 +695,7 @@ class DashboardAPIController(Resource):
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
                 # return response
-            
+                units.append(self.logic(survey_id,parent_survey,"false"))
                 response['units']=units
                 
                 return response
