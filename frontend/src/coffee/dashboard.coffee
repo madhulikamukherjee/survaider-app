@@ -101,6 +101,9 @@ class Dashboard
     rivets.formatters.analytics_uri = (v) ->
       "/survey/s:#{v}/analysis"
 
+    rivets.formatters.analytics_parent_uri = (v) ->
+      "/survey/s:#{v}/analysis?parent=true"
+
     rivets.formatters.survey_uri = (v) ->
       "/survey/s:#{v}/simple"
 

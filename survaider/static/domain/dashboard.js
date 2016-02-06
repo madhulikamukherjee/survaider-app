@@ -137,6 +137,9 @@
       rivets.formatters.analytics_uri = function(v) {
         return "/survey/s:" + v + "/analysis";
       };
+      rivets.formatters.analytics_parent_uri = function(v) {
+        return "/survey/s:" + v + "/analysis?parent=true";
+      };
       rivets.formatters.survey_uri = function(v) {
         return "/survey/s:" + v + "/simple";
       };
