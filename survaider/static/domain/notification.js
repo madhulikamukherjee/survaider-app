@@ -113,7 +113,7 @@
 
     NotificationDock.prototype.load_notifications = function() {
       var uri;
-      uri = '/api/notifications';
+      uri = '/api/notification';
       if (this.time_end != null) {
         uri += "/" + this.time_end;
       }

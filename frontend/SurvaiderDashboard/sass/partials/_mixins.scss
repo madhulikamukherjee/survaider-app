@@ -1,0 +1,50 @@
+@mixin absoluteCenter($xy:xy){
+  @if $xy == xy {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    @include transform(translate(-50%, -50%));
+  }
+
+  @if $xy == y {
+    position: absolute;
+    top: 50%;
+    @include transform(translate(0, -50%));
+  }
+
+  @if $xy == x {
+    position: absolute;
+    left: 50%;
+    @include transform(translate(-50%, 0));
+  }
+}
+
+@mixin absoluteContainer(){
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@mixin createArc($innerRadius ,$outerRadius: 0px, $backgroundColor: #FFFFFF){
+
+  @if $outerRadius != 0px{
+    width: $outerRadius;
+    height: $outerRadius;
+  }
+
+  position: relative;
+  border-radius: 50%;
+
+  &::after{
+    @include absoluteCenter;
+    content: '';
+    border-radius: 50%;
+    z-index: 1;
+    background-color: $backgroundColor;
+    width: $innerRadius;
+    height: $innerRadius;
+  }
+
+}

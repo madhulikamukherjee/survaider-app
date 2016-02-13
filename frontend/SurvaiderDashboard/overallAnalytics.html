@@ -1,0 +1,169 @@
+<div id="main-content" class="sv-main-content">
+
+  <div class="sv-overall-rating">
+
+    <h1 class="unit-name">Overall Analytics</h1>
+
+    <div class="rating-group">
+
+      <div class="rating-header">
+        <h1>Overall Qualitative Survaider Rating - QSR</h1>
+      </div>
+
+      <div class="rating-graph" ng-init="graphWidth = 600; graphHeight = 200; pointRadius = 7; maxOrdinate = maxOrdinateFrom2DPointArray(ratingPoints); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (ratingPoints.length); borderWidth = 20">
+        <svg ng-attr-width="{{graphWidth}}" ng-attr-height="{{graphHeight}}">
+          <g>
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)/2}} ng-attr-y2="{{(graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{(graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
+          </g>
+          <g transform="translate(20, 0)">
+            <g transform="translate(5, 0)">
+              <!-- <g>
+                <line ng-repeat="point in ratingPoints track by $index" y1="{{graphHeight - 20}}" x1="{{$index*abscissaSpacer}}" x2="{{$index*abscissaSpacer}}" y2="{{(graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
+              </g> -->
+              <g>
+                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in ratingPoints track by $index" ng-attr-y="{{graphHeight - 5}}" ng-attr-x="{{$index*abscissaSpacer}}">
+                  {{$index | getTheMonthName}}
+                </text>
+              </g>
+            </g>
+            <g>
+              <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" ng-attr-y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
+            </g>
+            <g>
+              <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{pointRadius}}" ng-attr-cx="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" fill="#4D6AFF" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+    </div>
+
+    <div class="total-respondents">
+      <h3>Total Repondents</h3>
+
+      <h1 ng-bind="appMeta.totalRespondents"></h1>
+    </div>
+
+
+  </div>
+
+
+  <div class="overall-analytics-ctas">
+    <a href="#" class="cta-facebook">Add Facebook Data</a>
+    <a href="#" class="cta-twitter">Add Twitter Data</a>
+  </div>
+
+
+  <!-- Application::Questions -->
+  <div class="sv-unit-questions">
+
+    <ul>
+
+      <li class="sv-unit-question-block" ng-repeat="question in surveyQuestions">
+
+        <div ng-switch on="question.type">
+
+          <div ng-switch-when="yes_no" ng-init="color1 = '#FFF46A'; color2 = '#F5A623'">
+
+            <div class="unit-question-group">
+
+              <div class="unit-question-header">
+                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.title"></h1>
+              </div>
+
+
+              <div class="unit-question-body">
+
+                <div class="yes-no-label">
+                  <h1>a) Yes</h1>
+                  <span style="background-color: {{color1}}"></span>
+                </div>
+                <div class="yes-no-label">
+                  <h1>b) No</h1>
+                  <span style="background-color: {{color2}}"></span>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="unit-question-graph" ng-init="radiusForThePieChart = 75">
+
+              <svg width="200" height="200">
+                <g>
+                  <circle ng-attr-r="{{radiusForThePieChart}}" cx="100" cy="100" fill="{{color1}}" />
+                  <circle ng-attr-r="{{radiusForThePieChart/2}}" cx="100" cy="100" fill="{{color1}}" stroke="{{color2}}" stroke-width="{{radiusForThePieChart}}" stroke-dasharray="{{(radiusForThePieChart*3.14)*(question.response/100)}} {{radiusForThePieChart*3.14}}"/>
+                  <text x="150" y="175">
+                    {{question.response}}%
+                  </text>
+                </g>
+              </svg>
+
+            </div>
+
+          </div>
+
+          <div ng-switch-when="long_text" ng-init="color1 = '#A2EB52'; color2 = '#FB6577'">
+
+            <div class="unit-question-group">
+
+              <div class="unit-question-header">
+                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.title"></h1>
+              </div>
+
+              <div class="unit-question-body">
+
+                <div class="long-text-keywords">
+                  <h3>Positive Keywords:</h3>
+                  <ul>
+                    <li ng-repeat="keyword in question.response['positive_keywords']['words']">
+                      <span ng-bind="keyword"></span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="long-text-keywords">
+                  <h3>Negative Keywords:</h3>
+                  <ul>
+                    <li ng-repeat="keyword in question.response['negative_keywords']['words']">
+                      <span ng-bind="keyword"></span>
+                    </li>
+                  </ul>
+                </div>
+
+
+              </div>
+
+            </div>
+
+            <div class="unit-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+              <svg width="200" height="200" class="long-text">
+                <g transform="translate(25,0)">
+                  <g>
+                    <text x="0" y="25">{{positiveData}}%</text>
+                    <rect x="0" ng-attr-y="{{200-positiveData*1.5}}" ng-attr-height="{{positiveData*1.5}}" fill="{{color1}}" ng-attr-width="{{barWidth}}" />
+                  </g>
+                  <g>
+                    <text ng-attr-x="{{barWidth*2}}" y="25">{{negativeData}}%</text>
+                    <rect ng-attr-x="{{barWidth*2}}" ng-attr-y="{{200 - negativeData*1.5}}" ng-attr-height="{{negativeData*1.5}}" fill="{{color2}}" ng-attr-width="{{barWidth}}" />
+                  </g>
+                </g>
+              </svg>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </li>
+
+    </ul>
+
+  </div>
+
+</div>

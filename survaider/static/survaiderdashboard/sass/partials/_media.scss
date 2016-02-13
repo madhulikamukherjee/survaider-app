@@ -1,0 +1,13 @@
+@media only screen
+and (min-width : 320px)
+and (max-width : 768px) {
+
+  .sv-sidebar{
+    display: none;
+  }
+
+  .sv-main-content-wrapper{
+    padding-left: 0 !important;
+  }
+
+}

@@ -1,0 +1,31 @@
+body{
+  margin: 0;
+  position: relative;
+}
+
+*,
+*::after,
+*::before{
+  box-sizing: border-box;
+}
+
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
+input,
+textarea{
+  border: none;
+  outline: none;
+}
+
+ul{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1,h2,h3,h4,h5,h6{
+  margin: 0;
+}

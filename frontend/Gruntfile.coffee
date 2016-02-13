@@ -15,6 +15,8 @@ ALL_TASKS = [
   'copy:new_thankyou_template'
   'copy:new_contact'
   'copy:new_contact_template'
+  'copy:survaiderdashboard'
+  'copy:survaiderdashboardtemplate'
 ]
 
 PROXY_TASKS = [
@@ -253,6 +255,19 @@ module.exports = (grunt) ->
         expand: true
         src: 'simplesurvey/index.simplesurvey.html'
         dest: '<%= build %>'
+
+      survaiderdashboard:
+        expand: true
+        cwd: 'SurvaiderDashboard/'
+        src: '**/*'
+        dest: '<%= build %>/survaiderdashboard'
+
+      survaiderdashboardtemplate:
+        expand: true
+        cwd: 'SurvaiderDashboard/'
+        src: 'index.analysis.html'
+        dest: '<%= templates %>/survaiderdashboard'
+
       new_homepage:
         expand: true
         cwd: 'homepage_pages'

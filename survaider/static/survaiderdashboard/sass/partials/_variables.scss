@@ -1,0 +1,49 @@
+/*---------------------------------------------------*/
+//Header
+/*---------------------------------------------------*/
+
+$header-height: 60px;
+$header-bg-color: #50E3C2;
+
+$logo-color: #FFFFFF;
+
+$header-action-bg-color: #7EFFE2;
+$header-action-color: #9B9B9B;
+
+
+/*---------------------------------------------------*/
+//Sidebar
+/*---------------------------------------------------*/
+
+$sidebar-width: 170px;
+$sidebar-top-padding: $header-height;
+$sidebar-bg-color: #4A4A4A;
+
+$sidebar-nav-link-color: #9B9B9B;
+
+/*---------------------------------------------------*/
+//Main Content
+/*---------------------------------------------------*/
+
+$main-left-padding: $sidebar-width;
+$main-top-padding: $header-height;
+$main-bg-color: #F6F2F2;
+
+$overall-rating-bg-color: #FFFFFF;
+
+$unit-block-width: 225px;
+$unit-block-bg-color: #FFFFFF;
+$unit-block-header-bg-color: #50E3C2;
+
+$unit-question-block-bg-color: #FFFFFF;
+
+
+/*---------------------------------------------------*/
+//Fonts
+/*---------------------------------------------------*/
+
+$font1R: 'Montserrat-Regular', sans-serif;
+$font1L: 'Montserrat-Light', sans-serif;
+$font1XL: 'Montserrat-Hairline', sans-serif;
+$font2R: 'Raleway-Regular', sans-serif;
+$font2L: 'Raleway-Light', sans-serif;

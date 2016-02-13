@@ -49,7 +49,7 @@ class NotificationDock extends Backbone.View
   template: Survaider.Templates['notification.dock']
 
   load_notifications: () ->
-    uri = '/api/notifications'
+    uri = '/api/notification'
     uri += "/#{@time_end}" if @time_end?
 
     return if @load_old_disable is yes

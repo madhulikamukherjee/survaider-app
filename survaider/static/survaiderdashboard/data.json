@@ -1,0 +1,523 @@
+{
+  "total_respondents": 8105,
+  "rating_data": [
+     {
+        "x":1,
+        "y":20
+     },
+     {
+        "x":2,
+        "y":60
+     },
+     {
+        "x":3,
+        "y":70
+     },
+     {
+        "x":4,
+        "y":100
+     },
+     {
+        "x":5,
+        "y":150
+     },
+     {
+        "x":6,
+        "y":170
+     },
+     {
+        "x":7,
+        "y":190
+     },
+     {
+        "x":8,
+        "y":220
+     },
+     {
+        "x":9,
+        "y":240
+     },
+     {
+        "x":10,
+        "y":288
+     },
+     {
+        "x":11,
+        "y":315
+     },
+     {
+        "x":12,
+        "y":350
+     }
+  ],
+  "questions": [
+
+    {
+      "id": 1,
+      "title": "On arrival to the salon, were you happy with the surrounding and setting?",
+      "type": "yes_no",
+      "response": 25
+    },
+    {
+      "id": 2,
+      "title": "Are there any testimonials you would like to leave on our website?",
+      "type": "long_text",
+      "response": {
+        "positive_keywords": {
+          "words": ["refershing", "caring", "love", "good", "amazing", "nice", "relaxing"],
+          "data": 81
+        },
+        "negative_keywords": {
+          "words": ["depressing", "dirty", "cheap", "poor"],
+          "data": 19
+        }
+      }
+    }
+
+  ],
+  "features": [
+
+    {
+      "id": 1,
+      "label": "Service"
+    },
+    {
+      "id": 2,
+      "label": "Value for Money"
+    },
+    {
+      "id": 3,
+      "label": "Cleanliness"
+    },
+    {
+      "id": 4,
+      "label": "Amenities"
+    },
+    {
+      "id": 5,
+      "label": "Onboarding Experience"
+    }
+
+  ],
+
+  "units": [
+
+    {
+      "id": 1,
+      "name": "Janakpuri Ext",
+      "features": [
+
+        {
+          "id": 1,
+          "score": 15
+        },
+        {
+          "id": 2,
+          "score": 69
+        },
+        {
+          "id": 3,
+          "score": 54
+        },
+        {
+          "id": 4,
+          "score": 69
+        },
+        {
+          "id": 5,
+          "score": 30
+        }
+
+      ],
+
+      "questions": [
+
+        {
+          "id": 1,
+          "title": "On arrival to the salon, were you happy with the surrounding and setting?",
+          "type": "yes_no",
+          "response": 25
+        },
+        {
+          "id": 2,
+          "title": "Are there any testimonials you would like to leave on our website?",
+          "type": "long_text",
+          "response": {
+            "positive_keywords": {
+              "words": ["refershing", "caring", "love", "good", "amazing", "nice", "relaxing"],
+              "data": 81
+            },
+            "negative_keywords": {
+              "words": ["depressing", "dirty", "cheap", "poor"],
+              "data": 19
+            }
+          }
+        }
+
+      ],
+      "rating_data": [
+         {
+            "x":1,
+            "y":70
+         },
+         {
+            "x":2,
+            "y":20
+         },
+         {
+            "x":3,
+            "y":45
+         },
+         {
+            "x":4,
+            "y":140
+         },
+         {
+            "x":5,
+            "y":100
+         },
+         {
+            "x":6,
+            "y":170
+         },
+         {
+            "x":7,
+            "y":190
+         },
+         {
+            "x":8,
+            "y":220
+         },
+         {
+            "x":9,
+            "y":240
+         },
+         {
+            "x":10,
+            "y":288
+         },
+         {
+            "x":11,
+            "y":315
+         },
+         {
+            "x":12,
+            "y":350
+         }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Greater Kailash 2",
+      "features": [
+
+        {
+          "id": 1,
+          "score": 15
+        },
+        {
+          "id": 2,
+          "score": 30
+        },
+        {
+          "id": 3,
+          "score": 38
+        },
+        {
+          "id": 4,
+          "score": 15
+        },
+        {
+          "id": 5,
+          "score": 50
+        }
+
+      ],
+
+      "questions": [
+
+        {
+          "id": 1,
+          "title": "On arrival to the salon, were you happy with the surrounding and setting?",
+          "type": "yes_no",
+          "response": 25
+        },
+        {
+          "id": 2,
+          "title": "Are there any testimonials you would like to leave on our website?",
+          "type": "long_text",
+          "response": {
+            "positive_keywords": {
+              "words": ["refershing", "caring", "love", "good", "amazing", "nice", "relaxing"],
+              "data": 81
+            },
+            "negative_keywords": {
+              "words": ["depressing", "dirty", "cheap", "poor"],
+              "data": 19
+            }
+          }
+        }
+
+      ],
+      "rating_data": [
+         {
+            "x":1,
+            "y":20
+         },
+         {
+            "x":2,
+            "y":60
+         },
+         {
+            "x":3,
+            "y":70
+         },
+         {
+            "x":4,
+            "y":100
+         },
+         {
+            "x":5,
+            "y":150
+         },
+         {
+            "x":6,
+            "y":170
+         },
+         {
+            "x":7,
+            "y":190
+         },
+         {
+            "x":8,
+            "y":220
+         },
+         {
+            "x":9,
+            "y":240
+         },
+         {
+            "x":10,
+            "y":288
+         },
+         {
+            "x":11,
+            "y":315
+         },
+         {
+            "x":12,
+            "y":350
+         }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Defence Colony",
+      "features": [
+
+        {
+          "id": 1,
+          "score": 54
+        },
+        {
+          "id": 2,
+          "score": 30
+        },
+        {
+          "id": 3,
+          "score": 69
+        },
+        {
+          "id": 4,
+          "score": 69
+        },
+        {
+          "id": 5,
+          "score": 45
+        }
+
+      ],
+
+      "questions": [
+
+        {
+          "id": 1,
+          "title": "On arrival to the salon, were you happy with the surrounding and setting?",
+          "type": "yes_no",
+          "response": 25
+        },
+        {
+          "id": 2,
+          "title": "Are there any testimonials you would like to leave on our website?",
+          "type": "long_text",
+          "response": {
+            "positive_keywords": {
+              "words": ["refershing", "caring", "love", "good", "amazing", "nice", "relaxing"],
+              "data": 81
+            },
+            "negative_keywords": {
+              "words": ["depressing", "dirty", "cheap", "poor"],
+              "data": 19
+            }
+          }
+        }
+
+      ],
+      "rating_data": [
+         {
+            "x":1,
+            "y":20
+         },
+         {
+            "x":2,
+            "y":60
+         },
+         {
+            "x":3,
+            "y":70
+         },
+         {
+            "x":4,
+            "y":100
+         },
+         {
+            "x":5,
+            "y":150
+         },
+         {
+            "x":6,
+            "y":170
+         },
+         {
+            "x":7,
+            "y":190
+         },
+         {
+            "x":8,
+            "y":220
+         },
+         {
+            "x":9,
+            "y":240
+         },
+         {
+            "x":10,
+            "y":288
+         },
+         {
+            "x":11,
+            "y":315
+         },
+         {
+            "x":12,
+            "y":350
+         }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Lajpat Nagar",
+      "features": [
+
+        {
+          "id": 1,
+          "score": 30
+        },
+        {
+          "id": 2,
+          "score": 77
+        },
+        {
+          "id": 3,
+          "score": 46
+        },
+        {
+          "id": 4,
+          "score": 69
+        },
+        {
+          "id": 5,
+          "score": 77
+        }
+
+      ],
+
+      "questions": [
+
+        {
+          "id": 1,
+          "title": "On arrival to the salon, were you happy with the surrounding and setting?",
+          "type": "yes_no",
+          "response": 25
+        },
+        {
+          "id": 2,
+          "title": "Are there any testimonials you would like to leave on our website?",
+          "type": "long_text",
+          "response": {
+            "positive_keywords": {
+              "words": ["refershing", "caring", "love", "good", "amazing", "nice", "relaxing"],
+              "data": 81
+            },
+            "negative_keywords": {
+              "words": ["depressing", "dirty", "cheap", "poor"],
+              "data": 19
+            }
+          }
+        }
+
+      ],
+      "rating_data": [
+         {
+            "x":1,
+            "y":20
+         },
+         {
+            "x":2,
+            "y":60
+         },
+         {
+            "x":3,
+            "y":70
+         },
+         {
+            "x":4,
+            "y":100
+         },
+         {
+            "x":5,
+            "y":150
+         },
+         {
+            "x":6,
+            "y":170
+         },
+         {
+            "x":7,
+            "y":190
+         },
+         {
+            "x":8,
+            "y":220
+         },
+         {
+            "x":9,
+            "y":240
+         },
+         {
+            "x":10,
+            "y":288
+         },
+         {
+            "x":11,
+            "y":315
+         },
+         {
+            "x":12,
+            "y":350
+         }
+      ]
+    }
+
+  ]
+}

@@ -1,0 +1,43 @@
+<div class="sv-overall-rating">
+
+  <div class="rating-group">
+
+    <div class="rating-header">
+      <h1>Overall Qualitative Survaider Rating - QSR</h1>
+    </div>
+
+    <div class="rating-graph" maxOrdinate = maxOrdinateFrom2DPointArray(ratingPoints); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (ratingPoints.length); borderWidth = 20>
+      <svg width="{{graphWidth}}" height="{{graphHeight}}">
+        <g transform="translate(20, 0)">
+          <g transform="translate(5, 0)">
+            <!-- <g>
+              <line ng-repeat="point in ratingPoints track by $index" y1="{{graphHeight - 20}}" x1="{{$index*abscissaSpacer}}" x2="{{$index*abscissaSpacer}}" y2="{{(graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
+            </g> -->
+            <g>
+              <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in ratingPoints track by $index" y="{{graphHeight - 5}}" x="{{$index*abscissaSpacer}}">
+                {{$index | getTheMonthName}}
+              </text>
+            </g>
+          </g>
+          <g>
+            <line ng-repeat="point in ratingPoints track by $index" x1="{{(pointRadius + $index*abscissaSpacer)}}" x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" r="{{pointRadius}}" cx="{{(pointRadius + $index*abscissaSpacer)}}" cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
+          </g>
+          <g>
+            <circle ng-repeat="point in ratingPoints track by $index" r="{{pointRadius}}" cx="{{(pointRadius + $index*abscissaSpacer)}}" cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" fill="#4D6AFF" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+  </div>
+
+  <div class="total-respondents">
+    <h3>Total Repondents</h3>
+
+    <h1 ng-bind="appMeta.totalRespondents"></h1>
+
+    <a href="#" class="generate-ticket-btn">Generate Ticket</a>
+  </div>
+
+
+</div>

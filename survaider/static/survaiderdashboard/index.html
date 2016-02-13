@@ -1,0 +1,87 @@
+<!doctype html>
+<html class="no-js" lang="" ng-app="SurvaiderDashboard">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Survaider Dashboard</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+
+        <link rel="stylesheet" href="css/style.css" media="screen" title="no title" charset="utf-8">
+
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <main ng-controller="MainController">
+
+          <!-- Application::Header -->
+          <header id="header" class="sv-header">
+            <div class="sv-logo">
+              <h2>
+                <a href="/">Survaider</a>
+              </h2>
+            </div>
+
+            <div class="sv-header-nav">
+              <h3>
+                <a href="/#/overallAnalytics">Overall Analytics</a>
+              </h3>
+            </div>
+          </header>
+
+          <!-- Application::Sidebar -->
+          <section id="sidebar" class="sv-sidebar">
+            <div class="sv-sidebar-nav">
+              <ul>
+                <li>
+                  <a href="#">Data</a>
+                </li>
+                <li>
+                  <a href="#">Edit Survey</a>
+                </li>
+                <li>
+                  <a href="#">Share</a>
+                </li>
+                <li>
+                  <a href="#">Settings</a>
+                </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Application::Main Content -->
+          <section class="sv-main-content-wrapper">
+
+            <div ng-view></div>
+
+          </section>
+
+        </main>
+
+
+        <!-- Javascripts Includes -->
+
+        <!-- Libraries -->
+        <script src="js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
+        <script src="js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
+        <script src="js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+
+        <!-- App::Models -->
+        <script src="js/app/models/question.js" charset="utf-8"></script>
+        <script src="js/app/models/feature.js" charset="utf-8"></script>
+        <script src="js/app/models/unit.js" charset="utf-8"></script>
+
+        <!-- App::Application -->
+        <script src="js/app/app.js" charset="utf-8"></script>
+
+        <!-- App::Angular_Setup -->
+        <script src="js/main.js" charset="utf-8"></script>
+
+    </body>
+</html>

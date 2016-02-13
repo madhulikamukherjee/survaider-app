@@ -517,11 +517,11 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
 
         response_data= d(lol.get_data())
-       # return len(response_data)
+        #return response_data
         # survey_strct= d(lol.survey_strct())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
-           
+
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
@@ -613,7 +613,7 @@ class DashboardAPIController(Resource):
                         else:pass
                         avg[key]= round(float(counter)/len(temp),2)
 
-            # return option_code, options_count
+            #return option_code, options_count
             # for i in range(len(response_data)):
             #     temp.append(response_data[i]['responses'][cid])
             # return temp[9]
@@ -646,6 +646,7 @@ class DashboardAPIController(Resource):
                 response['unit_name']=survey_name
                 response['created_by']=created_by
             except:pass
+            response['total_resp']=len(response_data)
             res.append(response)
         # try:
         #     res['unit_name']=survey_name
@@ -682,22 +683,21 @@ class DashboardAPIController(Resource):
             r['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
             return r
         else:
-
             if aggregate=="true":
                 
                 response={}
                 response['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
             
-            # return self.logic(survey_id,parent_survey)
+                return self.logic(survey_id,parent_survey,aggregate)
             # response={}
                 units=[]
-            
+                
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
                 # return response
                 units.append(self.logic(survey_id,parent_survey,"false"))
                 response['units']=units
-                
+                return "true"
                 return response
             else:
                 r= {}
@@ -1056,7 +1056,7 @@ def get_analysis_page(survey_id):
     except TypeError:
         raise ViewException("Invalid Survey ID", 404)
 
-    return render_template('srvy.analysis.html', title = "Analytics", survey = svey.repr)
+    return render_template('survaiderdashboard/index.analysis.html', title = "Analytics", survey = svey.repr)
 
 @srvy.route('/s:<survey_id>/simple')
 def get_simple_survey(survey_id):
