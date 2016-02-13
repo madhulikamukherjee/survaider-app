@@ -687,9 +687,7 @@ class DashboardAPIController(Resource):
                 
                 response={}
                 response['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
-            
-                return self.logic(survey_id,parent_survey,aggregate)
-            # response={}
+
                 units=[]
                 
                 for i in flag:
@@ -697,7 +695,7 @@ class DashboardAPIController(Resource):
                 # return response
                 units.append(self.logic(survey_id,parent_survey,"false"))
                 response['units']=units
-                return "true"
+                # return "true"
                 return response
             else:
                 r= {}
