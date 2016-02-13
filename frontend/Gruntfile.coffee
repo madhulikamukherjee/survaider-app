@@ -323,7 +323,7 @@ module.exports = (grunt) ->
     watch:
       all:
         files: [
-          'src/sass/*.sass'
+          'src/sass/*.scss'
           'src/coffee/*.coffee'
           'src/templates/*.html'
         ]

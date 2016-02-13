@@ -1,6 +1,6 @@
 <div id="main-content" class="sv-main-content">
 
-  <div class="sv-overall-rating">
+  <!-- <div class="sv-overall-rating">
 
     <div class="rating-group">
 
@@ -16,11 +16,11 @@
             <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{(graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
           </g>
           <g transform="translate(20, 0)">
-            <g transform="translate(5, 0)">
+            <g transform="translate(5, 0)"> -->
               <!-- <g>
                 <line ng-repeat="point in ratingPoints track by $index" y1="{{graphHeight - 20}}" x1="{{$index*abscissaSpacer}}" x2="{{$index*abscissaSpacer}}" y2="{{(graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
               </g> -->
-              <g>
+              <!--<g>
                 <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in ratingPoints track by $index" ng-attr-y="{{graphHeight - 5}}" ng-attr-x="{{$index*abscissaSpacer}}">
                   {{$index | getTheMonthName}}
                 </text>
@@ -28,9 +28,9 @@
             </g>
             <g>
               <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" ng-attr-y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
-            </g>
+            </g> -->
             <!-- Tickets Line -->
-            <g>
+            <!--<g>
               <line ng-if="ticketDetails.x" ng-attr-x1="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[ticketDetails.x - 1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#FFE491" stroke-width="5" />
               <g>
                 <text ng-if="ticketDetails.x" ng-attr-x="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-y="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[ticketDetails.x - 1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) ) - 15}}" fill="#333333" text-anchor="middle">
@@ -58,9 +58,9 @@
     </div>
 
 
-  </div>
+  </div> -->
 
-  <div class="sv-modal" ng-show="isTicketModal">
+  <div style="display:none" class="sv-modal" ng-show="isTicketModal">
     <div class="modal-content">
       <div class="ticket-modal">
         <h2>In how many outlets?</h2>
@@ -112,6 +112,33 @@
 
   </div>
 
+  <!-- App::Features -->
+  <div class="sv-unit-features">
+
+    <ul>
+
+      <!--
+        ** Scope Model : feature (from unit.features)
+        ** Properties:-
+        *** label
+      -->
+
+      <li class="sv-unit-feature-block" ng-repeat="feature in features track by $index">
+
+        <div class="unit-feature-score" style="background-color: {{colors[$index%colors.length]}}">
+          <h1 ng-bind="feature.score"></h1>
+        </div>
+
+        <div class="unit-feature-label">
+          <h4 ng-bind="feature.label"></h4>
+        </div>
+
+      </li>
+
+    </ul>
+
+  </div>
+
   <!-- Units -->
   <div class="sv-units">
 
@@ -124,7 +151,7 @@
       and calculate the totalGraphWidth and amount to translate the group to center it by using the $scope.features array
     -->
 
-    <ul ng-init="totalMaxGraphHeight = 150; blockWidth = 225; barWidth = 25; barMargin = 5; totalGraphWidth = (barWidth*features.length + barMargin*(features.length-1)); groupToTranslate = (blockWidth - totalGraphWidth) / 2">
+    <ul>
       <!--
         ** Scope Model : unit
         ** Properties:-
@@ -134,11 +161,11 @@
         **** feature.score
       -->
 
-      <li style="width: {{blockWidth}}px" class="sv-unit-block" ng-repeat="unit in units">
+      <li style="width: {{theGraph.blockWidth}}px" class="sv-unit-block" ng-repeat="unit in units">
 
         <div class="unit-header">
           <h4>
-            <a href="/#/unit/{{unit.id}}" ng-bind="unit.name"></a>
+            <a href="#/unit/{{unit.id}}" ng-bind="unit.name"></a>
           </h4>
         </div>
 
@@ -146,11 +173,11 @@
           <h2 ng-bind="unit.overallScore"></h2>
         </div>
 
-        <div class="unit-feature-graph" ng-init="maxScore = maxElementFromArray(unit.features); barWidth= 25">
+        <div class="unit-feature-graph" ng-init="maxScore = maxElementFromArray(unit.features)">
 
-          <svg ng-attr-height="{{totalMaxGraphHeight}}">
-            <g ng-attr-transform="translate({{groupToTranslate}}, 0)">
-              <rect ng-repeat="feature in unit.features track by $index" ng-attr-x="{{25*$index+5*$index}}" ng-attr-y="{{totalMaxGraphHeight-(feature.score * (totalMaxGraphHeight/maxScore))}}" ng-attr-height="{{feature.score * (totalMaxGraphHeight/maxScore)}}" ng-attr-width="{{barWidth}}" fill="{{colors[$index%colors.length]}}"  />
+          <svg ng-attr-height="{{theGraph.totalMaxGraphHeight}}">
+            <g ng-attr-transform="translate({{theGraph.groupToTranslate}}, 0)">
+              <rect ng-repeat="feature in unit.features track by $index" ng-attr-x="{{25*$index+5*$index}}" ng-attr-y="{{theGraph.totalMaxGraphHeight-(feature.score * (theGraph.totalMaxGraphHeight/maxScore))}}" ng-attr-height="{{feature.score * (theGraph.totalMaxGraphHeight/maxScore)}}" ng-attr-width="{{theGraph.barWidth}}" fill="{{colors[$index%colors.length]}}"  />
             </g>
           </svg>
 

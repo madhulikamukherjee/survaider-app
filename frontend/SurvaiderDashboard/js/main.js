@@ -13,46 +13,10 @@
     uri += "/true";
   }
 
+  var PATHNAME = window.location.pathname;
+
+
   appModule.controller('MainController', ['$scope','$http', function($scope, $http){
-
-    $http.get('/static/survaiderdashboard/data.json').success(function(data){
-
-      application = new myapp(data);
-      $scope.features = application.features;
-      $scope.colors = application.colors;
-      $scope.ratingPoints = application.ratingPoints;
-      $scope.appMeta = application.meta;
-
-
-      $scope.maxElementFromArray = function(input){
-        var max = -1;
-
-        if (input.length > 0) {
-          for (var i = 0; i < input.length; i++) {
-            if (input[i].score > max) {
-              max = input[i].score;
-            }
-          }
-        }
-
-        return max;
-      }
-
-      $scope.maxOrdinateFrom2DPointArray = function(input){
-        var max = -1;
-
-        if (input.length > 0) {
-          for (var i = 0; i < input.length; i++) {
-            if (input[i].y > max) {
-              max = input[i].y;
-            }
-          }
-        }
-
-        return max;
-      }
-
-    });
 
   }]);
 
@@ -60,16 +24,66 @@
 
     $scope.isTicketModal = false;
 
-    $scope.units = application.units;
+    $http.get(uri).success(function(data){
 
-    $http.get('generateTicket.json').success(function(data){
-      $scope.ticketDetails = {};
+      application = new myapp(data);
+      $scope.features = application.features;
+      $scope.colors = application.colors;
+      $scope.units = application.units;
+      // $scope.ratingPoints = application.ratingPoints;
+      // $scope.appMeta = application.meta;
 
-      if (data.x != -1) {
-        $scope.ticketDetails = data;
-      }
+      var numberOfFeatures = $scope.features.length;
+
+      $scope.theGraph = {
+        totalMaxGraphHeight: 150,
+        blockWidth: 225,
+        barWidth: 25,
+        barMargin: 5
+      };
+
+      $scope.theGraph['totalGraphWidth'] = ($scope.theGraph.barWidth)*(numberOfFeatures) + ($scope.theGraph.barMargin)*(numberOfFeatures-1);
+
+      $scope.theGraph['groupToTranslate'] = (($scope.theGraph.blockWidth) - ($scope.theGraph.totalGraphWidth)) / 2;
 
     });
+
+    $scope.maxElementFromArray = function(input){
+      var max = -1;
+
+      if (input.length > 0) {
+        for (var i = 0; i < input.length; i++) {
+          if (input[i].score > max) {
+            max = input[i].score;
+          }
+        }
+      }
+
+      return max;
+    }
+
+    $scope.maxOrdinateFrom2DPointArray = function(input){
+      var max = -1;
+
+      if (input.length > 0) {
+        for (var i = 0; i < input.length; i++) {
+          if (input[i].y > max) {
+            max = input[i].y;
+          }
+        }
+      }
+
+      return max;
+    }
+
+    // $http.get('generateTicket.json').success(function(data){
+    //   $scope.ticketDetails = {};
+    //
+    //   if (data.x != -1) {
+    //     $scope.ticketDetails = data;
+    //   }
+    //
+    // });
 
   }]);
 
@@ -77,6 +91,7 @@
   appModule.controller('UnitController', [ '$scope', '$routeParams', function($scope, $routeParams){
 
     $scope.unit = application.units[$routeParams.id-1];
+    console.log("Hello");
 
   }]);
 
@@ -87,20 +102,21 @@
 
   }]);
 
+  var STATIC_URL = '/static/SurvaiderDashboard/'
 
   appModule.config(['$routeProvider', function($routeProvider){
     $routeProvider
     .when('/unit/:id', {
       controller: 'UnitController',
-      templateUrl: '/static/survaiderdashboard/unit.html'
+      templateUrl: STATIC_URL + 'unit.html'
     })
     .when('/overallAnalytics', {
       controller: 'OverallAnalyticsController',
-      templateUrl: '/static/survaiderdashboard/overallAnalytics.html'
+      templateUrl: STATIC_URL + 'overallAnalytics.html'
     })
     .otherwise({
       controller: 'HomeController',
-      templateUrl: '/static/survaiderdashboard/home.html'
+      templateUrl: STATIC_URL + 'home.html'
     })
   }]);
 

@@ -232,6 +232,8 @@ body {
 /*---------------------------------------------------*/
 .sv-unit-features {
   margin-top: 2.5em; }
+  .sv-unit-features ul {
+    text-align: center; }
 
 .sv-unit-feature-block {
   width: 20%;

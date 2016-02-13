@@ -3,10 +3,10 @@
   function unit(id, name, overallScore){
     this.id = id;
     this.name = name;
-    this.overallScore = 0;
+    this.overallScore = overallScore;
     this.features = [];
-    this.questions = [];
-    this.ratingData = [];
+    // this.questions = [];
+    // this.ratingData = [];
   }
 
   unit.prototype.setTheOverallScore = function(){
@@ -24,6 +24,18 @@
     }
 
     this.overallScore = total;
+  }
+
+  unit.prototype.setFeaturesData = function(featuresData){
+    var self = this;
+    var index = 0;
+
+    for (var prop in featuresData) {
+      if( featuresData.hasOwnProperty( prop ) ) {
+        self.features.push({ id: (index+1), score: featuresData[prop] });
+      }
+    }
+
   }
 
   window.unit = unit;
