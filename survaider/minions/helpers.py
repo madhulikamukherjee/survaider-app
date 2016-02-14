@@ -98,5 +98,4 @@ def api_get_object(collection, oid):
         return obj
 
     except TypeError:
-        print(oid, collection)
         raise APIException("Invalid Object ID", 404)

@@ -19,8 +19,19 @@ ALL_TASKS = [
   'copy:survaiderdashboardtemplate'
 ]
 
+FRONTEND_DEV = [
+  'jst:all'
+  'coffee:all'
+  'concat:all'
+  'sass:all'
+]
+
 PROXY_TASKS = [
   'watch:proxy'
+]
+
+WATCH_FRONTEND = [
+  'watch:frontend'
 ]
 
 module.exports = (grunt) ->
@@ -347,5 +358,18 @@ module.exports = (grunt) ->
             host: 'localhost'
             port: 35729
 
+      frontend:
+        files: [
+          'src/sass/*.sass'
+          'src/coffee/*.coffee'
+          'src/templates/*.html'
+        ]
+        tasks: FRONTEND_DEV
+        options:
+          livereload:
+            host: 'localhost'
+            port: 35729
+
   grunt.registerTask 'default', ALL_TASKS
+  grunt.registerTask 'frontend', WATCH_FRONTEND
   grunt.registerTask 'proxy_task', PROXY_TASKS

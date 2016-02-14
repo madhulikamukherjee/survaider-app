@@ -17,6 +17,7 @@ from survaider.notification.controller import (NotificationController,
                                                SurveyTicketController)
 
 from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI
+from survaider.minions.future import SurveySharePromiseController
 
 
 api = Api(app, prefix = '/api')
@@ -52,6 +53,8 @@ api.add_resource(NotificationAggregation,
                  '/notification',
                  '/notification/<string:kind>',
                  '/notification/<string:kind>/<string:time_offset>')
+
+api.add_resource(SurveySharePromiseController, '/promise/<string:f_id>')
 
 # API FOR DATA RESPONSES --- Creating New Classes //Zurez
 # api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')

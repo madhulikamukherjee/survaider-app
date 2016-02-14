@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, g, request, jsonify
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import current_user
 from flask.ext.security.views import login as security_login
@@ -21,8 +21,8 @@ def create_app():
     from .admin.controller import admin
     from .dashboard.controller import dashboard, dashboard_home
     from .survey.controller import srvy
-    from .REST.controller import api
-    from survaider.minions.exceptions import ViewException
+    from .REST.controller import api, handle_api_exception
+    from survaider.minions.exceptions import ViewException, APIException
     from .minions.helpers import Routines
     from .notification.controller import (notification,
                                           register as register_notifications)
@@ -73,7 +73,16 @@ def create_app():
             'error_msg': e.message,
             'error_dsc': e.to_dict()
         }
-        return render_template('error_splash.html', dat = dat), 404
+        return render_template('error_splash.html', dat = dat), e.status_code
+
+    @app.errorhandler(APIException)
+    def handle_api_exception(e):
+        dat = {
+            'error_code': e.status_code,
+            'error_msg': e.message,
+            'error_dsc': e.to_dict()
+        }
+        return jsonify(dat), e.status_code
 
     @app.route('/')
     def home():

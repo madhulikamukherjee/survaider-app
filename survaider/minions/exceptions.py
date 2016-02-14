@@ -27,3 +27,6 @@ class ViewException(Exception):
         rv['error']   = True
         rv['message'] = self.message
         return rv
+
+class MethodUnavailable(Exception):
+    pass
