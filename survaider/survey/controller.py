@@ -769,18 +769,53 @@ class IRAPI(Resource):
 
             """Option Count"""
             options_count={}
+            options_count_segg={}
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
                 for b in temp:
+                    if j_data['field_type']=='multiple_choice':
+                        split_b= b.split('###')
+                        if len(split_b)==0:
+                            if split_b[0] in options_count_segg:
+                                options_count_segg[split_b[0]]+=1
+                            else:options_count_segg[split_b[0]]=1
+                        elif len(split_b)!=0:
+
+                            for i in split_b:
+                                if i in options_count_segg:
+                                    options_count_segg[i]+=1
+                                else:options_count_segg[i]=1
+                            
                     if b in options_count:pass
                     else:options_count[b]=temp.count(b)
 
             elif j_data['field_type'] in ["ranking"]:
-                for c in temp:
-                    aTempList=c.split("###")
+                values={}
+                for c in temp:#temp is an array of responses
+
+                    aTempList=c.split("###") #split a##2###b##1### [ "a##1", "b##3", "c##2"]
                     for d in aTempList:
-                        bTempList=d.split("##")
-                        e= bTempList[0]
+                        bTempList=d.split("##") #["a","1"]
+
+                        e= bTempList[0] #Values are a ,b
+                        rank_key= bTempList[1] #values are 1,2,3,4
+                        if e in values:
+                            if rank_key in values[e]:
+                                values[e][rank_key]+=1
+                            else:
+
+                                # values[e]={}
+                                values[e][rank_key]=1
+                                
+                        else:
+                            values[e]={}
+                            values[e][rank_key]=1
+
                         if e in options_count:
+                            """
+                            e is for eg : a_1 or a_2
+                            aTempList is the total options
+                            bTempList is option:value pair
+                            """
                             options_count[e]=int(options_count[e])+len(aTempList)-int(bTempList[1])
                         else:
                             options_count[e]=len(aTempList)-int(bTempList[1])
@@ -811,6 +846,11 @@ class IRAPI(Resource):
             response['type']=j_data['field_type']
             response['option_code']=option_code
             response['options_count']=options_count
+            response['garbage']=temp
+            if j_data['field_type']=='ranking':
+                response['ranking_count']=values
+            if j_data['field_type']=='multiple_choice':
+                response['options_count_segg']=options_count_segg
             response['total_resp']= len(temp)
             if j_data['field_type']=="rating":
                 avg=0
