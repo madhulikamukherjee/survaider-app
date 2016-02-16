@@ -560,7 +560,7 @@ class IrapiData(object):
         if "fields" in d(raw)[0]['structure']:
             # raw= db.survey.find({"_id":ObjectId(self.sid)
             a= d(db.survey.find({"_id":ObjectId(self.sid)}))[0]
-            if m==-1 and n==1:
+            if m==-1 and n==0:
                 return a['structure']['fields']
             else: return a['structure']['fields'][m:n]
             a= db.survey.find({"_id":ObjectId(self.sid)})
