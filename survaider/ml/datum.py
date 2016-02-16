@@ -19,7 +19,7 @@ class DatumBox(object):
     def get_sentiment(self,text):
         parameters={'api_key':api_key,'text':text}
         req=requests.get(url+"SentimentAnalysis.json",params=parameters)
-        return req.json()['output']['result']['1']
+        return req.json()['output']['result']
     def get_keywords(self,text,n=2):
     	#n is n-gram
     	text= text.lower()
