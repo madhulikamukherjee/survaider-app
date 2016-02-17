@@ -1498,7 +1498,7 @@
   Formbuilder.registerField('rating', {
     order: 7,
     view: "<div class=\"line\">\n  <label class='sb-option'>\n    <p>\n          <span class=\"digit\">1</span>\n          <span class=\"digit\">2</span>\n          <span class=\"digit\">3</span>\n          <span class=\"digit\">4</span>\n          <span class=\"digit spacer\">...</span>\n          <span class=\"digit\">8</span>\n          <span class=\"digit\">9</span>\n          <span class=\"digit\">10</span>\n    </p>\n  </label>\n</div>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
-    edit: "",
+    edit: "<%= Formbuilder.templates['edit/notify']() %>\n<%= Formbuilder.templates['edit/notify_rating']() %>\n",
     addButton: "<span class=\"pull-left\"><span class=\"fa fa-star\"></span></span> Rating"
   });
 
@@ -1718,9 +1718,26 @@ this["Formbuilder"]["templates"]["edit/notify"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<div class=\'sb-edit-section-header\'>Notifications</div>\n\n<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.' +
-((__t = ( Formbuilder.options.mappings.NOTIFICATION )) == null ? '' : __t) +
-'\' />\n  Notify for Answers\n</label>\n';
+__p += '<div class=\'sb-edit-section-header\'>Notifications</div>\n\n<label>\n  <input type=\'checkbox\' data-rv-checked=\'model.notifications\' />\n  Notify for Answers\n</label>\n';
+
+}
+return __p
+};
+
+this["Formbuilder"]["templates"]["edit/notify_rating"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+__p += '<div class=\'sb-edit-section-header\' data-rv-show=\'model.notifications\'>\n  <p>Notify for following ratings:</p>\n  ';
+ for(var i=0; i < 10; i++) {;
+__p += '\n    <label>\n      ' +
+((__t = ( i+1 )) == null ? '' : __t) +
+'\n      <input type="checkbox" class="check" data-rv-checked="model.field_options.notifications.' +
+((__t = ( i+1 )) == null ? '' : __t) +
+'">\n    </label>\n  ';
+ } ;
+__p += '\n</div>\n';
 
 }
 return __p
@@ -1772,7 +1789,7 @@ var __t, __p = '', __e = _.escape;
 with (obj) {
 __p += '\n<div class="form-group required">\n    <select data-rv-input=\'model.' +
 ((__t = ( Formbuilder.options.mappings.VALIDATION )) == null ? '' : __t) +
-'\'>\n      <option value="text">Text</option>\n      <option value="email">Email</option>\n      <option value="telephone">Phone Number</option>\n    <option value="date">Date</option>\n    </select>\n</div>\n';
+'\'>\n      <option value="text">Text</option>\n      <option value="email">Email</option>\n      <option value="telephone">Phone Number</option>\n    </select>\n</div>\n';
 
 }
 return __p

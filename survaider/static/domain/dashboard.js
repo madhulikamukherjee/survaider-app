@@ -154,6 +154,7 @@
       rivets.formatters.check_expires = {
         read: function(v) {
           var ex_date;
+          console.log(v, "check_expires");
           ex_date = moment(v);
           if (ex_date.isAfter('9000-01-01', 'year')) {
             return false;
@@ -168,6 +169,9 @@
             return moment().endOf('month').add(1, 'months').toISOString();
           }
         }
+      };
+      rivets.formatters.expire_label = function(v) {
+        return moment(v).isBefore(moment());
       };
       return rivets.formatters.check_response_cap = {
         read: function(v) {
@@ -188,7 +192,10 @@
     };
 
     Dashboard.prototype.bind_events = function() {
-      return $("#build_survey").on('click', this.create_survey);
+      $("#build_survey").on('click', this.create_survey);
+      return $("body").on('changeDate', function(v) {
+        return console.log($('.date').change());
+      });
     };
 
     Dashboard.prototype.process_data = function(dat) {

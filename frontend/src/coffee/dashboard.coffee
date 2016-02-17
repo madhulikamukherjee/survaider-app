@@ -116,6 +116,7 @@ class Dashboard
 
     rivets.formatters.check_expires =
       read: (v) ->
+        console.log v, "check_expires"
         ex_date = moment(v)
         return if ex_date.isAfter('9000-01-01', 'year') then false else true
       publish: (v) ->
@@ -127,6 +128,9 @@ class Dashboard
             .add(1, 'months')
             .toISOString()
 
+    rivets.formatters.expire_label = (v) ->
+      moment(v).isBefore(moment())
+
     rivets.formatters.check_response_cap =
       read: (v) ->
         if v is 2**32 then false else true
@@ -136,6 +140,8 @@ class Dashboard
 
   bind_events: ->
     $("#build_survey").on 'click', @create_survey
+    $("body").on 'changeDate', (v) ->
+      console.log $('.date').change()
 
   process_data: (dat) ->
     #: Processes the data and adds it to the dashboard collection.

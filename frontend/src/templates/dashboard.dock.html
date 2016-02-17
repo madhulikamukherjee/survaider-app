@@ -23,7 +23,7 @@
 
             <li role="status">
               <span class="tag" rv-show="survey.status.active">Active</span>
-              <span class="tag" rv-show="survey.status.expired">Expired</span>
+              <span class="tag" rv-show="survey.info.expires | expire_label">Expired</span>
               <span class="tag" rv-show="survey.status.paused">Paused</span>
             </li>
           </ul>

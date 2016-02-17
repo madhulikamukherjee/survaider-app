@@ -15,6 +15,7 @@ from uuid import uuid4
 from flask import request, Blueprint, render_template, g
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
+from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
 
 from survaider import app
 from survaider.minions.decorators import api_login_required
@@ -26,6 +27,8 @@ from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
 from survaider.survey.model import DataSort,IrapiData,Dashboard
+from survaider.minions.future import SurveySharePromise
+from survaider.ml.datum import DatumBox
 
 class SurveyController(Resource):
 
@@ -260,6 +263,47 @@ class SurveyMetaController(Resource):
                 return ret, 200
             except Exception as e:
                 raise APIException("Upload Error; {0}".format(str(e)), 400)
+
+        elif action == 'share':
+            args = self.post_args()
+            dat = args['swag']
+            try:
+                usr = User.objects.get(email = dat)
+                grp = set(svey.created_by)
+                grp.add(usr)
+                svey.created_by = list(grp)
+                svey.save()
+                ret = {
+                    'id': str(svey),
+                    'action': action,
+                    'user': usr.repr,
+                    'survey': svey.repr_sm
+                }
+                return ret, 200
+            except DoesNotExist:
+                try:
+                    ftract = SurveySharePromise.objects(
+                        future_email = dat,
+                        future_survey = svey
+                    ).first()
+                    if not ftract or ftract.active is False:
+                        raise ValueError
+                except ValueError:
+                    ftract = SurveySharePromise()
+                    ftract.future_email = dat
+                    ftract.future_survey = svey
+                    ftract.save()
+                    #: Send the Email Here. Send the URL by `ftract.url` attr.
+                finally:
+                    ret = {
+                        'id': str(svey),
+                        'action': action,
+                        'scheduled': True,
+                        'message': ('The user will be added to the survey after '
+                                    'they sign up on the website.'),
+                        'promise': ftract.repr
+                    }
+                return ret, 201
 
         raise APIException("Must specify a valid option", 400)
 
@@ -576,14 +620,38 @@ class DashboardAPIController(Resource):
             else:pass
             # return option_code
             temp= []
-
+            timed={}
+            import time
             for i in response_data:
                 # temp.append(i)
                 if cid in i['responses']:
                     temp.append(i['responses'][cid])
+                    timestamp= i['metadata']['modified']['$date']/1000
+                    timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+                    timed[timestamp]=i['responses'][cid]
             # return temp
             options_count={}
-            
+            timed_agg={}
+            timed_agg_counter={}
+            try:
+                for time , value in timed.items():
+                    if time[:10] not in timed_agg_counter:
+                        timed_agg_counter[time[:10]]=0
+                    if time[:10] in timed_agg:
+                        timed_agg[time[:10]]+=int(value)
+                        timed_agg_counter[time[:10]]+=1
+
+                    else:
+                        timed_agg[time[:10]]=int(value)
+                        timed_agg_counter[time[:10]]=1
+                timed_final={}
+                for time,value in timed_agg.items():
+                    avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
+                    timed_final[time]=avg
+            except:pass
+
+
+
             if j_data['field_type']=="group_rating":
 
                 for i in temp:
@@ -617,12 +685,14 @@ class DashboardAPIController(Resource):
             # for i in range(len(response_data)):
             #     temp.append(response_data[i]['responses'][cid])
             # return temp[9]
+            #timed={}
             elif j_data['field_type']=="rating":
                 for i in temp:
                     if str(i) in options_count:
                         options_count[str(i)]+=1
                     else:
                         options_count[str(i)]=1
+
                 # avg= 0.0
                 ll= 0
                 for j in temp:ll= float(ll)+float(j)
@@ -636,6 +706,9 @@ class DashboardAPIController(Resource):
                 response['avg_rating']=avg
 
             except:pass
+            if j_data['field_type']=='rating':
+                response['timed_agg']=timed_final
+                response['timed']=timed
             if j_data['field_type']=="group_rating":
                 response['options_code']=option_code
             else:pass
@@ -723,6 +796,7 @@ class IRAPI(Resource):
 
         lol = IrapiData(survey_id,start,end,aggregate)
         all_responses= lol.get_data()
+        # return all_responses
         #return all_responses
         all_survey= lol.get_uuid_labels()
         
@@ -769,18 +843,63 @@ class IRAPI(Resource):
 
             """Option Count"""
             options_count={}
+            options_count_segg={}
+            sentiment={'positive':0,'negative':0,'neutral':0}
+            long_text=""
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
                 for b in temp:
+                    if j_data['field_type']=='long_text':
+                        
+                        dat= DatumBox()
+                        sent= dat.get_sentiment(b)
+                        sentiment[sent]+=1
+                        options_count_segg[b]=sent
+                        long_text+=" "+b
+
+                    if j_data['field_type']=='multiple_choice':
+                        split_b= b.split('###')
+                        if len(split_b)==0:
+                            if split_b[0] in options_count_segg:
+                                options_count_segg[split_b[0]]+=1
+                            else:options_count_segg[split_b[0]]=1
+                        elif len(split_b)!=0:
+
+                            for i in split_b:
+                                if i in options_count_segg:
+                                    options_count_segg[i]+=1
+                                else:options_count_segg[i]=1
+                            
                     if b in options_count:pass
                     else:options_count[b]=temp.count(b)
 
             elif j_data['field_type'] in ["ranking"]:
-                for c in temp:
-                    aTempList=c.split("###")
+                values={}
+                for c in temp:#temp is an array of responses
+
+                    aTempList=c.split("###") #split a##2###b##1### [ "a##1", "b##3", "c##2"]
                     for d in aTempList:
-                        bTempList=d.split("##")
-                        e= bTempList[0]
+                        bTempList=d.split("##") #["a","1"]
+
+                        e= bTempList[0] #Values are a ,b
+                        rank_key= bTempList[1] #values are 1,2,3,4
+                        if e in values:
+                            if rank_key in values[e]:
+                                values[e][rank_key]+=1
+                            else:
+
+                                # values[e]={}
+                                values[e][rank_key]=1
+                                
+                        else:
+                            values[e]={}
+                            values[e][rank_key]=1
+
                         if e in options_count:
+                            """
+                            e is for eg : a_1 or a_2
+                            aTempList is the total options
+                            bTempList is option:value pair
+                            """
                             options_count[e]=int(options_count[e])+len(aTempList)-int(bTempList[1])
                         else:
                             options_count[e]=len(aTempList)-int(bTempList[1])
@@ -810,7 +929,17 @@ class IRAPI(Resource):
             response['label']=j_data['label']
             response['type']=j_data['field_type']
             response['option_code']=option_code
-            response['options_count']=options_count
+            if j_data['field_type']!='long_text': response['options_count']=options_count
+            if j_data['field_type']=='long_text':
+                response['sentiment']=sentiment
+                response['sentiment_segg']=options_count_segg
+                keywords=dat.get_keywords(long_text)
+                response['keywords']=keywords
+            #response['garbage']=temp
+            if j_data['field_type']=='ranking':
+                response['ranking_count']=values
+            if j_data['field_type']=='multiple_choice':
+                response['options_count_segg']=options_count_segg
             response['total_resp']= len(temp)
             if j_data['field_type']=="rating":
                 avg=0
@@ -881,10 +1010,7 @@ class ResponseAPIController(Resource):
             s= DataSort(parent_survey,uuid)
             survey_data= s.get_uuid_label()
 
-            
-            
         else:
-           
             survey_data= lol.get_uuid_label()
         j_data= d(survey_data)
         #return j_data
@@ -902,14 +1028,12 @@ class ResponseAPIController(Resource):
                 option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
 
         except:
-
             return "error"
 
         #Response Count
         temp= []
-        
+    
         for i in range(len(response_data)):
-
             temp.append(response_data[i]['responses'][uuid])
 
 
