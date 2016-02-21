@@ -177,7 +177,12 @@
 
           <svg ng-attr-height="{{theGraph.totalMaxGraphHeight}}">
             <g ng-attr-transform="translate({{theGraph.groupToTranslate}}, 0)">
-              <rect ng-repeat="feature in unit.features track by $index" ng-attr-x="{{25*$index+5*$index}}" ng-attr-y="{{theGraph.totalMaxGraphHeight-(feature.score * (theGraph.totalMaxGraphHeight/maxScore))}}" ng-attr-height="{{feature.score * (theGraph.totalMaxGraphHeight/maxScore)}}" ng-attr-width="{{theGraph.barWidth}}" fill="{{colors[$index%colors.length]}}"  />
+              <g ng-repeat="feature in unit.features track by $index" ng-attr-transform="translate({{25*$index+5*$index}},0)">
+                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle">
+                  {{feature.score}}
+                </text>
+                <rect ng-attr-y="{{0}}" ng-attr-height="{{feature.score * (theGraph.barHeight/maxScore)}}" ng-attr-width="{{theGraph.barWidth}}" fill="{{colors[$index%colors.length]}}"  />
+              </g>
             </g>
           </svg>
 

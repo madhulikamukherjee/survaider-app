@@ -36,10 +36,11 @@
       var numberOfFeatures = $scope.features.length;
 
       $scope.theGraph = {
-        totalMaxGraphHeight: 150,
+        totalMaxGraphHeight: 175,
         blockWidth: 225,
         barWidth: 25,
-        barMargin: 5
+        barMargin: 5,
+        barHeight: 150
       };
 
       $scope.theGraph['totalGraphWidth'] = ($scope.theGraph.barWidth)*(numberOfFeatures) + ($scope.theGraph.barMargin)*(numberOfFeatures-1);
