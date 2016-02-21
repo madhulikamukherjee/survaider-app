@@ -1147,6 +1147,7 @@ class ResponseAPIController(Resource):
         return d(response)
 # //Zurez
 
+
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')
 
 @srvy.route('/s:<survey_id>/edit')
