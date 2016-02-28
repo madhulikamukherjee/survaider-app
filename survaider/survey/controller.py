@@ -551,7 +551,7 @@ from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
-    def logic(self,survey_id,parent_survey,aggregate):
+    def logic(self,survey_id,parent_survey,aggregate="false"):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
@@ -805,7 +805,7 @@ class IRAPI(Resource):
             parent_survey= all_survey[0]['referenced']['$oid']
             
             # parent_survey= HashId.decode(parent_survey)
-            s= IrapiData(parent_survey,start,end)
+            s= IrapiData(parent_survey,start,end,aggregate)
             all_survey=s.get_uuid_labels()
 
             
@@ -839,7 +839,12 @@ class IRAPI(Resource):
             temp=[]
             
             for a in range(len(response_data)):
-                temp.append(response_data[a]['responses'][uuid])
+                try:
+                    temp.append(response_data[a]['responses'][uuid])
+                    
+                except:
+                    pass
+                
 
             """Option Count"""
             options_count={}
@@ -1007,7 +1012,7 @@ class ResponseAPIController(Resource):
             parent_survey= all_survey[0]['referenced']['$oid']
             
             # parent_survey= HashId.decode(parent_survey)
-            s= DataSort(parent_survey,uuid)
+            s= DataSort(parent_survey,uuid,aggregate)
             survey_data= s.get_uuid_label()
 
         else:
