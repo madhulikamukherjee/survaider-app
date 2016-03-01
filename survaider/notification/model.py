@@ -26,7 +26,7 @@ class Notification(db.Document):
 
     @property
     def flagged(self):
-        return datetime.now() > self.released
+        return datetime.now() < self.released
 
     @flagged.setter
     def flagged(self, value):
@@ -92,6 +92,35 @@ class SurveyTicket(Notification):
     origin      = db.ReferenceField(User)
     survey_unit = db.ListField(db.ReferenceField(SurveyUnit))
 
+    def add_comment(self, text, user):
+        if 'comments' not in self.payload:
+            self.payload['comments'] = []
+        comment_doc = {
+            'user': user,
+            'text': text,
+            'added': datetime.now(),
+            'id': int(datetime.now().timestamp())
+        }
+        self.payload['comments'].append(comment_doc)
+        return comment_doc['id']
+
+    def resolve(self):
+        self.flagged = False
+
+    @property
+    def resolved_payload(self):
+        pld = self.payload
+        comments = []
+        for comment in self.payload.get('comments', []):
+            comments.append({
+                'user': comment['user'].repr,
+                'text': comment['text'],
+                'added': str(comment['added']),
+                'id': str(comment['id']),
+            })
+        pld['comments'] = comments
+        return pld
+
     @property
     def repr(self):
 
@@ -104,7 +133,7 @@ class SurveyTicket(Notification):
             'origin':       str(self.origin),
             'cur_is_orgn':  current_user.id == self.origin.id,
             'targets':      [_.repr for _ in self.destined],
-            'payload':      self.payload,
+            'payload':      self.resolved_payload,
             'type':         self.__class__.__name__,
         }
         return doc

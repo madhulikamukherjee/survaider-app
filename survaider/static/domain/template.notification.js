@@ -36,7 +36,7 @@ __p += '\n        <li>\n          <div class="question">\n            ' +
 ((__t = ( doc.res_label )) == null ? '' : __t) +
 '</div>\n        </li>\n      ';
  }); ;
-__p += '\n    </ul>\n  </section>\n\n  <section class="">\n    <button>Analytics</button>\n    <button>More Details</button>\n  </section>\n</li>\n';
+__p += '\n    </ul>\n  </section>\n\n  <section class="">\n    <a href="">Analytics</a>\n    <a href="">More Details</a>\n  </section>\n</li>\n';
 
 }
 return __p
@@ -47,7 +47,9 @@ obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
 with (obj) {
-__p += '<li class="notification survey-ticket" data-card="parent">\n  <section class="title">\n    <i class="fa fa-bookmark icon"></i>\n    <p>Ticket ID: <strong>' +
+__p += '<li class="notification survey-ticket" data-card="parent" data-collapse="' +
+((__t = ( dat.collapse )) == null ? '' : __t) +
+'">\n  <section class="title">\n    <i class="fa fa-bookmark icon"></i>\n    <p>Ticket ID: <strong>' +
 ((__t = ( dat.id )) == null ? '' : __t) +
 '</strong></p>\n    <p>\n      <i class="fa fa-clock-o"></i>\n      <span data-livestamp="' +
 ((__t = ( dat.acquired )) == null ? '' : __t) +
@@ -79,7 +81,31 @@ __p += '\n      </li>\n    ';
  }); ;
 __p += '\n  </ul>\n  <p class="message">' +
 ((__t = ( dat.payload.original_msg )) == null ? '' : __t) +
-'</p>\n  <a href="#">Mark Finished</a>\n</li>\n';
+'</p>\n\n  <ul role="comments">\n    ';
+ _.each(dat.payload.comments, function(doc) { ;
+__p += '\n      <li data-user-id="' +
+((__t = ( doc.user.id )) == null ? '' : __t) +
+'">\n        <i class="fa fa-clock-o"></i>\n        <span data-livestamp="' +
+((__t = ( doc.added )) == null ? '' : __t) +
+'">' +
+((__t = ( doc.added )) == null ? '' : __t) +
+'</span>\n\n        <span>' +
+((__t = ( doc.user.email )) == null ? '' : __t) +
+'</span>\n        ';
+ if (dat.origin == doc.user.id) { ;
+__p += '\n          <span>Owner</span>\n        ';
+ } ;
+__p += '\n        <p class="message">' +
+((__t = ( doc.text )) == null ? '' : __t) +
+'</p>\n      </li>\n    ';
+ }); ;
+__p += '\n    <li>\n      <input type="text" data-input="add_comment"></input>\n      <span data-action="add_comment">Add a Comment</span>\n    </li>\n  </ul>\n  ';
+ if (dat.flagged) {;
+__p += '\n    <span data-action="mark_finished">Mark Finished</span>\n  ';
+ } else { ;
+__p += '\n    <span data-action="expand">Expand/Collapse</span>\n  ';
+ } ;
+__p += '\n</li>\n';
 
 }
 return __p

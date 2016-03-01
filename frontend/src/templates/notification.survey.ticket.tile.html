@@ -1,4 +1,4 @@
-<li class="notification survey-ticket" data-card="parent">
+<li class="notification survey-ticket" data-card="parent" data-collapse="<%= dat.collapse %>">
   <section class="title">
     <i class="fa fa-bookmark icon"></i>
     <p>Ticket ID: <strong><%= dat.id %></strong></p>
@@ -30,5 +30,28 @@
     <% }); %>
   </ul>
   <p class="message"><%= dat.payload.original_msg %></p>
-  <a href="#">Mark Finished</a>
+
+  <ul role="comments">
+    <% _.each(dat.payload.comments, function(doc) { %>
+      <li data-user-id="<%= doc.user.id %>">
+        <i class="fa fa-clock-o"></i>
+        <span data-livestamp="<%= doc.added %>"><%= doc.added %></span>
+
+        <span><%= doc.user.email %></span>
+        <% if (dat.origin == doc.user.id) { %>
+          <span>Owner</span>
+        <% } %>
+        <p class="message"><%= doc.text %></p>
+      </li>
+    <% }); %>
+    <li>
+      <input type="text" data-input="add_comment"></input>
+      <span data-action="add_comment">Add a Comment</span>
+    </li>
+  </ul>
+  <% if (dat.flagged) {%>
+    <span data-action="mark_finished">Mark Finished</span>
+  <% } else { %>
+    <span data-action="expand">Expand/Collapse</span>
+  <% } %>
 </li>

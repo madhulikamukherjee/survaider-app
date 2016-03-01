@@ -6,6 +6,7 @@ import datetime
 import dateutil.parser
 
 from blinker import signal
+from functools import reduce
 from flask import Flask, Blueprint, render_template, request, jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
@@ -63,6 +64,11 @@ class SurveyTicketController(Resource):
         parser.add_argument('unit_ids', type = str, required = True)
         return parser.parse_args()
 
+    def add_comment_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('msg', type=str, required=True)
+        return parser.parse_args()
+
     @api_login_required
     def post(self, ticket_id = None, action = None):
         if ticket_id is None:
@@ -100,8 +106,23 @@ class SurveyTicketController(Resource):
 
         tkt = api_get_object(SurveyTicket.objects, ticket_id)
 
-        if action == "mark_done":
-            pass
+        if action == "resolve":
+            "Resolve the ticket."
+            tkt.resolve()
+            tkt.save()
+            return tkt.repr
+
+        elif action == "add_comment":
+            "Add a Comment on the Ticket."
+            swag = self.add_comment_args()
+            c_user = User.objects(id = current_user.id).first()
+
+            if not c_user in reduce(lambda x, y: x + y, [_.created_by for _ in tkt.survey_unit], []):
+                raise APIException("Must be a member of Survey", 400)
+
+            cid = tkt.add_comment(swag['msg'], c_user)
+            tkt.save()
+            return tkt.repr
 
         raise APIException("Must specify valid option", 400)
 
@@ -119,7 +140,7 @@ class NotificationController(Resource):
 class NotificationAggregation(Resource):
 
     @api_login_required
-    def get(self, kind = None, time_offset = None):
+    def get(self, time_offset = None):
         if time_offset is None:
             time_offset = str(datetime.datetime.now())
 
@@ -128,49 +149,26 @@ class NotificationAggregation(Resource):
         except ValueError:
             raise APIException("Invalid Offset Time", 400)
 
-        if kind is None:
-            notifications = Notification.past(
-                destined = current_user.id,
-                acquired__lt = time_begin
-            )
+        notifications = Notification.past(
+            destined = current_user.id,
+            acquired__lt = time_begin
+        )
 
-            notif_list = [_.repr for _ in notifications.limit(5)]
-            next_page = False
-            try:
-                next_page = notif_list[-1]['acquired']
-            except Exception:
-                "No next page URI"
-                pass
+        notif_list = [_.repr for _ in notifications.limit(5)]
+        next_page = False
+        try:
+            next_page = notif_list[-1]['acquired']
+        except Exception:
+            "No next page URI"
+            pass
 
-            doc = {
-                'remaininglen': notifications.count(),
-                'next': next_page,
-                'data': notif_list,
-                'new': Notification.unflagged_count()
-            }
-            return doc
-
-        if kind == 'surveyresponsenotification':
-            notifications = SurveyResponseNotification.past(
-                destined = current_user.id,
-                acquired__lt = time_begin
-            )
-
-            notif_list = [_.repr for _ in notifications.limit(5)]
-            next_page = False
-            try:
-                next_page = notif_list[-1]['acquired']
-            except Exception:
-                "No next page URI"
-                pass
-
-            doc = {
-                'remaininglen': notifications.count(),
-                'next': next_page,
-                'data': notif_list,
-                'new': Notification.unflagged_count()
-            }
-            return doc
+        doc = {
+            'remaininglen': notifications.count(),
+            'next': next_page,
+            'data': notif_list,
+            'new': Notification.unflagged_count()
+        }
+        return doc
 
         raise APIException("Must specify a valid option", 400,
             usage = {'surveyresponsenotification': 'Survey Responses'}

@@ -18,6 +18,53 @@
       return this.template = Survaider.Templates['notification.survey.ticket.tile'];
     };
 
+    SurveyTicketNotification.prototype.add_comment = function(e) {
+      var msg;
+      msg = $(e.target.parentElement).find("[data-input=add_comment]").val();
+      if (msg.length < 2) {
+        swal({
+          type: 'error',
+          title: 'Please Enter a valid comment.'
+        });
+      }
+      return $.post("/api/surveyticket/" + (this.get('id')) + "/add_comment", {
+        msg: msg
+      }).done((function(_this) {
+        return function(dat) {
+          return _this.set({
+            payload: dat.payload
+          });
+        };
+      })(this)).fail(function() {
+        return swal({
+          type: 'error',
+          title: 'Server error. Please try again.'
+        });
+      });
+    };
+
+    SurveyTicketNotification.prototype.mark_finished = function(e) {
+      return $.post("/api/surveyticket/" + (this.get('id')) + "/resolve").done((function(_this) {
+        return function(dat) {
+          return _this.set({
+            flagged: dat.flagged,
+            collapse: !dat.flagged
+          });
+        };
+      })(this)).fail(function() {
+        return swal({
+          type: 'error',
+          title: 'Server error. Please try again.'
+        });
+      });
+    };
+
+    SurveyTicketNotification.prototype.expand = function(e) {
+      return this.set({
+        collapse: !this.get('collapse')
+      });
+    };
+
     return SurveyTicketNotification;
 
   })(Backbone.Model);
@@ -51,6 +98,7 @@
     NotificationCollection.prototype.model = function(attr, options) {
       switch (attr.type) {
         case 'SurveyTicket':
+          attr.collapse = !attr.flagged;
           return new SurveyTicketNotification(attr, options);
         case 'SurveyResponseNotification':
           return new SurveyResponseNotification(attr, options);
@@ -72,15 +120,26 @@
       return NotificationView.__super__.constructor.apply(this, arguments);
     }
 
+    NotificationView.prototype.events = {
+      'click [data-action]': 'notificationaction'
+    };
+
     NotificationView.prototype.initialize = function(options) {
-      return this.parentView = options.parentView, options;
+      this.parentView = options.parentView;
+      return this.listenTo(this.model, 'change', this.render);
     };
 
     NotificationView.prototype.render = function() {
-      this.setElement(this.model.template({
-        dat: this.model.attributes
+      this.$el.html(this.model.template({
+        dat: this.model.toJSON()
       }));
       return this;
+    };
+
+    NotificationView.prototype.notificationaction = function(e) {
+      var func;
+      func = $(e.target).attr("data-action");
+      return this.model[func](e);
     };
 
     return NotificationView;
@@ -113,7 +172,7 @@
 
     NotificationDock.prototype.load_notifications = function() {
       var uri;
-      uri = '/api/notification';
+      uri = '/api/notifications';
       if (this.time_end != null) {
         uri += "/" + this.time_end;
       }

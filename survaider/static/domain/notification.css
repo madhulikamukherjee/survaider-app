@@ -1,8 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
-* {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
+html {
   box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
 }
 
 html, body {
@@ -714,6 +716,12 @@ li.notification section.main li div.answer:last-child {
 }
 li.notification section.main li:nth-child(odd) {
   background: #EEE;
+}
+li.notification[data-collapse="true"] {
+  background: #EEE;
+}
+li.notification[data-collapse="true"] ul {
+  display: none;
 }
 li.notification p.message {
   background: #3498db;

@@ -66,6 +66,9 @@
     "backbone": "~1.2.3",
     "underscore": ">=1.7.0",
     "jquery.sparkline": "~2.1.2",
-    "select2": "~4.0.1"
+    "select2": "~4.0.1",
+    "font-awesome": "~4.4.0",
+    "jquery-ui": "~1.11.4",
+    "rivets": "~0.8.1"
   }
 }

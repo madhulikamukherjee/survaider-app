@@ -6,6 +6,37 @@ class SurveyTicketNotification extends Backbone.Model
   initialize: ->
     @template = Survaider.Templates['notification.survey.ticket.tile']
 
+  add_comment: (e) ->
+    msg = $(e.target.parentElement).find("[data-input=add_comment]").val()
+    if msg.length < 2
+      swal
+        type: 'error'
+        title: 'Please Enter a valid comment.'
+
+    $.post "/api/surveyticket/#{@get('id')}/add_comment", {msg: msg}
+    .done (dat) =>
+      @set
+        payload: dat.payload
+    .fail ->
+      swal
+        type: 'error'
+        title: 'Server error. Please try again.'
+
+  mark_finished: (e) ->
+    $.post "/api/surveyticket/#{@get('id')}/resolve"
+    .done (dat) =>
+      @set
+        flagged: dat.flagged
+        collapse: !dat.flagged
+    .fail ->
+      swal
+        type: 'error'
+        title: 'Server error. Please try again.'
+
+  expand: (e) ->
+    @set
+      collapse: !@get('collapse')
+
 class SurveyResponseNotification extends Backbone.Model
   defaults:
     type: 'SurveyResponseNotification'
@@ -17,6 +48,7 @@ class NotificationCollection extends Backbone.Collection
   model: (attr, options) ->
     switch attr.type
       when 'SurveyTicket'
+        attr.collapse = !attr.flagged
         return new SurveyTicketNotification attr, options
       when 'SurveyResponseNotification'
         return new SurveyResponseNotification attr, options
@@ -25,13 +57,20 @@ class NotificationCollection extends Backbone.Collection
     moment(model.get 'acquired').unix()
 
 class NotificationView extends Backbone.View
+  events:
+    'click [data-action]': 'notificationaction'
 
   initialize: (options) ->
     {@parentView} = options
+    @listenTo @model, 'change', @render
 
   render: ->
-    @setElement(@model.template({dat: @model.attributes}))
+    @$el.html(@model.template({dat: @model.toJSON()}))
     return @
+
+  notificationaction: (e) ->
+    func = $(e.target).attr("data-action")
+    @model[func](e)
 
 class NotificationDock extends Backbone.View
   events:
@@ -49,7 +88,7 @@ class NotificationDock extends Backbone.View
   template: Survaider.Templates['notification.dock']
 
   load_notifications: () ->
-    uri = '/api/notification'
+    uri = '/api/notifications'
     uri += "/#{@time_end}" if @time_end?
 
     return if @load_old_disable is yes

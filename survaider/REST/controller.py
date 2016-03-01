@@ -50,9 +50,8 @@ api.add_resource(SurveyTicketController,
                  '/surveyticket/<string:ticket_id>/<string:action>')
 
 api.add_resource(NotificationAggregation,
-                 '/notification',
-                 '/notification/<string:kind>',
-                 '/notification/<string:kind>/<string:time_offset>')
+                 '/notifications',
+                 '/notifications/<string:time_offset>')
 
 api.add_resource(SurveySharePromiseController, '/promise/<string:f_id>')
 
