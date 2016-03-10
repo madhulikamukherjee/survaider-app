@@ -22,16 +22,32 @@
           <p>And Survaider helps in doing just that!</p>
           <hr>
           <p><em>Add the key aspects that you’d like to measure. Don’t bother about the “how” part, we take care of that!</em></p>
+
           <select multiple="multiple" required name="s_tags" data-onboarding-input style="width: 100%">
             <option value="Room Service">Room Service</option>
             <option value="WiFi">WiFi</option>
           </select>
+
           <p><small>For e.g, a hotel business could list “Cleanliness”, “Room Service”, and “Hospitality” as their key aspects.</small></p>
         </div>
         <div data-slide="business-units">
           <p>Build a robust analytics platform with insights pouring in from every physical touch-point where your customers interact with your business.</p>
           <hr>
           <p><em>Add your business units, and emails of those who will be handling the unit dashboards. You can always come back and edit these later.</em></p>
+
+          <ul role="unit-input">
+            <li class="header">
+              <span>Unit Name</span>
+              <span>Unit Owner's Email</span>
+            </li>
+            <li role="template">
+              <input type="text" placeholder="eg. Hauz Khas"></input>
+              <input type="email" placeholder="foo@bar"></input>
+              <a href="#" class="button" role="deleteorb">&times;</a>
+            </li>
+          </ul>
+          <a href="#" class="button" role="add">Add unit</a>
+
           <p><small>For e.g, an automobile company may list their dealerships with names “Lajpat Ngaar New Delhi”, and “Manhattan New York”</small></p>
         </div>
         <div data-slide="facebook">
@@ -52,9 +68,9 @@
         </div>
       </div>
       <div role="nav">
-        <a href="javascript:void(0)" role="prev">Previous</a>
-        <a href="javascript:void(0)" role="next">Next</a>
-        <a href="javascript:void(0)" role="skip">Skip</a>
+        <a href="javascript:void(0)" class="button" role="prev">Previous</a>
+        <a href="javascript:void(0)" class="button" role="next">Next</a>
+        <a href="javascript:void(0)" class="button" role="skip">Skip</a>
       </div>
     </div>
   </section>

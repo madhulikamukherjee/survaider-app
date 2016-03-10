@@ -50,7 +50,7 @@ div[role="dock"]
         flex-flow: row
         flex-wrap: nowrap
         @include transform(translateX(0))
-        @include transition(transform 1s)
+        @include transition(transform 0.3s)
 
         div[data-slide]
           flex: 1 0 100%
@@ -64,35 +64,94 @@ div[role="dock"]
         padding: 10px
         bottom: 0
 
-        a
-          padding: 5px 20px
-          border-radius: 5px
-          color: #5F5762
-          font-weight: 300
-          font-size: 14px
-          text-decoration: none
-
-          &[role="prev"]
-            background: #EEEEEE
-            &:hover
-              background: #DDDDDD
-
+        a.button
           &[role="next"]
-            background: #78DFC8
             float: right
-            &:hover
-              background: #4ABDA3
 
           &[role="skip"]
             float: right
-            &:hover
-              text-decoration: underline
-
 
     &::after
       clear: both
       content: ""
       display: table
+
+  div[data-slide='business-units']
+    ul[role='unit-input']
+      @include clear-ul
+      width: 100%
+
+      li.header
+        font-size: 12px
+        span:nth-child(1)
+          display: inline-block
+          width: 30%
+        span:nth-child(2)
+          width: 60%
+
+      li
+        margin-bottom: 5px
+        input
+          &:nth-child(1)
+            width: 30%
+
+          &:nth-child(2)
+            width: 60%
+
+  input
+    padding: 5px 10px
+    border: 1px solid #999
+    border-radius: 3px
+    font-size: 14px
+
+    &:hover, &:active, &:focus
+      border-color: #000
+      outline: none
+
+  a.button
+    padding: 5px 15px
+    border-radius: 5px
+    color: #5F5762
+    font-weight: 300
+    font-size: 14px
+    text-decoration: none
+    background: #EEEEEE
+
+    &:hover
+      background: #DDDDDD
+
+    &[role="next"]
+      background: #78DFC8
+      &:hover
+        background: #4ABDA3
+
+    &[role="skip"]
+      background: transparent
+      &:hover
+        background: transparent
+        text-decoration: underline
+
+    &[role="add"]
+      margin-top: 5px
+      border-radius: 3px
+      font-size: 12px
+      display: inline-block
+      border: 1px solid #888
+
+    &[role="deleteorb"]
+      border: 1px solid #888
+      border-radius: 50%
+      background: transparent
+      padding: 5px
+      width: 30px
+      height: 30px
+      text-align: center
+      color: red
+      font-size: 15px
+      display: inline-block
+      &:hover
+        background: red
+        color: #FFFFFF
 
 .vex
   z-index: 900
