@@ -9,49 +9,75 @@
     <button><i class="fa fa-times"></i></button>
   </section>
 
-  <p data-survey-id="<%= dat.root_survey.id %>">Main Survey: <%= dat.root_survey.name %></p>
+  <section class="main">
+    <h2>
+      <% if (dat.origin == dat.targets.id) { %>
+        <p data-survey-id="<%= dat.root_survey.id %>">The task "<%= dat.payload.original_msg %>" is assigned to</p>
+      <% } else { %>
+        <p data-survey-id="<%= dat.root_survey.id %>">You have been assigned a task "<%= dat.payload.original_msg %>"</p>
+      <% } %>
+    </h2>
 
-  <ul>
-    <% _.each(dat.survey_unit, function(doc) { %>
-      <li>
-        <span><%= doc.name %></span>
-        <small><%= doc.id %></small>
-      </li>
-    <% }); %>
-  </ul>
-  <ul>
-    <% _.each(dat.targets, function(doc) { %>
-      <li data-user-id="<%= doc.id %>">
-        <span><%= doc.email %></span>
-        <% if (dat.origin == doc.id) { %>
-          <span>Owner</span>
-        <% } %>
-      </li>
-    <% }); %>
-  </ul>
-  <p class="message"><%= dat.payload.original_msg %></p>
+    <ul>
+      <table>
+        <tr>
+          <td class="details">
+            <ul>
+              <% if (dat.origin == dat.root_survey.id) { %>
+              To : 
+              <% } else { %>
+              Assigned to : 
+              <% } %>
 
-  <ul role="comments">
-    <% _.each(dat.payload.comments, function(doc) { %>
-      <li data-user-id="<%= doc.user.id %>">
-        <i class="fa fa-clock-o"></i>
-        <span data-livestamp="<%= doc.added %>"><%= doc.added %></span>
+              <% _.each(dat.survey_unit, function(doc) { %>
+              <ul class="units">
+                <span><%= doc.name %></span>
+                <!-- <small><%= doc.id %></small> -->
+              </ul>
+              <% }); %>
+            </ul>
+            <!--   by : <%= dat.root_survey.name %>
+               <ul>
+                <% _.each(dat.targets, function(doc) { %>
+                  <li data-user-id="<%= doc.id %>">
+                    <span><%= doc.email %></span>
+                    <% if (dat.origin == doc.id) { %>
+                      <span>Owner</span>
+                    <% } %>
+                  </li>
+                <% }); %>
+              </ul> -->
+            <ul role="comments">
+              <% _.each(dat.payload.comments, function(doc) { %>
+              <li data-user-id="<%= doc.user.id %>">
+                <i class="fa fa-clock-o"></i>
+                <!-- <span data-livestamp="<%= doc.added %>"><%= doc.added %></span> -->
 
-        <span><%= doc.user.email %></span>
-        <% if (dat.origin == doc.user.id) { %>
-          <span>Owner</span>
-        <% } %>
-        <p class="message"><%= doc.text %></p>
-      </li>
-    <% }); %>
-    <li>
-      <input type="text" data-input="add_comment"></input>
-      <span data-action="add_comment">Add a Comment</span>
-    </li>
-  </ul>
-  <% if (dat.flagged) {%>
-    <span data-action="mark_finished">Mark Finished</span>
-  <% } else { %>
-    <span data-action="expand">Expand/Collapse</span>
-  <% } %>
+                <!-- <span><%= doc.user.email %></span> -->
+                <% if (dat.origin == doc.user.id) { %>
+                <span>Owner</span>
+                <% } %>
+                <p class="message"><%= doc.text %></p>
+              </li>
+              <% }); %>
+              <li>
+                <span data-action="add_comment">Add a Comment</span>
+                <input type="text" data-input="add_comment"></input>
+                
+              </li>
+            </ul>
+          </td>
+          <td class="buttons">
+
+            <% if (dat.flagged) {%>
+            <span data-action="mark_finished"><button>Mark Finished</button></span>
+            <span data-action="send_to_cc"><button>Send to Customer Care</button></span>
+            <% } else { %>
+            <span data-action="expand"><button>Expand/Collapse</button></span>
+            <% } %>
+          </td>
+        </tr>
+      </table>
+    </ul>
+  </section>
 </li>
