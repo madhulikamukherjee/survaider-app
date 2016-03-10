@@ -90,17 +90,20 @@ div[role="dock"]
       display: table
 
   div[data-slide='business-units']
+    div.header
+      font-size: 12px
+      span:nth-child(1)
+        display: inline-block
+        width: 30%
+      span:nth-child(2)
+        width: 60%
+
     ul[role='unit-input']
       @include clear-ul
+      padding: 10px 0
       width: 100%
-
-      li.header
-        font-size: 12px
-        span:nth-child(1)
-          display: inline-block
-          width: 30%
-        span:nth-child(2)
-          width: 60%
+      max-height: 150px
+      overflow: scroll
 
       li
         margin-bottom: 5px

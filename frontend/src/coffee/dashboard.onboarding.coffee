@@ -95,9 +95,9 @@ Onboarding =
         init: ->
           @parent = $('ul[role="unit-input"]')
           templateel = @parent.find 'li[role="template"]'
-          templateel.hide()
           @template = templateel.clone()
-          @parent.find('.header').hide()
+          templateel.remove()
+          @parent.prev('.header').hide()
 
           @parent.siblings('a[role="add"]').on 'click', =>
             @add_field()
@@ -109,11 +109,13 @@ Onboarding =
         add_field: ->
           el = $("<li role='input'>#{@template.html()}</li>")
           @parent.append el
-          @parent.find('.header').show()
+          @parent.prev('.header').show()
+          @parent.animate
+            scrollTop: 1000
           el.find('a[role="deleteorb"]').on 'click', =>
             el.remove()
-            if @parent.children().length is 2
-              @parent.find('.header').hide()
+            if @parent.children().length is 0
+              @parent.prev('.header').hide()
 
         serialize: ->
           units = @parent.find('li[role="input"]')
@@ -167,7 +169,7 @@ Onboarding =
   init: ->
     $('#onboarding').html(Survaider.Templates['dashboard.onboarding.dock']())
 
-    @slides.init()
+    @slides.init('business-units')
 
 $(document).ready ->
   Onboarding.init()
