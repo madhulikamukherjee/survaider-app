@@ -37,8 +37,14 @@ Onboarding =
 
       el = $("div[data-slide=#{name}]")
       el.addClass 'active'
+      index = @slides.index(el)
 
-      translate = -1 * @slides.index(el) * el.outerWidth()
+      if index is 0
+        @prevel.hide()
+      else
+        @prevel.show()
+
+      translate = -1 * index * el.outerWidth()
       $('div[data-slides]').css 'transform', "translateX(#{translate}px)"
 
       title = $("li[data-slide-title=#{name}")
@@ -53,7 +59,9 @@ Onboarding =
         @meta[current_name].skip()
 
       if operator is 1 and not @meta[current_name]?.validate()
-        alert(@meta[current_name]?.validation_error)
+        vex.dialog.alert
+          className: 'vex-theme-default'
+          message: @meta[current_name]?.validation_error
         return
 
       index = @slides.index current
@@ -73,7 +81,8 @@ Onboarding =
 
     meta:
       'key-aspect':
-        validation_error: 'Business name and one keyword is required.'
+        validation_error: """Business name and at least one
+        keyword is required."""
         can_skip: no
 
         init: ->
