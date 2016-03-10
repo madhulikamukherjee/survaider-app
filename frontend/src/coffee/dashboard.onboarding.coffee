@@ -5,15 +5,28 @@ Onboarding =
       for name, obj of @meta
         obj.init()
 
+      @prevel = $('a[role="prev"]')
+      @nextel = $('a[role="next"]')
+      @skipel = $('a[role="skip"]')
+
       @slides = $("div[data-slide]")
       @slidetitles = $("li[data-slide-title]")
       @activate @slides.eq(0).attr 'data-slide'
       if slide
         @activate slide
 
+      @prevel.on 'click', => @previous()
+      @nextel.on 'click', => @next()
+      @skipel.on 'click', => @skip()
+
     activate: (name)->
       @slides.removeClass 'active'
       @slidetitles.removeClass 'active'
+
+      if @meta[name]?.can_skip
+        @skipel.show()
+      else
+        @skipel.hide()
 
       el = $("div[data-slide=#{name}]")
       el.addClass 'active'
@@ -24,9 +37,12 @@ Onboarding =
       title = $("li[data-slide-title=#{name}")
       title.addClass 'active'
 
-    __paginate: (operator)->
+    __paginate: (operator, skipping)->
       current = $("div[data-slide].active")
       current_name = current.attr 'data-slide'
+
+      if skipping and @meta[current_name].can_skip
+        @meta[current_name].skip()
 
       if operator is 1 and not @meta[current_name]?.validate()
         alert(@meta[current_name]?.validation_error)
@@ -40,6 +56,9 @@ Onboarding =
 
     next: ->
       @__paginate(1)
+
+    skip: ->
+      @__paginate(1, true)
 
     previous: ->
       @__paginate(-1)
@@ -70,16 +89,23 @@ Onboarding =
           templateel = @parent.find 'li[role="template"]'
           templateel.hide()
           @template = templateel.clone()
-          @add_field()
+          @parent.find('.header').hide()
 
           @parent.siblings('a[role="add"]').on 'click', =>
             @add_field()
 
+        skip: ->
+          @parent.find('.header').hide()
+          @parent.find('li[role="input"]').remove()
+
         add_field: ->
           el = $("<li role='input'>#{@template.html()}</li>")
           @parent.append el
-          el.find('a[role="deleteorb"]').on 'click', ->
+          @parent.find('.header').show()
+          el.find('a[role="deleteorb"]').on 'click', =>
             el.remove()
+            if @parent.children().length is 2
+              @parent.find('.header').hide()
 
         serialize: ->
           units = @parent.find('li[role="input"]')
@@ -93,21 +119,47 @@ Onboarding =
 
         validate: ->
           values = @serialize()
-          for {name, mail} in values
-            if not name or name.length < 1
+          console.log values
+          for {unit_name, owner_mail} in values
+            if not unit_name or unit_name.length < 1
               return false
-            if not mail or mail.length < 2
+            if not owner_mail or owner_mail.length < 2
               return false
           return true
+
+      'facebook':
+        validation_error: 'Facebook URI incorrect? <insert your msg>'
+        can_skip: yes
+
+        init: ->
+
+        skip: ->
+
+        serialize: ->
+
+        validate: ->
+          true
+
+      'twitter':
+        validation_error: 'Twitter URI incorrect'
+        can_skip: yes
+        init: ->
+        skip: ->
+        serialize: ->
+        validate: -> true
+
+      'websites':
+        validation_error: 'Websites incorrect'
+        can_skip: yes
+        init: ->
+        skip: ->
+        serialize: ->
+        validate: -> true
 
   init: ->
     $('#onboarding').html(Survaider.Templates['dashboard.onboarding.dock']())
 
-    @slides.init('business-units')
-
-    $('a[role="prev"]').on 'click', => @slides.previous()
-    $('a[role="next"]').on 'click', => @slides.next()
-    $('a[role="skip"]').on 'click', => @slides.next()
+    @slides.init()
 
 $(document).ready ->
   Onboarding.init()
