@@ -85,14 +85,14 @@
                 <img src="/static/img/partner/Tripadvisor-logo.png">
               </div>
               <p>Have an overall business TripAdvisor page? Paste the link here</p>
-              <input type="text" placeholder="good trip" tabindex="-1"></input>
+              <input type="text" placeholder="good trip" tabindex="-1" for="tripadvisor"></input>
             </div>
             <div role="partner">
               <div class="boxed">
                 <img src="/static/img/partner/Zomato-Logo-red-background.png">
               </div>
               <p>Have an overall business Zomato page? Paste the link here</p>
-              <input type="text" placeholder="good trip" tabindex="-1"></input>
+              <input type="text" placeholder="good trip" tabindex="-1" for="zomato"></input>
             </div>
           </div>
           <p><small>Individual units’ TripAdvisor or Zomato pages can be added by the unit managers, after which you will be able to see the insights.</small></p>
@@ -115,42 +115,17 @@
         <a href="/dashboard" class="button" role="dashboard">Go to Dashboard</a>
       </div>
     </div>
-    <div role="overlay" data-overlay="success" class="visible">
+    <div role="overlay" data-overlay="review" class="visible">
       <div role="inner">
         <h4>Looks good?</h4>
         <p>Please Review the information you've provided</p>
         <hr>
-        <dl>
-          <dt>Survey Name</dt>
-          <dd>Some Name</dd>
-          <dt>Tags</dt>
-          <dd>Tag A, Tag B</dd>
-          <dt>Units</dt>
-          <dd>
-            <ul>
-              <li>Unit One Name</li>
-              <li>Unit Two Name</li>
-              <li>Unit Three Name</li>
-            </ul>
-          </dd>
-          <dt>Social</dt>
-          <dd>
-            <ul>
-              <li>Facebook: Skipped</li>
-              <li>Twitter: Skipped</li>
-            </ul>
-          </dd>
-          <dt>External Service</dt>
-          <dd>
-            <ul>
-              <li>TripAdvisor: Skipped</li>
-              <li>Zomato: Skipped</li>
-            </ul>
-          </dd>
-        </dl>
-        <br>
-        <a href="javascript:void()" class="button" role="edit">Go back</a>
-        <a href="javascript:void()" class="button" role="dashboard">Proceed</a>
+        <dl role="review-fields"></dl>
+        <hr>
+        <p>
+        <a href="javascript:void(0)" class="button" role="close">Go back</a>
+        <a href="javascript:void(0)" class="button" role="proceed">Proceed</a>
+        <p>
       </div>
     </div>
   </section>

@@ -58,6 +58,9 @@ Onboarding =
       if skipping and @meta[current_name].can_skip
         @meta[current_name].skip()
 
+      if operator is 1 and @meta[current_name].next
+        return @meta[current_name].next()
+
       if operator is 1 and not @meta[current_name]?.validate()
         vex.dialog.alert
           className: 'vex-theme-default'
@@ -157,35 +160,99 @@ Onboarding =
         validation_error: 'Facebook URI incorrect? <insert your msg>'
         can_skip: yes
 
-        init: ->
-
+        init: -> @el = $("div[data-slide='facebook']")
         skip: ->
-
-        serialize: ->
-
-        validate: ->
-          true
+        serialize: -> @el.find('input').val()
+        validate: -> true
 
       'twitter':
         validation_error: 'Twitter URI incorrect'
         can_skip: yes
-        init: ->
+        init: -> @el = $("div[data-slide='twitter']")
         skip: ->
-        serialize: ->
+        serialize: -> @el.find('input').val()
         validate: -> true
 
       'websites':
         validation_error: 'Websites incorrect'
         can_skip: yes
-        init: ->
+        init: -> @el = $("div[data-slide='websites']")
         skip: ->
         serialize: ->
+          ta = @el.find('[for="tripadvisor"]').val()
+          zm = @el.find('[for="zomato"]').val()
+          return {
+            tripadvisor: if ta.length > 1 then ta else false
+            zomato: if zm.length > 1 then zm else false
+          }
         validate: -> true
+        next: -> Onboarding.overlay.activate('review')
+
+  overlay:
+    init: ->
+      for name, obj of @meta
+        obj.init()
+      @elements = $('div[role="overlay"]')
+      @close()
+
+    activate: (name)->
+      @close()
+      target = $("div[data-overlay='#{name}'")
+      @meta[name].pre_show?()
+      target.addClass('visible')
+
+    close: ->
+      @elements.removeClass('visible')
+
+    meta:
+      review:
+        init: ->
+          @el = $("div[data-overlay='review'")
+          @el.find("a[role='close']").on 'click', ->
+            Onboarding.overlay.close()
+        pre_show: ->
+          rel = @el.find('dl[role="review-fields"]')
+          render =
+            'key-aspect': (dat) ->
+              {key_aspects, survey_name} = dat
+              out = "<dt>Survey Name</dt><dd>#{survey_name}</dd>"
+              tags = (for tag in key_aspects
+                "<span role='tag'>#{tag}</span>").join("")
+              out += "<dt>Key Aspects</dt><dd>#{tags}</dt>"
+              return out
+            'business-units': (dat) ->
+              units = for {unit_name, owner_mail} in dat
+                "<li>#{unit_name} <small>(#{owner_mail})</small></li>"
+              units = if units.length then units.join("") else "Skipped"
+              "<dt>Units</dt><dd><ul>#{units}</ul></dd>"
+            'facebook': (dat) ->
+              val = if dat.length then dat else "Skipped"
+              "<dt>Facebook</dt><dd>#{val}</dd>"
+            'twitter': (dat) ->
+              val = if dat.length then dat else "Skipped"
+              "<dt>Twitter</dt><dd>#{val}</dd>"
+            'websites': (dat) ->
+              {zomato, tripadvisor} = dat
+              out = unless (zomato or tripadvisor) then "Skipped" else """
+                <ul>
+                  #{if zomato then "<li>Zomato</li>" else ""}
+                  #{if tripadvisor then "<li>Tripadvisor</li>" else ""}
+                </ul>
+              """
+              "<dt>External Services</dt><dd>#{out}</dd>"
+
+          meta = Onboarding.slides.meta
+          htmlgen = (render[k](v.serialize()) for k, v of meta)
+          rel.html(htmlgen.join(''))
+
+      success:
+        init: ->
 
   init: ->
     $('#onboarding').html(Survaider.Templates['dashboard.onboarding.dock']())
 
     @slides.init()
+    @overlay.init()
 
 $(document).ready ->
   Onboarding.init()
