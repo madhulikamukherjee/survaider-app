@@ -73,20 +73,28 @@ Onboarding =
 
     meta:
       'key-aspect':
-        validation_error: 'Minimum one keyword is required.'
+        validation_error: 'Business name and one keyword is required.'
         can_skip: no
 
         init: ->
-          @el = $('div[data-slide="key-aspect"]'+
-            ' select[data-onboarding-input]')
+          @slide = $('div[data-slide="key-aspect"]')
+          @el = @slide.find('select[data-onboarding-input]')
           @el.select2
             tags: true
             tokenSeparators: [',', ';']
         serialize: ->
-          @el.val()
+          {
+            key_aspects: @el.val()
+            survey_name: @slide.find('input').val()
+          }
         validate: ->
-          vals = @serialize()
-          return vals and vals.length > 0
+          {key_aspects, survey_name} = @serialize()
+          return (
+            key_aspects and
+            key_aspects.length > 0 and
+            survey_name and
+            survey_name.length > 1
+          )
 
       'business-units':
         validation_error: 'Please enter correct values.'
@@ -129,7 +137,6 @@ Onboarding =
 
         validate: ->
           values = @serialize()
-          console.log values
           for {unit_name, owner_mail} in values
             if not unit_name or unit_name.length < 1
               return false
@@ -169,7 +176,7 @@ Onboarding =
   init: ->
     $('#onboarding').html(Survaider.Templates['dashboard.onboarding.dock']())
 
-    @slides.init('business-units')
+    @slides.init()
 
 $(document).ready ->
   Onboarding.init()
