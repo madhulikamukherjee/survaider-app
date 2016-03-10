@@ -84,6 +84,42 @@ div[role="dock"]
           &[role="skip"]
             float: right
 
+    div[role="overlay"]
+      position: absolute
+      display: flex
+      justify-content: center
+      align-items: center
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      background: #FFFFFF
+      @include transform(translateY(100%))
+      @include transition(transform 0.3s)
+
+      &.visible
+        @include transform(translateY(0))
+
+      div[role="inner"]
+        width: 60%
+
+      dt, dd
+        float: left
+        margin: 0 0 5px 0
+      dt
+        width: 30%
+        padding-right: 10px
+        text-align: right
+        color: #A9A9A9
+
+      dd
+        width: 70%
+        ul
+          @include clear-ul
+
+      dt
+        clear: both
+
     &::after
       clear: both
       content: ""
@@ -165,7 +201,7 @@ div[role="dock"]
     &:hover
       background: #DDDDDD
 
-    &[role="next"]
+    &[role="next"], &[role="dashboard"]
       background: #78DFC8
       &:hover
         background: #4ABDA3
