@@ -62,6 +62,9 @@ module.exports = (grunt) ->
           '<%= build %>/domain/analytics.js': [
             'src/coffee/analytics.coffee'
           ]
+          '<%= build %>/domain/dashboard.onboarding.js': [
+            'src/coffee/dashboard.onboarding.coffee'
+          ]
           '<%= build %>/domain/notification.js': [
             'src/coffee/notification.coffee'
           ]
@@ -162,6 +165,15 @@ module.exports = (grunt) ->
           '<%= build %>/domain/homepage.vendor.js': [
             'bower_components/jquery/jquery.js'
           ]
+          '<%= build%>/domain/dashboard.onboarding.vendor.js': [
+            'bower_components/jquery/jquery.js'
+            'bower_components/underscore/underscore.js'
+            'bower_components/vex/js/vex.combined.min.js'
+            'bower_components/rivets/dist/rivets.bundled.min.js'
+            'bower_components/select2/dist/js/select2.js'
+            'bower_components/jquery.steps/build/jquery.steps.min.js'
+            '<%= build %>/domain/template.dashboard.js'
+          ]
 
       simplesurvey:
         # sourceMap: true
@@ -214,6 +226,13 @@ module.exports = (grunt) ->
             'bower_components/vex/css/vex-theme-default.css'
             'bower_components/vex/css/vex-theme-top.css'
             'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.css'
+            'bower_components/select2/dist/css/select2.css'
+          ]
+          '<%= build%>/domain/dashboard.onboarding.vendor.css': [
+            'bower_components/font-awesome/css/font-awesome.css'
+            'bower_components/vex/css/vex.css'
+            'bower_components/vex/css/vex-theme-default.css'
+            'bower_components/vex/css/vex-theme-top.css'
             'bower_components/select2/dist/css/select2.css'
           ]
           '<%= build%>/domain/notification.vendor.css': [
@@ -325,6 +344,7 @@ module.exports = (grunt) ->
         files:
           '<%= build %>/css/survaider.styles.css': 'assets/css/survaider.sass'
           '<%= build %>/domain/dashboard.css': 'src/sass/dashboard.sass'
+          '<%= build %>/domain/dashboard.onboarding.css': 'src/sass/dashboard.onboarding.sass'
           '<%= build %>/domain/notification.css': 'src/sass/notification.sass'
           '<%= build %>/domain/analytics.css': 'src/sass/analytics.sass'
           '<%= build %>/domain/builder.css': 'src/sass/builder.sass'

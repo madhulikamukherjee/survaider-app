@@ -1,0 +1,141 @@
+@import "beta"
+@import "_mixins"
+
+div[role="dock"]
+  background: #FFFFFF
+  border-radius: 5px
+  color: #746C77
+  padding: 20px
+
+  section[role="intro"]
+    h1
+      margin: 0 0 10px 0
+
+  section[role="wizard"]
+    border: 1px solid #888
+    border-radius: 5px
+    overflow: hidden
+    position: relative
+    padding-left: 200px
+
+    div[role="tabs"]
+      padding: 10px 0
+      background: #EFEFEF
+      position: absolute
+      width: 200px
+      left: 0
+      height: 100%
+
+      ul
+        @include clear-ul
+        li
+          padding: 5px 0 5px 20px
+          margin: 5px 0
+          font-size: 14px
+
+          &.active
+            background: #FFFFFF
+            font-weight: 500
+
+          &[role="header"]
+            font-size: 16px
+            padding-left: 10px
+
+    div[role="interaction"]
+      padding: 10px 10px 60px 10px
+      overflow: hidden
+
+      div[role="input"]
+        display: flex
+        flex-flow: row
+        flex-wrap: nowrap
+        @include transform(translateX(0))
+        @include transition(transform 1s)
+
+        div[data-slide]
+          flex: 1 0 100%
+          padding: 0px 60px 0 10px
+          padding-right: 20%
+
+      div[role="nav"]
+        position: absolute
+        left: 200px
+        right: 0
+        padding: 10px
+        bottom: 0
+
+        a
+          padding: 5px 20px
+          border-radius: 5px
+          color: #5F5762
+          font-weight: 300
+          font-size: 14px
+          text-decoration: none
+
+          &[role="prev"]
+            background: #EEEEEE
+            &:hover
+              background: #DDDDDD
+
+          &[role="next"]
+            background: #78DFC8
+            float: right
+            &:hover
+              background: #4ABDA3
+
+          &[role="skip"]
+            float: right
+            &:hover
+              text-decoration: underline
+
+
+    &::after
+      clear: both
+      content: ""
+      display: table
+
+.vex
+  z-index: 900
+
+  &.vex-theme-top
+    .vex-content
+      background: #FFFFFF
+      font-family: 'Montserrat'
+
+      h1
+        margin: 0 0 10px 0
+        line-height: 30px
+
+      p
+        margin: 5px 0
+
+      p.small
+        font-size: 15px
+        margin-bottom: 10px
+
+      .orb
+        width: 30px
+        height: 30px
+        padding: 5px
+        font-size: 18px
+        text-align: center
+        margin: 0 10px 10px 0
+        border-radius: 50%
+        background: #A2DED0
+        font-weight: 500
+        color: #000
+        float: left
+
+      font-size: 15px
+      font-weight: 200
+
+      input[name='s_name'], input[name='swag']
+        font-size: 15px
+        padding: 10px 0
+        background: #FFFFFF
+        border: none
+        border-bottom: 2px solid #AAA
+
+        &:focus, &:hover
+          outline: none
+          border-bottom: 2px solid #000
