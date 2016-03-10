@@ -19,9 +19,16 @@ Onboarding =
       @nextel.on 'click', => @next()
       @skipel.on 'click', => @skip()
 
+      for title in @slidetitles
+        $(title).on 'click', (e) =>
+          el = $(e.delegateTarget)
+          if el.hasClass('filled')
+            @activate el.attr('data-slide-title')
+
     activate: (name)->
       @slides.removeClass 'active'
       @slidetitles.removeClass 'active'
+      @slidetitles.removeClass 'filled'
 
       if @meta[name]?.can_skip
         @skipel.show()
@@ -36,6 +43,7 @@ Onboarding =
 
       title = $("li[data-slide-title=#{name}")
       title.addClass 'active'
+      title.prevAll('li[data-slide-title]').addClass 'filled'
 
     __paginate: (operator, skipping)->
       current = $("div[data-slide].active")

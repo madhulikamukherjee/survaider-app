@@ -37,6 +37,19 @@ div[role="dock"]
             background: #FFFFFF
             font-weight: 500
 
+          &.filled
+            background: #B1F1E3
+            color: #003126
+            a
+              cursor: pointer
+              &:hover
+                text-decoration: underline
+
+          a
+            color: inherit
+            text-decoration: none
+            cursor: default
+
           &[role="header"]
             font-size: 16px
             padding-left: 10px
@@ -97,6 +110,35 @@ div[role="dock"]
 
           &:nth-child(2)
             width: 60%
+
+  div[data-slide="websites"]
+    padding-right: 10px !important
+    div[role="partners"]
+      text-align: center
+      margin: auto
+      div[role="partner"]
+        display: inline-block
+        width: 50%
+        float: left
+        padding: 10px
+
+        div.boxed
+          background: #F2F2F2
+          padding: 20px
+          text-align: center
+          border-radius: 5px
+
+          img
+            height: 60px
+        p
+          font-size: 14px
+        input
+          width: 100%
+
+      &::after
+        clear: both
+        content: ""
+        display: table
 
   input
     padding: 5px 10px

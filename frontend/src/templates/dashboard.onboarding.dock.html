@@ -7,12 +7,22 @@
     <div role="tabs">
       <ul>
         <li role="header">Setup primary surver</li>
-        <li data-slide-title="key-aspect">Add key aspects</li>
-        <li data-slide-title="business-units">Add Business Units</li>
+        <li data-slide-title="key-aspect">
+          <a href="javascript:void(0)">Add key aspects</a>
+        </li>
+        <li data-slide-title="business-units">
+          <a href="javascript:void(0)">Add Business Units</a>
+        </li>
         <li role="header">Configure Accounts</li>
-        <li data-slide-title="facebook">Facebook</li>
-        <li data-slide-title="twitter">Twitter</li>
-        <li data-slide-title="websites">Review websites</li>
+        <li data-slide-title="facebook">
+          <a href="javascript:void(0)">Facebook</a>
+        </li>
+        <li data-slide-title="twitter">
+          <a href="javascript:void(0)">Twitter</a>
+        </li>
+        <li data-slide-title="websites">
+          <a href="javascript:void(0)">Review websites</a>
+        </li>
       </ul>
     </div>
     <div role="interaction">
@@ -55,16 +65,36 @@
           <hr>
           <p><em>If you have Facebook pages for all your units separately, the unit managers will link them up, after which you will be able to view the insights.</em></p>
           <p><em>If you have ONE Facebook page for your entire business, you can link it here.</em></p>
+          <input type="text" placeholder="https://facebook.com/yourpage"></input>
         </div>
         <div data-slide="twitter">
           <p>Your customers are tweeting inecessantly about their experience with your business. Find the temperature of these discussions and see if they are in your favour!</p>
           <hr>
           <p><em>If you have Twitter pages for all your units separately, the unit managers will link them up, after which you will be able to view the insights.</em></p>
           <p><em>If you have ONE Twitter page for your entire business, you can link it here.</em></p>
+          <input type="text" placeholder="https://twitter.com/@you"></input>
         </div>
         <div data-slide="websites">
           <p>Delve into insights on your reviews from various other sources.</p>
           <p><em>In our version 1, you can integrate with </em></p>
+          <div role="partners">
+            <div role="partner">
+              <div class="boxed">
+                <img src="/static/img/partner/Tripadvisor-logo.png">
+              </div>
+              <p>Have an overall business TripAdvisor page? Paste the link here</p>
+              <input type="text" placeholder="good trip"></input>
+            </div>
+            <div role="partner">
+              <div class="boxed">
+                <img src="/static/img/partner/Zomato-Logo-red-background.png">
+              </div>
+              <p>Have an overall business Zomato page? Paste the link here</p>
+              <input type="text" placeholder="good trip"></input>
+            </div>
+          </div>
+          <p><small>Individual units’ TripAdvisor or Zomato pages can be added by the unit managers, after which you will be able to see the insights.</small></p>
+
         </div>
       </div>
       <div role="nav">
