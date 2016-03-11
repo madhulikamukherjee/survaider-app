@@ -32,6 +32,12 @@ from survaider.ml.datum import DatumBox
 
 class SurveyController(Resource):
 
+    def post_args_bulk(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('bulk', type = bool, required = True)
+        parser.add_argument('payload', type = str, required = True)
+        return parser.parse_args()
+
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('s_name', type = str, required = True)
@@ -54,25 +60,64 @@ class SurveyController(Resource):
 
     @api_login_required
     def post(self):
-        args = self.post_args()
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
-        svey.metadata['name'] = args['s_name']
-
-        struct_dict = starter_template
-        opt = []
-        for option in args['s_tags']:
-            opt.append({
-                'checked': False,
-                'label': option
-            })
-
-        struct_dict['fields'][0]['field_options']['options'] = opt
-        svey.struct = struct_dict
         svey.created_by.append(usr)
-        svey.save()
+        ret = {}
 
-        return svey.repr, 200
+        try:
+            args = self.post_args()
+        except Exception as e:
+            args = self.post_args_bulk()
+            payload = json.loads(args['payload'])
+            name = payload['create']['survey_name']
+            tags = payload['create']['key_aspects']
+
+            #: Do whatever we want with metadata here.
+            svey.metadata['external'] = payload['external']
+            svey.save()
+
+            #: Create units.
+            for unit in payload['units']:
+                usvey = SurveyUnit()
+                usvey.unit_name = unit['unit_name']
+                usvey.referenced = svey
+                usvey.created_by.append(usr)
+                usvey.save()
+
+                try:
+                    shuser = User.objects.get(email = unit['owner_mail'])
+                except DoesNotExist:
+                    ftract = SurveySharePromise()
+                    ftract.future_email = unit['owner_mail']
+                    ftract.future_survey = usvey
+                    ftract.save()
+                    # Send email here.
+                    ret['partial'] = True
+                else:
+                    usvey.created_by.append(shuser)
+                    usvey.save()
+        else:
+            name = args['s_name']
+            tags = args['s_tags']
+        finally:
+            svey.metadata['name'] = name
+
+            struct_dict = starter_template
+            opt = []
+            for option in tags:
+                opt.append({
+                    'checked': False,
+                    'label': option
+                })
+
+            struct_dict['fields'][0]['field_options']['options'] = opt
+            svey.struct = struct_dict
+            svey.save()
+            ret.update(svey.repr)
+
+            return ret, 200 + int(ret.get('partial', 0))
+
 
 class SurveyMetaController(Resource):
 
@@ -575,7 +620,7 @@ class DashboardAPIController(Resource):
             # return survey_name
             created_by=csi['created_by'][0]['$oid']
             # return csi
-            
+
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -589,12 +634,12 @@ class DashboardAPIController(Resource):
             x= i['field_options']
             if "deletable" in x:
                 # return x['options']
-            
-                cids.append(i['cid'])
-        
-        # 
 
-        
+                cids.append(i['cid'])
+
+        #
+
+
         """ END"""
         res=[]
         r= {}
@@ -604,10 +649,10 @@ class DashboardAPIController(Resource):
             # return survey_data
             #I have the total responses
             j_data= d(survey_data)
-            
+
             # return survey_data[0]['field_options']
             if "options" in survey_data['field_options']:
-                
+
                 try:
                     options=[]
                     option_code={}
@@ -675,7 +720,7 @@ class DashboardAPIController(Resource):
                 for key in options_count:
                     counter=0
                     for bkey in options_count[key]:
-                        
+
                         if int(bkey)!=0:
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
@@ -725,7 +770,7 @@ class DashboardAPIController(Resource):
         #     res['unit_name']=survey_name
         #     res['created_by']=created_by
         # except:pass
-        
+
         return res
     def get(self,survey_id,aggregate="false"):
         ##First get for all surveys
@@ -733,13 +778,13 @@ class DashboardAPIController(Resource):
         # survey_id=HashId.decode("goojkg5jyVnGj9V6Lnw")
         # parent_survey=survey_id
         # survey_id= HashId.decode("3NNl87yvoZXN4lypAjq")
-    
+
         parent_survey= survey_id
         l = IrapiData(survey_id,1,1,aggregate)
         # survey_strct= l.survey_strct()
-        
 
-        
+
+
         #Check if survey has children.
         #Check for parent too.
         flag0= l.get_parent()
@@ -747,9 +792,9 @@ class DashboardAPIController(Resource):
         if flag0!=False:
             """There is a parent"""
             parent_survey= flag0
-        
+
         flag= l.flag()
-        
+
         if flag ==False:
             r= {}
 
@@ -757,12 +802,12 @@ class DashboardAPIController(Resource):
             return r
         else:
             if aggregate=="true":
-                
+
                 response={}
                 response['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
 
                 units=[]
-                
+
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
                 # return response
@@ -777,7 +822,7 @@ class DashboardAPIController(Resource):
 
 
 
-        
+
 
 
 
@@ -785,12 +830,12 @@ class DashboardAPIController(Resource):
 class IRAPI(Resource):
     """
     docstring for IRAPI-  Inclusive-RAPI
-    returns json response 
+    returns json response
     """
     def get(self,survey_id,start=None,end=None,aggregate="false"):
         try:
             survey_id=HashId.decode(survey_id)
-           
+
         except ValueError:
             return "No survey_id or uuid provided"
 
@@ -799,22 +844,22 @@ class IRAPI(Resource):
         # return all_responses
         #return all_responses
         all_survey= lol.get_uuid_labels()
-        
+
         if "referenced" in all_survey[0]:
 
             parent_survey= all_survey[0]['referenced']['$oid']
-            
+
             # parent_survey= HashId.decode(parent_survey)
             s= IrapiData(parent_survey,start,end,aggregate)
             all_survey=s.get_uuid_labels()
 
-            
-            
+
+
         else:
-           
+
             all_survey= lol.get_uuid_labels()
         # return all_responses
-        
+
         # try:
         #     all_survey=all_survey[0]
         # except :
@@ -822,9 +867,9 @@ class IRAPI(Resource):
         ret=[]
         # return all_survey
         for i in range(len(all_survey)):
-            
+
             j_data=all_survey[i]
-            
+
             uuid= j_data['cid']
             response_data=all_responses
 
@@ -837,14 +882,14 @@ class IRAPI(Resource):
             except:pass
             """Response Count """
             temp=[]
-            
+
             for a in range(len(response_data)):
                 try:
                     temp.append(response_data[a]['responses'][uuid])
-                    
+
                 except:
                     pass
-                
+
 
             """Option Count"""
             options_count={}
@@ -854,7 +899,7 @@ class IRAPI(Resource):
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
                 for b in temp:
                     if j_data['field_type']=='long_text':
-                        
+
                         dat= DatumBox()
                         sent= dat.get_sentiment(b)
                         sentiment[sent]+=1
@@ -873,7 +918,7 @@ class IRAPI(Resource):
                                 if i in options_count_segg:
                                     options_count_segg[i]+=1
                                 else:options_count_segg[i]=1
-                            
+
                     if b in options_count:pass
                     else:options_count[b]=temp.count(b)
 
@@ -894,7 +939,7 @@ class IRAPI(Resource):
 
                                 # values[e]={}
                                 values[e][rank_key]=1
-                                
+
                         else:
                             values[e]={}
                             values[e][rank_key]=1
@@ -980,7 +1025,7 @@ class IRAPI(Resource):
     #                       counter+= float(bkey) * options_count[key][bkey]
     #                   else:
     #                       pass
-    #               avg[key]= float(counter)/len(temp) 
+    #               avg[key]= float(counter)/len(temp)
 
     #               # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
     #           response['avg_rating']=avg
@@ -998,7 +1043,7 @@ class IRAPI(Resource):
     #       ret.append(response)
     # #return ret
 
-        
+
 class ResponseAPIController(Resource):
     """docstring for RAPI"""
     def get(self,survey_id,uuid,aggregate="false"):
@@ -1010,7 +1055,7 @@ class ResponseAPIController(Resource):
         if "referenced" in all_survey[0]:
            # return "reference"
             parent_survey= all_survey[0]['referenced']['$oid']
-            
+
             # parent_survey= HashId.decode(parent_survey)
             s= DataSort(parent_survey,uuid,aggregate)
             survey_data= s.get_uuid_label()
@@ -1037,7 +1082,7 @@ class ResponseAPIController(Resource):
 
         #Response Count
         temp= []
-    
+
         for i in range(len(response_data)):
             temp.append(response_data[i]['responses'][uuid])
 

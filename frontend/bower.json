@@ -60,7 +60,8 @@
     "vex": "~2.3.3",
     "rivets": "~0.8.1",
     "select2": "~4.0.1",
-    "jquery.steps": "^1.1.0"
+    "jquery.steps": "^1.1.0",
+    "uri-template.js": "^0.1.2"
   },
   "resolutions": {
     "jquery": "~2.0.3",

@@ -195,10 +195,10 @@ Onboarding =
       @elements = $('div[role="overlay"]')
       @close()
 
-    activate: (name)->
+    activate: (name, args)->
       @close()
       target = $("div[data-overlay='#{name}'")
-      @meta[name].pre_show?()
+      @meta[name].pre_show?(args)
       target.addClass('visible')
 
     close: ->
@@ -208,9 +208,17 @@ Onboarding =
       review:
         init: ->
           @el = $("div[data-overlay='review'")
-          @el.find("a[role='close']").on 'click', ->
+
+          (@el.find 'p[role="buttons"]').slideDown()
+          (@el.find 'p[role="progress"]').slideUp()
+
+          (@el.find 'a[role="close"]').on 'click', ->
             Onboarding.overlay.close()
+          (@el.find 'a[role="proceed"]').on 'click', =>
+            @do_proceed()
+
         pre_show: ->
+          @preset = false
           rel = @el.find('dl[role="review-fields"]')
           render =
             'key-aspect': (dat) ->
@@ -220,33 +228,86 @@ Onboarding =
                 "<span role='tag'>#{tag}</span>").join("")
               out += "<dt>Key Aspects</dt><dd>#{tags}</dt>"
               return out
+
             'business-units': (dat) ->
               units = for {unit_name, owner_mail} in dat
                 "<li>#{unit_name} <small>(#{owner_mail})</small></li>"
               units = if units.length then units.join("") else "Skipped"
               "<dt>Units</dt><dd><ul>#{units}</ul></dd>"
+
             'facebook': (dat) ->
               val = if dat.length then dat else "Skipped"
               "<dt>Facebook</dt><dd>#{val}</dd>"
+
             'twitter': (dat) ->
               val = if dat.length then dat else "Skipped"
               "<dt>Twitter</dt><dd>#{val}</dd>"
+
             'websites': (dat) ->
               {zomato, tripadvisor} = dat
               out = unless (zomato or tripadvisor) then "Skipped" else """
                 <ul>
-                  #{if zomato then "<li>Zomato</li>" else ""}
-                  #{if tripadvisor then "<li>Tripadvisor</li>" else ""}
+                  #{if zomato then "<span role='tag'>Zomato</span>" else ""}
+                  #{if tripadvisor then "<span role='tag'>Tripadvisor</span>" else ""}
                 </ul>
               """
               "<dt>External Services</dt><dd>#{out}</dd>"
 
           meta = Onboarding.slides.meta
           htmlgen = (render[k](v.serialize()) for k, v of meta)
+          @preset = true
           rel.html(htmlgen.join(''))
 
+        do_proceed: ->
+          if @preset? isnt true then return
+          (@el.find 'p[role="buttons"]').slideUp()
+          (@el.find 'p[role="progress"]').slideDown()
+
+          data =
+            bulk: true
+            payload: JSON.stringify
+              create: Onboarding.slides.meta['key-aspect'].serialize()
+              units: Onboarding.slides.meta['business-units'].serialize()
+              external:
+                facebook: Onboarding.slides.meta['facebook'].serialize()
+                twitter: Onboarding.slides.meta['twitter'].serialize()
+                zomato: Onboarding.slides.meta['websites'].serialize()?.zomato
+                tripadvisor: Onboarding.slides.meta['websites'].serialize()?.tripadvisor
+
+          $.ajax(
+            url: '/api/survey'
+            data: data
+            type: 'POST'
+          ).done((dat) =>
+            Onboarding.overlay.activate 'success',
+              success: if dat?.partial then true else false
+              uri: dat?.uri_edit
+
+          ).fail(=>
+            vex.dialog.alert
+              className: 'vex-theme-default'
+              message: "Unknown server error. Please try again."
+
+            (@el.find 'p[role="buttons"]').slideDown()
+            (@el.find 'p[role="progress"]').slideUp()
+            return
+          )
+
       success:
+        msg_fail: """Your survey has been succesfully created, however a few
+        of the unit owners you had designated weren't added because they're
+        already owners of another survey. No worries, though. You can always
+        share the units from your dashboard."""
+        msg_success: """Your survey has been succesfully created."""
+
         init: ->
+          @el = $("div[data-overlay='success'")
+
+        pre_show: (status)->
+          (@el.find '[role="edit"]').attr 'href', status?.uri or '#'
+          (@el.find '[role="message"]').html(
+            if status?.success then @msg_success else @msg_fail
+          )
 
   init: ->
     $('#onboarding').html(Survaider.Templates['dashboard.onboarding.dock']())
