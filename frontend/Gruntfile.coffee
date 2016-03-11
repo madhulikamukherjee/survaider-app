@@ -95,7 +95,7 @@ module.exports = (grunt) ->
             'bower_components/PACE/pace.js'
             'bower_components/jquery/jquery.js'
             'bower_components/modernizer/modernizr.js'
-            'bower_components/jquery-ui/ui/jquery-ui.js'
+            'bower_components/jquery-ui/jquery-ui.js'
             'bower_components/bootstrap/dist/js/bootstrap.js'
             'bower_components/jquery.easing/js/jquery.easing.js'
             'bower_components/jquery-unveil/jquery.unveil.js'
