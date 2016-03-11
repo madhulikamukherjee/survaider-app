@@ -16,19 +16,19 @@
     <% }; %>
 
     <ul>
+      <table>
       <% _.each(dat.payload, function(doc) { %>
-        <li>
-          <div class="question">
-            <%= doc.label %>
-          </div>
-          <div class="answer"><%= doc.res_label %></div>
-        </li>
+          <tr>
+            <td class="details">
+              A response "<%= doc.res_label %>" to the question "<%= doc.label %>" at outlet
+            </td>
+            <td class="buttons">
+              <a href=""><button>Analytics</button></a>
+              <a href=""><button>More Details</button></a>
+            </td>
+          </tr>
       <% }); %>
+    </table>
     </ul>
-  </section>
-
-  <section class="">
-    <a href="">Analytics</a>
-    <a href="">More Details</a>
   </section>
 </li>

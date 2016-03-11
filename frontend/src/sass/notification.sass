@@ -1,14 +1,148 @@
-@import "beta"
+@import "notifbeta"
 
 div.deck
+  padding-left : 20px
   ul
     list-style: none
     padding: 0
+body
+  margin: 0
+  position: relative
+  font-family: "Raleway-Regular", sans-serif
+
+
+a
+  text-decoration: none
+  color: inherit
+
+input, textarea
+  border: none
+  outline: none
+
+ul
+  margin: 0
+  padding: 0
+  list-style: none
+
+h1, h2, h3, h4, h5, h6
+  margin: 0
+
+@font-face
+  font-family: Montserrat-Light
+  src: url("fonts/Montserrat-Light.otf")
+
+
+@font-face
+  font-family: Montserrat-Hairline
+  src: url("fonts/Montserrat-Hairline.otf")
+
+
+@font-face
+  font-family: Montserrat-Regular
+  src: url("fonts/Montserrat-Regular.otf")
+
+
+@font-face
+  font-family: Raleway-Light
+  src: url("fonts/Raleway-Light.ttf")
+
+
+@font-face
+  font-family: Raleway-Regular
+  src: url("fonts/Raleway-Regular.ttf")
+
+
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+/*---------------------------------------------------
+@media only screen and (min-width: 320px) and (max-width: 768px)
+  .sv-sidebar
+    display: none
+  .sv-main-content-wrapper
+    padding-left: 0 !important
+
+/*---------------------------------------------------
+/*---------------------------------------------------
+
+
+.sv-header
+  height: 60px
+  width: 100%
+  background-color: #50E3C2
+  z-index: 10
+  position: fixed
+  top: 0
+  left: 0
+
+.sv-logo
+  left: 1em
+  a
+    display: block
+    font-weight: 900
+    color: white
+  position: absolute
+  top: 50%
+  -webkit-transform: translate(0, -50%)
+  -moz-transform: translate(0, -50%)
+  -ms-transform: translate(0, -50%)
+  -o-transform: translate(0, -50%)
+  transform: translate(0, -50%)
+
+.sv-header-nav
+  position: absolute
+  top: 50%
+  -webkit-transform: translate(0, -50%)
+  -moz-transform: translate(0, -50%)
+  -ms-transform: translate(0, -50%)
+  -o-transform: translate(0, -50%)
+  transform: translate(0, -50%)
+  right: 2em
+  a
+    display: block
+    border: 1px solid #8e8e8e
+    padding: 0.5em 1em
+    background-color: #7EFFE2
+    color: #9B9B9B
+
+/*---------------------------------------------------
+/*---------------------------------------------------
+
+.sv-sidebar
+  width: 170px
+  height: 100%
+  background-color: #4A4A4A
+  position: fixed
+  top: 0
+  left: 0
+  padding-top: 60px
+  z-index: 5
+
+.sv-sidebar-nav ul
+  margin: 28px 0 0 28px
+  li
+    margin-bottom: 16px
+    a
+      display: block
+      color: #9B9B9B
+      font-size: 20px
+
+.sv-main-content-wrapper
+  width: 100%
+  min-height: 100vh
+  background-color: #F6F2F2
+  padding-top: 60px
+  padding-left: 170px
+
+
+
 
 li.notification
   background: #FFFFFF
-  border: 1px solid
-  border-radius: 4px
   padding: 10px
   margin-bottom: 10px
   color: #555
@@ -50,6 +184,20 @@ li.notification
       font-weight: 200
 
     ul
+      table
+        width : 100%
+      td.details
+        width : 65%
+      td.buttons
+        width : 35%
+        vertical-align : top
+    
+    ul.units
+      background : #DDDDDD
+      padding: 10px 10px
+      border-radius: 10px
+      font-size: 14px
+      display: inline-block
 
     li
       @include outer-container
@@ -59,7 +207,7 @@ li.notification
         @include span-columns(6)
 
       &:nth-child(odd)
-        background: #EEE
+        background: #FFFFFF
 
   &[data-collapse="true"]
     background: #EEE

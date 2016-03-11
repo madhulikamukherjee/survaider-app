@@ -16279,10 +16279,10 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 }).call(this);
 
 /*!
- * Waves v0.7.5
+ * Waves v0.7.4
  * http://fian.my.id/Waves
  *
- * Copyright 2014-2016 Alfiana E. Sibuea and other contributors
+ * Copyright 2014 Alfiana E. Sibuea and other contributors
  * Released under the MIT license
  * https://github.com/fians/Waves/blob/master/LICENSE
  */
@@ -16340,7 +16340,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 
         if (stringRepr === '[object String]') {
             return $$(nodes);
-        } else if (isObject(nodes) && /^\[object (Array|HTMLCollection|NodeList|Object)\]$/.test(stringRepr) && nodes.hasOwnProperty('length')) {
+        } else if (isObject(nodes) && /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) && nodes.hasOwnProperty('length')) {
             return nodes;
         } else if (isDOMNode(nodes)) {
             return [nodes];
@@ -23134,15 +23134,15 @@ __p += '\n    <h3>Main Survey: ' +
 ((__t = ( dat.root.name )) == null ? '' : __t) +
 '</h3>\n    ';
  }; ;
-__p += '\n\n    <ul>\n      ';
+__p += '\n\n    <ul>\n      <table>\n      ';
  _.each(dat.payload, function(doc) { ;
-__p += '\n        <li>\n          <div class="question">\n            ' +
-((__t = ( doc.label )) == null ? '' : __t) +
-'\n          </div>\n          <div class="answer">' +
+__p += '\n          <tr>\n            <td class="details">\n              A response "' +
 ((__t = ( doc.res_label )) == null ? '' : __t) +
-'</div>\n        </li>\n      ';
+'" to the question "' +
+((__t = ( doc.label )) == null ? '' : __t) +
+'" at outlet\n            </td>\n            <td class="buttons">\n              <a href=""><button>Analytics</button></a>\n              <a href=""><button>More Details</button></a>\n            </td>\n          </tr>\n      ';
  }); ;
-__p += '\n    </ul>\n  </section>\n\n  <section class="">\n    <a href="">Analytics</a>\n    <a href="">More Details</a>\n  </section>\n</li>\n';
+__p += '\n    </table>\n    </ul>\n  </section>\n</li>\n';
 
 }
 return __p
@@ -23161,57 +23161,73 @@ __p += '<li class="notification survey-ticket" data-card="parent" data-collapse=
 ((__t = ( dat.acquired )) == null ? '' : __t) +
 '">' +
 ((__t = ( dat.acquired )) == null ? '' : __t) +
-'</span>\n    </p>\n    <button><i class="fa fa-times"></i></button>\n  </section>\n\n  <p data-survey-id="' +
+'</span>\n    </p>\n    <button><i class="fa fa-times"></i></button>\n  </section>\n\n  <section class="main">\n    <h2>\n      ';
+ if (dat.origin == dat.targets.id) { ;
+__p += '\n        <p data-survey-id="' +
 ((__t = ( dat.root_survey.id )) == null ? '' : __t) +
-'">Main Survey: ' +
-((__t = ( dat.root_survey.name )) == null ? '' : __t) +
-'</p>\n\n  <ul>\n    ';
- _.each(dat.survey_unit, function(doc) { ;
-__p += '\n      <li>\n        <span>' +
-((__t = ( doc.name )) == null ? '' : __t) +
-'</span>\n        <small>' +
-((__t = ( doc.id )) == null ? '' : __t) +
-'</small>\n      </li>\n    ';
- }); ;
-__p += '\n  </ul>\n  <ul>\n    ';
- _.each(dat.targets, function(doc) { ;
-__p += '\n      <li data-user-id="' +
-((__t = ( doc.id )) == null ? '' : __t) +
-'">\n        <span>' +
-((__t = ( doc.email )) == null ? '' : __t) +
-'</span>\n        ';
- if (dat.origin == doc.id) { ;
-__p += '\n          <span>Owner</span>\n        ';
- } ;
-__p += '\n      </li>\n    ';
- }); ;
-__p += '\n  </ul>\n  <p class="message">' +
+'">The task "' +
 ((__t = ( dat.payload.original_msg )) == null ? '' : __t) +
-'</p>\n\n  <ul role="comments">\n    ';
+'" is assigned to</p>\n      ';
+ } else { ;
+__p += '\n        <p data-survey-id="' +
+((__t = ( dat.root_survey.id )) == null ? '' : __t) +
+'">You have been assigned a task "' +
+((__t = ( dat.payload.original_msg )) == null ? '' : __t) +
+'"</p>\n      ';
+ } ;
+__p += '\n    </h2>\n\n    <ul>\n      <table>\n        <tr>\n          <td class="details">\n            <ul>\n              ';
+ if (dat.origin == dat.root_survey.id) { ;
+__p += '\n              To : \n              ';
+ } else { ;
+__p += '\n              Assigned to : \n              ';
+ } ;
+__p += '\n\n              ';
+ _.each(dat.survey_unit, function(doc) { ;
+__p += '\n              <ul class="units">\n                <span>' +
+((__t = ( doc.name )) == null ? '' : __t) +
+'</span>\n                <!-- <small>' +
+((__t = ( doc.id )) == null ? '' : __t) +
+'</small> -->\n              </ul>\n              ';
+ }); ;
+__p += '\n            </ul>\n            <!--   by : ' +
+((__t = ( dat.root_survey.name )) == null ? '' : __t) +
+'\n               <ul>\n                ';
+ _.each(dat.targets, function(doc) { ;
+__p += '\n                  <li data-user-id="' +
+((__t = ( doc.id )) == null ? '' : __t) +
+'">\n                    <span>' +
+((__t = ( doc.email )) == null ? '' : __t) +
+'</span>\n                    ';
+ if (dat.origin == doc.id) { ;
+__p += '\n                      <span>Owner</span>\n                    ';
+ } ;
+__p += '\n                  </li>\n                ';
+ }); ;
+__p += '\n              </ul> -->\n            <ul role="comments">\n              ';
  _.each(dat.payload.comments, function(doc) { ;
-__p += '\n      <li data-user-id="' +
+__p += '\n              <li data-user-id="' +
 ((__t = ( doc.user.id )) == null ? '' : __t) +
-'">\n        <i class="fa fa-clock-o"></i>\n        <span data-livestamp="' +
+'">\n                <i class="fa fa-clock-o"></i>\n                <!-- <span data-livestamp="' +
 ((__t = ( doc.added )) == null ? '' : __t) +
 '">' +
 ((__t = ( doc.added )) == null ? '' : __t) +
-'</span>\n\n        <span>' +
+'</span> -->\n\n                <!-- <span>' +
 ((__t = ( doc.user.email )) == null ? '' : __t) +
-'</span>\n        ';
+'</span> -->\n                ';
  if (dat.origin == doc.user.id) { ;
-__p += '\n          <span>Owner</span>\n        ';
+__p += '\n                <span>Owner</span>\n                ';
  } ;
-__p += '\n        <p class="message">' +
+__p += '\n                <p class="message">' +
 ((__t = ( doc.text )) == null ? '' : __t) +
-'</p>\n      </li>\n    ';
+'</p>\n              </li>\n              ';
  }); ;
-__p += '\n    <li>\n      <input type="text" data-input="add_comment"></input>\n      <span data-action="add_comment">Add a Comment</span>\n    </li>\n  </ul>\n  ';
+__p += '\n              <li>\n                <span data-action="add_comment">Add a Comment</span>\n                <input type="text" data-input="add_comment"></input>\n                \n              </li>\n            </ul>\n          </td>\n          <td class="buttons">\n\n            ';
  if (dat.flagged) {;
-__p += '\n    <span data-action="mark_finished">Mark Finished</span>\n  ';
+__p += '\n            <span data-action="mark_finished"><button>Mark Finished</button></span>\n            <span data-action="send_to_cc"><button>Send to Customer Care</button></span>\n            ';
  } else { ;
-__p += '\n    <span data-action="expand">Expand/Collapse</span>\n  ';
+__p += '\n            <span data-action="expand"><button>Expand/Collapse</button></span>\n            ';
  } ;
-__p += '\n</li>\n';
+__p += '\n          </td>\n        </tr>\n      </table>\n    </ul>\n  </section>\n</li>\n';
 
 }
 return __p
