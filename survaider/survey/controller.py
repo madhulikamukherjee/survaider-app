@@ -76,6 +76,7 @@ class SurveyController(Resource):
             #: Do whatever we want with metadata here.
             svey.metadata['external'] = payload['external']
             svey.save()
+            ret['partial'] = False
 
             #: Create units.
             for unit in payload['units']:

@@ -280,7 +280,7 @@ Onboarding =
             type: 'POST'
           ).done((dat) =>
             Onboarding.overlay.activate 'success',
-              success: if dat?.partial then true else false
+              success: if dat?.partial is false then true else false
               uri: dat?.uri_edit
 
           ).fail(=>

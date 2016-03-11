@@ -380,7 +380,7 @@
             }).done((function(_this) {
               return function(dat) {
                 return Onboarding.overlay.activate('success', {
-                  success: (dat != null ? dat.partial : void 0) ? true : false,
+                  success: (dat != null ? dat.partial : void 0) === false ? true : false,
                   uri: dat != null ? dat.uri_edit : void 0
                 });
               };
