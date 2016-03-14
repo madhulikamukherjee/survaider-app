@@ -4003,14 +4003,14 @@
     }
 }).call(this);
 
-/*! DataTables 1.10.10
+/*! DataTables 1.10.11
  * ©2008-2015 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     DataTables
  * @description Paginate, search and order HTML tables
- * @version     1.10.10
+ * @version     1.10.11
  * @file        jquery.dataTables.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -4749,6 +4749,7 @@
 		oCol._bAttrSrc = $.isPlainObject( mDataSrc ) && (
 			attrTest(mDataSrc.sort) || attrTest(mDataSrc.type) || attrTest(mDataSrc.filter)
 		);
+		oCol._setter = null;
 	
 		oCol.fnGetData = function (rowData, type, meta) {
 			var innerData = mData( rowData, type, undefined, meta );
@@ -4873,7 +4874,7 @@
 	 */
 	function _fnVisbleColumns( oSettings )
 	{
-		return _fnGetColumns( oSettings, 'bVisible' ).length;
+		return $( _pluck( oSettings.aoColumns, 'nTh' ) ).filter(':visible').length;
 	}
 	
 	
@@ -5179,8 +5180,9 @@
 			return defaultContent;
 		}
 	
-		/* When the data source is null, we can use default column data */
-		if ( (cellData === rowData || cellData === null) && defaultContent !== null ) {
+		// When the data source is null and a specific data type is requested (i.e.
+		// not the original data), we can use default column data
+		if ( (cellData === rowData || cellData === null) && defaultContent !== null && type !== undefined ) {
 			cellData = defaultContent;
 		}
 		else if ( typeof cellData === 'function' ) {
@@ -5776,8 +5778,9 @@
 				cells.push( nTd );
 	
 				// Need to create the HTML if new, or if a rendering function is defined
-				if ( !nTrIn || oCol.mRender || oCol.mData !== i )
-				{
+				if ( (!nTrIn || oCol.mRender || oCol.mData !== i) &&
+					 (!$.isPlainObject(oCol.mData) || oCol.mData._ !== i+'.display')
+				) {
 					nTd.innerHTML = _fnGetCellData( oSettings, iRow, i, 'display' );
 				}
 	
@@ -7881,11 +7884,12 @@
 			footer         = settings.nTFoot ? $(settings.nTFoot) : null,
 			browser        = settings.oBrowser,
 			ie67           = browser.bScrollOversize,
+			dtHeaderCells  = _pluck( settings.aoColumns, 'nTh' ),
 			headerTrgEls, footerTrgEls,
 			headerSrcEls, footerSrcEls,
 			headerCopy, footerCopy,
 			headerWidths=[], footerWidths=[],
-			headerContent=[],
+			headerContent=[], footerContent=[],
 			idx, correction, sanityWidth,
 			zeroOut = function(nSizer) {
 				var style = nSizer.style;
@@ -7917,17 +7921,17 @@
 		// Remove the old minimised thead and tfoot elements in the inner table
 		table.children('thead, tfoot').remove();
 	
-		// Clone the current header and footer elements and then place it into the inner table
-		headerCopy = header.clone().prependTo( table );
-		headerTrgEls = header.find('tr'); // original header is in its own table
-		headerSrcEls = headerCopy.find('tr');
-		headerCopy.find('th, td').removeAttr('tabindex');
-	
 		if ( footer ) {
 			footerCopy = footer.clone().prependTo( table );
 			footerTrgEls = footer.find('tr'); // the original tfoot is in its own table and must be sized
 			footerSrcEls = footerCopy.find('tr');
 		}
+	
+		// Clone the current header and footer elements and then place it into the inner table
+		headerCopy = header.clone().prependTo( table );
+		headerTrgEls = header.find('tr'); // original header is in its own table
+		headerSrcEls = headerCopy.find('tr');
+		headerCopy.find('th, td').removeAttr('tabindex');
 	
 	
 		/*
@@ -7994,7 +7998,11 @@
 	
 		// Apply all widths in final pass
 		_fnApplyToChildren( function(nToSize, i) {
-			nToSize.style.width = headerWidths[i];
+			// Only apply widths to the DataTables detected header cells - this
+			// prevents complex headers from having contradictory sizes applied
+			if ( $.inArray( nToSize, dtHeaderCells ) !== -1 ) {
+				nToSize.style.width = headerWidths[i];
+			}
 		}, headerTrgEls );
 	
 		$(headerSrcEls).height(0);
@@ -8005,6 +8013,7 @@
 			_fnApplyToChildren( zeroOut, footerSrcEls );
 	
 			_fnApplyToChildren( function(nSizer) {
+				footerContent.push( nSizer.innerHTML );
 				footerWidths.push( _fnStringToCss( $(nSizer).css('width') ) );
 			}, footerSrcEls );
 	
@@ -8032,7 +8041,7 @@
 		if ( footer )
 		{
 			_fnApplyToChildren( function(nSizer, i) {
-				nSizer.innerHTML = "";
+				nSizer.innerHTML = '<div class="dataTables_sizing" style="height:0;overflow:hidden;">'+footerContent[i]+'</div>';
 				nSizer.style.width = footerWidths[i];
 			}, footerSrcEls );
 		}
@@ -8102,6 +8111,9 @@
 			divFooterInner[0].style.width = _fnStringToCss( iOuterWidth );
 			divFooterInner[0].style[padding] = bScrolling ? barWidth+"px" : "0px";
 		}
+	
+		// Correct DOM ordering for colgroup - comes before the thead
+		table.children('colgroup').insertBefore( table.children('thead') );
 	
 		/* Adjust the position of the header in case we loose the y-scrollbar */
 		divBody.scroll();
@@ -8275,6 +8287,10 @@
 						.appendTo( tr );
 				}
 			}
+	
+			// Tidy the temporary table - remove name attributes so there aren't
+			// duplicated in the dom (radio elements for example)
+			$('[name]', tmpTable).removeAttr('name');
 	
 			// Table has been built, attach to the document so we can work with it.
 			// A holding element is used, positioned at the top of the container
@@ -11794,9 +11810,17 @@
 	
 			// Selector - node
 			if ( sel.nodeName ) {
-				if ( $.inArray( sel, nodes ) !== -1 ) {
-					return [ sel._DT_RowIndex ]; // sel is a TR node that is in the table
-					                             // and DataTables adds a prop for fast lookup
+				if ( sel._DT_RowIndex !== undefined ) {
+					return [ sel._DT_RowIndex ]; // Property added by DT for fast lookup
+				}
+				else if ( sel._DT_CellIndex ) {
+					return [ sel._DT_CellIndex.row ];
+				}
+				else {
+					var host = $(sel).closest('*[data-dt-row]');
+					return host.length ?
+						[ host.data('dt-row') ] :
+						[];
 				}
 			}
 	
@@ -12356,17 +12380,35 @@
 						return $.map( names, function (name, i) {
 							return name === match[1] ? i : null;
 						} );
+	
+					default:
+						return [];
 				}
 			}
-			else {
-				// jQuery selector on the TH elements for the columns
-				return $( nodes )
-					.filter( s )
-					.map( function () {
-						return $.inArray( this, nodes ); // `nodes` is column index complete and in order
-					} )
-					.toArray();
+	
+			// Cell in the table body
+			if ( s.nodeName && s._DT_CellIndex ) {
+				return [ s._DT_CellIndex.column ];
 			}
+	
+			// jQuery selector on the TH elements for the columns
+			var jqResult = $( nodes )
+				.filter( s )
+				.map( function () {
+					return $.inArray( this, nodes ); // `nodes` is column index complete and in order
+				} )
+				.toArray();
+	
+			if ( jqResult.length || ! s.nodeName ) {
+				return jqResult;
+			}
+	
+			// Otherwise a node which might have a `dt-column` data attribute, or be
+			// a child or such an element
+			var host = $(s).closest('*[data-dt-column]');
+			return host.length ?
+				[ host.data('dt-column') ] :
+				[];
 		};
 	
 		return _selector_run( 'column', selector, run, settings, opts );
@@ -12419,11 +12461,6 @@
 		if ( recalc === undefined || recalc ) {
 			// Automatically adjust column sizing
 			_fnAdjustColumnSizing( settings );
-	
-			// Realign columns for scrolling
-			if ( settings.oScroll.sX || settings.oScroll.sY ) {
-				_fnScrollDraw( settings );
-			}
 		}
 	
 		_fnCallbackFire( settings, null, 'column-visibility', [settings, column, vis, recalc] );
@@ -12584,7 +12621,7 @@
 			}
 	
 			// Selector - jQuery filtered cells
-			return allCells
+			var jqResult = allCells
 				.filter( s )
 				.map( function (i, el) {
 					return { // use a new object, in case someone changes the values
@@ -12593,6 +12630,21 @@
 	 				};
 				} )
 				.toArray();
+	
+			if ( jqResult.length || ! s.nodeName ) {
+				return jqResult;
+			}
+	
+			// Otherwise the selector is a node, and there is one last option - the
+			// element might be a child of an element which has dt-row and dt-column
+			// data attributes
+			host = $(s).closest('*[data-dt-row]');
+			return host.length ?
+				[ {
+					row: host.data('dt-row'),
+					column: host.data('dt-column')
+				} ] :
+				[];
 		};
 	
 		return _selector_run( 'cell', selector, run, settings, opts );
@@ -12660,9 +12712,10 @@
 	
 	_api_registerPlural( 'cells().nodes()', 'cell().node()', function () {
 		return this.iterator( 'cell', function ( settings, row, column ) {
-			var cells = settings.aoData[ row ].anCells;
-			return cells ?
-				cells[ column ] :
+			var data = settings.aoData[ row ];
+	
+			return data && data.anCells ?
+				data.anCells[ column ] :
 				undefined;
 		}, 1 );
 	} );
@@ -13310,7 +13363,7 @@
 	 *  @type string
 	 *  @default Version number
 	 */
-	DataTable.version = "1.10.10";
+	DataTable.version = "1.10.11";
 
 	/**
 	 * Private data store, containing all of the settings objects that are
@@ -18831,6 +18884,12 @@
 	 * to make working with DataTables a little bit easier.
 	 */
 	
+	var __htmlEscapeEntities = function ( d ) {
+		return typeof d === 'string' ?
+			d.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') :
+			d;
+	};
+	
 	/**
 	 * Helpers for `columns.render`.
 	 *
@@ -18869,9 +18928,10 @@
 					var flo = parseFloat( d );
 	
 					// If NaN then there isn't much formatting that we can do - just
-					// return immediately
+					// return immediately, escaping any HTML (this was supposed to
+					// be a number after all)
 					if ( isNaN( flo ) ) {
-						return d;
+						return __htmlEscapeEntities( d );
 					}
 	
 					d = Math.abs( flo );
@@ -18893,11 +18953,7 @@
 	
 		text: function () {
 			return {
-				display: function ( d ) {
-					return typeof d === 'string' ?
-						d.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') :
-						d;
-				}
+				display: __htmlEscapeEntities
 			};
 		}
 	};
@@ -20714,18 +20770,18 @@ else if ( jQuery && !jQuery.fn.dataTable.Buttons ) {
 })(window, document);
 
 
-/*! FixedColumns 3.2.0
- * ©2010-2014 SpryMedia Ltd - datatables.net/license
+/*! FixedColumns 3.2.1
+ * ©2010-2016 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     FixedColumns
  * @description Freeze columns in place on a scrolling DataTable
- * @version     3.2.0
+ * @version     3.2.1
  * @file        dataTables.fixedColumns.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2010-2014 SpryMedia Ltd.
+ * @copyright   Copyright 2010-2016 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -20764,7 +20820,7 @@ else if ( jQuery && !jQuery.fn.dataTable.Buttons ) {
 }(function( $, window, document, undefined ) {
 'use strict';
 var DataTable = $.fn.dataTable;
-
+var _firefoxScroll;
 
 /**
  * When making use of DataTables' x-axis scrolling feature, you may wish to
@@ -21206,11 +21262,24 @@ $.extend( FixedColumns.prototype , {
 
 		/* Event handlers */
 		var mouseController;
+		var mouseDown = false;
+
+		// When the mouse is down (drag scroll) the mouse controller cannot
+		// change, as the browser keeps the original element as the scrolling one
+		$(this.s.dt.nTableWrapper).on( 'mousedown.DTFC', function () {
+			mouseDown = true;
+
+			$(document).one( 'mouseup', function () {
+				mouseDown = false;
+			} );
+		} );
 
 		// When the body is scrolled - scroll the left and right columns
 		$(this.dom.scroller)
 			.on( 'mouseover.DTFC touchstart.DTFC', function () {
-				mouseController = 'main';
+				if ( ! mouseDown ) {
+					mouseController = 'main';
+				}
 			} )
 			.on( 'scroll.DTFC', function (e) {
 				if ( ! mouseController && e.originalEvent ) {
@@ -21235,7 +21304,9 @@ $.extend( FixedColumns.prototype , {
 			// When scrolling the left column, scroll the body and right column
 			$(that.dom.grid.left.liner)
 				.on( 'mouseover.DTFC touchstart.DTFC', function () {
-					mouseController = 'left';
+					if ( ! mouseDown ) {
+						mouseController = 'left';
+					}
 				} )
 				.on( 'scroll.DTFC', function ( e ) {
 					if ( ! mouseController && e.originalEvent ) {
@@ -21262,7 +21333,9 @@ $.extend( FixedColumns.prototype , {
 			// When scrolling the right column, scroll the body and the left column
 			$(that.dom.grid.right.liner)
 				.on( 'mouseover.DTFC touchstart.DTFC', function () {
-					mouseController = 'right';
+					if ( ! mouseDown ) {
+						mouseController = 'right';
+					}
 				} )
 				.on( 'scroll.DTFC', function ( e ) {
 					if ( ! mouseController && e.originalEvent ) {
@@ -21294,6 +21367,7 @@ $.extend( FixedColumns.prototype , {
 
 		jqTable
 			.on( 'draw.dt.DTFC', function () {
+				that._fnColCalc();
 				that._fnDraw.call( that, bFirstDraw );
 				bFirstDraw = false;
 			} )
@@ -21308,16 +21382,20 @@ $.extend( FixedColumns.prototype , {
 					that._fnDraw( true );
 				}
 			} )
+			.on( 'select.dt.DTFC deselect.dt.DTFC', function ( e, dt, type, indexes ) {
+				that._fnDraw( false );
+			} )
 			.on( 'destroy.dt.DTFC', function () {
-				jqTable.off( 'column-sizing.dt.DTFC column-visibility.dt.DTFC destroy.dt.DTFC draw.dt.DTFC' );
+				jqTable.off( '.DTFC' );
 
-				$(that.dom.scroller).off( 'mouseover.DTFC touchstart.DTFC scroll.DTFC' );
-				$(window).off( 'resize.DTFC' );
+				$(that.dom.scroller).off( '.DTFC' );
+				$(window).off( '.DTFC' );
+				$(this.s.dt.nTableWrapper).off( '.DTFC' );
 
-				$(that.dom.grid.left.liner).off( 'mouseover.DTFC touchstart.DTFC scroll.DTFC '+wheelType );
+				$(that.dom.grid.left.liner).off( '.DTFC '+wheelType );
 				$(that.dom.grid.left.wrapper).remove();
 
-				$(that.dom.grid.right.liner).off( 'mouseover.DTFC touchstart.DTFC scroll.DTFC '+wheelType );
+				$(that.dom.grid.right.liner).off( '.DTFC '+wheelType );
 				$(that.dom.grid.right.wrapper).remove();
 			} );
 
@@ -21419,7 +21497,7 @@ $.extend( FixedColumns.prototype , {
 					'</div>'+
 					'<div class="DTFC_LeftFootWrapper" style="position:relative; top:0; left:0; overflow:hidden;"></div>'+
 				'</div>'+
-				'<div class="DTFC_RightWrapper" style="position:absolute; top:0; left:0;">'+
+				'<div class="DTFC_RightWrapper" style="position:absolute; top:0; right:0;">'+
 					'<div class="DTFC_RightHeadWrapper" style="position:relative; top:0; left:0;">'+
 						'<div class="DTFC_RightHeadBlocker DTFC_Blocker" style="position:absolute; top:0; bottom:0;"></div>'+
 					'</div>'+
@@ -21456,6 +21534,8 @@ $.extend( FixedColumns.prototype , {
 			this.dom.grid.right.body = nRight.childNodes[1];
 			this.dom.grid.right.liner = $('div.DTFC_RightBodyLiner', nSWrapper)[0];
 
+			nRight.style.right = oOverflow.bar+"px";
+
 			block = $('div.DTFC_RightHeadBlocker', nSWrapper)[0];
 			block.style.width = oOverflow.bar+"px";
 			block.style.right = -oOverflow.bar+"px";
@@ -21481,6 +21561,24 @@ $.extend( FixedColumns.prototype , {
 				this.dom.grid.right.foot = nRight.childNodes[2];
 			}
 		}
+
+		// RTL support - swap the position of the left and right columns (#48)
+		if ( $(this.dom.body).css('direction') === 'rtl' ) {
+			$(nLeft).css( {
+				left: '',
+				right: 0
+			} );
+
+			$(nRight).css( {
+				left: oOverflow.bar+"px",
+				right: ''
+			} );
+
+			$('div.DTFC_RightHeadBlocker', nSWrapper).css( {
+				left: -oOverflow.bar+'px',
+				right: ''
+			} );
+		}
 	},
 
 
@@ -21491,6 +21589,7 @@ $.extend( FixedColumns.prototype , {
 	 */
 	"_fnGridLayout": function ()
 	{
+		var that = this;
 		var oGrid = this.dom.grid;
 		var iWidth = $(oGrid.wrapper).width();
 		var iBodyHeight = $(this.s.dt.nTable.parentNode).outerHeight();
@@ -21506,6 +21605,12 @@ $.extend( FixedColumns.prototype , {
 				node.style.width = (width+20)+"px";
 				node.style.paddingRight = "20px";
 				node.style.boxSizing = "border-box";
+			}
+			else if ( that._firefoxScrollError() ) {
+				// See the above function for why this is required
+				if ( $(node).height() > 34 ) {
+					node.style.width = (width+oOverflow.bar)+"px";
+				}
 			}
 			else {
 				// Otherwise just overflow by the scrollbar
@@ -21543,7 +21648,6 @@ $.extend( FixedColumns.prototype , {
 			}
 
 			oGrid.right.wrapper.style.width = iRightWidth+"px";
-			oGrid.right.wrapper.style.left = iRight+"px";
 			oGrid.right.wrapper.style.height = "1px";
 			oGrid.right.body.style.height = iBodyHeight+"px";
 			if ( oGrid.right.foot ) {
@@ -21851,11 +21955,13 @@ $.extend( FixedColumns.prototype , {
 
 			/* Add in the tbody elements, cloning form the master table */
 			$('>tbody>tr', that.dom.body).each( function (z) {
-				var n = this.cloneNode(false);
-				n.removeAttribute('id');
 				var i = that.s.dt.oFeatures.bServerSide===false ?
 					that.s.dt.aiDisplay[ that.s.dt._iDisplayStart+z ] : z;
 				var aTds = that.s.dt.aoData[ i ].anCells || $(this).children('td, th');
+
+				var n = this.cloneNode(false);
+				n.removeAttribute('id');
+				n.setAttribute( 'data-dt-row', i );
 
 				for ( iIndex=0 ; iIndex<aiColumns.length ; iIndex++ )
 				{
@@ -21864,6 +21970,8 @@ $.extend( FixedColumns.prototype , {
 					if ( aTds.length > 0 )
 					{
 						nClone = $( aTds[iColumn] ).clone(true, true)[0];
+						nClone.setAttribute( 'data-dt-row', i );
+						nClone.setAttribute( 'data-dt-column', iIndex );
 						n.appendChild( nClone );
 					}
 				}
@@ -22030,6 +22138,41 @@ $.extend( FixedColumns.prototype , {
 			anClone[i].style.height = heights[i]+"px";
 			anOriginal[i].style.height = heights[i]+"px";
 		}
+	},
+
+	/**
+	 * Determine if the UA suffers from Firefox's overflow:scroll scrollbars
+	 * not being shown bug.
+	 *
+	 * Firefox doesn't draw scrollbars, even if it is told to using
+	 * overflow:scroll, if the div is less than 34px height. See bugs 292284 and
+	 * 781885. Using UA detection here since this is particularly hard to detect
+	 * using objects - its a straight up rendering error in Firefox.
+	 *
+	 * @return {boolean} True if Firefox error is present, false otherwise
+	 */
+	_firefoxScrollError: function () {
+		if ( _firefoxScroll === undefined ) {
+			var test = $('<div/>')
+				.css( {
+					position: 'absolute',
+					top: 0,
+					left: 0,
+					height: 10,
+					width: 50,
+					overflow: 'scroll'
+				} )
+				.appendTo( 'body' );
+
+			// Make sure this doesn't apply on Macs with 0 width scrollbars
+			_firefoxScroll = (
+				test[0].clientWidth === test[0].offsetWidth && this._fnDTOverflow().bar !== 0
+			);
+
+			test.remove();
+		}
+
+		return _firefoxScroll;
 	}
 } );
 
@@ -22127,7 +22270,7 @@ FixedColumns.defaults = /** @lends FixedColumns.defaults */{
  *  @default   See code
  *  @static
  */
-FixedColumns.version = "3.2.0";
+FixedColumns.version = "3.2.1";
 
 
 

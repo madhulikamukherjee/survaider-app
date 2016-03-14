@@ -16279,10 +16279,10 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 }).call(this);
 
 /*!
- * Waves v0.7.4
+ * Waves v0.7.5
  * http://fian.my.id/Waves
  *
- * Copyright 2014 Alfiana E. Sibuea and other contributors
+ * Copyright 2014-2016 Alfiana E. Sibuea and other contributors
  * Released under the MIT license
  * https://github.com/fians/Waves/blob/master/LICENSE
  */
@@ -16340,7 +16340,7 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 
         if (stringRepr === '[object String]') {
             return $$(nodes);
-        } else if (isObject(nodes) && /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr) && nodes.hasOwnProperty('length')) {
+        } else if (isObject(nodes) && /^\[object (Array|HTMLCollection|NodeList|Object)\]$/.test(stringRepr) && nodes.hasOwnProperty('length')) {
             return nodes;
         } else if (isDOMNode(nodes)) {
             return [nodes];

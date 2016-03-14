@@ -82,18 +82,9 @@
           event.stopPropagation();
           $vexContent = $(this).parent();
           return $.post("/api/survey/" + self.surveys[tile.index].id + "/unit_addition", $(".vex-dialog-form").serialize()).done(function(data) {
-            var cpy;
             vex.close($vexContent.data().vex.id);
             if (self.surveys[tile.index].units.length === 0) {
-              cpy = _.extend(JSON.parse(JSON.stringify(data.unit)), {
-                meta: {
-                  name: data.unit.meta.rootname
-                },
-                fake: true
-              });
-              self.surveys[tile.index].units.push(cpy);
               self.surveys[tile.index].units.push(data.unit);
-              self.surveys[tile.index].contains_fake = true;
             } else {
               self.surveys[tile.index].units.push(data.unit);
             }
@@ -210,22 +201,11 @@
               return (d != null ? d.id : void 0) === s.id;
             });
             if (index > -1) {
-              this.dashboard.surveys[index] = _.extend(this.dashboard.surveys[index], s);
+              results.push(this.dashboard.surveys[index] = _.extend(this.dashboard.surveys[index], s));
             } else {
-              this.dashboard.surveys.push(_.extend({
+              results.push(this.dashboard.surveys.push(_.extend({
                 units: []
-              }, s));
-            }
-            if (s.status.unit_count > 0) {
-              index = _.findIndex(this.dashboard.surveys, function(d) {
-                return (d != null ? d.id : void 0) === s.id;
-              });
-              this.dashboard.surveys[index].units.push(_.extend(s, {
-                fake: true
-              }));
-              results.push(this.dashboard.surveys[index].contains_fake = true);
-            } else {
-              results.push(void 0);
+              }, s)));
             }
             break;
           case "Survey.SurveyUnit":

@@ -744,7 +744,11 @@ class DashboardAPIController(Resource):
                 for j in temp:ll= float(ll)+float(j)
 
                 # avg = round(float(avg)/float(len(temp)))
-                avg=round(ll/len(temp),2)
+                # return len(temp)
+                if len(temp) != 0:
+                    avg=round(ll/len(temp),2)
+                else:
+                    avg=0
                 # return avg
             response={}
             response['cid']= cid
