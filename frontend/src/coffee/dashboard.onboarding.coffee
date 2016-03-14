@@ -282,6 +282,7 @@ Onboarding =
             Onboarding.overlay.activate 'success',
               success: if dat?.partial is false then true else false
               uri: dat?.uri_edit
+              id: dat?.id
 
           ).fail(=>
             vex.dialog.alert
@@ -305,6 +306,7 @@ Onboarding =
 
         pre_show: (status)->
           (@el.find '[role="edit"]').attr 'href', status?.uri or '#'
+          (@el.find '[role="dashboard"]').attr 'href', "/survey/s:#{status?.id}/analysis?parent=true" or '#'
           (@el.find '[role="message"]').html(
             if status?.success then @msg_success else @msg_fail
           )
