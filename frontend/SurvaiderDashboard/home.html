@@ -8,40 +8,35 @@
         <h1>Overall Qualitative Survaider Rating - QSR</h1>
       </div>
 
-      <div class="rating-graph" ng-init="graphWidth = 600; graphHeight = 200; pointRadius = 7; maxOrdinate = maxOrdinateFrom2DPointArray(ratingPoints); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (ratingPoints.length); borderWidth = 20">
-        <svg ng-attr-width="{{graphWidth}}" ng-attr-height="{{graphHeight}}">
+      <div class="rating-graph">
+        <svg ng-attr-width="{{ratingGraph.graphWidth}}" ng-attr-height="{{ratingGraph.graphHeight}}">
           <g>
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)/2}} ng-attr-y2="{{(graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{(graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)/2}} ng-attr-y2="{{(ratingGraph.graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} ng-attr-y2="{{(ratingGraph.graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
           </g>
           <g transform="translate(20, 0)">
-            <g transform="translate(5, 0)">
-              <!-- <g>
-                <line ng-repeat="point in ratingPoints track by $index" y1="{{graphHeight - 20}}" x1="{{$index*abscissaSpacer}}" x2="{{$index*abscissaSpacer}}" y2="{{(graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
-              </g> -->
+            <g ng-repeat="date in dates track by $index" transform="translate(5, 0)">
               <g>
-                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in ratingPoints track by $index" ng-attr-y="{{graphHeight - 5}}" ng-attr-x="{{$index*abscissaSpacer}}">
-                  {{$index | getTheMonthName}}
+                <line ng-attr-y1="{{ratingGraph.graphHeight - 20}}" ng-attr-x1="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-x2="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-y2="{{(ratingGraph.graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
+              </g>
+              <g>
+                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-attr-y="{{ratingGraph.graphHeight - 5}}" ng-attr-x="{{$index*ratingGraph.abscissaSpacer}}">
+                  <tspan>{{(formatDate(date)).getDate() + "-"}}</tspan>
+                  <tspan>{{formatNumber((formatDate(date)).getMonth() + 1)}}</tspan>
                 </text>
               </g>
             </g>
             <g>
-              <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" ng-attr-y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
-            </g>
-            <!-- Tickets Line -->
-            <g>
-              <line ng-if="ticketDetails.x" ng-attr-x1="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[ticketDetails.x - 1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#FFE491" stroke-width="5" />
-              <g>
-                <text ng-if="ticketDetails.x" ng-attr-x="{{(pointRadius + (ticketDetails.x - 1)*abscissaSpacer)}}" ng-attr-y="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[ticketDetails.x - 1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) ) - 15}}" fill="#333333" text-anchor="middle">
-                  {{ticketDetails.numOfTicketsConfirmed}}/{{units.length}}
-                </text>
-
-              </g>
+              <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + ($index+1)*ratingGraph.abscissaSpacer)}}" ng-attr-y1="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" ng-attr-y2="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (ratingPoints[$index+1].y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
             </g>
 
             <g>
-              <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{pointRadius}}" ng-attr-cx="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" fill="#4D6AFF" />
+              <line ng-repeat="ticket in tickets" ng-attr-x1="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} y2="0" stroke="#FFE491" stroke-width="5" />
+            </g>
+
+            <g>
+              <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{ratingGraph.pointRadius}}" ng-attr-cx="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-cy="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" fill="#4D6AFF" />
             </g>
           </g>
         </svg>
@@ -54,7 +49,7 @@
 
       <h1 ng-bind="appMeta.totalRespondents"></h1>
 
-      <a href="#" class="generate-ticket-btn" ng-click="isTicketModal = !isTicketModal">Generate Ticket</a>
+      <a href="#" class="generate-ticket-btn" ng-click="prepareTicketModal()">Generate Ticket</a>
     </div>
 
 
@@ -66,18 +61,18 @@
         <h2>In how many outlets?</h2>
         <div class="ticket-form">
           <div class="radio-group">
-            <input id="all-units" type="radio" name="unit-type" />
-            <label for="all-units">All</label>
+            <input ng-model="ticketForm.isCheckAll" ng-click="ticketForm.checkAll()" id="all-units" type="radio" name="unit-type" />
+            <label for="all-units" ng-click="ticketForm.checkAll()">All</label>
           </div>
           <div class="radio-group">
-            <input id="some-units" type="radio" name="unit-type" />
-            <label for="some-units">Some</label>
+            <input ng-model="ticketForm.isCheckSome" ng-click="ticketForm.checkSome()" id="some-units" type="radio" name="unit-type" />
+            <label for="some-units" ng-click="ticketForm.checkSome()">Some</label>
           </div>
           <div class="units-selection">
             <h4>Choose the oulets</h4>
             <div class="checkboxes">
-              <div class="checkbox-group" ng-repeat="unit in units">
-                <input id="unit-{{unit.id}}" type="checkbox" name="unit{{unit.id}}" />
+              <div class="checkbox-group" ng-repeat="unit in ticketForm.units">
+                <input ng-model="unit.isSelected" id="unit-{{unit.id}}" type="checkbox" />
                 <label for="unit-{{unit.id}}" ng-bind="unit.name"></label>
               </div>
             </div>
@@ -85,81 +80,101 @@
         </div>
         <div class="ticket-message">
           <h3>Write the message task :</h3>
-          <textarea></textarea>
+          <textarea ng-model="ticketForm.ticketMessage"></textarea>
         </div>
-        <button type="button" class="ticket-action">Generate</button>
+        <button ng-click="ticketForm.sendTheTicketDetail()" type="button" class="ticket-action">Generate</button>
       </div>
       <a href="#" class="modal-close" ng-click="isTicketModal = !isTicketModal"></a>
     </div>
   </div>
 
-  <!-- Features -->
-  <div class="sv-features">
 
-    <ul>
+  <div class="tabs" id="tabs">
 
-      <!--
-        ** Scope Model : feature
-        ** Properties:-
-        *** label
-      -->
+    <nav>
+      <ul>
+        <li class="tab-current"><a href="#section-1">Overall</a></li>
+        <li><a href="#section-1">Facebook</a></li>
+        <li><a href="#section-1">Twitter</a></li>
+        <li><a href="#section-1">Tripadvisor</a></li>
+        <li><a href="#section-1">Zomato</a></li>
+      </ul>
+    </nav>
 
-      <li class="sv-feature-label" ng-repeat="feature in features track by $index">
-        <a href="#" ng-bind="feature.label" style="border-color: {{colors[$index%(colors.length)]}}"></a>
-      </li>
+    <div class="tab-content">
 
-    </ul>
+      <div id="section-1">
+
+        <!-- App::Features -->
+        <div class="sv-unit-features">
+
+          <ul>
+
+            <!--
+              ** Scope Model : feature (from unit.features)
+              ** Properties:-
+              *** label
+            -->
+
+            <li class="sv-unit-feature-block" ng-repeat="feature in features track by $index">
+
+              <div class="unit-feature-score" style="background-color: {{colors[$index%colors.length]}}">
+                <h1 ng-bind="feature.score"></h1>
+              </div>
+
+              <div class="unit-feature-label">
+                <h4 ng-bind="feature.label"></h4>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </div>
+
+        <!-- Units -->
+        <div class="sv-units">
+
+          <div class="units-graph" style="padding: 2em">
+
+            <svg ng-attr-width="{{unitsGraph.outerWidth}}" ng-attr-height="{{unitsGraph.outerWidth}}">
+              <g ng-repeat="counter in makeANumberArray(10)" transform="translate(0,75)">
+                <line x1="30" ng-attr-y1="{{5 + 50*$index}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{5 + 50*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
+                <text x="10" ng-attr-y="{{5 + 50*$index}}" text-anchor="middle">{{10-counter+1}}</text>
+              </g>
+              <line x1="30" y1="20" x2="30" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
+              <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
+              <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
+                <g transform="translate(0,75)">
+                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{455 - 50*(feature.score-1)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle>
+                </g>
+                <a xlink:href="{{'#/unit/' + unit.id}}">
+                  <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
+                  <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
+                  <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.name}}</text>
+                  <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 60}}" fill="#111" font-size="14px" text-anchor="middle">{{unit.overallScore}}</text>
+                </a>
+              </g>
+
+              <g>
+                <a xlink:href="/addUnit">
+                  <line ng-attr-x1="{{100 + 120*unitsGraph.addUnitX}}" ng-attr-x2="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
+                  <circle ng-attr-cx="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
+                  <text ng-attr-x="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">Add Unit</text>
+                  <text ng-attr-x="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y="{{unitsGraph.height + 60}}" fill="#111" font-size="24px" text-anchor="middle">+</text>
+                </a>
+              </g>
+            </svg>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
-  <!-- Units -->
-  <div class="sv-units">
-
-    <!-- Initialize the width of the block and the bar's width to center the graph
-      **totalMaxGraphHeight: 150px;
-      **blockWidth: 225px;
-      **barWidth: 25px;
-      **barMargin: 5px;
-
-      and calculate the totalGraphWidth and amount to translate the group to center it by using the $scope.features array
-    -->
-
-    <ul ng-init="totalMaxGraphHeight = 150; blockWidth = 225; barWidth = 25; barMargin = 5; totalGraphWidth = (barWidth*features.length + barMargin*(features.length-1)); groupToTranslate = (blockWidth - totalGraphWidth) / 2">
-      <!--
-        ** Scope Model : unit
-        ** Properties:-
-        *** names
-        *** overallScore
-        *** features {->} feature
-        **** feature.score
-      -->
-
-      <li style="width: {{blockWidth}}px" class="sv-unit-block" ng-repeat="unit in units">
-
-        <div class="unit-header">
-          <h4>
-            <a href="/#/unit/{{unit.id}}" ng-bind="unit.name"></a>
-          </h4>
-        </div>
-
-        <div class="unit-rating" style="background-color: {{colors[$index%(colors.length)]}}">
-          <h2 ng-bind="unit.overallScore"></h2>
-        </div>
-
-        <div class="unit-feature-graph" ng-init="maxScore = maxElementFromArray(unit.features); barWidth= 25">
-
-          <svg ng-attr-height="{{totalMaxGraphHeight}}">
-            <g ng-attr-transform="translate({{groupToTranslate}}, 0)">
-              <rect ng-repeat="feature in unit.features track by $index" ng-attr-x="{{25*$index+5*$index}}" ng-attr-y="{{totalMaxGraphHeight-(feature.score * (totalMaxGraphHeight/maxScore))}}" ng-attr-height="{{feature.score * (totalMaxGraphHeight/maxScore)}}" ng-attr-width="{{barWidth}}" fill="{{colors[$index%colors.length]}}"  />
-            </g>
-          </svg>
-
-        </div>
-
-      </li>
-
-    </ul>
-
-  </div>
 
 </div>

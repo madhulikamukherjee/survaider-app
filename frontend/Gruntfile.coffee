@@ -297,7 +297,7 @@ module.exports = (grunt) ->
         cwd: 'SurvaiderDashboard/'
         src: 'index.analysis.html'
         dest: '<%= templates %>/survaiderdashboard'
-
+        
       new_homepage:
         expand: true
         cwd: 'homepage_pages'
