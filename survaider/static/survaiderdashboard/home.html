@@ -138,15 +138,15 @@
           <div class="units-graph" style="padding: 2em">
 
             <svg ng-attr-width="{{unitsGraph.outerWidth}}" ng-attr-height="{{unitsGraph.outerWidth}}">
-              <g ng-repeat="counter in makeANumberArray(10)" transform="translate(0,75)">
-                <line x1="30" ng-attr-y1="{{5 + 50*$index}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{5 + 50*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
-                <text x="10" ng-attr-y="{{5 + 50*$index}}" text-anchor="middle">{{10-counter+1}}</text>
+              <g ng-repeat="counter in makeANumberArray(6)" transform="translate(0,75)">
+                <line x1="30" ng-attr-y1="{{5 + 100*$index}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{5 + 100*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
+                <text x="10" ng-attr-y="{{5 + 100*$index}}" text-anchor="middle">{{6-counter}}</text>
               </g>
               <line x1="30" y1="20" x2="30" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
               <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
               <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
                 <g transform="translate(0,75)">
-                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{455 - 50*(feature.score-1)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle>
+                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{455 - 50*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle>
                 </g>
                 <a xlink:href="{{'#/unit/' + unit.id}}">
                   <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>

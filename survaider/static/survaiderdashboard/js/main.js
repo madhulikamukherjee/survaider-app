@@ -267,14 +267,49 @@
     $http.get('/api/irapi/' + SURVEY_ID + '/0/0/response/true').success(function(data){
 
 
-      var groupRating = data[0],
-          ratingQuestion = data[1],
-          shortText = data[2],
-          longText = data[3],
-          yesNo = data[4],
-          singleChoice = data[5],
-          multipleChoice = data[6],
-          rankingQuestion = data[7];
+      // Setting the features name(from the key 'option_code')
+      // and the average rating(from the key 'avg_rating')
+      // in an object { 'label', 'rating' } and pushing it in an array
+      // $scope.features
+      $scope.questions = [];
+      
+      for (var i = 0; i < data.length; i++) {
+        switch (data[i].type) {
+          case 'group_rating':
+            var groupRating = data[i];
+            setGroupRatingQuestion();
+            break;
+          case 'rating':
+            var ratingQuestion = data[i];
+            setRatingQuestion();
+            break;
+          case 'short_text':
+            var shortText = data[i];
+            setShortTextQuestion();
+            break;
+          case 'long_text':
+            var longText = data[i];
+            setLongTextQuestion();
+            break;
+          case 'yes_no':
+            var yesNo = data[i];
+            setYesOrNoQuestion();
+            break;
+          case 'single_choice':
+            var singleChoice = data[i];
+            setSingleQuestion();
+            break;
+          case 'multiple_choice':
+            var multipleChoice = data[i];
+            setMultipleChoiceQuestion();
+            break;
+          case 'ranking':
+            var rankingQuestion = data[i];
+            setRankingQuestionQuestion();
+            break;
+
+        }
+      }
 
 
       // Setting the features name(from the key 'option_code')
@@ -292,11 +327,6 @@
       }
 
 
-      // Setting the features name(from the key 'option_code')
-      // and the average rating(from the key 'avg_rating')
-      // in an object { 'label', 'rating' } and pushing it in an array
-      // $scope.features
-      $scope.questions = [];
 
       function setShortTextQuestion() {
 
@@ -816,14 +846,6 @@
 
 
 
-      setShortTextQuestion();
-      setYesOrNoQuestion();
-      setSingleQuestion();
-      setLongTextQuestion();
-      setMultipleChoiceQuestion();
-      setRatingQuestion();
-      setGroupRatingQuestion();
-      setRankingQuestionQuestion();
 
     });
 
