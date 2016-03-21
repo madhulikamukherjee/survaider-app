@@ -173,6 +173,7 @@ class Survey(db.Document):
         return {
             'id': str(self),
             'name': self.metadata['name'],
+            'ext': self.metadata.get('external', []),
             'is_gamified': self.gamified_enabled,
             'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
             'uri_game': '/survey/s:{0}/gamified'.format(str(self)),
