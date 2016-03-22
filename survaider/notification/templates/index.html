@@ -1,4 +1,4 @@
-{% extends 'beta.master.html' %}
+{% extends 'beta.notification.html' %}
 
 {% block head_css %}
   <link href="{{ url_for('static', filename='domain/notification.vendor.css') }}" rel="stylesheet" type="text/css" />
@@ -7,12 +7,48 @@
 
 {% block header %}
   <br>
-  <br>
+  <header id="header" class="sv-header">
+            <div class="sv-logo">
+              <h2>
+                <a href="/">Survaider</a>
+              </h2>
+            </div>
+
+            <div class="sv-header-nav">
+              <h3>
+                <a href="/#/overallAnalytics">Overall Analytics</a>
+              </h3>
+            </div>
+  </header>
+
+    <br>
+{% endblock %}
+
+{% block sidebar %}
+<section id="sidebar" class="sv-sidebar">
+    <div class="sv-sidebar-nav">
+      <ul>
+        <li>
+          <a href="#">Data</a>
+        </li>
+        <li>
+          <a href="#">Edit Survey</a>
+        </li>
+        <li>
+          <a href="#">Share</a>
+        </li>
+        <li>
+          <a href="#">Settings</a>
+        </li>
+      </ul>
+    </div>
+  </section>
 {% endblock %}
 
 {% block main_sections %}
-  <section class="dock">
+  <section class="sv-main-content-wrapper">
     <h1 class="hr"><span>Notifications</span></h1>
+    <br>
 
     <div class="deck" id="card_dock">
     </div>

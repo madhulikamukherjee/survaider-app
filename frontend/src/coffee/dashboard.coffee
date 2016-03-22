@@ -58,20 +58,22 @@ class Survey
         $.post("/api/survey/#{self.surveys[tile.index].id}/unit_addition",
                $(".vex-dialog-form").serialize())
           .done (data) ->
-            vex.close $vexContent.data().vex.id
 
+            vex.close $vexContent.data().vex.id
+            
             if self.surveys[tile.index].units.length == 0
               #: Add a fake unit, and this one.
-              cpy = _.extend JSON.parse(JSON.stringify(data.unit)),
-                meta:
-                  name: data.unit.meta.rootname
-                fake: yes
-              self.surveys[tile.index].units.push cpy
+              # cpy = _.extend JSON.parse(JSON.stringify(data.unit)),
+              #   meta:
+              #     name: data.unit.meta.rootname
+              #   fake: yes
+              # self.surveys[tile.index].units.push cpy
+
               self.surveys[tile.index].units.push data.unit
-              self.surveys[tile.index].contains_fake = yes
+              # self.surveys[tile.index].contains_fake = yes
 
             else self.surveys[tile.index].units.push data.unit
-
+            
             vex.dialog.alert
               className: 'vex-theme-default'
               message: 'Created a new Unit.'
@@ -156,12 +158,12 @@ class Dashboard
           else
             @dashboard.surveys.push _.extend({units: []}, s)
 
-          if s.status.unit_count > 0
-            #: Create a fake Unit!
-            index = _.findIndex @dashboard.surveys, (d) ->
-              d?.id is s.id
-            @dashboard.surveys[index].units.push _.extend s, fake: yes
-            @dashboard.surveys[index].contains_fake = yes
+          # if s.status.unit_count > 0
+          #   #: Create a fake Unit!
+          #   index = _.findIndex @dashboard.surveys, (d) ->
+          #     d?.id is s.id
+          #   @dashboard.surveys[index].units.push _.extend s, fake: yes
+          #   @dashboard.surveys[index].contains_fake = yes
 
         when "Survey.SurveyUnit"
           #: Add TO Survey

@@ -625,6 +625,7 @@ class DashboardAPIController(Resource):
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
+        
         # else:pass
         #return survey_strct
         """ALT"""
@@ -744,7 +745,11 @@ class DashboardAPIController(Resource):
                 for j in temp:ll= float(ll)+float(j)
 
                 # avg = round(float(avg)/float(len(temp)))
-                avg=round(ll/len(temp),2)
+                # return len(temp)
+                if len(temp) != 0:
+                    avg=round(ll/len(temp),2)
+                else:
+                    avg=0
                 # return avg
             response={}
             response['cid']= cid
@@ -784,8 +789,6 @@ class DashboardAPIController(Resource):
         l = IrapiData(survey_id,1,1,aggregate)
         # survey_strct= l.survey_strct()
 
-
-
         #Check if survey has children.
         #Check for parent too.
         flag0= l.get_parent()
@@ -812,7 +815,8 @@ class DashboardAPIController(Resource):
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
                 # return response
-                units.append(self.logic(survey_id,parent_survey,"false"))
+
+                # units.append(self.logic(survey_id,parent_survey,"false"))
                 response['units']=units
                 # return "true"
                 return response

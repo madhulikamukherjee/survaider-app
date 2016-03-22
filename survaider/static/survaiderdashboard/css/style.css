@@ -58,6 +58,11 @@ h1, h2, h3, h4, h5, h6 {
 body {
   font-family: "Raleway-Regular", sans-serif; }
 
+button {
+  background: none;
+  outline: none;
+  border: none; }
+
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
 .sv-header {
@@ -85,10 +90,22 @@ body {
   -ms-transform: translate(0, -50%);
   -o-transform: translate(0, -50%);
   transform: translate(0, -50%); }
+  .sv-logo a,
+  .sv-header-nav a {
+    float: left; }
+
+.sv-header-nav .notification {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-top: 6px;
+  margin-right: 16px; }
+  .sv-header-nav .notification img {
+    max-width: 100%; }
 
 .sv-header-nav {
   right: 2em; }
-  .sv-header-nav a {
+  .sv-header-nav .overall {
     display: block;
     border: 1px solid #8e8e8e;
     padding: 0.5em 1em;
@@ -128,7 +145,8 @@ body {
 .sv-overall-rating {
   background-color: #FFFFFF;
   padding: 2em;
-  width: 100%; }
+  width: 100%;
+  overflow: hidden; }
   .sv-overall-rating::after {
     clear: both;
     content: "";
@@ -139,7 +157,8 @@ body {
 
 .rating-group {
   width: 80%;
-  float: left; }
+  float: left;
+  padding: 0 2em; }
 
 .total-respondents {
   width: 20%;
@@ -165,18 +184,18 @@ body {
       color: #FFFFFF; }
 
 .rating-graph {
-  margin-top: 2em; }
+  margin-top: 2em;
+  overflow: auto; }
 
 .sv-features,
 .sv-units {
-  padding: 2em 2.5em; }
-  .sv-features ul,
-  .sv-units ul {
-    text-align: center;
-    margin: 0 auto; }
-    .sv-features ul li,
-    .sv-units ul li {
-      display: inline-block; }
+  padding: 2em 2.5em;
+  background-color: #fff;
+  margin: 4em 0; }
+
+.units-graph {
+  width: 70%;
+  margin: 0 auto; }
 
 .sv-feature-label a {
   display: block;
@@ -232,6 +251,8 @@ body {
 /*---------------------------------------------------*/
 .sv-unit-features {
   margin-top: 2.5em; }
+  .sv-unit-features ul {
+    text-align: center; }
 
 .sv-unit-feature-block {
   width: 20%;
@@ -282,14 +303,16 @@ body {
 
 .unit-question-group {
   float: left;
-  width: 80%; }
+  width: 75%; }
 
 .unit-question-graph {
   float: right;
-  width: 20%; }
+  width: 25%; }
 
-.unit-question-header h1 {
-  color: #746C77; }
+.unit-question-header {
+  margin-bottom: 2em; }
+  .unit-question-header h1 {
+    color: #746C77; }
 
 .unit-question-body {
   margin-top: 2em;
@@ -301,6 +324,15 @@ body {
     display: inline-block;
     margin-right: 12px; }
   .yes-no-label span {
+    width: 30px;
+    height: 15px; }
+
+.choice-label {
+  margin-bottom: 1em; }
+  .choice-label h1, .choice-label span {
+    display: inline-block;
+    margin-right: 12px; }
+  .choice-label span {
     width: 30px;
     height: 15px; }
 
@@ -450,6 +482,162 @@ body {
     .ticket-modal .ticket-action:hover {
       background-color: #000000;
       color: #FFFFFF; }
+
+.full-width-graph {
+  margin: 2em 0; }
+
+.star-rating-all-group::after {
+  clear: both;
+  content: "";
+  display: table; }
+
+.star-rating-label {
+  margin: 80px 0; }
+  .star-rating-label:first-child {
+    margin-top: 0; }
+  .star-rating-label:last-child {
+    margin-bottom: 0; }
+
+.star-rating-graph-wrapper {
+  margin-top: 6em; }
+  .star-rating-graph-wrapper::after {
+    clear: both;
+    content: "";
+    display: table; }
+  .star-rating-graph-wrapper .star-rating-options {
+    float: left;
+    width: 40%; }
+  .star-rating-graph-wrapper .star-rating-question-graph {
+    float: left;
+    width: 60%; }
+
+.ranking-board {
+  padding: 1em;
+  background-color: #EEFFFB; }
+  .ranking-board h1 {
+    font-size: 20px;
+    text-align: center; }
+  .ranking-board ul {
+    padding: 2em 0; }
+    .ranking-board ul li {
+      margin: 1em 0;
+      padding: 0 1.5em; }
+      .ranking-board ul li h2 {
+        font-size: 16px; }
+      .ranking-board ul li h2, .ranking-board ul li .board-label {
+        display: inline-block; }
+      .ranking-board ul li .board-label {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
+        background-color: #ddd;
+        text-align: center;
+        margin-right: 1em;
+        font-size: 14px; }
+        .ranking-board ul li .board-label.first-rank::before {
+          content: '';
+          width: 64px;
+          height: 64px;
+          position: absolute;
+          -webkit-transform: translate(-50%, -50%);
+          -moz-transform: translate(-50%, -50%);
+          -ms-transform: translate(-50%, -50%);
+          -o-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+          z-index: 2;
+          background: url("../images/rank-star.png") center center no-repeat; }
+        .ranking-board ul li .board-label h2 {
+          width: 68px;
+          height: 68px;
+          border-radius: 34px;
+          background-color: #EEFFFB;
+          line-height: 68px;
+          font-size: 2em;
+          font-weight: 900;
+          position: relative;
+          top: 6px; }
+
+.ranking-graph-wrapper {
+  padding: 3em 0 0 1em; }
+  .ranking-graph-wrapper::after {
+    clear: both;
+    content: "";
+    display: table; }
+  .ranking-graph-wrapper .rank-rating-options {
+    width: 25%;
+    float: left; }
+  .ranking-graph-wrapper .rank-rating-question-graph {
+    width: 40%;
+    margin: 0 auto;
+    float: left; }
+  .ranking-graph-wrapper .ranking-board {
+    width: 35%;
+    float: left; }
+
+.short-text-graph {
+  width: 800px;
+  max-height: 600px;
+  overflow: auto;
+  margin: 2em auto; }
+  .short-text-graph .st-words-list-wrapper {
+    border: 2px solid #333;
+    padding: 2em;
+    border-radius: 10px; }
+    .short-text-graph .st-words-list-wrapper ul li {
+      margin: 12px 0;
+      padding: 16px;
+      background-color: #ddd;
+      color: #000;
+      border-radius: 10px; }
+      .short-text-graph .st-words-list-wrapper ul li:first-child {
+        margin-top: 0; }
+      .short-text-graph .st-words-list-wrapper ul li:last-child {
+        margin-bottom: 0; }
+
+.ranks-wrapper {
+  margin-top: 4em;
+  padding-left: 1em;
+  text-align: center; }
+  .ranks-wrapper .choice-label {
+    margin-right: 1em;
+    display: inline-block; }
+
+.tabs {
+  position: relative;
+  width: 100%; }
+  .tabs nav {
+    margin-bottom: 4em;
+    background-color: #fff; }
+    .tabs nav ul::after {
+      clear: both;
+      content: "";
+      display: table; }
+    .tabs nav ul li {
+      float: left;
+      background-color: #D8D8D8;
+      vertical-align: bottom;
+      font-size: 12px; }
+      .tabs nav ul li.tab-current {
+        background-color: #F6F2F2;
+        font-size: 14px;
+        margin-top: -5px; }
+      .tabs nav ul li a {
+        padding: 0.75em 2.5em;
+        display: block; }
+
+.group-rating-graph,
+.multiple-choice-graph {
+  position: relative; }
+
+#group-rating-graph-switch {
+  background-color: #ddd;
+  color: #333;
+  padding: 0.75em 1.75em;
+  position: absolute;
+  right: 1em;
+  cursor: pointer;
+  font-size: 16px; }
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/

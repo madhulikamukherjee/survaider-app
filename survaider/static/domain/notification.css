@@ -15,7 +15,7 @@ html, body {
 
 body {
   font-family: "Montserrat";
-  background: #33495F;
+  background: #F6F2F2;
   min-height: 100vh;
   margin-bottom: 100px;
 }
@@ -42,14 +42,14 @@ header {
 }
 
 h1.hr {
-  font-size: 12px;
-  color: #ffffff;
+  font-size: 20px;
+  color: #4A4A4A;
   position: relative;
 }
 h1.hr span {
-  margin-left: 40px;
   padding: 0 20px;
-  background: #33495F;
+  background: #F6F2F2;
+  margin: 10px;
 }
 h1.hr::after {
   content: "";
@@ -414,7 +414,7 @@ button {
   padding: 10px 20px;
   border-radius: 4px;
   background: transparent;
-  border: 1px solid #33495F;
+  border: 1px solid #191919;
   font-family: "Montserrat";
   font-size: 14px;
 }
@@ -637,15 +637,158 @@ button.create {
     transform: scale(1);
   }
 }
+div.deck {
+  padding-left: 20px;
+}
 div.deck ul {
   list-style: none;
   padding: 0;
 }
 
+body {
+  margin: 0;
+  position: relative;
+  font-family: "Raleway-Regular", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input, textarea {
+  border: none;
+  outline: none;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+@font-face {
+  font-family: Montserrat-Light;
+  src: url("fonts/Montserrat-Light.otf");
+}
+@font-face {
+  font-family: Montserrat-Hairline;
+  src: url("fonts/Montserrat-Hairline.otf");
+}
+@font-face {
+  font-family: Montserrat-Regular;
+  src: url("fonts/Montserrat-Regular.otf");
+}
+@font-face {
+  font-family: Raleway-Light;
+  src: url("fonts/Raleway-Light.ttf");
+}
+@font-face {
+  font-family: Raleway-Regular;
+  src: url("fonts/Raleway-Regular.ttf");
+}
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+@media only screen and (min-width: 320px) and (max-width: 768px) {
+  .sv-sidebar {
+    display: none;
+  }
+
+  .sv-main-content-wrapper {
+    padding-left: 0 !important;
+  }
+}
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+.sv-header {
+  height: 60px;
+  width: 100%;
+  background-color: #50E3C2;
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sv-logo {
+  left: 1em;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+}
+.sv-logo a {
+  display: block;
+  font-weight: 900;
+  color: white;
+}
+
+.sv-header-nav {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  right: 2em;
+}
+.sv-header-nav a {
+  display: block;
+  border: 1px solid #8e8e8e;
+  padding: 0.5em 1em;
+  background-color: #7EFFE2;
+  color: #9B9B9B;
+}
+
+/*--------------------------------------------------- */
+/*--------------------------------------------------- */
+.sv-sidebar {
+  width: 170px;
+  height: 100%;
+  background-color: #4A4A4A;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 60px;
+  z-index: 5;
+}
+
+.sv-sidebar-nav ul {
+  margin: 28px 0 0 28px;
+}
+.sv-sidebar-nav ul li {
+  margin-bottom: 16px;
+}
+.sv-sidebar-nav ul li a {
+  display: block;
+  color: #9B9B9B;
+  font-size: 20px;
+}
+
+.sv-main-content-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #F6F2F2;
+  padding-top: 60px;
+  padding-left: 170px;
+}
+
 li.notification {
   background: #FFFFFF;
-  border: 1px solid;
-  border-radius: 4px;
   padding: 10px;
   margin-bottom: 10px;
   color: #555;
@@ -686,6 +829,23 @@ li.notification section.main h2, li.notification section.main h3 {
   margin: 0;
   font-weight: 200;
 }
+li.notification section.main ul table {
+  width: 100%;
+}
+li.notification section.main ul td.details {
+  width: 65%;
+}
+li.notification section.main ul td.buttons {
+  width: 35%;
+  vertical-align: top;
+}
+li.notification section.main ul.units {
+  background: #DDDDDD;
+  padding: 10px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  display: inline-block;
+}
 li.notification section.main li {
   max-width: 68em;
   margin-left: auto;
@@ -715,7 +875,7 @@ li.notification section.main li div.answer:last-child {
   margin-right: 0;
 }
 li.notification section.main li:nth-child(odd) {
-  background: #EEE;
+  background: #FFFFFF;
 }
 li.notification[data-collapse="true"] {
   background: #EEE;

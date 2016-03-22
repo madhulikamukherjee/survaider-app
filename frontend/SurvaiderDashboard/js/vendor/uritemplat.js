@@ -121,7 +121,7 @@ Expression = (function(_super) {
 
     /*
     Structure of regex (Note that we only capture vars, not the expression itself)
-       
+
     (?:
       {operator}(var){sep}(var)
     )?
@@ -296,8 +296,8 @@ TYPES = {
  *
  * U:         : - . _ ~
  * encodeURIC : - . _ ~ ! * ' ( )
- * R:         : / ? # @ ! $ & ' ( ) * + , ; = [ ] 
- * encodeURI: : / ? # @ ! $ & ' ( ) * + , ; = - _ . ~    
+ * R:         : / ? # @ ! $ & ' ( ) * + , ; = [ ]
+ * encodeURI: : / ? # @ ! $ & ' ( ) * + , ; = - _ . ~
  *
  * named = false
  * | 1   |    {/list}    /red,green,blue                  | {$value}*(?:,{$value}+)*

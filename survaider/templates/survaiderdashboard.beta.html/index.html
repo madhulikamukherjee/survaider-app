@@ -10,7 +10,8 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
 
-        <link rel="stylesheet" href="css/style.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="/static/survaiderdashboard/css/style.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="/static/survaiderdashboard/css/angular-chart.css" media="screen" title="no title" charset="utf-8">
 
     </head>
     <body>
@@ -29,9 +30,11 @@
             </div>
 
             <div class="sv-header-nav">
-              <h3>
-                <a href="/#/overallAnalytics">Overall Analytics</a>
-              </h3>
+              <a href="/notification" class="notification">
+                <img src="/static/survaiderdashboard/images/globe.png" alt="Notifications" />
+              </a>
+              <a class="overall" href="/#/overallAnalytics">Overall Analytics</a>
+
             </div>
           </header>
 
@@ -68,20 +71,27 @@
         <!-- Javascripts Includes -->
 
         <!-- Libraries -->
-        <script src="js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
-        <script src="js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
-        <script src="js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/uritemplat.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script>
+
+        <!-- home.html -->
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
         <!-- App::Models -->
-        <script src="js/app/models/question.js" charset="utf-8"></script>
-        <script src="js/app/models/feature.js" charset="utf-8"></script>
-        <script src="js/app/models/unit.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/app/models/question.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/app/models/feature.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/app/models/unit.js" charset="utf-8"></script>
 
         <!-- App::Application -->
-        <script src="js/app/app.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/app/app.js" charset="utf-8"></script>
 
         <!-- App::Angular_Setup -->
-        <script src="js/main.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/main.js" charset="utf-8"></script>
 
     </body>
 </html>

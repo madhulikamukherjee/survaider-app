@@ -381,7 +381,8 @@
               return function(dat) {
                 return Onboarding.overlay.activate('success', {
                   success: (dat != null ? dat.partial : void 0) === false ? true : false,
-                  uri: dat != null ? dat.uri_edit : void 0
+                  uri: dat != null ? dat.uri_edit : void 0,
+                  id: dat != null ? dat.id : void 0
                 });
               };
             })(this)).fail((function(_this) {
@@ -404,6 +405,7 @@
           },
           pre_show: function(status) {
             (this.el.find('[role="edit"]')).attr('href', (status != null ? status.uri : void 0) || '#');
+            (this.el.find('[role="dashboard"]')).attr('href', ("/survey/s:" + (status != null ? status.id : void 0) + "/analysis?parent=true") || '#');
             return (this.el.find('[role="message"]')).html((status != null ? status.success : void 0) ? this.msg_success : this.msg_fail);
           }
         }

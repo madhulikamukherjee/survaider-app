@@ -18,7 +18,8 @@ from survaider.notification.controller import (NotificationController,
 
 from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI
 from survaider.minions.future import SurveySharePromiseController
-
+from survaider.ml.controller import WordCloud
+from survaider.ml.controller import Aspect
 
 api = Api(app, prefix = '/api')
 
@@ -58,9 +59,19 @@ api.add_resource(SurveySharePromiseController, '/promise/<string:f_id>')
 # API FOR DATA RESPONSES --- Creating New Classes //Zurez
 # api.add_resource(NewResponseController,'/survey/<string:survey_id>/response/<string:c_id>/data')
 
-api.add_resource(ResponseAPIController,"/rapi/<string:survey_id>/<string:uuid>/response","/rapi/<string:survey_id>/<string:uuid>/response/<string:aggregate>")
-api.add_resource(DashboardAPIController,"/dashboard/<string:survey_id>/response","/dashboard/<string:survey_id>/response/<string:aggregate>")
-api.add_resource(IRAPI,"/irapi/<string:survey_id>/<string:start>/<string:end>/response","/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
+api.add_resource(ResponseAPIController,
+                "/rapi/<string:survey_id>/<string:uuid>/response",
+                "/rapi/<string:survey_id>/<string:uuid>/response/<string:aggregate>")
+
+api.add_resource(DashboardAPIController,
+                "/dashboard/<string:survey_id>/response",
+                "/dashboard/<string:survey_id>/response/<string:aggregate>")
+
+api.add_resource(IRAPI,
+                "/irapi/<string:survey_id>/<string:start>/<string:end>/response",
+                "/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
+api.add_resource(WordCloud,"/wc/<string:url>/<string:action>/get")
+api.add_resource(Aspect,"/aspect/<string:survey_id>/<string:provider>/get")
 ###############################
 
 class TemporaryEmailHandler(Resource):
