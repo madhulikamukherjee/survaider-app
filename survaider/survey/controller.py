@@ -8,6 +8,7 @@ REST API End Points
 
 import datetime
 import dateutil.parser
+import requests
 import json
 
 from bson.objectid import ObjectId
@@ -29,6 +30,8 @@ from survaider.survey.model import Survey, Response, ResponseSession, ResponseAg
 from survaider.survey.model import DataSort,IrapiData,Dashboard
 from survaider.minions.future import SurveySharePromise
 from survaider.ml.datum import DatumBox
+from survaider.security.controller import user_datastore
+from survaider.config import MG_URL, MG_API, MG_VIA
 
 class SurveyController(Resource):
 
@@ -89,12 +92,34 @@ class SurveyController(Resource):
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
                 except DoesNotExist:
-                    ftract = SurveySharePromise()
-                    ftract.future_email = unit['owner_mail']
-                    ftract.future_survey = usvey
-                    ftract.save()
+                    upswd = HashId.hashids.encode(
+                        int(datetime.datetime.now().timestamp())
+                    )
+                    usr = user_datastore.create_user(
+                        email=unit['owner_mail'],
+                        password=upswd
+                    )
+                    # ftract = SurveySharePromise()
+                    # ftract.future_email = unit['owner_mail']
+                    # ftract.future_survey = usvey
+                    # ftract.save()
                     # Send email here.
-                    ret['partial'] = True
+                    # ret['partial'] = True
+                    requests.post(MG_URL, auth=MG_API, data={
+                        'from': MG_VIA,
+                        'to': unit['owner_mail'],
+                        'subject': 'Survaider | Unit Credential',
+                        'text': (
+                            "Hello,\n\r"
+                            "You have been given access to {0} of {1}. You may"
+                            "login to Survaider using the following credentials:\n\r"
+                            "Username: {2}\n\r"
+                            "password: {3}\n\r"
+                            "Thanks,\n\r"
+                            "Survaider"
+                        ).format(unit['unit_name'], name, unit['owner_mail'],upswd)
+                    })
+                    shuser = User.objects.get(email = unit['owner_mail'])
                 else:
                     usvey.created_by.append(shuser)
                     usvey.save()
@@ -625,7 +650,7 @@ class DashboardAPIController(Resource):
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
-        
+
         # else:pass
         #return survey_strct
         """ALT"""
