@@ -25,8 +25,9 @@ from survaider.ml.tripadvisor import TripAdvisor
 from survaider.ml.zomato import Zomato
 from survaider.ml.model import Data
 import pymongo
-connection= pymongo.MongoClient('localhost', 27017)
-db = connection['wordcloud']
+
+# connection= pymongo.MongoClient('localhost', 27017)
+# db = connection['wordcloud']
 class WordCloud(Resource):
 	"""docstring for WordCloud
 	@params
