@@ -14,6 +14,8 @@ class Data(object):
 		self.sid= HashId.decode(survey_id)
 	def ext(self):
 		dat = SurveyUnit.objects(referenced = self.sid)
+		js= [_.repr for _ in dat if not _.hidden]
+		return js
 		return d(dat)
 
 
