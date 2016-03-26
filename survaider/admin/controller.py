@@ -26,6 +26,7 @@ class UserView(BaseView):
 
 class SurveyView(BaseView):
     can_view_details = True
+    column_exclude_list = ['structure']
 
 admin.add_view(UserView(User))
 admin.add_view(BaseView(Role))

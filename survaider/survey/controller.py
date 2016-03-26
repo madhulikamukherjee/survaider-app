@@ -95,7 +95,7 @@ class SurveyController(Resource):
                     upswd = HashId.hashids.encode(
                         int(datetime.datetime.now().timestamp())
                     )
-                    usr = user_datastore.create_user(
+                    user_datastore.create_user(
                         email=unit['owner_mail'],
                         password=upswd
                     )
@@ -120,7 +120,7 @@ class SurveyController(Resource):
                         ).format(unit['unit_name'], name, unit['owner_mail'],upswd)
                     })
                     shuser = User.objects.get(email = unit['owner_mail'])
-                else:
+                finally:
                     usvey.created_by.append(shuser)
                     usvey.save()
         else:
