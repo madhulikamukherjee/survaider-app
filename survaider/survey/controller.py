@@ -787,7 +787,9 @@ class DashboardAPIController(Resource):
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
                         avg[key]= round(float(counter)/len(temp),2)
-                        avg[key]= round((avg[key]+float(aspect['key']))/2,2)
+                        # if key=="food":
+                        #     avg[key]+= float(aspect.food)
+                        avg[key]= round((avg[key]+float(aspect[key]))/2,2)
 
             #return option_code, options_count
             # for i in range(len(response_data)):
