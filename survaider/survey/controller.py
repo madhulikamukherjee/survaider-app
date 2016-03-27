@@ -633,7 +633,9 @@ class AspectR(object):
             aspects= Aspect.objects(survey_id=self.sid)
         # return HashId.encode(self.sid)
         if len(aspects)==0:
-            return json.dumps({"status":"failure","message":"No Aspect Found"})
+            response={"food":0,"service":0,"price":0,"overall":0}
+            return response
+            #return json.dumps({"status":"failure","message":"No Aspect Found"})
         div= float(len(aspects))
         food=0
         service=0
@@ -650,7 +652,7 @@ class AspectR(object):
         overall=round(float(overall)/div,2)
         response={"food":food,"service":service,"price":price,"overall":overall}
         return response
-        # return (food,service,price,overall)
+        #return (food,service,price,overall)
 
         
 class DashboardAPIController(Resource):
@@ -661,11 +663,13 @@ class DashboardAPIController(Resource):
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
 
-
+        
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
 
+        #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
+        
         response_data= d(lol.get_data())
         #return response_data
         # survey_strct= d(lol.survey_strct())
@@ -789,7 +793,10 @@ class DashboardAPIController(Resource):
                         avg[key]= round(float(counter)/len(temp),2)
                         # if key=="food":
                         #     avg[key]+= float(aspect.food)
-                        avg[key]= round((avg[key]+float(aspect[key]))/2,2)
+                        #avg[key]= round((avg[key]+float(aspect[key]))/2,2)
+                        new_key= option_code[key]
+                        avg[key]+=avg[key]+float(aspect[new_key])
+                        avg[key]=round(avg[key]/2,2)
 
             #return option_code, options_count
             # for i in range(len(response_data)):
@@ -813,7 +820,8 @@ class DashboardAPIController(Resource):
                     avg=round(ll/len(temp),2)
                 else:
                     avg=0
-                avg= round((avg+float(aspect['overall'])/2,2))
+                avg+=aspect['overall']*2
+                avg=round(avg/2,2)
                 # return avg
             response={}
             response['cid']= cid
