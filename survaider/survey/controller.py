@@ -12,7 +12,7 @@ import json
 
 from bson.objectid import ObjectId
 from uuid import uuid4
-from flask import request, Blueprint, render_template, g
+from flask import request, Blueprint, render_template, g,jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
@@ -26,9 +26,8 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect
 from survaider.minions.future import SurveySharePromise
-from survaider.ml.datum import DatumBox
 
 class SurveyController(Resource):
 
@@ -134,11 +133,10 @@ class SurveyMetaController(Resource):
 
     def get(self, survey_id, action = 'repr'):
         args = self.get_args()
-
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
-
+            
             if svey is None:
                 raise TypeError
 
@@ -595,8 +593,40 @@ class ResponseDocumentController(Resource):
 import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
+class AspectController(Resource):
+    """docstring for AspectController"""
+    # def __init__(self,survey_id):
+    #     self.sid= survey_id
+        # self.p= provider
+    def get(self,survey_id,provider):
+        if provider!="all":
+            aspects= Aspect.objects(survey_id=survey_id,provider=provider)
+        else:
+            aspects= Aspect.objects(survey_id=survey_id)
+        if len(aspects)==0:
+            return json.dumps({"status":"failure","message":"No Aspect Found"})
+        div= float(len(aspects))
+        food=0
+        service=0
+        price=0
+        overall=0
+        for i in aspects:
+            food+= float(i.food)
+            service+= float(i.service)
+            price+=float(i.price)
+            overall+=float(i.overall)
+        food=round(float(food)/div,2)
+        service=round(float(service)/div,2)
+        price=round(float(price)/div,2)
+        overall=round(float(overall)/div,2)
+        response={"food":food,"service":service,"price":price,"overall":overall}
+        return jsonify(response)
+        # return (food,service,price,overall)
+
+        
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
+
     def logic(self,survey_id,parent_survey,aggregate="false"):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
@@ -605,6 +635,7 @@ class DashboardAPIController(Resource):
 
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
+
 
         response_data= d(lol.get_data())
         #return response_data
@@ -753,6 +784,7 @@ class DashboardAPIController(Resource):
                 # return avg
             response={}
             response['cid']= cid
+            aspects=Aspect(survey_id)
             try:
                 response['avg_rating']=avg
 

@@ -16,10 +16,8 @@ from survaider.notification.controller import (NotificationController,
                                                NotificationAggregation,
                                                SurveyTicketController)
 
-from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI
+from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI,AspectController
 from survaider.minions.future import SurveySharePromiseController
-from survaider.ml.controller import WordCloud
-from survaider.ml.controller import Aspect
 
 api = Api(app, prefix = '/api')
 
@@ -70,8 +68,7 @@ api.add_resource(DashboardAPIController,
 api.add_resource(IRAPI,
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response",
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
-api.add_resource(WordCloud,"/wc/<string:url>/<string:action>/get")
-api.add_resource(Aspect,"/aspect/<string:survey_id>/<string:provider>/get")
+api.add_resource(AspectController,'/aspect/<string:survey_id>/<string:provider>/get')
 ###############################
 
 class TemporaryEmailHandler(Resource):

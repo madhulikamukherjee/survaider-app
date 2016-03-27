@@ -489,6 +489,20 @@ def d(data):return json.loads(dumps(data))
 connection= pymongo.MongoClient('localhost', 27017)
 db = connection['qwer']
 survey= db.response
+
+from mongoengine import *
+connect("qwer")
+
+class Aspect(Document):
+    """docstring for Aspect"""
+    sector=StringField()
+    food=StringField()
+    service=StringField()
+    price=StringField()
+    overall=StringField()
+    survey_id=StringField()
+    provider=StringField()
+        
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
