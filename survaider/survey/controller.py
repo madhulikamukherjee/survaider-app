@@ -833,13 +833,14 @@ class DashboardAPIController(Resource):
                 response['created_by']=created_by
             except:pass
             response['total_resp']=len(response_data)
-            response['aspects']=aspect
+            # response['aspects']=aspect
             res.append(response)
+
         # try:
         #     res['unit_name']=survey_name
         #     res['created_by']=created_by
         # except:pass
-
+        res.append({'aspects':aspect})
         return res
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
