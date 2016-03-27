@@ -17,6 +17,9 @@
         callback.wrapped = function(m, v) {
           return callback(v);
         };
+        if (obj.cid) {
+          this._obj = obj;
+        }
         return obj.on('change:' + keypath, callback.wrapped);
       },
       unsubscribe: function(obj, keypath, callback) {
@@ -525,6 +528,8 @@
       'click .js-default-updated': 'defaultUpdated',
       'input .option-label-input': 'forceRender',
       'change .option-label-input': 'forceRender',
+      'blur .option-label-input': 'rerender',
+      'click .notify-tick': 'delayedrerender',
       'change .check': 'optionUpdated',
       'click .check': 'optionUpdated',
       'click .sb-attach-init': 'attachImage',
@@ -542,7 +547,7 @@
       this.$el.html(Formbuilder.templates["edit/base"]({
         rf: this.model
       }));
-      rivets.bind(this.$el, {
+      this.rv = rivets.bind(this.$el, {
         model: this.model
       });
       return this;
@@ -576,6 +581,22 @@
         return this.forceRender();
       }, this);
       return routine();
+    };
+
+    EditFieldView.prototype.rerender = function(e) {
+      this.$el.html(Formbuilder.templates["edit/base"]({
+        rf: this.model
+      }));
+      this.rv.unbind();
+      return this.rv = rivets.bind(this.$el, {
+        model: this.model
+      });
+    };
+
+    EditFieldView.prototype.delayedrerender = function() {
+      var log;
+      log = _.bind(this.rerender, this);
+      return _.delay(log, 100);
     };
 
     EditFieldView.prototype.removeOption = function(e) {
@@ -767,7 +788,9 @@
         stop: (function(_this) {
           return function(e, ui) {
             var rf;
+            console.log(ui, ui.item.attr('data-field-type'), e);
             if (ui.item.data('field-type')) {
+              console.log("HERE");
               rf = _this.collection.create(Formbuilder.helpers.defaultFieldAttrs(ui.item.data('field-type')), {
                 $replaceEl: ui.item
               });
@@ -796,7 +819,7 @@
 
     BuilderView.prototype.setDraggable = function() {
       var $addFieldButtons;
-      $addFieldButtons = this.$el.find("[data-field-type]");
+      $addFieldButtons = this.$el.find("[data-field-types]");
       return $addFieldButtons.draggable({
         connectToSortable: this.$responseFields,
         helper: (function(_this) {
@@ -1421,7 +1444,7 @@
   Formbuilder.registerField('group_rating', {
     order: 8,
     view: "<% lis = rf.get(Formbuilder.options.mappings.OPTIONS) || [] %>\n<% for (i = 0; i < lis.length; i += 1) { %>\n  <div class=\"line\">\n    <label class='sb-option'>\n      <p>\n          <%= rf.get(Formbuilder.options.mappings.OPTIONS)[i].label %>\n          <br>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n          <i class=\"fa fa-star\"></i>\n      </p>\n    </label>\n  </div>\n<% } %>\n  <button class=\"target hanging\"\n          data-target = \"out\"\n          id = \"<%= rf.cid %>_0\"\n  ></button>",
-    edit: "<%= Formbuilder.templates['edit/options']() %>",
+    edit: "<%= Formbuilder.templates['edit/notify']() %> <%= Formbuilder.templates['edit/options']() %> <%= Formbuilder.templates['edit/notify_group_rating']() %>",
     addButton: "<span class=\"pull-left\"><i class=\"fa fa-star\"></i></span> Group Rating</span>",
     defaultAttributes: function(attrs) {
       attrs.field_options.options = [
@@ -1724,6 +1747,25 @@ __p += '<div class=\'sb-edit-section-header\'>Notifications</div>\n\n<label>\n  
 return __p
 };
 
+this["Formbuilder"]["templates"]["edit/notify_group_rating"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+__p += '<div class=\'sb-edit-section-header\' data-rv-each-option="model.field_options.options">\n  <div data-rv-show=\'option:notify\'>\n  <p>Notify for <strong data-rv-text="option:label"></strong>:</p>\n  ';
+ for(var i=0; i < 5; i++) {;
+__p += '\n    <label>\n      ' +
+((__t = ( i+1 )) == null ? '' : __t) +
+'\n      <input type="checkbox" class="check"\n        data-rv-checked="option:notify_' +
+((__t = ( i+1 )) == null ? '' : __t) +
+'">\n    </label>\n  ';
+ } ;
+__p += '\n  </div>\n</div>\n';
+
+}
+return __p
+};
+
 this["Formbuilder"]["templates"]["edit/notify_rating"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
@@ -1753,7 +1795,7 @@ __p += '<div class=\'sb-edit-section-header\'>Add Option</div>\n\n<div class="in
 ((__t = ( Formbuilder.options.mappings.RICHTEXT )) == null ? '' : __t) +
 '">\n    <i class="fa fa-paperclip"></i>\n    <input type="text" data-rv-input="option:img_uri" class="form-control option-label-input" data-sb-attach="uri" style="display:none">\n    <input type="checkbox" class="check" data-sb-attach="enabled" data-rv-checked="option:img_enabled" style="display:none">\n  </a>\n  <a class="input-group-addon" data-rv-if="model.' +
 ((__t = ( Formbuilder.options.mappings.NOTIFICATION )) == null ? '' : __t) +
-'">\n    <input type="checkbox" class="check" data-rv-checked="option:notify">\n  </a>\n  <a class="input-group-addon js-remove-option">\n    <i class="fa fa-times-circle"></i>\n  </a>\n</div>\n\n<button class="btn btn-primary btn-sm m-b-10 js-add-option" type="button">\n  <i class="fa fa-plus-circle"></i> <span class="bold">Add Option</span>\n</button>\n';
+'">\n    <input type="checkbox" class="check notify-tick" data-rv-checked="option:notify">\n  </a>\n  <a class="input-group-addon js-remove-option">\n    <i class="fa fa-times-circle"></i>\n  </a>\n</div>\n\n<button class="btn btn-primary btn-sm m-b-10 js-add-option" type="button">\n  <i class="fa fa-plus-circle"></i> <span class="bold">Add Option</span>\n</button>\n';
 
 }
 return __p

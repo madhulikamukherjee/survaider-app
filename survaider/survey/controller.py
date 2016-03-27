@@ -8,6 +8,7 @@ REST API End Points
 
 import datetime
 import dateutil.parser
+import requests
 import json
 
 from bson.objectid import ObjectId
@@ -28,6 +29,9 @@ from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
 from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect
 from survaider.minions.future import SurveySharePromise
+from survaider.security.controller import user_datastore
+# from survaider.config import MG_URL, MG_API, MG_VIA
+
 
 class SurveyController(Resource):
 
@@ -88,13 +92,35 @@ class SurveyController(Resource):
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
                 except DoesNotExist:
-                    ftract = SurveySharePromise()
-                    ftract.future_email = unit['owner_mail']
-                    ftract.future_survey = usvey
-                    ftract.save()
+                    upswd = HashId.hashids.encode(
+                        int(datetime.datetime.now().timestamp())
+                    )
+                    user_datastore.create_user(
+                        email=unit['owner_mail'],
+                        password=upswd
+                    )
+                    # ftract = SurveySharePromise()
+                    # ftract.future_email = unit['owner_mail']
+                    # ftract.future_survey = usvey
+                    # ftract.save()
                     # Send email here.
-                    ret['partial'] = True
-                else:
+                    # ret['partial'] = True
+                    requests.post(MG_URL, auth=MG_API, data={
+                        'from': MG_VIA,
+                        'to': unit['owner_mail'],
+                        'subject': 'Survaider | Unit Credential',
+                        'text': (
+                            "Hello,\n\r"
+                            "You have been given access to {0} of {1}. You may"
+                            "login to Survaider using the following credentials:\n\r"
+                            "Username: {2}\n\r"
+                            "password: {3}\n\r"
+                            "Thanks,\n\r"
+                            "Survaider"
+                        ).format(unit['unit_name'], name, unit['owner_mail'],upswd)
+                    })
+                    shuser = User.objects.get(email = unit['owner_mail'])
+                finally:
                     usvey.created_by.append(shuser)
                     usvey.save()
         else:
@@ -593,16 +619,19 @@ class ResponseDocumentController(Resource):
 import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
-class AspectController(Resource):
+class AspectR(object):
     """docstring for AspectController"""
-    # def __init__(self,survey_id):
-    #     self.sid= survey_id
-        # self.p= provider
-    def get(self,survey_id,provider):
-        if provider!="all":
-            aspects= Aspect.objects(survey_id=survey_id,provider=provider)
+    def __init__(self,survey_id,provider):
+        self.sid= HashId.encode(survey_id)
+        self.p= provider
+
+    # def output(self,survey_id,provider):
+    def get(self):
+        if self.p!="all":
+            aspects= Aspect.objects(survey_id=self.sid,provider=self.p)
         else:
-            aspects= Aspect.objects(survey_id=survey_id)
+            aspects= Aspect.objects(survey_id=self.sid)
+        # return HashId.encode(self.sid)
         if len(aspects)==0:
             return json.dumps({"status":"failure","message":"No Aspect Found"})
         div= float(len(aspects))
@@ -620,14 +649,14 @@ class AspectController(Resource):
         price=round(float(price)/div,2)
         overall=round(float(overall)/div,2)
         response={"food":food,"service":service,"price":price,"overall":overall}
-        return jsonify(response)
+        return response
         # return (food,service,price,overall)
 
         
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
 
-    def logic(self,survey_id,parent_survey,aggregate="false"):
+    def logic(self,survey_id,parent_survey,provider,aggregate="false"):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
@@ -635,7 +664,7 @@ class DashboardAPIController(Resource):
 
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
-
+        aspect= AspectR(survey_id,provider).get()
 
         response_data= d(lol.get_data())
         #return response_data
@@ -656,7 +685,7 @@ class DashboardAPIController(Resource):
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
-        
+
         # else:pass
         #return survey_strct
         """ALT"""
@@ -784,6 +813,7 @@ class DashboardAPIController(Resource):
                 # return avg
             response={}
             response['cid']= cid
+
             aspects=Aspect(survey_id)
             try:
                 response['avg_rating']=avg
@@ -803,6 +833,7 @@ class DashboardAPIController(Resource):
                 response['created_by']=created_by
             except:pass
             response['total_resp']=len(response_data)
+            response['aspects']=aspect
             res.append(response)
         # try:
         #     res['unit_name']=survey_name
@@ -810,7 +841,7 @@ class DashboardAPIController(Resource):
         # except:pass
 
         return res
-    def get(self,survey_id,aggregate="false"):
+    def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
         # survey_id=HashId.decode("goojkg5jyVnGj9V6Lnw")
@@ -834,18 +865,18 @@ class DashboardAPIController(Resource):
         if flag ==False:
             r= {}
 
-            r['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+            r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
             return r
         else:
             if aggregate=="true":
 
                 response={}
-                response['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+                response['parent_survey']= self.logic(survey_id,parent_survey,aggregate,provider)
 
                 units=[]
 
                 for i in flag:
-                    units.append(self.logic(HashId.decode(i),parent_survey,aggregate))
+                    units.append(self.logic(HashId.decode(i),parent_survey,aggregate,provider))
                 # return response
 
                 # units.append(self.logic(survey_id,parent_survey,"false"))

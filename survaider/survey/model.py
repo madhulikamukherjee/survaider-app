@@ -54,7 +54,13 @@ class Survey(db.Document):
                 store = []
                 for i, option in options:
                     if option.get('notify', False) is True:
-                        store.append("a_{0}".format(i + 1))
+                        val = "a_{0}".format(i + 1)
+
+                        for j in range(0, 5):
+                            if option.get("notify_{0}".format(j)):
+                                store.append("a_{0}##{1}".format(i + 1, j + 1))
+                        store.append(val)
+
                 rules[field['cid']] = store
 
         return rules
@@ -372,11 +378,12 @@ class Response(db.Document):
             raise TypeError("Question ID is invalid")
 
         if qid in self.parent_survey.notification_hooks:
-            if qres in self.parent_survey.notification_hooks[qid]:
-                survey_response_notify.send(self.parent_survey,
-                                            response = self,
-                                            qid = qid,
-                                            qres = qres)
+            for hook in qres.split('###'):
+                if hook in self.parent_survey.notification_hooks[qid]:
+                    survey_response_notify.send(self.parent_survey,
+                                                response = self,
+                                                qid = qid,
+                                                qres = qres)
 
     @property
     def added(self):
@@ -530,7 +537,7 @@ class IrapiData(object):
             i= HashId.decode(i)
             raw= db.response.find({"parent_survey":ObjectId(i)})
             js= js +d(raw)
-        return js  
+        return js
     def get_child_data(self,survey_id):
         raw= db.survey.find({"_id":ObjectId(self.sid)})
         return d(raw)
@@ -546,14 +553,14 @@ class IrapiData(object):
             return js
         else:
             if self.agg=="true":
-                
+
                 "WIll return all the responses "
                 raw= db.response.find({"parent_survey":ObjectId(self.sid)})
                 js= d(raw)
                 js = js+ self.get_multi_data(flag)
                 return js
             else:
-                
+
                 raw= db.response.find({"parent_survey":ObjectId(self.sid)})
                 js= d(raw)
                 return js
@@ -567,7 +574,7 @@ class IrapiData(object):
             return False
     def get_uuid_labels(self):
         raw= db.survey.find({"_id":ObjectId(self.sid)})
-        
+
         m= int(self.start)-1
         n=int(self.end)
         # return d(raw)[0]['structure']['fields'][a:b]
@@ -600,8 +607,8 @@ class Dashboard(IrapiData):
     """docstring for Dashboard"""
     def __init__(self,survey_id):
         self.sid= survey_id
-    
-    
+
+
 
 class DataSort(object):
     """docstring for DataSort"""
@@ -637,7 +644,7 @@ class DataSort(object):
             i= HashId.decode(i)
             raw= db.response.find({"parent_survey":ObjectId(i)})
             js= js +d(raw)
-        return js  
+        return js
     def get_child_data(self,survey_id):
         raw= db.survey.find({"_id":ObjectId(self.sid)})
         return d(raw)
