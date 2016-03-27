@@ -11,7 +11,7 @@
   var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search);
 
-  var uri = '/api/dashboard/' + uri_dat.s_id + '/response';
+  var uri = '/api/dashboard/' + uri_dat.s_id + '/all/response';
 
   if (uri_dat.parent) {
     uri += "/true";
