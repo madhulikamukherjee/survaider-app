@@ -872,12 +872,12 @@ class DashboardAPIController(Resource):
             if aggregate=="true":
 
                 response={}
-                response['parent_survey']= self.logic(survey_id,parent_survey,aggregate,provider)
+                response['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
 
                 units=[]
 
                 for i in flag:
-                    units.append(self.logic(HashId.decode(i),parent_survey,aggregate,provider))
+                    units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
                 # return response
 
                 # units.append(self.logic(survey_id,parent_survey,"false"))
@@ -886,7 +886,7 @@ class DashboardAPIController(Resource):
                 return response
             else:
                 r= {}
-                r['parent_survey']= self.logic(survey_id,parent_survey,aggregate)
+                r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
                 return r
 
 
