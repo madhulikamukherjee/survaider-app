@@ -787,6 +787,7 @@ class DashboardAPIController(Resource):
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
                         avg[key]= round(float(counter)/len(temp),2)
+                        avg[key]= round((avg[key]+float(aspect['key']))/2,2)
 
             #return option_code, options_count
             # for i in range(len(response_data)):
@@ -810,6 +811,7 @@ class DashboardAPIController(Resource):
                     avg=round(ll/len(temp),2)
                 else:
                     avg=0
+                avg= round((avg+float(aspect['overall'])/2,2))
                 # return avg
             response={}
             response['cid']= cid
@@ -840,7 +842,7 @@ class DashboardAPIController(Resource):
         #     res['unit_name']=survey_name
         #     res['created_by']=created_by
         # except:pass
-        res.append({'aspects':aspect})
+        # res.append({'aspects':aspect})
         return res
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
