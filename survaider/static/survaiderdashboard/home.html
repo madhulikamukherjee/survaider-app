@@ -146,7 +146,7 @@
               <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{unitsGraph.width - 20}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
               <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
                 <g transform="translate(0,75)">
-                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{455 - 50*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle>
+                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle>
                 </g>
                 <a xlink:href="{{'#/unit/' + unit.id}}">
                   <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
