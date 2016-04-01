@@ -17,6 +17,7 @@ from flask import request, Blueprint, render_template, g,jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
+# from textblob import TextBlob
 
 from survaider import app
 from survaider.minions.decorators import api_login_required
@@ -30,8 +31,8 @@ from survaider.survey.model import Survey, Response, ResponseSession, ResponseAg
 from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
+from survaider.ml.datum import DatumBox
 # from survaider.config import MG_URL, MG_API, MG_VIA
-
 
 class SurveyController(Resource):
 
@@ -654,7 +655,6 @@ class AspectR(object):
         return response
         #return (food,service,price,overall)
 
-        
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
 
@@ -663,7 +663,6 @@ class DashboardAPIController(Resource):
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
 
-        
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
@@ -690,21 +689,12 @@ class DashboardAPIController(Resource):
             survey_name="Parent Survey"
             created_by="Not Applicable"
 
-        # else:pass
-        #return survey_strct
         """ALT"""
         cids= []
-        # return survey_strct
         for i in survey_strct:
-            # return i
             x= i['field_options']
             if "deletable" in x:
-                # return x['options']
-
                 cids.append(i['cid'])
-
-        #
-
 
         """ END"""
         res=[]
@@ -712,11 +702,11 @@ class DashboardAPIController(Resource):
         for cid in cids:
             alol = DataSort(parent_survey,cid,aggregate)
             survey_data= alol.get_uuid_label()#?So wrong
-            # return survey_data
+
             #I have the total responses
             j_data= d(survey_data)
 
-            # return survey_data[0]['field_options']
+
             if "options" in survey_data['field_options']:
 
                 try:
@@ -761,8 +751,6 @@ class DashboardAPIController(Resource):
                     timed_final[time]=avg
             except:pass
 
-
-
             if j_data['field_type']=="group_rating":
 
                 for i in temp:
@@ -785,19 +773,26 @@ class DashboardAPIController(Resource):
                 avg={}
                 for key in options_count:
                     counter=0
+
                     for bkey in options_count[key]:
 
+                        # if key=="a_3":
+                        #     return options_count[key][bkey]
                         if int(bkey)!=0:
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
-                        avg[key]= round(float(counter)/len(temp),2)
-                        # if key=="food":
-                        #     avg[key]+= float(aspect.food)
-                        #avg[key]= round((avg[key]+float(aspect[key]))/2,2)
-                        new_key= option_code[key]
-                        avg[key]+=avg[key]+float(aspect[new_key])
-                        avg[key]=round(avg[key]/2,2)
+                        # return key, bkey, options_count[key][bkey], counter, temp
+                    
+                    avg[key]= round(float(counter)/len(temp),2)
+                    # return avg[key], key, counter, options_count[key], len(temp)
+                    
+                    new_key= option_code[key]
+                    survey_avg = avg[key]
+                    avg[key]=survey_avg+float(aspect[new_key])
+                    avg[key]=round(avg[key]/2,2)
+                    # return survey_avg, key, aspect[new_key], counter, avg[key]
 
+                    
             #return option_code, options_count
             # for i in range(len(response_data)):
             #     temp.append(response_data[i]['responses'][cid])
@@ -820,9 +815,11 @@ class DashboardAPIController(Resource):
                     avg=round(ll/len(temp),2)
                 else:
                     avg=0
+
+                # TAKING AVERAGE FROM EXTERNAL APP DATA
                 avg+=aspect['overall']*2
                 avg=round(avg/2,2)
-                # return avg
+                
             response={}
             response['cid']= cid
 
@@ -901,12 +898,6 @@ class DashboardAPIController(Resource):
                 r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
                 return r
 
-
-
-
-
-
-
 """InclusiveResponse"""
 class IRAPI(Resource):
     """
@@ -922,8 +913,6 @@ class IRAPI(Resource):
 
         lol = IrapiData(survey_id,start,end,aggregate)
         all_responses= lol.get_data()
-        # return all_responses
-        #return all_responses
         all_survey= lol.get_uuid_labels()
 
         if "referenced" in all_survey[0]:
@@ -933,20 +922,10 @@ class IRAPI(Resource):
             # parent_survey= HashId.decode(parent_survey)
             s= IrapiData(parent_survey,start,end,aggregate)
             all_survey=s.get_uuid_labels()
-
-
-
         else:
 
             all_survey= lol.get_uuid_labels()
-        # return all_responses
-
-        # try:
-        #     all_survey=all_survey[0]
-        # except :
-        #     pass
         ret=[]
-        # return all_survey
         for i in range(len(all_survey)):
 
             j_data=all_survey[i]
@@ -983,6 +962,15 @@ class IRAPI(Resource):
 
                         dat= DatumBox()
                         sent= dat.get_sentiment(b)
+                        # blob = TextBlob(b)
+                        # sentence_sentiment = blob.sentences[0].sentiment.polarity
+                        # if sentence_sentiment > 0:
+                        #     sent = 'positive'
+                        # if sentence_sentiment == 0:
+                        #     sent = 'neutral'
+                        # if sentence_sentiment < 0:
+                        #     sent = 'negative'
+
                         sentiment[sent]+=1
                         options_count_segg[b]=sent
                         long_text+=" "+b
@@ -1124,7 +1112,6 @@ class IRAPI(Resource):
     #       ret.append(response)
     # #return ret
 
-
 class ResponseAPIController(Resource):
     """docstring for RAPI"""
     def get(self,survey_id,uuid,aggregate="false"):
@@ -1166,8 +1153,6 @@ class ResponseAPIController(Resource):
 
         for i in range(len(response_data)):
             temp.append(response_data[i]['responses'][uuid])
-
-
 
         #eturn j_data['field_type']
         options_count={}
