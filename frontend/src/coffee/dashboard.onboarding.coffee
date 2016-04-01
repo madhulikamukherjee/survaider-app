@@ -39,6 +39,9 @@ Onboarding =
       el.addClass 'active'
       index = @slides.index(el)
 
+      if @meta[name]?.prepare?
+        @meta[name].prepare(@meta)
+
       if index is 0
         @prevel.hide()
       else
@@ -119,6 +122,7 @@ Onboarding =
           templateel.remove()
           @parent.prev('.header').hide()
 
+          @add_field()
           @parent.siblings('a[role="add"]').on 'click', =>
             @add_field()
 
@@ -149,12 +153,15 @@ Onboarding =
 
         validate: ->
           values = @serialize()
+          if values.length is 0 then return false
+
           for {unit_name, owner_mail} in values
             if not unit_name or unit_name.length < 1
               return false
             if not owner_mail or owner_mail.length < 2
               return false
-          return true
+
+          (_.uniq values, 'unit_name').length is values.length
 
       'facebook':
         validation_error: 'Facebook URI incorrect? <insert your msg>'
@@ -176,15 +183,41 @@ Onboarding =
       'websites':
         validation_error: 'Websites incorrect'
         can_skip: yes
-        init: -> @el = $("div[data-slide='websites']")
+        init: ->
+          @el = $("div[data-slide='websites']")
+          @container = $("ul[role='user-input']")
+          templateel = @el.find 'li[role="template"]'
+          @template = templateel.clone()
+          templateel.remove()
         skip: ->
+        prepare: (meta) ->
+          @container.html('')
+          units = meta['business-units'].serialize()
+          for {unit_name} in units
+            el = $("<li role='input'>#{@template.html()}</li>")
+            (el.find 'label').html(unit_name)
+            (el.find 'input').attr('data-unit', unit_name)
+            @container.append el
+
         serialize: ->
-          ta = @el.find('[for="tripadvisor"]').val()
-          zm = @el.find('[for="zomato"]').val()
-          return {
-            tripadvisor: if ta.length > 1 then ta else false
-            zomato: if zm.length > 1 then zm else false
-          }
+          inputs = @container.find 'input'
+          vals   = {}
+
+          inputs.each ->
+            el    = $(@)
+            fr    = el.attr 'for'
+            val   = el.val()
+            unit  = el.attr 'data-unit'
+
+            unless val.length then return
+
+            unless vals[unit]
+              vals[unit] = {}
+
+            vals[unit][fr] = val
+
+          return vals
+
         validate: -> true
         next: -> Onboarding.overlay.activate('review')
 
@@ -244,14 +277,14 @@ Onboarding =
               "<dt>Twitter</dt><dd>#{val}</dd>"
 
             'websites': (dat) ->
-              {zomato, tripadvisor} = dat
-              out = unless (zomato or tripadvisor) then "Skipped" else """
-                <ul>
-                  #{if zomato then "<span role='tag'>Zomato</span>" else ""}
-                  #{if tripadvisor then "<span role='tag'>Tripadvisor</span>" else ""}
-                </ul>
-              """
-              "<dt>External Services</dt><dd>#{out}</dd>"
+              out = ""
+              for k, v of dat
+                out += """<li>#{k}: #{if v.zomato then "zomato" else ""}
+                  #{if v.tripadvisor then 'tripadvisor' else ""} </li>"""
+
+              unless out.length then out = "skipped"
+
+              "<dt>External Services</dt><dd><ul>#{out}</ul></dd>"
 
           meta = Onboarding.slides.meta
           htmlgen = (render[k](v.serialize()) for k, v of meta)
@@ -268,11 +301,10 @@ Onboarding =
             payload: JSON.stringify
               create: Onboarding.slides.meta['key-aspect'].serialize()
               units: Onboarding.slides.meta['business-units'].serialize()
-              external:
+              social:
                 facebook: Onboarding.slides.meta['facebook'].serialize()
                 twitter: Onboarding.slides.meta['twitter'].serialize()
-                zomato: Onboarding.slides.meta['websites'].serialize()?.zomato
-                tripadvisor: Onboarding.slides.meta['websites'].serialize()?.tripadvisor
+              services: Onboarding.slides.meta['websites'].serialize()
 
           $.ajax(
             url: '/api/survey'

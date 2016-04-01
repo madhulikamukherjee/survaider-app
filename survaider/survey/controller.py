@@ -32,7 +32,7 @@ from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 from survaider.ml.datum import DatumBox
-# from survaider.config import MG_URL, MG_API, MG_VIA
+from survaider.config import MG_URL, MG_API, MG_VIA
 
 class SurveyController(Resource):
 
@@ -78,7 +78,7 @@ class SurveyController(Resource):
             tags = payload['create']['key_aspects']
 
             #: Do whatever we want with metadata here.
-            svey.metadata['external'] = payload['external']
+            svey.metadata['social'] = payload['social']
             svey.save()
             ret['partial'] = False
 
@@ -87,6 +87,10 @@ class SurveyController(Resource):
                 usvey = SurveyUnit()
                 usvey.unit_name = unit['unit_name']
                 usvey.referenced = svey
+
+                if unit['unit_name'] in payload['services']:
+                    usvey.metadata['services'] = payload['services'][unit['unit_name']]
+
                 usvey.created_by.append(usr)
                 usvey.save()
 
@@ -141,6 +145,7 @@ class SurveyController(Resource):
             struct_dict['fields'][0]['field_options']['options'] = opt
             svey.struct = struct_dict
             svey.save()
+            ret['pl'] = payload
             ret.update(svey.repr)
 
             return ret, 200 + int(ret.get('partial', 0))
@@ -163,7 +168,7 @@ class SurveyMetaController(Resource):
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
-            
+
             if svey is None:
                 raise TypeError
 
@@ -668,7 +673,7 @@ class DashboardAPIController(Resource):
         aspect= AspectR(survey_id,provider).get()
 
         #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
-        
+
         response_data= d(lol.get_data())
         #return response_data
         # survey_strct= d(lol.survey_strct())
@@ -782,17 +787,17 @@ class DashboardAPIController(Resource):
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
                         # return key, bkey, options_count[key][bkey], counter, temp
-                    
+
                     avg[key]= round(float(counter)/len(temp),2)
                     # return avg[key], key, counter, options_count[key], len(temp)
-                    
+
                     new_key= option_code[key]
                     survey_avg = avg[key]
                     avg[key]=survey_avg+float(aspect[new_key])
                     avg[key]=round(avg[key]/2,2)
                     # return survey_avg, key, aspect[new_key], counter, avg[key]
 
-                    
+
             #return option_code, options_count
             # for i in range(len(response_data)):
             #     temp.append(response_data[i]['responses'][cid])
@@ -819,7 +824,7 @@ class DashboardAPIController(Resource):
                 # TAKING AVERAGE FROM EXTERNAL APP DATA
                 avg+=aspect['overall']*2
                 avg=round(avg/2,2)
-                
+
             response={}
             response['cid']= cid
 

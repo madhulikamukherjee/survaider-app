@@ -80,20 +80,24 @@
           <p>Delve into insights on your reviews from various other sources.</p>
           <p><em>In our version 1, you can integrate with </em></p>
           <div role="partners">
-            <div role="partner">
-              <div class="boxed">
-                <img src="/static/img/partner/Tripadvisor-logo.png">
-              </div>
-              <p>Have an overall business TripAdvisor page? Paste the link here</p>
-              <input type="text" placeholder="good trip" tabindex="-1" for="tripadvisor"></input>
-            </div>
-            <div role="partner">
-              <div class="boxed">
-                <img src="/static/img/partner/Zomato-Logo-red-background.png">
-              </div>
-              <p>Have an overall business Zomato page? Paste the link here</p>
-              <input type="text" placeholder="good trip" tabindex="-1" for="zomato"></input>
-            </div>
+            <ul>
+              <li>
+                <label></label>
+                <div class="boxed">
+                  <img src="/static/img/partner/Tripadvisor-logo.png">
+                </div>
+                <div class="boxed">
+                  <img src="/static/img/partner/Zomato-Logo-red-background.png">
+                </div>
+              </li>
+            </ul>
+            <ul role="user-input">
+              <li role="template">
+                <label></label>
+                <input type="text" placeholder="url" tabindex="-1" for="tripadvisor"></input>
+                <input type="text" placeholder="url" tabindex="-1" for="zomato"></input>
+              </li>
+            </ul>
           </div>
           <p><small>Individual units’ TripAdvisor or Zomato pages can be added by the unit managers, after which you will be able to see the insights.</small></p>
 

@@ -163,23 +163,51 @@ div[role="dock"]
         float: left
         padding: 10px
 
-        div.boxed
-          background: #F2F2F2
-          padding: 20px
-          text-align: center
-          border-radius: 5px
-
-          img
-            height: 60px
         p
           font-size: 14px
         input
           width: 100%
 
+      ul
+        @include clear-ul
+
+        li
+          display: flex
+
+          label
+            display: inline-flex
+            align-items: center
+            // flex-align: center
+            width: 20%
+            flex-grow: 0
+            flex-shrink: 0
+            flex-wrap: wrap
+
+          input, div
+            margin: 5px
+            display: inline-flex
+            width: 40%
+            align-self: center
+
+        &[role="user-input"]
+          max-height: 150px
+          overflow: auto
+
+
       &::after
         clear: both
         content: ""
         display: table
+
+    div.boxed
+      background: #F2F2F2
+      padding: 20px
+      text-align: center
+      border-radius: 5px
+      justify-content: center
+
+      img
+        height: 60px
 
   input
     padding: 5px 10px

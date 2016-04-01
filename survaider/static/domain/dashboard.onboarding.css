@@ -826,25 +826,52 @@ div[role="dock"] div[data-slide="websites"] div[role="partners"] div[role="partn
   float: left;
   padding: 10px;
 }
-div[role="dock"] div[data-slide="websites"] div[role="partners"] div[role="partner"] div.boxed {
-  background: #F2F2F2;
-  padding: 20px;
-  text-align: center;
-  border-radius: 5px;
-}
-div[role="dock"] div[data-slide="websites"] div[role="partners"] div[role="partner"] div.boxed img {
-  height: 60px;
-}
 div[role="dock"] div[data-slide="websites"] div[role="partners"] div[role="partner"] p {
   font-size: 14px;
 }
 div[role="dock"] div[data-slide="websites"] div[role="partners"] div[role="partner"] input {
   width: 100%;
 }
+div[role="dock"] div[data-slide="websites"] div[role="partners"] ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+div[role="dock"] div[data-slide="websites"] div[role="partners"] ul li {
+  display: flex;
+}
+div[role="dock"] div[data-slide="websites"] div[role="partners"] ul li label {
+  display: inline-flex;
+  align-items: center;
+  width: 20%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+div[role="dock"] div[data-slide="websites"] div[role="partners"] ul li input, div[role="dock"] div[data-slide="websites"] div[role="partners"] ul li div {
+  margin: 5px;
+  display: inline-flex;
+  width: 40%;
+  align-self: center;
+}
+div[role="dock"] div[data-slide="websites"] div[role="partners"] ul[role="user-input"] {
+  max-height: 150px;
+  overflow: auto;
+}
 div[role="dock"] div[data-slide="websites"] div[role="partners"]::after {
   clear: both;
   content: "";
   display: table;
+}
+div[role="dock"] div[data-slide="websites"] div.boxed {
+  background: #F2F2F2;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  justify-content: center;
+}
+div[role="dock"] div[data-slide="websites"] div.boxed img {
+  height: 60px;
 }
 div[role="dock"] input {
   padding: 5px 10px;

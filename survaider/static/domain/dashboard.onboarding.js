@@ -51,7 +51,7 @@
         return results;
       },
       activate: function(name) {
-        var el, index, ref, title, translate;
+        var el, index, ref, ref1, title, translate;
         this.slides.removeClass('active');
         this.slidetitles.removeClass('active');
         this.slidetitles.removeClass('filled');
@@ -63,6 +63,9 @@
         el = $("div[data-slide=" + name + "]");
         el.addClass('active');
         index = this.slides.index(el);
+        if (((ref1 = this.meta[name]) != null ? ref1.prepare : void 0) != null) {
+          this.meta[name].prepare(this.meta);
+        }
         if (index === 0) {
           this.prevel.hide();
         } else {
@@ -141,6 +144,7 @@
             this.template = templateel.clone();
             templateel.remove();
             this.parent.prev('.header').hide();
+            this.add_field();
             return this.parent.siblings('a[role="add"]').on('click', (function(_this) {
               return function() {
                 return _this.add_field();
@@ -185,6 +189,9 @@
           validate: function() {
             var i, len, owner_mail, ref, unit_name, values;
             values = this.serialize();
+            if (values.length === 0) {
+              return false;
+            }
             for (i = 0, len = values.length; i < len; i++) {
               ref = values[i], unit_name = ref.unit_name, owner_mail = ref.owner_mail;
               if (!unit_name || unit_name.length < 1) {
@@ -194,7 +201,7 @@
                 return false;
               }
             }
-            return true;
+            return (_.uniq(values, 'unit_name')).length === values.length;
           }
         },
         'facebook': {
@@ -229,17 +236,47 @@
           validation_error: 'Websites incorrect',
           can_skip: true,
           init: function() {
-            return this.el = $("div[data-slide='websites']");
+            var templateel;
+            this.el = $("div[data-slide='websites']");
+            this.container = $("ul[role='user-input']");
+            templateel = this.el.find('li[role="template"]');
+            this.template = templateel.clone();
+            return templateel.remove();
           },
           skip: function() {},
+          prepare: function(meta) {
+            var el, i, len, results, unit_name, units;
+            this.container.html('');
+            units = meta['business-units'].serialize();
+            results = [];
+            for (i = 0, len = units.length; i < len; i++) {
+              unit_name = units[i].unit_name;
+              el = $("<li role='input'>" + (this.template.html()) + "</li>");
+              (el.find('label')).html(unit_name);
+              (el.find('input')).attr('data-unit', unit_name);
+              results.push(this.container.append(el));
+            }
+            return results;
+          },
           serialize: function() {
-            var ta, zm;
-            ta = this.el.find('[for="tripadvisor"]').val();
-            zm = this.el.find('[for="zomato"]').val();
-            return {
-              tripadvisor: ta.length > 1 ? ta : false,
-              zomato: zm.length > 1 ? zm : false
-            };
+            var inputs, vals;
+            inputs = this.container.find('input');
+            vals = {};
+            inputs.each(function() {
+              var el, fr, unit, val;
+              el = $(this);
+              fr = el.attr('for');
+              val = el.val();
+              unit = el.attr('data-unit');
+              if (!val.length) {
+                return;
+              }
+              if (!vals[unit]) {
+                vals[unit] = {};
+              }
+              return vals[unit][fr] = val;
+            });
+            return vals;
           },
           validate: function() {
             return true;
@@ -334,10 +371,16 @@
                 return "<dt>Twitter</dt><dd>" + val + "</dd>";
               },
               'websites': function(dat) {
-                var out, tripadvisor, zomato;
-                zomato = dat.zomato, tripadvisor = dat.tripadvisor;
-                out = !(zomato || tripadvisor) ? "Skipped" : "<ul>\n  " + (zomato ? "<span role='tag'>Zomato</span>" : "") + "\n  " + (tripadvisor ? "<span role='tag'>Tripadvisor</span>" : "") + "\n</ul>";
-                return "<dt>External Services</dt><dd>" + out + "</dd>";
+                var k, out, v;
+                out = "";
+                for (k in dat) {
+                  v = dat[k];
+                  out += "<li>" + k + ": " + (v.zomato ? "zomato" : "") + "\n" + (v.tripadvisor ? 'tripadvisor' : "") + " </li>";
+                }
+                if (!out.length) {
+                  out = "skipped";
+                }
+                return "<dt>External Services</dt><dd><ul>" + out + "</ul></dd>";
               }
             };
             meta = Onboarding.slides.meta;
@@ -354,7 +397,7 @@
             return rel.html(htmlgen.join(''));
           },
           do_proceed: function() {
-            var data, ref, ref1;
+            var data;
             if ((this.preset != null) !== true) {
               return;
             }
@@ -365,12 +408,11 @@
               payload: JSON.stringify({
                 create: Onboarding.slides.meta['key-aspect'].serialize(),
                 units: Onboarding.slides.meta['business-units'].serialize(),
-                external: {
+                social: {
                   facebook: Onboarding.slides.meta['facebook'].serialize(),
-                  twitter: Onboarding.slides.meta['twitter'].serialize(),
-                  zomato: (ref = Onboarding.slides.meta['websites'].serialize()) != null ? ref.zomato : void 0,
-                  tripadvisor: (ref1 = Onboarding.slides.meta['websites'].serialize()) != null ? ref1.tripadvisor : void 0
-                }
+                  twitter: Onboarding.slides.meta['twitter'].serialize()
+                },
+                services: Onboarding.slides.meta['websites'].serialize()
               })
             };
             return $.ajax({
