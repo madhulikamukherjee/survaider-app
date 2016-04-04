@@ -509,7 +509,7 @@ class Aspect(Document):
     overall=StringField()
     survey_id=StringField()
     provider=StringField()
-        
+    
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
@@ -608,7 +608,11 @@ class Dashboard(IrapiData):
     def __init__(self,survey_id):
         self.sid= survey_id
 
-
+class WordCloudD(Document):
+    """docstring for WordCloud"""
+    provider= StringField()
+    survey_id=StringField()
+    wc= DictField()
 
 class DataSort(object):
     """docstring for DataSort"""
