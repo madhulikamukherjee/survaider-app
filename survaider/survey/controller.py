@@ -17,8 +17,7 @@ from flask import request, Blueprint, render_template, g,jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
-# from textblob import TextBlob
-
+from textblob import TextBlob
 from survaider import app
 from survaider.minions.decorators import api_login_required
 from survaider.minions.exceptions import APIException, ViewException
@@ -28,11 +27,11 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
-from survaider.ml.datum import DatumBox
-from survaider.config import MG_URL, MG_API, MG_VIA
+
+# from survaider.config import MG_URL, MG_API, MG_VIA
 
 class SurveyController(Resource):
 
@@ -659,6 +658,22 @@ class AspectR(object):
         response={"food":food,"service":service,"price":price,"overall":overall}
         return response
         #return (food,service,price,overall)
+class WordCloud(object):
+    """docstring for WordCloud"""
+    def __init__(self,survey_id,provider):
+        self.sid= HashId.encode(survey_id)
+        self.p=provider
+
+    def get(self):
+        if self.p!="all":
+            wc= WordCloudD.objects(survey_id=self.sid,provider=self.p)
+            return wc,self.p
+        else:
+            new_wc= {}
+            wc= WordCloudD.objects(survey_id=self.sid)
+            for i in wc:
+                new_wc.update(i.wc)
+            return wc,"all"
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
@@ -672,6 +687,11 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
         return csi
         aspect= AspectR(survey_id,provider).get()
+
+        wordcloud= WordCloud(survey_id,provider).get()
+        #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
+
+
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -852,6 +872,7 @@ class DashboardAPIController(Resource):
         #     res['created_by']=created_by
         # except:pass
         # res.append({'aspects':aspect})
+        res.append({"wordcloud":{"provider":wordcloud[1],"cloud":wordcloud[0]}})
         return res
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
@@ -957,16 +978,16 @@ class IRAPI(Resource):
                 for b in temp:
                     if j_data['field_type']=='long_text':
 
-                        dat= DatumBox()
-                        sent= dat.get_sentiment(b)
-                        # blob = TextBlob(b)
-                        # sentence_sentiment = blob.sentences[0].sentiment.polarity
-                        # if sentence_sentiment > 0:
-                        #     sent = 'positive'
-                        # if sentence_sentiment == 0:
-                        #     sent = 'neutral'
-                        # if sentence_sentiment < 0:
-                        #     sent = 'negative'
+                        # dat= DatumBox()
+                        # sent= dat.get_sentiment(b)
+                        blob = TextBlob(b)
+                        sentence_sentiment = blob.sentences[0].sentiment.polarity
+                        if sentence_sentiment > 0:
+                            sent = 'positive'
+                        if sentence_sentiment == 0:
+                            sent = 'neutral'
+                        if sentence_sentiment < 0:
+                            sent = 'negative'
 
                         sentiment[sent]+=1
                         options_count_segg[b]=sent
