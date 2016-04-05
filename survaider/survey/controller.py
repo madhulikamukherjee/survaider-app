@@ -685,12 +685,10 @@ class DashboardAPIController(Resource):
 
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
-        return csi
         aspect= AspectR(survey_id,provider).get()
         wordcloud= WordCloud(survey_id,provider).get()
-        #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
-
-
+        # return wordcloud
+        
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -701,9 +699,7 @@ class DashboardAPIController(Resource):
 
         try:
             survey_name= csi['unit_name']
-            # return survey_name
             created_by=csi['created_by'][0]['$oid']
-            # return csi
 
         except:
             survey_name="Parent Survey"
@@ -722,8 +718,6 @@ class DashboardAPIController(Resource):
         for cid in cids:
             alol = DataSort(parent_survey,cid,aggregate)
             survey_data= alol.get_uuid_label()#?So wrong
-
-            #I have the total responses
             j_data= d(survey_data)
 
 
@@ -744,13 +738,11 @@ class DashboardAPIController(Resource):
             timed={}
             import time
             for i in response_data:
-                # temp.append(i)
                 if cid in i['responses']:
                     temp.append(i['responses'][cid])
                     timestamp= i['metadata']['modified']['$date']/1000
                     timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
                     timed[timestamp]=i['responses'][cid]
-            # return temp
             options_count={}
             timed_agg={}
             timed_agg_counter={}
@@ -774,9 +766,7 @@ class DashboardAPIController(Resource):
             if j_data['field_type']=="group_rating":
 
                 for i in temp:
-                    # return i
                     aTempList= i.split("###")
-                    # return aTempList
                     for j in aTempList:
                         bTempList= j.split("##")
 
@@ -795,29 +785,17 @@ class DashboardAPIController(Resource):
                     counter=0
 
                     for bkey in options_count[key]:
-
-                        # if key=="a_3":
-                        #     return options_count[key][bkey]
                         if int(bkey)!=0:
                             counter+= float(bkey) * options_count[key][bkey]
                         else:pass
-                        # return key, bkey, options_count[key][bkey], counter, temp
 
                     avg[key]= round(float(counter)/len(temp),2)
-                    # return avg[key], key, counter, options_count[key], len(temp)
 
                     new_key= option_code[key]
                     survey_avg = avg[key]
                     avg[key]=survey_avg+float(aspect[new_key])
                     avg[key]=round(avg[key]/2,2)
-                    # return survey_avg, key, aspect[new_key], counter, avg[key]
 
-
-            #return option_code, options_count
-            # for i in range(len(response_data)):
-            #     temp.append(response_data[i]['responses'][cid])
-            # return temp[9]
-            #timed={}
             elif j_data['field_type']=="rating":
                 for i in temp:
                     if str(i) in options_count:
@@ -825,12 +803,9 @@ class DashboardAPIController(Resource):
                     else:
                         options_count[str(i)]=1
 
-                # avg= 0.0
                 ll= 0
                 for j in temp:ll= float(ll)+float(j)
 
-                # avg = round(float(avg)/float(len(temp)))
-                # return len(temp)
                 if len(temp) != 0:
                     avg=round(ll/len(temp),2)
                 else:
@@ -866,11 +841,7 @@ class DashboardAPIController(Resource):
             # response['aspects']=aspect
             res.append(response)
 
-        # try:
-        #     res['unit_name']=survey_name
-        #     res['created_by']=created_by
-        # except:pass
-        # res.append({'aspects':aspect})
+        
         res.append({"wordcloud":{"provider":wordcloud[1],"cloud":wordcloud[0]}})
         return res
     def get(self,survey_id,provider,aggregate="false"):
