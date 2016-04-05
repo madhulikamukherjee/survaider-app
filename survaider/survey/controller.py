@@ -670,13 +670,9 @@ class DashboardAPIController(Resource):
 
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
+        return csi
         aspect= AspectR(survey_id,provider).get()
-
-        #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
-
         response_data= d(lol.get_data())
-        #return response_data
-        # survey_strct= d(lol.survey_strct())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
 
@@ -822,9 +818,10 @@ class DashboardAPIController(Resource):
                     avg=0
 
                 # TAKING AVERAGE FROM EXTERNAL APP DATA
-                avg+=aspect['overall']*2
-                avg=round(avg/2,2)
 
+                # avg+=aspect['overall']*2
+                # avg=round(avg/2,2)
+                
             response={}
             response['cid']= cid
 
@@ -859,13 +856,8 @@ class DashboardAPIController(Resource):
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
-        # survey_id=HashId.decode("goojkg5jyVnGj9V6Lnw")
-        # parent_survey=survey_id
-        # survey_id= HashId.decode("3NNl87yvoZXN4lypAjq")
-
         parent_survey= survey_id
         l = IrapiData(survey_id,1,1,aggregate)
-        # survey_strct= l.survey_strct()
 
         #Check if survey has children.
         #Check for parent too.
