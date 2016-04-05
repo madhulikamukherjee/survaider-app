@@ -665,15 +665,21 @@ class WordCloud(object):
         self.p=provider
 
     def get(self):
+        new_wc={}
+        provider="all"
         if self.p!="all":
+            provider=self.p
             wc= WordCloudD.objects(survey_id=self.sid,provider=self.p)
-            return wc,self.p
-        else:
-            new_wc= {}
-            wc= WordCloudD.objects(survey_id=self.sid)
             for i in wc:
                 new_wc.update(i.wc)
-            return wc,"all"
+       
+        else:
+   
+            wc= WordCloudD.objects(survey_id=self.sid)
+   
+            for i in wc:
+                new_wc.update(i.wc)
+        return new_wc,provider
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
@@ -687,7 +693,7 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
         wordcloud= WordCloud(survey_id,provider).get()
-        # return wordcloud
+        return d(wordcloud)
         
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
