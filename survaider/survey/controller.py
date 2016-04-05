@@ -687,7 +687,6 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
         return csi
         aspect= AspectR(survey_id,provider).get()
-
         wordcloud= WordCloud(survey_id,provider).get()
         #aspect={'food':raw[0],'service':raw[1],'price':raw[2],'overall':raw[3]}
 
