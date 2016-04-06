@@ -692,8 +692,8 @@ class DashboardAPIController(Resource):
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
-        wordcloud= WordCloud(survey_id,provider).get()
-        return d(wordcloud)
+        wordcloud= d(WordCloud(survey_id,provider).get())
+        #return d(wordcloud)
         
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
