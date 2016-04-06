@@ -850,9 +850,38 @@ class DashboardAPIController(Resource):
             # response['aspects']=aspect
             res.append(response)
 
-        
-        res.append({"wordcloud":wordcloud})
+        if len(wordcloud)!=0:
+            res.append({"wordcloud":wordcloud})
+        # res.append ({})
         return res
+    def com(self,pwc):
+        pwc_keys= ["zomato","tripadvisor"]
+        npwc={}
+        wc={}
+        for i in pwc_keys:
+            npwc[i]={}
+        for x in pwc :
+            npwc["zomato"].update(x["zomato"])
+            npwc["tripadvisor"].update(x['tripadvisor'])
+        
+        trip = list(npwc["tripadvisor"].values())
+        if len(trip)!=0:
+            t= sorted(trip,reverse= True)[0:10]
+            for keyword,value in npwc["tripadvisor"].items():
+                for v in t:
+                    if v == value:
+                        wc[keyword]=value
+        zoma= list(npwc["zomato"].values())
+        if len(zoma)!=0:
+            z=sorted(zoma,reverse= True)[0:10]
+            for keyword,value in npwc["zomato"].items():
+                for v in z:
+                    if v == value:
+                        # return v
+                        wc[keyword]=value
+        return wc
+        
+        
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
@@ -881,13 +910,22 @@ class DashboardAPIController(Resource):
                 response['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
 
                 units=[]
-
+                pwc=[]
+                npwc={}
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
-                # return response
-
+                    wc= WordCloud(HashId.decode(i),provider).get()
+               
+                    pwc.append(wc)
+                # Crude Code Alert: needs to be automated and refined!
+                
+                # import operator
+                wc= self.com(pwc)
+                # return wc
                 # units.append(self.logic(survey_id,parent_survey,"false"))
+                response['wordcloud']=wc
                 response['units']=units
+
                 # return "true"
                 return response
             else:
