@@ -670,16 +670,19 @@ class WordCloud(object):
         if self.p!="all":
             provider=self.p
             wc= WordCloudD.objects(survey_id=self.sid,provider=self.p)
+            new_wc[provider]={}
             for i in wc:
-                new_wc.update(i.wc)
+                new_wc[provider].update(i.wc)
        
         else:
-   
-            wc= WordCloudD.objects(survey_id=self.sid)
-   
-            for i in wc:
-                new_wc.update(i.wc)
-        return new_wc,provider
+            providers= ["tripadvisor","zomato"]
+            for x in providers:
+                wc= WordCloudD.objects(survey_id=self.sid,provider=x)
+            # wc= WordCloudD.objects(survey_id=self.sid)
+                new_wc[x]={}
+                for i in wc:
+                    new_wc[x].update(i.wc)
+        return new_wc
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
@@ -693,7 +696,7 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
         wordcloud= d(WordCloud(survey_id,provider).get())
-        #return d(wordcloud)
+        # return d(wordcloud)
         
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
@@ -848,7 +851,7 @@ class DashboardAPIController(Resource):
             res.append(response)
 
         
-        res.append({"wordcloud":{"provider":wordcloud[1],"cloud":wordcloud[0]}})
+        res.append({"wordcloud":wordcloud})
         return res
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
