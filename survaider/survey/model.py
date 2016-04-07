@@ -613,7 +613,13 @@ class WordCloudD(Document):
     provider= StringField()
     survey_id=StringField()
     wc= DictField()
-
+class Reviews(Document):
+    provider=StringField()
+    survey_id=StringField()
+    rating=StringField()
+    review=StringField()
+    sentiment=StringField()
+        
 class DataSort(object):
     """docstring for DataSort"""
 

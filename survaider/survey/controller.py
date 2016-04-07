@@ -27,10 +27,10 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
-
+import ast
 # from survaider.config import MG_URL, MG_API, MG_VIA
 
 class SurveyController(Resource):
@@ -658,6 +658,28 @@ class AspectR(object):
         response={"food":food,"service":service,"price":price,"overall":overall}
         return response
         #return (food,service,price,overall)
+class Sentiment(object):
+    def __init__(self,survey_id,provider="all"):
+        self.sid=survey_id
+        self.p= provider
+    def get(self):
+        providers=["zomato","tripadvisor"]
+        sents=["positive","negative","neutral"]
+        response= {}
+        if self.p=="all":
+            for i in providers:
+                response[i]={}
+                for j in sents:
+                    result= Reviews.objects(survey_id= self.sid,provider=i,sentiment= j)
+
+                    response[i][j]=len(result)
+        else:
+            response[self.p]={}
+            for j in sents:
+                    result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
+                    response[self.p][j]=len(result)
+        return response    
+        
 class WordCloud(object):
     """docstring for WordCloud"""
     def __init__(self,survey_id,provider):
@@ -696,7 +718,9 @@ class DashboardAPIController(Resource):
         csi= lol.get_child_data(survey_id)[0]#child survey info
         aspect= AspectR(survey_id,provider).get()
         wordcloud= d(WordCloud(survey_id,provider).get())
-        # return d(wordcloud)
+        sentiment= Sentiment(survey_id,provider).get()
+        company_name=Survey.objects(id = survey_id).first().metadata['name']
+        # meta= ast.literal_eval(meta)
         
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
@@ -709,7 +733,7 @@ class DashboardAPIController(Resource):
         try:
             survey_name= csi['unit_name']
             created_by=csi['created_by'][0]['$oid']
-
+            company_name= meta.metadata
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -852,6 +876,8 @@ class DashboardAPIController(Resource):
 
         if len(wordcloud)!=0:
             res.append({"wordcloud":wordcloud})
+        res.append({"sentiment":sentiment})
+        res.append({"company":company_name})
         # res.append ({})
         return res
     def com(self,pwc):
