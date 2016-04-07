@@ -875,13 +875,13 @@ class DashboardAPIController(Resource):
             res.append(response)
 
         if len(wordcloud)!=0:
-            res.append({"wordcloud":wordcloud})
-        res.append({"sentiment":sentiment})
-        res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
+            response.update({"wordcloud":wordcloud})
+        response.update({"sentiment":sentiment})
+        response.update({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
         # res.append({"company":company_name})
         # res.append({'id':HashId.encode(survey_id)})
         # res.append ({})
-        return res
+        return response
     def com(self,pwc):
         pwc_keys= ["zomato","tripadvisor"]
         npwc={}
