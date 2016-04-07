@@ -729,11 +729,11 @@ class DashboardAPIController(Resource):
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
-
+        # company_name= meta.metadata
         try:
             survey_name= csi['unit_name']
             created_by=csi['created_by'][0]['$oid']
-            company_name= meta.metadata
+      
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -866,10 +866,10 @@ class DashboardAPIController(Resource):
             # response['survey_id']=survey_id
             response['options_count']=options_count
             response['label']=survey_data['label']
-            try:
-                response['unit_name']=survey_name
-                response['created_by']=created_by
-            except:pass
+            # try:
+            #     response['unit_name']=survey_name
+            #     response['created_by']=created_by
+            # except:pass
             response['total_resp']=len(response_data)
             # response['aspects']=aspect
             res.append(response)
@@ -877,7 +877,7 @@ class DashboardAPIController(Resource):
         if len(wordcloud)!=0:
             res.append({"wordcloud":wordcloud})
         res.append({"sentiment":sentiment})
-        res.append({"meta":{"company":company_name,"id":HashId.encode(survey_id)}})
+        res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
         # res.append({"company":company_name})
         # res.append({'id':HashId.encode(survey_id)})
         # res.append ({})
