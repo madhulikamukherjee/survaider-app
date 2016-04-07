@@ -877,8 +877,9 @@ class DashboardAPIController(Resource):
         if len(wordcloud)!=0:
             res.append({"wordcloud":wordcloud})
         res.append({"sentiment":sentiment})
-        res.append({"company":company_name})
-        res.append({'id':HashId.encode(survey_id)})
+        res.append({"meta":{"company":company_name,"id":HashId.encode(survey_id)}})
+        # res.append({"company":company_name})
+        # res.append({'id':HashId.encode(survey_id)})
         # res.append ({})
         return res
     def com(self,pwc):
