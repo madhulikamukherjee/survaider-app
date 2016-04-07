@@ -872,17 +872,21 @@ class DashboardAPIController(Resource):
             # except:pass
             response['total_resp']=len(response_data)
             # response['aspects']=aspect
-            # res.append(response)
-
+            res.append(response)
+        result= {}
+        result["responses"]=res
+        result["wordcloud"]=wordcloud
+        result["sentiment"]=sentiment
+        result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
+        return result
         if len(wordcloud)!=0:
-            response.update({"wordcloud":wordcloud})
-        response.update({"sentiment":sentiment})
-        response.update({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
+            res.append({"wordcloud":wordcloud})
+        res.append({"sentiment":sentiment})
+        res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
         # res.append({"company":company_name})
         # res.append({'id':HashId.encode(survey_id)})
         # res.append ({})
-        response.update({"res":res})
-        return response
+        return res
     def com(self,pwc):
         pwc_keys= ["zomato","tripadvisor"]
         npwc={}
