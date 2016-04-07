@@ -872,7 +872,7 @@ class DashboardAPIController(Resource):
             # except:pass
             response['total_resp']=len(response_data)
             # response['aspects']=aspect
-            res.append(response)
+            # res.append(response)
 
         if len(wordcloud)!=0:
             response.update({"wordcloud":wordcloud})
@@ -881,6 +881,7 @@ class DashboardAPIController(Resource):
         # res.append({"company":company_name})
         # res.append({'id':HashId.encode(survey_id)})
         # res.append ({})
+        response.update({"res":res})
         return response
     def com(self,pwc):
         pwc_keys= ["zomato","tripadvisor"]
