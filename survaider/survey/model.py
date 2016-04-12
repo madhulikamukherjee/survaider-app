@@ -485,6 +485,26 @@ class ResponseAggregation(object):
             "survey_id": str(self.survey)
         }
 
+    def csv(self):
+        # Columns
+        # Question ID | Question | Response ID 1 ... n
+        responses = Response.objects(parent_survey = self.survey)
+        questions = self.survey.questions
+
+        header = ['question_id']
+        for r in responses:
+            header.append(str(r))
+
+        yield ','.join(header)
+
+        for q in questions:
+            row = []
+            row.append(q[0])
+            row.append('"{0}"'.format(q[1]))
+            for r in responses:
+                row.append('"{0}"'.format(r.responses.get(q[0], '')))
+            yield ','.join(row)
+
     @property
     def count(self):
         return Response.objects(parent_survey = self.survey).count()
@@ -509,7 +529,7 @@ class Aspect(Document):
     overall=StringField()
     survey_id=StringField()
     provider=StringField()
-    
+
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
@@ -619,7 +639,7 @@ class Reviews(Document):
     rating=StringField()
     review=StringField()
     sentiment=StringField()
-        
+
 class DataSort(object):
     """docstring for DataSort"""
 

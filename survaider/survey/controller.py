@@ -13,7 +13,7 @@ import json
 
 from bson.objectid import ObjectId
 from uuid import uuid4
-from flask import request, Blueprint, render_template, g,jsonify
+from flask import request, Blueprint, render_template, g,jsonify, make_response
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
@@ -591,6 +591,11 @@ class ResponseAggregationController(Resource):
             return responses.flat(), 201
         elif action == 'nested':
             return responses.nested(), 201
+        elif action == 'csv':
+            csv = '\n'.join(responses.csv())
+            res = make_response(csv)
+            res.headers['content-type'] = 'text/csv'
+            return res
 
         raise APIException("Must specify a valid option", 400)
 
@@ -678,8 +683,8 @@ class Sentiment(object):
             for j in sents:
                     result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
                     response[self.p][j]=len(result)
-        return response    
-        
+        return response
+
 class WordCloud(object):
     """docstring for WordCloud"""
     def __init__(self,survey_id,provider):
@@ -695,7 +700,7 @@ class WordCloud(object):
             new_wc[provider]={}
             for i in wc:
                 new_wc[provider].update(i.wc)
-       
+
         else:
             providers= ["tripadvisor","zomato"]
             for x in providers:
@@ -721,7 +726,7 @@ class DashboardAPIController(Resource):
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
-        
+
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -733,7 +738,7 @@ class DashboardAPIController(Resource):
         try:
             survey_name= csi['unit_name']
             created_by=csi['created_by'][0]['$oid']
-      
+
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -848,7 +853,7 @@ class DashboardAPIController(Resource):
 
                 # avg+=aspect['overall']*2
                 # avg=round(avg/2,2)
-                
+
             response={}
             response['cid']= cid
 
@@ -896,7 +901,7 @@ class DashboardAPIController(Resource):
         for x in pwc :
             npwc["zomato"].update(x["zomato"])
             npwc["tripadvisor"].update(x['tripadvisor'])
-        
+
         trip = list(npwc["tripadvisor"].values())
         if len(trip)!=0:
             t= sorted(trip,reverse= True)[0:10]
@@ -913,8 +918,8 @@ class DashboardAPIController(Resource):
                         # return v
                         wc[keyword]=value
         return wc
-        
-        
+
+
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
@@ -948,10 +953,10 @@ class DashboardAPIController(Resource):
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
                     wc= WordCloud(HashId.decode(i),provider).get()
-               
+
                     pwc.append(wc)
                 # Crude Code Alert: needs to be automated and refined!
-                
+
                 # import operator
                 wc= self.com(pwc)
                 # return wc
