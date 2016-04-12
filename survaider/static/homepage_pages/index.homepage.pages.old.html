@@ -54,7 +54,7 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
 </head>
 <body class="pace-white">
   <!-- BEGIN HEADER -->
-  <nav class="header bg-header dark transparent-light " data-pages="header" data-pages-header="autoresize" data-pages-resize-class="dark">
+  <nav class="header bg-header transparent-light " data-pages="header" data-pages-header="autoresize" data-pages-resize-class="dark">
     <div class="container relative">
       <!-- BEGIN LEFT CONTENT -->
       <div class="pull-left">
@@ -117,20 +117,36 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
             <div class="container">
               <div class="row">
                 <div class="col-md-12 col-md-offset-0">
-                  <h1 class="light m-t-5" data-swiper-parallax="-15%">
-                     Listen to and understand the voice of your customers from everywhere</h1>
+                  <h1 class="light text-white m-t-5" data-swiper-parallax="-15%">
+                     Measuring customer experience made simple</h1>
                   </div>
                </div>
                <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                  <h3 class="light m-t-5" data-swiper-parallax="-15%">
-                     Measure and improve customer feedback from multiple channels at one place</h3>
+                  <h3 class="light text-white m-t-5" data-swiper-parallax="-15%">
+                     Measure and improve the level of service quality across all your customer touch points</h3>
                   </div>
                </div>
                <br><br>
 
+              <!-- START MODAL-->
+              <!--  <div class="mymodal move-top" id="sign-up-modal">
+                 <button class="close" onclick="mymodal.close()">close</button>
+                 <h1>We want to know more about your organisation</h1>
+                 <p>Sign up and give us some time to get back to you!</p>
+                   <form action="/usr/thankyou" method="POST" target="_blank">
+                     <input type="email" class="dark-outline" name="email_signup">
+                     <input type="submit" value="Submit" class="dark-outline">
+                  </form>
+              </div> -->
+              <!-- END MODAL-->
+
+              <!-- <div class="col-sm-6 col-sm-offset-3 text-center">
+                 <button class="light-outline" onclick="mymodal.open();" style="height:70px;">Start your free trial!</button>
+              </div> -->
+
               <div class="col-sm-6 col-sm-offset-3 text-center">
-                 <button class="dark-outline" id = "firstbutton" onmouseover="changecolorfunction()" onmouseout="changecolorback()" style="height:70px;"><a href="/usr/contact" style="font-size: large; color:black" id="firstlink">Start your free trial!</a></button>
+                 <button class="light-outline" style="height:70px;"><a href="/usr/contact">Start your free trial!</a></button>
               </div>
 
             </div>
@@ -141,48 +157,180 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
             <!-- END CONTENT -->
             </div>
             </div>
-            <!-- <div class="op-left bottom-right full-width full-vh z-index-1" data-vide-bg="/static/homepage_pages/assets/video/hero.mp4" data-vide-options="loop: true, muted: false, position: 50% 0%"> -->
+            <div class="op-left bottom-right full-width full-vh z-index-1" data-vide-bg="/static/homepage_pages/assets/video/hero.mp4" data-vide-options="loop: true, muted: false, position: 50% 0%">
             </div>
-            <!-- <div class="bottom-right full-width full-vh z-index-1 hidden demo-video-placeholder" data-pages-bg-image="/static/homepage_pages/assets/images/Screenshot.jpg"></div>
-            <a id="start_tour" href="#" class="btn btn-lg btn-black demo-btn-tour font-montserrat all-caps no-border fs-13">Start tour</a> -->
-            <!-- <div class="video-overlay z-index-1"></div> -->
+            <div class="bottom-right full-width full-vh z-index-1 hidden demo-video-placeholder" data-pages-bg-image="/static/homepage_pages/assets/images/Screenshot.jpg"></div>
+            <a id="start_tour" href="#" class="btn btn-lg btn-black demo-btn-tour font-montserrat all-caps no-border fs-13">Start tour</a>
+            <div class="video-overlay z-index-1"></div>
   </section>
   <!-- END JUMBOTRON -->
-
-  <!-- START CONTENT SECTION -->
-  <section class="p-b-60 p-t-60">
-    <div class="container">
+  <!-- BEGIN INTRO CONTENT -->
+  <section class="p-b-60 p-t-60" id="notifications">
+     <div class="container">
       <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-          <!-- <h6 class="block-title m-b-0 ">PAGES Admin Dashboard DESIGN</h6> -->
-          <h1 class="m-t-5">Aggregate all your customer feedback into one place!<!-- <br>Some other sentence --></h1>
+       <div class="col-sm-6">
+        <img src="/static/homepage_pages/assets/images/first_section.gif" class="image-responsive-width sm-image-responsive-height" alt="">
+     </div>
+     <div class="col-sm-4 col-sm-offset-1 p-t-50 sm-p-t-0">
+      <!--  <h6 class="block-title m-b-0 ">Notifications</h6> -->
+      <h1 class="m-t-5">Rank and benchmark service quality</h1>
+      <p class="m-t-30">Measure, rank and benchmark service quality across all your business units. View analytics for all the units individually, and as a whole.
+      </p>
+              <!-- <p class="hint-text font-arial small m-t-30">This is something extra to give users an exceptional user experience with a condensed menu.
+           </p> -->
         </div>
-      </div>
+     </div>
+  </div>
+  </section>
+  <!-- END INTRO CONTENT -->
+  <!-- BEGIN CONTENT SECTION -->
+  <section class="demo-bg-section p-t-100 p-b-100">
+     <div class="container-xs-height full-height">
+      <div class="col-xs-height col-middle text-left">
+       <!-- BEGIN CONTENT -->
+       <div class="inner full-height">
+        <div class="container-xs-height full-height">
+         <div class="col-xs-height col-middle">
+          <div class="container">
+           <div class="row">
+            <div class="col-sm-4 col-sm-offset-1">
+             <!-- <h6 class="block-title m-b-0 text-menu hint-text ">Menu Clipping</h6> -->
+             <h1 class="m-t-5 text-white">Take control in real time<br></h1>
+             <p class="m-t-30 text-menu">Pick and select conditions when you want to get notified. Get a quick notifications when these conditions are met across any of your business outlets. Reach out to your frontline staff and take control of the situation instantly.
+             </p>
+                        <!-- <p class="hint-text font-arial small m-t-30 text-menu">This is something extra to give users an exceptional user experience with a condensed menu.
+                     </p> -->
+                  </div>
+                  <div class="col-sm-1">
+                  </div>
+                  <div class="col-sm-6">
+                   <img src="/static/homepage_pages/assets/images/second_gif.gif" class="image-responsive-width md-image-responsive-height" alt="">
+                </div>
+             </div>
+          </div>
+       </div>
     </div>
+  </div>
+  <!-- END CONTENT -->
+  </div>
+  </div>
+  </section>
+  <section class="p-b-60 p-t-60" id="notifications">
+     <div class="container">
+      <div class="row">
+       <div class="col-sm-6">
+        <img src="/static/homepage_pages/assets/images/third_gif.gif" class="image-responsive-width sm-image-responsive-height" alt="">
+     </div>
+     <div class="col-sm-4 col-sm-offset-1 p-t-50 sm-p-t-0">
+      <!--  <h6 class="block-title m-b-0 ">Notifications</h6> -->
+      <h1 class="m-t-5">Experiment in the real world</h1>
+      <p class="m-t-30">A/B test in real world. Implement any temporary changes in just one of your outlets and measure the outcome of customer satisfaction to that change in real time.</p>
+              <!-- <p class="hint-text font-arial small m-t-30">This is something extra to give users an exceptional user experience with a condensed menu.
+           </p> -->
+        </div>
+     </div>
+  </div>
   </section>
   <!-- END CONTENT SECTION -->
   <!-- START CONTENT SECTION -->
-  <section class="text-center no-overflow">
-     <img src="/static/homepage_pages/assets/images/machine.png" alt="" class="image-responsive-width md-image-responsive-height">
-  </section>
-  <!-- START CONTENT SECTION -->
-  <section class="p-b-60 p-t-60">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-          <h1 class="m-t-5">We tell you what people feel about different aspects of your business</h1>
-          <h3 class="m-t-5">Track these scores over time and improve consistently</h3>
+  <!-- <section class="demo-bg-section p-t-100 p-b-100"> -->
+  <section class="p-t-100 p-b-100">
+    <div class="container-xs-height full-height">
+      <div class="col-xs-height col-middle text-left">
+      <!-- BEGIN CONTENT -->
+        <div id="parallex5" class="parallex" style="margin: 0">
+          <div class="row">
+            <div class="col-md-4" "col-md-offset-2">
+              <!--  <div class="page-header">
+                  <h1 id="timeline">Timeline</h1>
+                    </div> -->
+              <ul class="timeline">
+                <li class="timeline-inverted">
+                  <div class="timeline-badge"><i class="glyphicon glyphicon-check"></i></div>
+                  <div class="timeline-panel" id = "createsurvey">
+                    <div class="timeline-heading">
+                    <h4 class="timeline-title">Create survey</h4>
+                    <!-- <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> 15th August 1947 </small></p> -->
+                    </div>
+                      <!-- <div class="timeline-body">
+                        <p>Some important text here
+                         </p>
+                      </div> -->
+                  </div>
+                </li>
+                <li class="timeline-inverted">
+                  <div class="timeline-badge warning"><i class="glyphicon glyphicon-credit-card"></i></div>
+                  <div class="timeline-panel" id = "addunits">
+                    <div class="timeline-heading">
+                    <h4 class="timeline-title">Add business outlets</h4>
+                    </div>
+                      <!-- <div class="timeline-body">
+                        <p>Some important text here
+                         </p>
+                      </div> -->
+                  </div>
+                </li>
+                <li class="timeline-inverted">
+                  <div class="timeline-badge danger"><i class="glyphicon glyphicon-credit-card"></i></div>
+                  <div class="timeline-panel" id = "dashboards">
+                    <div class="timeline-heading">
+                    <h4 class="timeline-title">Dashboard for every unit manager</h4>
+                    </div>
+                      <!-- <div class="timeline-body">
+                        <p>Some important text here
+                         </p>
+                      </div> -->
+                  </div>
+                </li>
+                <li class="timeline-inverted">
+                  <div class="timeline-badge info"><i class="glyphicon glyphicon-floppy-disk"></i></div>
+                  <div class="timeline-panel" id="watchfeedback">
+                    <div class="timeline-heading">
+                    <h4 class="timeline-title">Watch feedback coming in</h4>
+                    </div>
+                      <!-- <div class="timeline-body">
+                         <p>Some important text here
+                         </p>
+                      </div> -->
+                  </div>
+                </li>
+                <li class="timeline-inverted">
+                  <div class="timeline-badge success"><i class="glyphicon glyphicon-thumbs-up"></i></div>
+                  <div class="timeline-panel" id="analytic">
+                    <div class="timeline-heading">
+                    <h4 class="timeline-title">Analytics and insights</h4>
+                    </div>
+                      <!-- <div class="timeline-body">
+                        <p>Some important text here
+                         </p>
+                      </div> -->
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-5">
+               <img src="/static/homepage_pages/assets/images/HoverImages/first.png" id="img_createsurvey" class="HoverImages">
+               <img src="/static/homepage_pages/assets/images/HoverImages/second.png" id="img_addunits" class="HoverImages">
+               <img src="/static/homepage_pages/assets/images/HoverImages/third.png" id="img_dashboards" class="HoverImages">
+               <img src="/static/homepage_pages/assets/images/HoverImages/fourth.png" id="img_watchfeedback" class="HoverImages">
+               <img src="/static/homepage_pages/assets/images/HoverImages/fifth.png" id="img_analytic" class="HoverImages">
+            </div>
+          </div>
         </div>
+      <!-- END CONTENT -->
       </div>
     </div>
   </section>
-  <!-- END CONTENT SECTION -->
+
 
   <!-- START CONTENT SECTION -->
-  <!-- <section class="p-b-60 p-t-60">
+  <section class="p-b-60 p-t-60">
     <div class="container">
       <div class="row">
         <div class="col-sm-6 col-sm-offset-3 text-center">
+          <!-- <h6 class="block-title m-b-0 ">PAGES Admin Dashboard DESIGN</h6> -->
           <h1 class="m-t-5">Make customers part of<br> every decision you make</h1>
         </div>
       </div>
@@ -215,12 +363,12 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
         </div>
       </div>
     </div>
-  </section> -->
+  </section>
   <!-- END CONTENT SECTION -->
   <!-- START CONTENT SECTION -->
-  <!--<section class="text-center no-overflow">
+  <section class="text-center no-overflow">
      <img src="/static/homepage_pages/assets/images/responsiveness.png" alt="" class="image-responsive-width md-image-responsive-height">
-  </section> -->
+  </section>
   <!-- END CONTENT SECTION -->
 
 
@@ -229,17 +377,31 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
     <div class="container">
       <div class="row">
         <div class="col-sm-10 col-sm-offset-1">
-          <h6 class="block-title m-b-0 text-white text-center">Hear what your customers are saying and consistently improve customer experience!</h6>
-          <h1 class="text-white text-center m-t-5">Start listening to customers!</h1>
+          <h6 class="block-title m-b-0 text-white text-center">Want to start measuring and improving customer satisfaction?</h6>
+          <h1 class="text-white text-center m-t-5">Apply for Survaider closed beta now!</h1>
           <p class="small hint-text p-t-0 text-white text-center ">Don't worry, we value your privacy! None of your details will be shared with anyone else.</p>
-          <!-- <div class="col-sm-6 col-sm-offset-3 text-center">
-             <button class="light-outline" style="height:70px;"><a href="/usr/contact">Start your free trial</a></button>
+          <!-- <div class="form-group form-group-default input-group  m-t-40 bg-transparent b-a b-transparent-white">
+             <label>Email Address</label>
+             <input type="email" class="form-control text-white" placeholder="name@example.com" id="emaildiv">
+             <span class="input-group-btn">
+              <button class="btn btn-white m-r-10 btn-cons" type="button" id="emailbutton" onclick="sign_up2();">Send!</button>
+             </span>
           </div> -->
 
-          <div class="col-sm-6 col-sm-offset-3 text-center">
-                 <button class="light-outline" id = "secondbutton" onmouseover="changecolorfunction2()" onmouseout="changecolorback2()" style="height:70px;"><a href="/usr/contact" style="font-size: large; color:white" id="secondlink">Start your free trial!</a></button>
-          </div>
 
+          <!-- <form class="form-group form-group-default input-group  m-t-40 bg-transparent b-a b-transparent-white" action="/usr/thankyou" method="POST" target="_blank">
+                     <label>Email Address</label>
+                     <input type="email" class="form-control text-white" placeholder="name@example.com" name="email_signup">
+                     <span class="input-group-btn">
+                      <input type="submit" value="Submit" class="dark-outline">
+                     </span>
+                </form> -->
+          <!--  <div class="col-sm-6 col-sm-offset-3 text-center">
+                  <button class="light-outline" onclick="mymodal.open();" id="TakeToTop_hack" style="height:70px;">Start your free trial!</button>
+                </div> -->
+          <div class="col-sm-6 col-sm-offset-3 text-center">
+             <button class="light-outline" style="height:70px;"><a href="/usr/contact">Start your free trial!</a></button>
+          </div>
         </div>
       </div>
     </div>
@@ -336,19 +498,7 @@ f=false,d=document;return{use_existing_jquery:function(){return use_existing_jqu
     //   return false;
     //   };
 
-    function changecolorfunction() {
-      document.getElementById("firstlink").style.color = "white";
-    }
-    function changecolorback() {
-      document.getElementById("firstlink").style.color = "black";
-    }
 
-    function changecolorfunction2() {
-      document.getElementById("secondlink").style.color = "black";
-    }
-    function changecolorback2() {
-      document.getElementById("secondlink").style.color = "white";
-    }
 
   </script>
 
