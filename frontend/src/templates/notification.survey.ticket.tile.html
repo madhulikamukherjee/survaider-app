@@ -6,7 +6,7 @@
       <i class="fa fa-clock-o"></i>
       <span data-livestamp="<%= dat.acquired %>"><%= dat.acquired %></span>
     </p>
-    <button><i class="fa fa-times"></i></button>
+    <button><i class="fa fa-times" data-action="mark_finished"></i></button>
   </section>
 
   <section class="main">
@@ -24,9 +24,9 @@
           <td class="details">
             <ul>
               <% if (dat.origin == dat.root_survey.id) { %>
-              To : 
+              To :
               <% } else { %>
-              Assigned to : 
+              Assigned to :
               <% } %>
 
               <% _.each(dat.survey_unit, function(doc) { %>
@@ -63,7 +63,7 @@
               <li>
                 <span data-action="add_comment">Add a Comment</span>
                 <input type="text" data-input="add_comment"></input>
-                
+
               </li>
             </ul>
           </td>

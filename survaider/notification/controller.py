@@ -141,12 +141,15 @@ class NotificationController(Resource):
     def post(self, notification_id, action):
         notf = api_get_object(Notification.objects, notification_id)
 
-        notf = api_get_object(Notification.objects, notification_id)
-
         if action == "add_comment":
             swag = self.add_comment_args()
             c_user = User.objects(id = current_user.id).first()
             cid = notf.add_comment(swag['msg'], c_user)
+            notf.save()
+            return notf.repr
+
+        elif action == "resolve":
+            notf.flagged = False
             notf.save()
             return notf.repr
 

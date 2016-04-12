@@ -1,4 +1,4 @@
-<li class="notification survey-response" data-card="parent">
+<li class="notification survey-response" data-card="parent" data-collapse="<%= dat.collapse %>">
   <section class="title">
     <i class="fa fa-bolt icon"></i>
     <p>Subscribed Notification</p>
@@ -6,7 +6,7 @@
       <i class="fa fa-clock-o"></i>
       <span data-livestamp="<%= dat.acquired %>"><%= dat.acquired %></span>
     </p>
-    <button><i class="fa fa-times"></i></button>
+    <button><i class="fa fa-times" data-action="mark_finished"></i></button>
   </section>
 
   <section class="main">
