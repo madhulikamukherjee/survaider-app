@@ -45,6 +45,18 @@ class Notification(db.Document):
     def unflagged_count():
         return Notification.past(released__gt = datetime.now()).count()
 
+    def add_comment(self, text, user):
+        if 'comments' not in self.payload:
+            self.payload['comments'] = []
+        comment_doc = {
+            'user': user,
+            'text': text,
+            'added': datetime.now(),
+            'id': int(datetime.now().timestamp())
+        }
+        self.payload['comments'].append(comment_doc)
+        return comment_doc['id']
+
 class SurveyResponseNotification(Notification):
     survey   = db.ReferenceField(Survey, required = True)
     response = db.ReferenceField(Response, required = True)
@@ -74,6 +86,18 @@ class SurveyResponseNotification(Notification):
         return payload
 
     @property
+    def comments(self):
+        comments = []
+        for comment in self.payload.get('comments', []):
+            comments.append({
+                'user': comment['user'].repr,
+                'text': comment['text'],
+                'added': str(comment['added']),
+                'id': str(comment['id']),
+            })
+        return comments
+
+    @property
     def repr(self):
         doc = {
             'id':       str(self),
@@ -83,7 +107,7 @@ class SurveyResponseNotification(Notification):
             'root':     self.survey.resolved_root.tiny_repr,
             'response': str(self.response),
             'payload':  self.resolved_payload,
-            'pl':self.payload,
+            'comments': self.comments,
             'type':     self.__class__.__name__,
         }
         return doc
@@ -91,18 +115,6 @@ class SurveyResponseNotification(Notification):
 class SurveyTicket(Notification):
     origin      = db.ReferenceField(User)
     survey_unit = db.ListField(db.ReferenceField(SurveyUnit))
-
-    def add_comment(self, text, user):
-        if 'comments' not in self.payload:
-            self.payload['comments'] = []
-        comment_doc = {
-            'user': user,
-            'text': text,
-            'added': datetime.now(),
-            'id': int(datetime.now().timestamp())
-        }
-        self.payload['comments'].append(comment_doc)
-        return comment_doc['id']
 
     def resolve(self):
         self.flagged = False

@@ -30,5 +30,24 @@
       <% }); %>
     </table>
     </ul>
+            <ul role="comments">
+              <% _.each(dat.comments, function(doc) { %>
+              <li data-user-id="<%= doc.user.id %>">
+                <i class="fa fa-clock-o"></i>
+                <!-- <span data-livestamp="<%= doc.added %>"><%= doc.added %></span> -->
+
+                <!-- <span><%= doc.user.email %></span> -->
+                <% if (dat.origin == doc.user.id) { %>
+                <span>Owner</span>
+                <% } %>
+                <p class="message"><%= doc.text %></p>
+              </li>
+              <% }); %>
+              <li>
+                <span data-action="add_comment">Add a Comment</span>
+                <input type="text" data-input="add_comment"></input>
+
+              </li>
+            </ul>
   </section>
 </li>

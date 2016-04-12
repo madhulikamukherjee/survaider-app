@@ -44,6 +44,23 @@ class SurveyResponseNotification extends Backbone.Model
   initialize: ->
     @template = Survaider.Templates['notification.survey.response.tile']
 
+  add_comment: (e) ->
+    msg = $(e.target.parentElement).find("[data-input=add_comment]").val()
+    if msg.length < 2
+      swal
+        type: 'error'
+        title: 'Please Enter a valid comment.'
+
+    $.post "/api/notification/#{@get('id')}/add_comment", {msg: msg}
+    .done (dat) =>
+      @set
+        payload: dat.payload
+    .fail ->
+      swal
+        type: 'error'
+        title: 'Server error. Please try again.'
+
+
 class NotificationCollection extends Backbone.Collection
   model: (attr, options) ->
     switch attr.type

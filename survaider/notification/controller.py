@@ -132,10 +132,26 @@ class NotificationController(Resource):
         notf = api_get_object(Notification.objects, notification_id)
         return notf.repr
 
+    def add_comment_args(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('msg', type=str, required=True)
+        return parser.parse_args()
+
     @api_login_required
     def post(self, notification_id, action):
         notf = api_get_object(Notification.objects, notification_id)
-        pass
+
+        notf = api_get_object(Notification.objects, notification_id)
+
+        if action == "add_comment":
+            swag = self.add_comment_args()
+            c_user = User.objects(id = current_user.id).first()
+            cid = notf.add_comment(swag['msg'], c_user)
+            notf.save()
+            return notf.repr
+
+        raise APIException("Must specify valid option", 400)
+
 
 class NotificationAggregation(Resource):
 

@@ -84,6 +84,31 @@
       return this.template = Survaider.Templates['notification.survey.response.tile'];
     };
 
+    SurveyResponseNotification.prototype.add_comment = function(e) {
+      var msg;
+      msg = $(e.target.parentElement).find("[data-input=add_comment]").val();
+      if (msg.length < 2) {
+        swal({
+          type: 'error',
+          title: 'Please Enter a valid comment.'
+        });
+      }
+      return $.post("/api/notification/" + (this.get('id')) + "/add_comment", {
+        msg: msg
+      }).done((function(_this) {
+        return function(dat) {
+          return _this.set({
+            payload: dat.payload
+          });
+        };
+      })(this)).fail(function() {
+        return swal({
+          type: 'error',
+          title: 'Server error. Please try again.'
+        });
+      });
+    };
+
     return SurveyResponseNotification;
 
   })(Backbone.Model);
