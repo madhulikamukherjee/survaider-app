@@ -284,14 +284,16 @@
     };
     Header.prototype.addMinimized = function() {
         if (this.options.autoresize && !this.$element.hasClass('affix-top'))
-            if (!this.$element.hasClass(this.options.minimizedClass))
+           {  if (!this.$element.hasClass(this.options.minimizedClass))
                 this.$element.addClass(this.options.minimizedClass);
-            this.$element.addClass(this.options.darkClass);
+                this.$element.addClass(this.options.darkClass);
+            }
     };
     Header.prototype.removeMinized = function() {
         if (this.options.autoresize || this.$element.hasClass('affix-top'))
-            this.$element.removeClass(this.options.minimizedClass);
-        this.$element.addClass(this.options.darkClass);
+            { this.$element.removeClass(this.options.minimizedClass);
+              this.$element.addClass(this.options.darkClass);
+            }
     };
 
     function Plugin(option) {
