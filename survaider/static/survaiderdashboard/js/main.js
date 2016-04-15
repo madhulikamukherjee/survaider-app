@@ -3,7 +3,6 @@
   Chart.defaults.global['responsive'] = true;
   Chart.defaults.global['maintainAspectRatio'] = false;
 
-
   var appModule = angular.module('SurvaiderDashboard', ['ngRoute', 'chart.js']);
 
   var application = null;
@@ -16,7 +15,6 @@
   if (uri_dat.parent) {
     uri += "/true";
   }
-
   var SURVEY_ID = uri_dat.s_id;
 
   var PATHNAME = window.location.pathname;
