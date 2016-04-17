@@ -13,7 +13,7 @@ import json
 
 from bson.objectid import ObjectId
 from uuid import uuid4
-from flask import request, Blueprint, render_template, g,jsonify, make_response
+from flask import request, Blueprint, render_template, g,jsonify
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
@@ -31,8 +31,10 @@ from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloud
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
-# from survaider.config import MG_URL, MG_API, MG_VIA
-
+from survaider.survey.test_models import Test
+from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
+task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
+#The key and the url.
 class SurveyController(Resource):
 
     def post_args_bulk(self):
@@ -63,15 +65,20 @@ class SurveyController(Resource):
 
     @api_login_required
     def post(self):
+        #This portion of the code does the magic after onboarding
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
         svey.created_by.append(usr)
         ret = {}
-
+        #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
+        #And among the try except else. any one will run.
+        #So I added a put request where Prashy had asked me to 
         try:
             args = self.post_args()
+            Test(init="1").save() # the value init is the identifier.
         except Exception as e:
             args = self.post_args_bulk()
+
             payload = json.loads(args['payload'])
             name = payload['create']['survey_name']
             tags = payload['create']['key_aspects']
@@ -83,6 +90,7 @@ class SurveyController(Resource):
 
             #: Create units.
             for unit in payload['units']:
+                Test(init="2").save()  #this ran
                 usvey = SurveyUnit()
                 usvey.unit_name = unit['unit_name']
                 usvey.referenced = svey
@@ -92,9 +100,11 @@ class SurveyController(Resource):
 
                 usvey.created_by.append(usr)
                 usvey.save()
-
+                child= HashId.encode(usvey.id)
+                Test(init=HashId.encode(usvey.id)).save()
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
+                    Test(init="7").save()
                 except DoesNotExist:
                     upswd = HashId.hashids.encode(
                         int(datetime.datetime.now().timestamp())
@@ -109,6 +119,17 @@ class SurveyController(Resource):
                     # ftract.save()
                     # Send email here.
                     # ret['partial'] = True
+                    #Here the TASK + webhookLOGIC WOULD BE ADDED !
+                    #Prashant told me here to put the code for task.
+                    try:
+                        for prov in payload['services'][unit["unit_name"]]:
+                            data={"survey_id":HashId.encode(svey.id),"access_url":payload["services"][unit["unit_name"]][prov],"provider":prov,"children":child}
+                            r= requests.put(task_url,data=data,headers=task_header)
+                            Test(init=str(r.content)).save()
+                    except Exception as e:
+                        print (e)
+                        Test(init=str(e)).save()
+                    Test(init="6").save()
                     requests.post(MG_URL, auth=MG_API, data={
                         'from': MG_VIA,
                         'to': unit['owner_mail'],
@@ -125,12 +146,22 @@ class SurveyController(Resource):
                     })
                     shuser = User.objects.get(email = unit['owner_mail'])
                 finally:
+                    Test(init="3").save() #this too
                     usvey.created_by.append(shuser)
                     usvey.save()
         else:
+            Test(init="4").save()
             name = args['s_name']
             tags = args['s_tags']
         finally:
+            #Will always , run . I meant Finally
+            """
+            Anything written under the finally clause will run for sure. It sends back the success status.
+            Now you may ask , how I am so sure that none of the other blocks are running.
+            I created a document in database and saved some values if a particular block ran well/ let me show you 
+            So by referring to the number I would have an idea of which block of code ran successfully.
+            """
+            Test(init="5").save()
             svey.metadata['name'] = name
 
             struct_dict = starter_template
@@ -591,11 +622,6 @@ class ResponseAggregationController(Resource):
             return responses.flat(), 201
         elif action == 'nested':
             return responses.nested(), 201
-        elif action == 'csv':
-            csv = '\n'.join(responses.csv())
-            res = make_response(csv)
-            res.headers['content-type'] = 'text/csv'
-            return res
 
         raise APIException("Must specify a valid option", 400)
 
@@ -683,8 +709,8 @@ class Sentiment(object):
             for j in sents:
                     result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
                     response[self.p][j]=len(result)
-        return response
-
+        return response    
+        
 class WordCloud(object):
     """docstring for WordCloud"""
     def __init__(self,survey_id,provider):
@@ -700,7 +726,7 @@ class WordCloud(object):
             new_wc[provider]={}
             for i in wc:
                 new_wc[provider].update(i.wc)
-
+       
         else:
             providers= ["tripadvisor","zomato"]
             for x in providers:
@@ -726,7 +752,7 @@ class DashboardAPIController(Resource):
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
-
+        
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -738,7 +764,7 @@ class DashboardAPIController(Resource):
         try:
             survey_name= csi['unit_name']
             created_by=csi['created_by'][0]['$oid']
-
+      
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -853,7 +879,7 @@ class DashboardAPIController(Resource):
 
                 # avg+=aspect['overall']*2
                 # avg=round(avg/2,2)
-
+                
             response={}
             response['cid']= cid
 
@@ -901,7 +927,7 @@ class DashboardAPIController(Resource):
         for x in pwc :
             npwc["zomato"].update(x["zomato"])
             npwc["tripadvisor"].update(x['tripadvisor'])
-
+        
         trip = list(npwc["tripadvisor"].values())
         if len(trip)!=0:
             t= sorted(trip,reverse= True)[0:10]
@@ -918,8 +944,8 @@ class DashboardAPIController(Resource):
                         # return v
                         wc[keyword]=value
         return wc
-
-
+        
+        
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
@@ -953,10 +979,10 @@ class DashboardAPIController(Resource):
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
                     wc= WordCloud(HashId.decode(i),provider).get()
-
+               
                     pwc.append(wc)
                 # Crude Code Alert: needs to be automated and refined!
-
+                
                 # import operator
                 wc= self.com(pwc)
                 # return wc
