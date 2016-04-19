@@ -97,27 +97,31 @@
               <br>
               <div class="panel" id="contact-panel">
                 <p class="semi-bold no-margin">Fill up this form and we'll get back to you!</p>
-                <form role="form" autocomplete="off" class="m-t-15" id="contact-form" action="/usr/thankyou" method="POST">
+                <form role="form" autocomplete="off" class="m-t-15" id="contact-form" action="" method="POST">
                   <div class="row">
                     <div class="col-sm-6">
+                      <!-- MAILCHIMP FIELDS -->
+                      <input type="hidden" name="u" value="bf3190b8cea328106e2970ef4">
+                      <input type="hidden" name="id" value="2215d0556d">
+                      <!-- END OF MAILCHIMP FIELDS -->
                       <div class="form-group form-group-default required">
                         <label>Name</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <input type="text" name="MERGE1" class="form-control" required>
                       </div>
                     </div>
                     <div class="col-sm-6">
                       <div class="form-group form-group-default required">
                         <label>Organisation</label>
-                        <input type="text" name="organisation" class="form-control" required>
+                        <input type="text" name="MERGE2" class="form-control" required>
                       </div>
                     </div>
                   </div>
                   <div class="form-group form-group-default required">
                     <label>Email</label>
-                    <input type="email" name="email_signup" placeholder="name@example.com" class="form-control" required>
+                    <input type="email" name="MERGE0" placeholder="name@example.com" class="form-control" required>
                   </div>
                   <div class="sm-p-t-10 clearfix">
-                    <button class="btn btn-primary font-montserrat all-caps fs-12 pull-right xs-pull-left">Submit</button>
+                    <button class="btn btn-primary font-montserrat all-caps fs-12 pull-right xs-pull-left" onclick="takeToThankYou()">Submit</button>
                   </div>
                   <div class="clearfix"></div>
                 </form>
@@ -130,6 +134,17 @@
       <!-- END CONTACT SECION -->
       
     </div>
+
+    <script type="text/javascript">
+      function takeToThankYou(){
+        alert('function alerted!');
+        form=document.getElementById('contact-form');
+        // form.action='/usr/thankyou';
+        // form.submit();
+        form.action = "http://survaider.us13.list-manage.com/subscribe/post";
+        form.submit();
+      }
+    </script>
 
     <!-- BEGIN CORE FRAMEWORK -->
     <script src="/static/homepage_pages/assets/plugins/pace/pace.min.js" type="text/javascript"></script>
