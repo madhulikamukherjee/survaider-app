@@ -633,6 +633,7 @@ class WordCloudD(Document):
     provider= StringField()
     survey_id=StringField()
     wc= DictField()
+    
 class Reviews(Document):
     provider=StringField()
     survey_id=StringField()

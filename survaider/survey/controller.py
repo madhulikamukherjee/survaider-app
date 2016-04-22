@@ -13,7 +13,7 @@ import json
 
 from bson.objectid import ObjectId
 from uuid import uuid4
-from flask import request, Blueprint, render_template, g,jsonify
+from flask import request, Blueprint, render_template, g,jsonify, make_response
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
@@ -33,6 +33,9 @@ from survaider.security.controller import user_datastore
 import ast
 from survaider.survey.test_models import Test
 from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
+from survaider.survey.keywordcount import KeywordCount
+
+
 task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 #The key and the url.
 class SurveyController(Resource):
@@ -622,6 +625,11 @@ class ResponseAggregationController(Resource):
             return responses.flat(), 201
         elif action == 'nested':
             return responses.nested(), 201
+        elif action == 'csv':
+            csv = '\n'.join(responses.csv())
+            res = make_response(csv)
+            res.headers['content-type'] = 'text/csv'
+            return res
 
         raise APIException("Must specify a valid option", 400)
 
@@ -1003,6 +1011,16 @@ class IRAPI(Resource):
     docstring for IRAPI-  Inclusive-RAPI
     returns json response
     """
+
+    def wc_to_dict(self,alist):
+        v= 10
+        alist=alist[0:v]
+        adict={}
+        for i in alist:
+            adict[i[0]]=i[1]
+    
+        return adict
+
     def get(self,survey_id,start=None,end=None,aggregate="false"):
         try:
             survey_id=HashId.decode(survey_id)
@@ -1056,9 +1074,9 @@ class IRAPI(Resource):
             sentiment={'positive':0,'negative':0,'neutral':0}
             long_text=""
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
-                for b in temp:
-                    if j_data['field_type']=='long_text':
-
+                if j_data['field_type']=='long_text':
+                    for b in temp:
+                    
                         # dat= DatumBox()
                         # sent= dat.get_sentiment(b)
                         blob = TextBlob(b)
@@ -1074,7 +1092,15 @@ class IRAPI(Resource):
                         options_count_segg[b]=sent
                         long_text+=" "+b
 
-                    if j_data['field_type']=='multiple_choice':
+                        if b in options_count:pass
+                        else:options_count[b]=temp.count(b)
+
+                    keywordcounts = KeywordCount()
+                    keywords = keywordcounts.run(long_text)
+                    wc = self.wc_to_dict(keywords)
+
+                if j_data['field_type']=='multiple_choice':
+                    for b in temp:
                         split_b= b.split('###')
                         if len(split_b)==0:
                             if split_b[0] in options_count_segg:
@@ -1086,9 +1112,11 @@ class IRAPI(Resource):
                                 if i in options_count_segg:
                                     options_count_segg[i]+=1
                                 else:options_count_segg[i]=1
+                        
+                        if b in options_count:pass
+                        else:options_count[b]=temp.count(b)
 
-                    if b in options_count:pass
-                    else:options_count[b]=temp.count(b)
+                    
 
             elif j_data['field_type'] in ["ranking"]:
                 values={}
@@ -1151,7 +1179,7 @@ class IRAPI(Resource):
             if j_data['field_type']=='long_text':
                 response['sentiment']=sentiment
                 response['sentiment_segg']=options_count_segg
-                keywords=dat.get_keywords(long_text)
+                keywords=wc
                 response['keywords']=keywords
             #response['garbage']=temp
             if j_data['field_type']=='ranking':
