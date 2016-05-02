@@ -139,7 +139,7 @@ class Survey(db.Document):
     def img_uploads(self):
         return [_.repr for _ in self.attachments]
 
-    @property
+    @property 
     def hidden(self):
         return self.metadata['hidden'] if 'hidden' in self.metadata else False
 

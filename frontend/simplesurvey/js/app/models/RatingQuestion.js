@@ -33,6 +33,6 @@ RatingQuestion.prototype.resetResponse = function(){
 RatingQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
-    q_res: this.response
+    q_res: 'a_'+this.response
   }
 }
