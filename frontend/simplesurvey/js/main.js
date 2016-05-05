@@ -31,9 +31,9 @@
               stop: function (event, ui) {
                 var index = ui.handle.parentElement.getAttribute('data-question-index'),
                     id = ui.handle.parentElement.getAttribute('data-question-id');
-                    console.log(index);
-                    console.log(id);
-                    console.log();
+                    // console.log(index);
+                    // console.log(id);
+                    // console.log();
                 $scope.changeInQuestion(index, id);
                 $scope.$apply();
               }
@@ -226,7 +226,7 @@
         return false;
       }
 
-      console.log(question);
+      // console.log(question);
 
       checkTheNumberOfRemainingQuestions();
 
@@ -550,7 +550,7 @@
         $http.get(payload_update_uri + '?new=true')
               .success(function(data, status, header, config){
          
-                  console.log(data);
+                  // console.log(data);
          
               }
           );
@@ -611,7 +611,7 @@
          $scope.changeInQuestion = function(questionIndex, questionId){
            var question = $scope.questions[questionIndex],
            questionElement = $('#question-' + questionId);
-           console.log(question);
+           // console.log(question);
 
            if (question.checkIfCompleted()) {
              questionElement.addClass('completed-question');
@@ -648,7 +648,7 @@
            $http.get(payload_update_uri + '?new=false')
               .success(function(data, status, header, config){
 
-                  console.log(data);
+                  // console.log(data);
 
               }
           );

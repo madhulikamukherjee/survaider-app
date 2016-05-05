@@ -53,7 +53,8 @@ GroupRatingQuestion.prototype.checkIfCompleted = function(){
 GroupRatingQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
-    q_res: []
+    q_res: [],
+    q_res_plain : []
   }
 
 
@@ -61,12 +62,16 @@ GroupRatingQuestion.prototype.generateResponse = function(){
       delimeter1 = '##';
       delimeter2 = '###';
 
+  var temp2 = []
+
   for (var i = 0; i < this.subparts.length; i++) {
     temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rating));
+    temp2.push(this.subparts[i].label + delimeter1 + this.subparts[i].rating);
   }
 
 
   response.q_res = temp.join(delimeter2).toLocaleString();
+  response.q_res_plain = temp2.join(delimeter2).toLocaleString();
 
   return response;
 }

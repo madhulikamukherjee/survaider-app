@@ -62,20 +62,24 @@ MultipleChoiceQuestion.prototype.resetResponse = function(){
 MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
-    q_res: ""
+    q_res: "",
+    q_res_plain : ""
   }
 
   var temp = [],
       delimeter = '###';
+  var temp2 = [];
 
   for (var i = 0; i < this.choices.length; i++) {
     if (this.choices[i].checked) {
       temp.push('a_' + (i + 1));
+      temp2.push(this.choices[i].label);
     }
   }
 
 
   response.q_res = temp.join(delimeter).toLocaleString();
+  response.q_res_plain = temp2.join(delimeter).toLocaleString();
 
   return response;
 }

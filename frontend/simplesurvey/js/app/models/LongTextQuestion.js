@@ -36,6 +36,7 @@ LongTextQuestion.prototype.resetResponse = function(){
 LongTextQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
-    q_res: this.response
+    q_res: this.response,
+    q_res_plain : this.response
   }
 }

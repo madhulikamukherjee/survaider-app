@@ -48,8 +48,10 @@ SingleChoiceQuestion.prototype.resetResponse = function(){
 
 
 SingleChoiceQuestion.prototype.generateResponse = function(){
+  // console.log(this.options[this.response-1].label);
   return {
     q_id: this.id,
-    q_res: 'a_' + this.response
+    q_res: 'a_' + this.response,
+    q_res_plain: this.options[this.response-1].label
   }
 }
