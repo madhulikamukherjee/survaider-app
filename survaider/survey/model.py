@@ -139,7 +139,7 @@ class Survey(db.Document):
     def img_uploads(self):
         return [_.repr for _ in self.attachments]
 
-    @property 
+    @property
     def hidden(self):
         return self.metadata['hidden'] if 'hidden' in self.metadata else False
 
@@ -369,21 +369,21 @@ class Response(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
-    def add(self, qid, qres):
-        if qid in self.parent_survey.cols:
-            self.responses[qid] = qres
+    def add(self, q_id, q_res, q_res_plain):
+        if q_id in self.parent_survey.cols:
+            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain}
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
             raise TypeError("Question ID is invalid")
 
-        if qid in self.parent_survey.notification_hooks:
-            for hook in qres.split('###'):
-                if hook in self.parent_survey.notification_hooks[qid]:
+        if q_id in self.parent_survey.notification_hooks:
+            for hook in q_res.split('###'):
+                if hook in self.parent_survey.notification_hooks[q_id]:
                     survey_response_notify.send(self.parent_survey,
                                                 response = self,
-                                                qid = qid,
-                                                qres = qres)
+                                                qid = q_id,
+                                                qres = q_res)
 
     @property
     def added(self):
@@ -440,7 +440,7 @@ class ResponseAggregation(object):
             row = [str(response), str(response.added)]
             for qid in self.survey.cols:
                 if qid in response.responses:
-                    row.append(response.responses[qid])
+                    row.append(response.responses[qid]['raw'])
                 else:
                     row.append(None)
             rows.append(row)
@@ -470,7 +470,7 @@ class ResponseAggregation(object):
                 if ps:
                     cols.append([str(response.id), str(response.added)])
                 if q[0] in response.responses:
-                    row.append(response.responses[q[0]])
+                    row.append(response.responses[q[0]]['raw'])
                 else:
                     row.append(None)
             rows.append(row)
@@ -502,7 +502,7 @@ class ResponseAggregation(object):
             row.append(q[0])
             row.append('"{0}"'.format(q[1]))
             for r in responses:
-                row.append('"{0}"'.format(r.responses.get(q[0], '')))
+                row.append('"{0}"'.format(r.responses.get(q[0], '')['pretty']))
             yield ','.join(row)
 
     @property
@@ -633,7 +633,7 @@ class WordCloudD(Document):
     provider= StringField()
     survey_id=StringField()
     wc= DictField()
-    
+
 class Reviews(Document):
     provider=StringField()
     survey_id=StringField()

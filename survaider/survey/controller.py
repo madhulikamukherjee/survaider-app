@@ -75,7 +75,7 @@ class SurveyController(Resource):
         ret = {}
         #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
         #And among the try except else. any one will run.
-        #So I added a put request where Prashy had asked me to 
+        #So I added a put request where Prashy had asked me to
         try:
             args = self.post_args()
             Test(init="1").save() # the value init is the identifier.
@@ -161,7 +161,7 @@ class SurveyController(Resource):
             """
             Anything written under the finally clause will run for sure. It sends back the success status.
             Now you may ask , how I am so sure that none of the other blocks are running.
-            I created a document in database and saved some values if a particular block ran well/ let me show you 
+            I created a document in database and saved some values if a particular block ran well/ let me show you
             So by referring to the number I would have an idea of which block of code ran successfully.
             """
             Test(init="5").save()
@@ -484,6 +484,7 @@ class ResponseController(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('q_id',  type = str, required = True)
         parser.add_argument('q_res', type = str, required = True)
+        parser.add_argument('q_res_plain', type = str, required = True)
         return parser.parse_args()
 
     def get_args(self):
@@ -554,6 +555,7 @@ class ResponseController(Resource):
         Args:
             q_id (str):  Question ID, as generated in the survey structure.
             q_res (str): Response.
+            q_res_plain (str): Pretty Response
         """
 
         try:
@@ -596,7 +598,7 @@ class ResponseController(Resource):
         args = self.post_args()
 
         try:
-            resp.add(args['q_id'], args['q_res'])
+            resp.add(**args)
             ret['will_add_id'] = args['q_id']
         except TypeError as te:
             raise APIException(str(te), 400)
@@ -717,8 +719,8 @@ class Sentiment(object):
             for j in sents:
                     result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
                     response[self.p][j]=len(result)
-        return response    
-        
+        return response
+
 class WordCloud(object):
     """docstring for WordCloud"""
     def __init__(self,survey_id,provider):
@@ -734,7 +736,7 @@ class WordCloud(object):
             new_wc[provider]={}
             for i in wc:
                 new_wc[provider].update(i.wc)
-       
+
         else:
             providers= ["tripadvisor","zomato"]
             for x in providers:
@@ -760,7 +762,7 @@ class DashboardAPIController(Resource):
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
-        
+
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -772,7 +774,7 @@ class DashboardAPIController(Resource):
         try:
             survey_name= csi['unit_name']
             created_by=csi['created_by'][0]['$oid']
-      
+
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
@@ -887,7 +889,7 @@ class DashboardAPIController(Resource):
 
                 # avg+=aspect['overall']*2
                 # avg=round(avg/2,2)
-                
+
             response={}
             response['cid']= cid
 
@@ -935,7 +937,7 @@ class DashboardAPIController(Resource):
         for x in pwc :
             npwc["zomato"].update(x["zomato"])
             npwc["tripadvisor"].update(x['tripadvisor'])
-        
+
         trip = list(npwc["tripadvisor"].values())
         if len(trip)!=0:
             t= sorted(trip,reverse= True)[0:10]
@@ -952,8 +954,8 @@ class DashboardAPIController(Resource):
                         # return v
                         wc[keyword]=value
         return wc
-        
-        
+
+
     def get(self,survey_id,provider,aggregate="false"):
         ##First get for all surveys
         survey_id=HashId.decode(survey_id)
@@ -987,10 +989,10 @@ class DashboardAPIController(Resource):
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
                     wc= WordCloud(HashId.decode(i),provider).get()
-               
+
                     pwc.append(wc)
                 # Crude Code Alert: needs to be automated and refined!
-                
+
                 # import operator
                 wc= self.com(pwc)
                 # return wc
@@ -1018,7 +1020,7 @@ class IRAPI(Resource):
         adict={}
         for i in alist:
             adict[i[0]]=i[1]
-    
+
         return adict
 
     def get(self,survey_id,start=None,end=None,aggregate="false"):
@@ -1076,7 +1078,7 @@ class IRAPI(Resource):
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
                 if j_data['field_type']=='long_text':
                     for b in temp:
-                    
+
                         # dat= DatumBox()
                         # sent= dat.get_sentiment(b)
                         blob = TextBlob(b)
@@ -1112,11 +1114,11 @@ class IRAPI(Resource):
                                 if i in options_count_segg:
                                     options_count_segg[i]+=1
                                 else:options_count_segg[i]=1
-                        
+
                         if b in options_count:pass
                         else:options_count[b]=temp.count(b)
 
-                    
+
 
             elif j_data['field_type'] in ["ranking"]:
                 values={}
