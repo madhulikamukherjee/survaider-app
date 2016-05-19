@@ -794,52 +794,56 @@ class DashboardAPIController(Resource):
             survey_data= alol.get_uuid_label()#?So wrong
             j_data= d(survey_data)
 
-
             if "options" in survey_data['field_options']:
-
                 try:
-                    options=[]
+                    # options=[]
                     option_code={}
+
                     for i in range(len(j_data['field_options']['options'])):
-                        options.append(j_data['field_options']['options'][i]['label'])
+                        # options.append(j_data['field_options']['options'][i]['label'])
                         option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
                 except :
                     pass
-            #Response Count
+
             else:pass
-            # return option_code
+
             temp= []
             timed={}
             import time
+
             for i in response_data:
                 if cid in i['responses']:
-                    temp.append(i['responses'][cid])
+                    temp.append(i['responses'][cid]['raw'])
                     timestamp= i['metadata']['modified']['$date']/1000
                     timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
                     timed[timestamp]=i['responses'][cid]
+
             options_count={}
+
             timed_agg={}
             timed_agg_counter={}
-            try:
-                for time , value in timed.items():
-                    if time[:10] not in timed_agg_counter:
-                        timed_agg_counter[time[:10]]=0
-                    if time[:10] in timed_agg:
-                        timed_agg[time[:10]]+=int(value)
-                        timed_agg_counter[time[:10]]+=1
+            # try:
+            #     for time , value in timed.items():
+            #         # return int(value['raw'])
+            #         if time[:10] not in timed_agg_counter:
+            #             timed_agg_counter[time[:10]]=0
+            #         if time[:10] in timed_agg:
+            #             timed_agg[time[:10]]+=int(value['raw'])
+            #             timed_agg_counter[time[:10]]+=1
 
-                    else:
-                        timed_agg[time[:10]]=int(value)
-                        timed_agg_counter[time[:10]]=1
-                timed_final={}
-                for time,value in timed_agg.items():
-                    avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
-                    timed_final[time]=avg
-            except:pass
+            #         else:
+            #             timed_agg[time[:10]]=int(value['raw'])
+            #             timed_agg_counter[time[:10]]=1
+            #     timed_final={}
+            #     for time,value in timed_agg.items():
+            #         avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
+            #         timed_final[time]=avg
+            # except:pass
 
             if j_data['field_type']=="group_rating":
-
+                # return temp
                 for i in temp:
+                    # return i
                     aTempList= i.split("###")
                     for j in aTempList:
                         bTempList= j.split("##")
@@ -871,19 +875,39 @@ class DashboardAPIController(Resource):
                     avg[key]=round(avg[key]/2,2)
 
             elif j_data['field_type']=="rating":
+                # return temp
                 for i in temp:
-                    if str(i) in options_count:
-                        options_count[str(i)]+=1
+                    # return i
+                    if str(i[2:]) in options_count:
+                        options_count[str(i[2:])]+=1
                     else:
-                        options_count[str(i)]=1
+                        options_count[str(i[2:])]=1
 
                 ll= 0
-                for j in temp:ll= float(ll)+float(j)
+                for j in temp:
+                    ll= float(ll)+float(j[2:])
 
                 if len(temp) != 0:
                     avg=round(ll/len(temp),2)
                 else:
                     avg=0
+                
+
+                for time , value in timed.items():
+
+                    if time[:10] not in timed_agg_counter:
+                        timed_agg_counter[time[:10]]=0
+                    if time[:10] in timed_agg:
+                        timed_agg[time[:10]]+=int(value['raw'][2:])
+                        timed_agg_counter[time[:10]]+=1
+
+                    else:
+                        timed_agg[time[:10]]=int(value['raw'][2:])
+                        timed_agg_counter[time[:10]]=1
+                timed_final={}
+                for time,value in timed_agg.items():
+                    avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
+                    timed_final[time]=avg
 
                 # TAKING AVERAGE FROM EXTERNAL APP DATA
 
@@ -1383,8 +1407,8 @@ class ResponseAPIController(Resource):
         response['survey_id']=survey_id
         response['label']=j_data['label']
         response['type']=j_data['field_type']
-        response['option_code']=option_code
-        response['option_count']=options_count
+        response['options_code']=option_code
+        response['options_count']=options_count
         #return option_code
         response['total_resp']=len(temp)
         response['garbage']= temp

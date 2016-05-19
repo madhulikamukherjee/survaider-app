@@ -41862,6 +41862,7 @@ RankingQuestion.prototype.generateResponse = function(){
   var temp2 = [];
 
   for (var i = 0; i < this.subparts.length; i++) {
+    // temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rank+1));
     temp.push('a_' + (i + 1) + delimeter1 + (this.subparts[i].rank+1));
     temp2.push(this.subparts[i].label + delimeter1 + (this.subparts[i].rank+1));
   }
