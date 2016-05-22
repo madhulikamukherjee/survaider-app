@@ -21,6 +21,8 @@
           </g>
           <g>
             <line ng-repeat="point in ratingPoints track by $index" x1="{{(pointRadius + $index*abscissaSpacer)}}" x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (ratingPoints[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" r="{{pointRadius}}" cx="{{(pointRadius + $index*abscissaSpacer)}}" cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
+
+          <line x1="30" y1="2" x2="30" ng-attr-y2="{{graphHeight}}" stroke="#979797" stroke-width="2" y2="50"></line>
           </g>
           <g>
             <circle ng-repeat="point in ratingPoints track by $index" r="{{pointRadius}}" cx="{{(pointRadius + $index*abscissaSpacer)}}" cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" fill="#4D6AFF" />

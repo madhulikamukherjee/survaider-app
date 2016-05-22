@@ -32,11 +32,13 @@ __p += '\n    <h3>Main Survey: ' +
  }; ;
 __p += '\n\n    <ul>\n      <table>\n      ';
  _.each(dat.payload, function(doc) { ;
-__p += '\n          <tr>\n            <td class="details">\n              A response "' +
+__p += '\n          <tr>\n            <td class="details">\n              A response ' +
 ((__t = ( doc.res_label )) == null ? '' : __t) +
-'" to the question "' +
+' to the question ' +
 ((__t = ( doc.label )) == null ? '' : __t) +
-'" at outlet\n            </td>\n            <td class="buttons">\n              <a href=""><button>Analytics</button></a>\n              <a href=""><button>More Details</button></a>\n            </td>\n          </tr>\n      ';
+' at outlet ' +
+((__t = ( dat.survey.name )) == null ? '' : __t) +
+'\n            </td>\n            <td class="buttons">\n              <a href=""><button>Analytics</button></a>\n              <a href=""><button>More Details</button></a>\n            </td>\n          </tr>\n      ';
  }); ;
 __p += '\n    </table>\n    </ul>\n            <ul role="comments">\n              ';
  _.each(dat.comments, function(doc) { ;

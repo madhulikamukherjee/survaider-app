@@ -20,7 +20,7 @@
       <% _.each(dat.payload, function(doc) { %>
           <tr>
             <td class="details">
-              A response "<%= doc.res_label %>" to the question "<%= doc.label %>" at outlet
+              A response <%= doc.res_label %> to the question <%= doc.label %> at outlet <%= dat.survey.name %>
             </td>
             <td class="buttons">
               <a href=""><button>Analytics</button></a>

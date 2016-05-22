@@ -79,7 +79,7 @@ button {
   .sv-logo a {
     display: block;
     font-weight: 900;
-    color: white; }
+    color: white !important; }
 
 .sv-logo,
 .sv-header-nav {
@@ -112,6 +112,9 @@ button {
     background-color: #7EFFE2;
     color: #9B9B9B; }
 
+  h3 a, h3 a:hover {
+    color: black !important;
+    cursor: pointer; }
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
 .sv-sidebar {
@@ -128,10 +131,12 @@ button {
   margin: 28px 0 0 28px; }
   .sv-sidebar-nav ul li {
     margin-bottom: 16px; }
-    .sv-sidebar-nav ul li a {
+    .sv-sidebar-nav ul li a,
+     .sv-sidebar-nav ul li a:hover {
       display: block;
-      color: #9B9B9B;
-      font-size: 20px; }
+      color: #9B9B9B !important;
+      font-size: 20px;
+      cursor: pointer; }
 
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
@@ -141,6 +146,11 @@ button {
   background-color: #F6F2F2;
   padding-top: 60px;
   padding-left: 170px; }
+
+.sv-company-name{
+    font-size: 1.5em;
+    padding: 1em;
+}
 
 .sv-overall-rating {
   background-color: #FFFFFF;
@@ -191,11 +201,14 @@ button {
 .sv-units {
   padding: 2em 2.5em;
   background-color: #fff;
-  margin: 4em 0; }
+  /*margin: 4em 0; */
+  }
 
 .units-graph {
-  width: 70%;
-  margin: 0 auto; }
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: scroll;
+}
 
 .sv-feature-label a {
   display: block;
@@ -287,14 +300,23 @@ button {
     margin-top: 1.5em; }
 
 .sv-unit-questions {
-  margin-top: 2em;
+  /*margin-top: 2em;*/
   padding: 2em; }
 
 .sv-unit-question-block {
   margin-bottom: 2em;
-  padding: 4em 2em 8em 2em;
+  padding: 0.5em 0.25em 1em 0.5em;
   display: block;
   background-color: #FFFFFF; }
+
+.sv-unit-question-block h1 {
+     font-size: 1.1em !important;
+ }
+ 
+ .sv-unit-question-block h3 {
+     font-size: 0.9em !important;
+ }
+ 
 
 .sv-unit-question-block::after {
   clear: both;
@@ -607,13 +629,14 @@ button {
   position: relative;
   width: 100%; }
   .tabs nav {
-    margin-bottom: 4em;
+    /*margin-bottom: 4em;*/
     background-color: #fff; }
     .tabs nav ul::after {
       clear: both;
       content: "";
       display: table; }
     .tabs nav ul li {
+      cursor: pointer;
       float: left;
       background-color: #D8D8D8;
       vertical-align: bottom;
@@ -624,6 +647,7 @@ button {
         margin-top: -5px; }
       .tabs nav ul li a {
         padding: 0.75em 2.5em;
+        color: black !important;
         display: block; }
 
 .group-rating-graph,
@@ -645,3 +669,30 @@ svg.long-text text {
   font-size: 24px; }
 
 /*# sourceMappingURL=style.css.map */
+
+  .md-toolbar-tools, ._md-thumb {
+    background-color: #6BA9D9 !important;
+  }
+ 
+ .md-button {
+     background-color: #6BA9D9 !important;
+     color: white !important;
+ }
+
+ .md-datepicker-button {
+     display: none !important;
+ }
+ 
+ md-switch {
+     margin: -5px 0 0 0 !important;
+ }
+ 
+ .md-checked ._md-bar {
+     background-color: #6BA9D9 !important;
+ }
+ 
+ 
+ .dialog-header-icon {
+     width: 30px;
+     margin: 0 10px -5px 0;
+ }
