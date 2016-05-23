@@ -3,84 +3,47 @@
   //Constructor
   function app(){
     this.features = [];
+    //this.questions = [];
     this.units = [];
     this.ratingPoints = [];
     this.surveyQuestions = [];
     this.meta = {};
     this.colors = ['#B8E986', '#92C4FF', '#B86DF9', '#F4596C', '#F7CC85'];
+    this.sentiments = [];
+    this.totalRespondents = [];
+    this.companyName = [];
+    this.unitName = [];
+    this.unitId = '';
   }
 
   //Initializer
   app.prototype.init = function(data){
 
     var self = this;
+    // console.log("init called ....");
 
     /* Uses Class :: feature
     * Constructor(Number id, String label)
     */
 
     self.features = [];
-    self.setFeaturesData(data['parent_survey'][0]['options_code']);
-    self.setFeaturesScore(data['parent_survey'][0]['avg_rating']);
-    self.setRatingData(data['parent_survey'][1]['timed_agg']);
+    self.setFeaturesData(data['parent_survey']['responses'][0]['options_code']);
+    self.setFeaturesScore(data['parent_survey']['responses'][0]['avg_rating']);
+    self.setRatingData(data['parent_survey']['responses'][1]['timed_agg']);
+    self.setSentimentsData(data['parent_survey']['sentiment']);
+    self.setTotalRespondents(data['parent_survey']['responses'][0]['total_resp']);
+    self.setCompanyName(data['parent_survey']['meta']['company']);
+    self.setUnitName(data['parent_survey']['meta']['unit_name']);
+    self.setUnitId(data['parent_survey']['meta']['id']);
+    // self.unitName = data['parent_survey']['meta'].unit_name;
+    // alert(self.unitName);
 
-    self.TIMEDAGGR = data['parent_survey'][1]['timed_agg'];
+    self.TIMEDAGGR = data['parent_survey']['responses'][1]['timed_agg'];
     self.TIMEDAGGR = Object.keys(self.TIMEDAGGR);
 
     var l = self.TIMEDAGGR[0],
         h = self.TIMEDAGGR[self.TIMEDAGGR.length - 1];
 
-    // var dateL = l.split('-');
-    //
-    // var dateH = h.split('-');
-    //
-    // var temp = dateL[0];
-    // dateL[0] = dateL[2];
-    // dateL[2] = temp;
-    //
-    // temp = dateH[0];
-    // dateH[0] = dateH[2];
-    // dateH[2] = temp;
-    //
-    // temp = dateL[0];
-    // dateL[0] = dateL[1];
-    // dateL[1] = temp;
-    //
-    // temp = dateH[0];
-    // dateH[0] = dateH[1];
-    // dateH[1] = temp;
-    //
-    // l = dateL.join('-');
-    // h = dateH.join('-');
-    //
-    // function treatAsUTC(date) {
-    //     var result = new Date(date);
-    //     result.setMinutes(result.getMinutes() - result.getTimezoneOffset());
-    //     return result;
-    // }
-    //
-    // function daysBetween(startDate, endDate) {
-    //     var millisecondsPerDay = 24 * 60 * 60 * 1000;
-    //     return (treatAsUTC(endDate) - treatAsUTC(startDate)) / millisecondsPerDay;
-    // }
-    //
-    // var numberOfDays = daysBetween(l,h);
-    //
-    // self.dates = [];
-    // console.log(l);
-    // for (var i = 0; i < numberOfDays; i++) {
-    //   var nextDate = new Date(l).getTime() + (1000*24*60*60*(i+1));
-    //   nextDate = new Date(nextDate);
-    //
-    //   var date = [];
-    //
-    //   date.push(nextDate.getMonth());
-    //   date.push(nextDate.getDate());
-    //   date.push(nextDate.getFullYear());
-    //
-    //   self.dates.push(date.join('-'));
-    //   console.log(date.join('-'));
-    // }
 
     var secondsL = new Date(l).getTime(),
         secondsH = new Date(h).getTime();
@@ -92,52 +55,20 @@
       self.dates.push( new Date(secondsL).getTime() );
     }
 
-    // console.log(self.dates);
-
     /* Uses Class :: unit
     * Constructor(Number id, String name, Number overallScore)
     */
     self.units = [];
-    data.units.forEach(function(u, idx){
-      var tempUnit = new unit(idx, u[0].unit_name, u[1].avg_rating);
 
-      // for (var i = 0; i < 5; i++) {
-      //   tempUnit.features.push( { id: i+1, score: 10*Math.random() } );
-      // }
+    if (data['parent_survey']['meta']['unit_name'] == "Parent Survey"){
+      data.units.forEach(function(u, idx){
+        // var tempUnit = new unit(idx+1, u['meta'].unit_name, u['responses'][1].avg_rating);
+        var tempUnit = new unit(u['meta'].id, u['meta'].unit_name, u['responses'][1].avg_rating);
+        tempUnit.setFeaturesData(u['responses'][0].avg_rating);
 
-      //MAIN::Removed Only for Testing Purposes
-      // u.features.forEach(function(f){
-      //   tempUnit.features.push( { id: f.id, score: f.score } );
-      // });
-
-
-      // u.questions.forEach(function(q){
-      //
-      //   tempUnit.questions.push( new Question(q.id, q.title, q.type, q.response) );
-      //
-      // });
-
-      tempUnit.setFeaturesData(u[0].avg_rating);
-
-      //Testing:: ONLY FOR TESTING
-      // app.RandomizeTheData(tempUnit.ratingData, 'y');
-      // app.RandomizeTheData(tempUnit.features, 'score');
-
-      // tempUnit.setTheOverallScore();
-
-      self.units.push(tempUnit);
-    });
-
-    // this.ratingPoints = data.rating_data;
-    //
-    // //Testing:: ONLY FOR TESTING
-    // app.RandomizeTheData(this.ratingPoints, 'y');
-    //
-    // this.meta = {
-    //   'totalRespondents' : data.total_respondents
-    // };
-    //
-    // this.surveyQuestions = data.questions;
+        self.units.push(tempUnit);
+      });
+    }
   }
 
   app.prototype.getTheMonthName = function(index){
@@ -147,7 +78,63 @@
     return months[index % months.length];
   }
 
+  app.prototype.setSentimentsData = function(sentiments){
+    var self = this;
+    self.sentiments=[];
+    function ucfirst(name) {
+    //return field.value.substr(0, 1).toUpperCase() + field.value.substr(1);
+    name = name.toUpperCase().charAt(0) + name.substring(1)
+    return name;
+    }
+    //this.sentiments = sentiments;
+    var countData = [],
+        questionOptions = [],
+        barColorsForAllBars = {
+          'negative': '#FB6577',
+          'positive': '#A2EB52',
+          'neutral': '#DDDDDD'
+        },
+        graphData={};
 
+        for (var vendor in sentiments) {
+            countData = [];
+            questionOptions = [];
+            for(var sentiment in sentiments[vendor]){
+                if (sentiments[vendor].hasOwnProperty(sentiment)) {
+                    countData.push([sentiments[vendor][sentiment]] );
+                    if (sentiment == 'negative') {
+                      questionOptions.push("Negative :" + sentiments[vendor][sentiment]);
+                    }
+                    else if (sentiment == 'positive') {
+                      questionOptions.push("Positive :" + sentiments[vendor][sentiment]);
+                    }
+                    else if (sentiment == 'neutral') {
+                      questionOptions.push("Neutral :" + sentiments[vendor][sentiment]);
+                    }
+                }
+            }
+            graphData={
+                label: vendor,
+                data: countData,
+                options: [],
+                series: ['Negative', 'Neutral', 'Positive'],
+                graphOptions: {
+                    barShowStroke : false,
+                    showScale: false,
+                    barDatasetSpacing : 10
+                },
+                colors: [
+                         {'fillColor': barColorsForAllBars['negative']},
+                         {'fillColor': barColorsForAllBars['neutral']},
+                         {'fillColor': barColorsForAllBars['positive']}
+                        ]
+            };
+            
+        this.sentiments.push(graphData);
+        // console.log(graphData);
+    }
+  }
+  
   app.prototype.setFeaturesData = function(featuresData){
     var self = this;
     var index = 0;
@@ -158,7 +145,6 @@
       }
       index++;
     }
-
   }
 
   app.prototype.setFeaturesScore = function(featuresData){
@@ -171,7 +157,26 @@
       }
       index++;
     }
+  }
 
+  app.prototype.setTotalRespondents = function(totalresp){
+    var self = this;
+    self.totalRespondents = totalresp;
+  }
+
+  app.prototype.setUnitName = function(unit_Name){
+    var self = this;
+    self.unitName = unit_Name;
+  }
+
+  app.prototype.setUnitId = function(unit_id){
+    var self = this;
+    self.unitId = unit_id;
+  }
+
+  app.prototype.setCompanyName = function(company_Name){
+    var self = this;
+    self.companyName = company_Name;
   }
 
   app.prototype.setRatingData = function(featuresData){
@@ -189,7 +194,6 @@
 
   }
 
-
   //Testing Functions
   app.RandomizeTheData = function(array, keyName){
     array.forEach(function(point){
@@ -198,12 +202,6 @@
 
     });
   }
-
-
-
-
-
-
 
   window.myapp = app;
 

@@ -1,0 +1,52 @@
+<md-dialog aria-label="Settings" style="width:100%;" ng-cloak>
+   <form>
+     <md-toolbar>
+       <div class="md-toolbar-tools">
+       	<div>
+       		<img src="/static/survaiderdashboard/images/modal2.png" class="dialog-header-icon"/>
+        </div>
+       	<h2>Settings for {{surveyName}}</h2>
+         <span flex></span>
+         <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+         </md-button>
+       </div>
+     </md-toolbar>
+     <md-dialog-content>
+       <div class="md-dialog-content">
+            <div layout="row" layout-wrap>
+               <div flex="15">
+                   <label>Expire survey</label>
+               </div>
+               <div flex="30">
+                   <input type="date" ng-model="survey.expiryDate"/>
+               </div>
+               <span flex="10"></span>
+               <div flex="15">
+                   <label>Pause survey</label>
+               </div>
+               <div flex="30">
+                   <md-switch ng-model="survey.isPaused" aria-label="Survey Pause">
+                   </md-switch>
+               </div>
+           </div>
+           <br/><br/>
+           <div layout="row">
+               <div flex="15">
+                   <label>Response Cap</label>
+               </div>
+               <div flex="75">
+                  <input name="postalCode" ng-model="survey.responseCap" placeholder = "123"/>
+               </div>
+           </div>
+       </div>
+     </md-dialog-content>
+     <md-dialog-actions layout="row">
+       
+       <span flex></span>
+       <md-button ng-click="saveSettings()" style="margin-right:20px;">
+       	Save
+   		</md-button>
+     </md-dialog-actions>
+   </form>
+ </md-dialog>

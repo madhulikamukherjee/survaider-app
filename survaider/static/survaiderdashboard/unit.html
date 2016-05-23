@@ -1,4 +1,4 @@
-<div id="main-content" class="sv-main-content" ng-animate="{enter: 'ng-enter'}">
+<div id="main-content" class="sv-main-content" ng-animate="{enter: 'ng-enter'}"  ng-controller="UnitController">
   <!--
     ** Scope Model : unit
     ** Properties:-
@@ -8,17 +8,22 @@
     **** feature.score
   -->
 
-  <!-- Unit::Overall Qualitative Survaider Rating - QSR -->
+  <div class="sv-company-name">
+    <h1>Welcome, {{companyName}} {{unitName}}!</h1>
+  </div>
 
-  <div class="sv-overall-rating" ng-show="false">
-    <h1 ng-bind="unit.name" class="unit-name"></h1>
+  <!-- Unit::Overall Qualitative Survaider Rating - QSR -->
+<!--   <h1 ng-bind="unitname" class="unit-name"></h1>
+ -->
+  <div class="sv-overall-rating" ng-show="true">
+    
     <div class="rating-group">
 
       <div class="rating-header">
         <h1>Overall Qualitative Survaider Rating - QSR</h1>
       </div>
 
-      <div class="rating-graph" ng-init="graphWidth = 600; graphHeight = 200; pointRadius = 7; maxOrdinate = maxOrdinateFrom2DPointArray(unit.ratingData); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (unit.ratingData.length); borderWidth = 20">
+     <!--  <div class="rating-graph" ng-init="graphWidth = 600; graphHeight = 200; pointRadius = 7; maxOrdinate = maxOrdinateFrom2DPointArray(unit.ratingData); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (unit.ratingData.length); borderWidth = 20">
         <svg ng-attr-width="{{graphWidth}}" ng-attr-height="{{graphHeight}}">
           <g>
             <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
@@ -27,9 +32,6 @@
           </g>
           <g transform="translate(20, 0)">
             <g transform="translate(5, 0)">
-              <!-- <g>
-                <line ng-repeat="point in unit.ratingData track by $index" y1="{{graphHeight - 20}}" x1="{{$index*abscissaSpacer}}" x2="{{$index*abscissaSpacer}}" y2="{{(graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
-              </g> -->
               <g>
                 <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in unit.ratingData track by $index" ng-attr-y="{{graphHeight - 5}}" ng-attr-x="{{$index*abscissaSpacer}}">
                   {{$index | getTheMonthName}}
@@ -44,14 +46,47 @@
             </g>
           </g>
         </svg>
+      </div> -->
+
+      <div class="rating-graph">
+        <svg ng-attr-width="{{ratingGraph.graphWidth}}" ng-attr-height="{{ratingGraph.graphHeight}}">
+          <g>
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)/2}} ng-attr-y2="{{(ratingGraph.graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
+            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} ng-attr-y2="{{(ratingGraph.graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
+          </g>
+          <g transform="translate(20, 0)">
+            <g ng-repeat="date in dates track by $index" transform="translate(5, 0)">
+              <g>
+                <line ng-attr-y1="{{ratingGraph.graphHeight - 20}}" ng-attr-x1="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-x2="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-y2="{{(ratingGraph.graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
+              </g>
+              <g>
+                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-attr-y="{{ratingGraph.graphHeight - 5}}" ng-attr-x="{{$index*ratingGraph.abscissaSpacer}}">
+                  <tspan>{{(formatDate(date)).getDate() + "-"}}</tspan>
+                  <tspan>{{formatNumber((formatDate(date)).getMonth() + 1)}}</tspan>
+                </text>
+              </g>
+            </g>
+            <g>
+              <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + ($index+1)*ratingGraph.abscissaSpacer)}}" ng-attr-y1="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" ng-attr-y2="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (ratingPoints[$index+1].y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
+            </g>
+
+            <g>
+              <line ng-repeat="ticket in tickets" ng-attr-x1="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} y2="0" stroke="#FFE491" stroke-width="5" />
+            </g>
+
+            <g>
+              <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{ratingGraph.pointRadius}}" ng-attr-cx="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-cy="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" fill="#4D6AFF" />
+            </g>
+          </g>
+        </svg>
       </div>
 
     </div>
 
     <div class="total-respondents">
-      <h3>Total Repondents</h3>
-
-      <h1 ng-bind="appMeta.totalRespondents"></h1>
+      <h3>Total Respondents</h3>
+      <h1 ng-bind="totalRespondents"></h1>
     </div>
 
 
@@ -85,6 +120,32 @@
 
   </div>
 
+  <!-- Unit:: Cards -->
+  <div class="sv-unit-questions">
+      <div ng-repeat="sentiment in sentiments">
+          <li class="sv-unit-question-block ng-scope">
+              <div style="width: 33.333%; float: left">
+                <div class="sentiment-group">
+                    <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
+                </div>
+                
+                <div class="sentiment-body">
+                    <div ng-repeat="item in sentiment.series ">
+                        <h3>{{item}} Rating: {{sentiment.data[$index][0]}}</h3>
+                    </div>
+                </div>
+              </div>
+              <div style="float: right; width: 33.333%;">
+                  <canvas id="bar" class="chart chart-bar ng-isolate-scope"
+                    chart-data="sentiment.data" chart-labels="sentiment.options"
+                    chart-series="sentiment.series"
+                    chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
+                  </canvas>
+              </div>
+          </li>
+      </div>
+  </div>
+
   <!-- Unit::Questions -->
   <div class="sv-unit-questions">
 
@@ -93,8 +154,6 @@
       <li class="sv-unit-question-block" ng-repeat="question in questions">
 
         <div ng-switch on="question.type">
-
-
 
           <!-- Template:: SHORTTEXT -->
 

@@ -814,6 +814,7 @@ class DashboardAPIController(Resource):
 
             for i in response_data:
                 if cid in i['responses']:
+                    # return cid
                     temp.append(i['responses'][cid]['raw'])
                     timestamp= i['metadata']['modified']['$date']/1000
                     timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
@@ -1070,12 +1071,14 @@ class IRAPI(Resource):
 
             all_survey= lol.get_uuid_labels()
         ret=[]
+        # return all_responses
         for i in range(len(all_survey)):
 
             j_data=all_survey[i]
 
             uuid= j_data['cid']
             response_data=all_responses
+
 
             try:
                 options=[]
@@ -1090,20 +1093,22 @@ class IRAPI(Resource):
             for a in range(len(response_data)):
                 try:
                     temp.append(response_data[a]['responses'][uuid])
-
                 except:
                     pass
-
+            # if uuid == "a957b9fe-864c-4391-8c80-ba90a19b92ea":
+            #     return temp
 
             """Option Count"""
             options_count={}
             options_count_segg={}
             sentiment={'positive':0,'negative':0,'neutral':0}
             long_text=""
-            if j_data['field_type'] not in ["ranking","rating","group_rating"]:
-                if j_data['field_type']=='long_text':
-                    for b in temp:
 
+            if j_data['field_type'] not in ["ranking","rating","group_rating"]:
+                # return temp
+                for b in temp:
+                    # return b
+                    if j_data['field_type']=='long_text':
                         # dat= DatumBox()
                         # sent= dat.get_sentiment(b)
                         blob = TextBlob(b)
@@ -1119,37 +1124,38 @@ class IRAPI(Resource):
                         options_count_segg[b]=sent
                         long_text+=" "+b
 
-                        if b in options_count:pass
-                        else:options_count[b]=temp.count(b)
+                    if j_data['field_type']=='multiple_choice':
+                        
+                            # return b
+                            split_b= b['raw'].split('###')
+                            if len(split_b)==0:
+                                if split_b[0] in options_count_segg:
+                                    options_count_segg[split_b[0]]+=1
+                                else:options_count_segg[split_b[0]]=1
+                            elif len(split_b)!=0:
 
+                                for i in split_b:
+                                    if i in options_count_segg:
+                                        options_count_segg[i]+=1
+                                    else:options_count_segg[i]=1
+                            # return options_count
+
+                    if j_data['field_type'] in["yes_no", "single_choice", "multiple_choice"]:
+                        if b['raw'] in options_count:
+                            pass
+                        else:
+                            options_count[b['raw']]= sum(1 for d in temp if d.get('raw') == b['raw'])
+
+                if j_data['field_type'] == "long_text":
                     keywordcounts = KeywordCount()
                     keywords = keywordcounts.run(long_text)
                     wc = self.wc_to_dict(keywords)
 
-                if j_data['field_type']=='multiple_choice':
-                    for b in temp:
-                        split_b= b.split('###')
-                        if len(split_b)==0:
-                            if split_b[0] in options_count_segg:
-                                options_count_segg[split_b[0]]+=1
-                            else:options_count_segg[split_b[0]]=1
-                        elif len(split_b)!=0:
-
-                            for i in split_b:
-                                if i in options_count_segg:
-                                    options_count_segg[i]+=1
-                                else:options_count_segg[i]=1
-
-                        if b in options_count:pass
-                        else:options_count[b]=temp.count(b)
-
-
-
             elif j_data['field_type'] in ["ranking"]:
                 values={}
-                for c in temp:#temp is an array of responses
-
-                    aTempList=c.split("###") #split a##2###b##1### [ "a##1", "b##3", "c##2"]
+                for c in temp:
+                    # return c
+                    aTempList=c['raw'].split("###") #split a##2###b##1### [ "a##1", "b##3", "c##2"]
                     for d in aTempList:
                         bTempList=d.split("##") #["a","1"]
 
@@ -1178,7 +1184,8 @@ class IRAPI(Resource):
                             options_count[e]=len(aTempList)-int(bTempList[1])
             elif j_data['field_type']=="group_rating":
                 for f in temp:
-                    aTempList=f.split("###")
+                    # return f
+                    aTempList=f['raw'].split("###")
                     for g in aTempList:
                         bTempList=g.split("##")
                         l= bTempList[0]
@@ -1191,18 +1198,20 @@ class IRAPI(Resource):
                             options_count[l]={}
                             options_count[l][k]=1
             elif j_data['field_type']=="rating":
+                # return temp
                 for i in temp:
-                    i = str(i)
+                    i = str(i['raw'])
                     if i in options_count:
                         options_count[i]+=1
                     else:options_count[i]=1
-            #return options_count
+
             response={}
             response['cid']=uuid
             response['label']=j_data['label']
             response['type']=j_data['field_type']
-            response['option_code']=option_code
-            if j_data['field_type']!='long_text': response['options_count']=options_count
+            response['options_code']=option_code
+            response['options_count']=options_count
+
             if j_data['field_type']=='long_text':
                 response['sentiment']=sentiment
                 response['sentiment_segg']=options_count_segg
@@ -1215,10 +1224,15 @@ class IRAPI(Resource):
                 response['options_count_segg']=options_count_segg
             response['total_resp']= len(temp)
             if j_data['field_type']=="rating":
+                # response['options_count'] = options_count
                 avg=0
-                for i in temp: avg+=int(i)
+                for i in temp:
+                    # return i
+                    avg+=int(i['raw'][2:])
                 # response['avg_rating']= float(avg)/float(len(temp))
                 response['avg_rating']= float(avg)/len(temp)
+
+                # return options_count
             if j_data['field_type']=="group_rating":
                 avg={}
                 for key in options_count:
@@ -1229,7 +1243,11 @@ class IRAPI(Resource):
                         else:pass
                     avg[key]= round(float(counter)/len(temp),2)
                 response['avg_rating']=avg
+            
+
             ret.append(response)
+            # if uuid == "a957b9fe-864c-4391-8c80-ba90a19b92ea":
+            #     return options_count
         return ret
 
 

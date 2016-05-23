@@ -12,9 +12,10 @@
 
         <link rel="stylesheet" href="/static/survaiderdashboard/css/style.css" media="screen" title="no title" charset="utf-8">
         <link rel="stylesheet" href="/static/survaiderdashboard/css/angular-chart.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
     </head>
-    <body>
+    <body ng-app="app">
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -30,11 +31,13 @@
             </div>
 
             <div class="sv-header-nav">
-              <a href="/notification" class="notification">
+              <a href="/notification" class="notification" style="padding-right: ">
                 <img src="/static/survaiderdashboard/images/globe.png" alt="Notifications" />
               </a>
-              <a class="overall" href="/#/overallAnalytics">Overall Analytics</a>
 
+              <h3>
+                <a href="/logout">Logout</a>
+              </h3>
             </div>
           </header>
 
@@ -45,14 +48,15 @@
                 <li>
                   <a href="#">Data</a>
                 </li>
-                <li>
-                  <a href="#">Edit Survey</a>
+                
+                <li ng-show="isEditSurveyEnabled">
+                  <a ng-href="http://localhost:5000/survey/s:{{ParentId}}/edit">Edit Survey</a>
                 </li>
                 <li>
-                  <a href="#">Share</a>
+                  <a ng-click="showModal($event, 'shareSurvey')">Share</a>
                 </li>
                 <li>
-                  <a href="#">Settings</a>
+                  <a ng-click="showModal($event, 'settings')">Settings</a>
                 </li>
               </ul>
             </div>
@@ -68,6 +72,7 @@
         </main>
 
 
+
         <!-- Javascripts Includes -->
 
         <!-- Libraries -->
@@ -75,6 +80,11 @@
         <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
         <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
         <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+
+        <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-aria.min.js" charset="utf-8"></script>
+        <script src="/static/survaiderdashboard/js/vendor/angular-1.4.7/angular-messages.min.js" charset="utf-8"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
         <script src="/static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
         <script src="/static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script>
 

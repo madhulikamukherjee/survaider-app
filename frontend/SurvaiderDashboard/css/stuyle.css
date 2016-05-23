@@ -125,6 +125,10 @@ body {
   padding-top: 60px;
   padding-left: 170px; }
 
+.sv-company-name {
+  font-size: 4em;
+}
+
 .sv-overall-rating {
   background-color: #FFFFFF;
   padding: 2em;
