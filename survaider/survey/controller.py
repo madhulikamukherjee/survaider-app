@@ -27,7 +27,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -128,6 +128,7 @@ class SurveyController(Resource):
                         for prov in payload['services'][unit["unit_name"]]:
                             data={"survey_id":HashId.encode(svey.id),"access_url":payload["services"][unit["unit_name"]][prov],"provider":prov,"children":child}
                             r= requests.put(task_url,data=data,headers=task_header)
+                            Relation(parent=HashId.encode(svey.id),survey_id=child,provider=prov).save()
                             Test(init=str(r.content)).save()
                     except Exception as e:
                         print (e)
@@ -1414,6 +1415,113 @@ class ResponseAPIController(Resource):
         response['garbage']= temp
 
         return d(response)
+"""
+Had to rewrite again Damn you git pull and merge conflict!
+"""
+class Dash(Resource):
+    """docstring for Dash -marker"""
+    # NUMBER_OF_REVIEWS = []
+    # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(304) # Number of reviews from Zomato for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(30) # Number of reviews from Facebook for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(14) # Number of reviews from Twitter for this hotel for all its child units combined
+
+    # ASPECTS = [] # [food, price, service]
+    # ASPECTS.append([4.2, 3.8, 3.7]) # Tripadvisor aspects for this hotel for all units combined
+    # ASPECTS.append([4.1, 4.0, 3.8]) # Zomato aspects for this hotel for all units combined
+    # ASPECTS.append([4.5, 4.1, 4.3]) # Facebook aspects for this hotel for all units combined
+    # ASPECTS.append([3.9, 3.6, 4.0]) # Twitter aspects for this hotel for all units combined
+    # NUMBER_OF_REVIEWS = []
+    # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(304) # Number of reviews from Zomato for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(30) # Number of reviews from Facebook for this hotel for all its child units combined
+    # NUMBER_OF_REVIEWS.append(14) # Number of reviews from Twitter for this hotel for all its child units combined
+
+    # ASPECTS = [] # [food, price, service]
+    # ASPECTS.append([4.2, 3.8, 3.7]) # Tripadvisor aspects for this hotel for all units combined
+    # ASPECTS.append([4.1, 4.0, 3.8]) # Zomato aspects for this hotel for all units combined
+    # ASPECTS.append([4.5, 4.1, 4.3]) # Facebook aspects for this hotel for all units combined
+    # ASPECTS.append([3.9, 3.6, 4.0]) # Twitter aspects for this hotel for all units combined
+    def get_child(self,survey_id):
+        objects= Relation.objects(parent=survey_id)
+        return objects
+    def get_reviews_count(self,survey_id,provider="all"):
+        if provider=="all":
+            reviews= Reviews.objects(survey_id= survey_id)
+        if provider!="all":
+            reviews=Reviews.objects(survey_id=survey_id,provider=provider)
+        return len(reviews)
+    def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
+        # return "lol"
+        aspects=['food','service','price']
+        providers=["facebook","zomato","tripadvisor","twitter"]
+        response= {'survey_id':survey_id}
+        if aspect=="all" and provider=="all":
+            
+            for j in providers:
+                objects= Aspect.objects(survey_id=survey_id,provider=j)
+                
+                if len(objects)!=0:
+                    temp= {"food":0,"service":0,"price":0}
+                    for obj in objects:
+                        temp['food']+=float(obj.food)
+                        temp['service']+=float(obj.service)
+                        temp['price']+=float(obj.price)
+                    #Average below
+                    temp['food']=temp['food']/len(objects)
+                    temp['service']=temp['service']/len(objects)
+                    temp['price']=temp['price']/len(objects)
+                    response[j]=temp
+        return response
+        # Will return {"zomato":{"food":3,""}}
+    def data_form(self,survey_id,avg_aspect):
+        # Convert Data to fit in unified rating
+        providers=["zomato","tripadvisor"]
+        ASPECT=[]
+        NUMBER_OF_REVIEWS=[]
+        for i in providers:
+            temp1=[avg_aspect[i]['food'],avg_aspect[i]['price'],avg_aspect[i]['service']]
+            ASPECT.append(temp1)
+            temp2=(self.get_reviews_count(survey_id,i))
+            NUMBER_OF_REVIEWS.append(temp2)
+        return [ASPECT,NUMBER_OF_REVIEWS]
+
+    def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, NUMBER_OF_REVIEWS, ASPECTS):
+        avg_of_aspects = []
+        for i in range(0,NUMBER_OF_CHANNELS):
+            avg_of_aspects.append(sum(ASPECTS[i])/float(len(ASPECTS[i])))
+
+        total_reviews = sum(NUMBER_OF_REVIEWS)
+        aspect_contribution = []
+
+        for i in range(0,NUMBER_OF_CHANNELS):
+            aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
+
+        uni = sum(aspect_contribution)
+        return uni
+    def unified_avg_aspect(self,parent_survey_id):
+        objects= self.get_child(parent_survey_id)
+        resp= {}
+        for obj in objects:
+            survey_id=obj.survey_id
+            raw_data=self.get_avg_aspect(obj.survey_id)
+            pr_data=self.data_form(survey_id,raw_data)
+            ASPECTS= pr_data[0]
+            NUMBER_OF_REVIEWS= pr_data[1]
+            NUMBER_OF_CHANNELS=2
+            return self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
+    def get(self,parent_survey_id):
+        return self.unified_avg_aspect(parent_survey_id)
+                # print(asp.price)
+        # Add in your logic
+        return {'aspect':{
+        'food':2,
+        'service':3,
+        'price':4
+        },
+        'survey_id':parent_survey_id
+        }
+
 # //Zurez
 
 srvy = Blueprint('srvy', __name__, template_folder = 'templates')

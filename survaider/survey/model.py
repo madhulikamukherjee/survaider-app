@@ -714,3 +714,8 @@ class DataSort(object):
             if i['cid']==self.uuid:
                 return i
                 # Zurez
+class Relation(Document):
+    """docstring for Relation"""
+    survey_id=StringField()
+    provider=StringField()
+    parent=StringField()
