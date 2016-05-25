@@ -11,7 +11,7 @@ from survaider.minions.helpers import HashId
 def api_login_required(func):
     @wraps(func)
     def returned_wrapper(*args, **kwargs):
-        if not current_user.is_authenticated():
+        if not current_user.is_authenticated:
             raise APIException("Login Required", 401)
         return func(*args, **kwargs)
     return returned_wrapper

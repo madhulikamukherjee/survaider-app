@@ -509,26 +509,18 @@ class ResponseAggregation(object):
     def count(self):
         return Response.objects(parent_survey = self.survey).count()
 # Zurez
-import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
 
-connection= pymongo.MongoClient('localhost', 27017)
-db = connection['qwer']
-survey= db.response
-
-from mongoengine import *
-connect("qwer")
-
-class Aspect(Document):
+class Aspect(db.Document):
     """docstring for Aspect"""
-    sector=StringField()
-    food=StringField()
-    service=StringField()
-    price=StringField()
-    overall=StringField()
-    survey_id=StringField()
-    provider=StringField()
+    sector = db.StringField()
+    food = db.StringField()
+    service = db.StringField()
+    price = db.StringField()
+    overall = db.StringField()
+    survey_id = db.StringField()
+    provider = db.StringField()
 
 class IrapiData(object):
     """docstring for IrapiData"""
@@ -537,9 +529,8 @@ class IrapiData(object):
         self.start=start
         self.end=end
         self.agg= aggregate
+
     def flag(self):
-        # raw= db.survey.find({"_id":ObjectId(self.sid)})
-        # js= d(raw)
         dat = SurveyUnit.objects(referenced = self.sid)
         js= [_.repr for _ in dat if not _.hidden]
         if len(js)!=0:
@@ -550,14 +541,16 @@ class IrapiData(object):
         else:
             return False
 
-    def get_multi_data(self,aList):
+    def get_multi_data(self, aList):
         js=[]
         # return aLists
         for i in aList:
             i= HashId.decode(i)
-            raw= db.response.find({"parent_survey":ObjectId(i)})
+            raw =find({"parent_survey":ObjectId(i)})
+            raw= Response.objects(parent_survey=i)
             js= js +d(raw)
         return js
+
     def get_child_data(self,survey_id):
         raw= db.survey.find({"_id":ObjectId(self.sid)})
         return d(raw)
@@ -628,25 +621,24 @@ class Dashboard(IrapiData):
     def __init__(self,survey_id):
         self.sid= survey_id
 
-class WordCloudD(Document):
+class WordCloudD(db.Document):
     """docstring for WordCloud"""
-    provider= StringField()
-    survey_id=StringField()
-    wc= DictField()
+    provider = db.StringField()
+    survey_id = db.StringField()
+    wc = db.DictField()
 
-class Reviews(Document):
-    provider=StringField()
-    survey_id=StringField()
-    rating=StringField()
-    review=StringField()
-    sentiment=StringField()
+class Reviews(db.Document):
+    provider = db.StringField()
+    survey_id = db.StringField()
+    rating = db.StringField()
+    review = db.StringField()
+    sentiment = db.StringField()
 
 class DataSort(object):
     """docstring for DataSort"""
 
     def __init__(self,survey_id,uuid,aggregate):
         self.sid= survey_id
-        # self.sid="56582299857c5616113814ae"
         self.uuid= uuid
         self.agg= aggregate
     def get_survey(self):
@@ -714,8 +706,9 @@ class DataSort(object):
             if i['cid']==self.uuid:
                 return i
                 # Zurez
-class Relation(Document):
+
+class Relation(db.Document):
     """docstring for Relation"""
-    survey_id=StringField()
-    provider=StringField()
-    parent=StringField()
+    survey_id = db.StringField()
+    provider = db.StringField()
+    parent = db.StringField()
