@@ -514,27 +514,19 @@ def d(data):return json.loads(dumps(data))
 
 class Aspect(db.Document):
     """docstring for Aspect"""
-<<<<<<< HEAD
-    sector=StringField()
-    food=StringField()
-    service=StringField()
-    price=StringField()
-    ambience=StringField()
-    value_for_money=StringField()
-    room_service=StringField()
-    cleanliness=StringField()
-    overall=StringField()
-    survey_id=StringField()
-    provider=StringField()
-=======
-    sector = db.StringField()
-    food = db.StringField()
-    service = db.StringField()
-    price = db.StringField()
-    overall = db.StringField()
-    survey_id = db.StringField()
-    provider = db.StringField()
->>>>>>> bc6a5acb5611c2e349e3d63db2b04ef2a107f543
+
+    sector=db.StringField()
+    food=db.StringField()
+    service=db.StringField()
+    price=db.StringField()
+    ambience=db.StringField()
+    value_for_money=db.StringField()
+    room_service=db.StringField()
+    cleanliness=db.StringField()
+    overall=db.StringField()
+    survey_id=db.StringField()
+    provider=db.StringField()
+
 
 class IrapiData(object):
     """docstring for IrapiData"""
