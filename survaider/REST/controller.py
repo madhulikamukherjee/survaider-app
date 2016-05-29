@@ -69,7 +69,7 @@ api.add_resource(IRAPI,
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response",
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
 # api.add_resource(AspectController,'/aspect/<string:survey_id>/<string:provider>/get')
-api.add_resource(Dash,"/dashboard/parent/<string:parent_survey_id>")
+# api.add_resource(Dash,"/dashboard/parent/<string:parent_survey_id>")
 ###############################
 
 class TemporaryEmailHandler(Resource):
