@@ -526,6 +526,10 @@ class Aspect(Document):
     food=StringField()
     service=StringField()
     price=StringField()
+    ambience=StringField()
+    value_for_money=StringField()
+    room_service=StringField()
+    cleanliness=StringField()
     overall=StringField()
     survey_id=StringField()
     provider=StringField()
@@ -719,3 +723,6 @@ class Relation(Document):
     survey_id=StringField()
     provider=StringField()
     parent=StringField()
+class TimedDash(Document):
+    dash_value= StringField()
+    time= DateTimeField(default = datetime.datetime.now)

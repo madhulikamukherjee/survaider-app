@@ -27,7 +27,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation,TimedDash
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -763,7 +763,6 @@ class DashboardAPIController(Resource):
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
-
         response_data= d(lol.get_data())
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
@@ -821,7 +820,7 @@ class DashboardAPIController(Resource):
                     timed[timestamp]=i['responses'][cid]
 
             options_count={}
-
+            # return "lol"
             timed_agg={}
             timed_agg_counter={}
             # try:
@@ -843,6 +842,9 @@ class DashboardAPIController(Resource):
             # except:pass
 
             if j_data['field_type']=="group_rating":
+
+                avg= Dash().get_avg_aspect(HashId.encode(survey_id))
+                avg= HashId.encode(survey_id)
                 # return temp
                 for i in temp:
                     # return i
@@ -915,7 +917,7 @@ class DashboardAPIController(Resource):
 
                 # avg+=aspect['overall']*2
                 # avg=round(avg/2,2)
-
+            
             response={}
             response['cid']= cid
 
@@ -932,6 +934,7 @@ class DashboardAPIController(Resource):
             else:pass
             # response['survey_id']=survey_id
             response['options_count']=options_count
+
             response['label']=survey_data['label']
             # try:
             #     response['unit_name']=survey_name
@@ -940,11 +943,16 @@ class DashboardAPIController(Resource):
             response['total_resp']=len(response_data)
             # response['aspects']=aspect
             res.append(response)
+
         result= {}
         result["responses"]=res
         result["wordcloud"]=wordcloud
         result["sentiment"]=sentiment
         result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
+        avg_aspect= Dash().get_avg_aspect(HashId.encode(survey_id))
+        unified_avg_aspect= Dash().get(HashId.encode(survey_id))
+        result["aspects"]={"average_aspect":avg_aspect,"unified_aspect":unified_avg_aspect}
+      
         return result
         if len(wordcloud)!=0:
             res.append({"wordcloud":wordcloud})
@@ -1436,7 +1444,7 @@ class ResponseAPIController(Resource):
 """
 Had to rewrite again Damn you git pull and merge conflict!
 """
-class Dash(Resource):
+class Dash():
     """docstring for Dash -marker"""
     # NUMBER_OF_REVIEWS = []
     # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
@@ -1471,7 +1479,7 @@ class Dash(Resource):
         return len(reviews)
     def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
         # return "lol"
-        aspects=['food','service','price']
+        aspects=["food","price","service","ambience","value_for_money","room_service","cleanliness"] 
         providers=["facebook","zomato","tripadvisor","twitter"]
         response= {'survey_id':survey_id}
         if aspect=="all" and provider=="all":
@@ -1480,15 +1488,26 @@ class Dash(Resource):
                 objects= Aspect.objects(survey_id=survey_id,provider=j)
                 
                 if len(objects)!=0:
-                    temp= {"food":0,"service":0,"price":0}
+                    temp={}
+                    for x in aspects:
+                        temp[x]=0
+                    # temp= {"food":0,"service":0,"price":0}
                     for obj in objects:
-                        temp['food']+=float(obj.food)
-                        temp['service']+=float(obj.service)
-                        temp['price']+=float(obj.price)
+                        if obj.food !=None:temp['food']+=float(obj.food)
+                        if obj.service!=None:temp['service']+=float(obj.service)
+                        if obj.price!=None:temp['price']+=float(obj.price)
+                        if obj.ambience!=None:temp['ambience']+=float(obj.ambience)
+                        if obj.value_for_money!=None:temp['value_for_money']+=float(obj.value_for_money)
+                        if obj.room_service!=None:temp['room_service']+=float(obj.room_service)
+                        if obj.cleanliness!=None:temp['cleanliness']+=float(obj.cleanliness)
                     #Average below
                     temp['food']=temp['food']/len(objects)
                     temp['service']=temp['service']/len(objects)
                     temp['price']=temp['price']/len(objects)
+                    temp['ambience']+=temp['ambience']/len(objects)
+                    temp['value_for_money']+=temp['value_for_money']/len(objects)
+                    temp['room_service']+=temp['room_service']/len(objects)
+                    temp['cleanliness']+=temp['cleanliness']/len(objects)
                     response[j]=temp
         return response
         # Will return {"zomato":{"food":3,""}}
