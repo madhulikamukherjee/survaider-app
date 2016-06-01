@@ -324,63 +324,7 @@
 
                 </div>
 
-
-
-
                 <!-- Template:: LONG-TEXT -->
-
-
-                <!-- <div ng-switch-when="long_text">
-
-                  <div class="unit-question-group">
-
-                    <div class="unit-question-header">
-                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-                    </div>
-
-                    <div class="unit-question-body">
-
-                      <div class="long-text-keywords">
-                        <h3>Positive Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.positiveKeyWords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="long-text-keywords">
-                        <h3>Negative Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.negativeKeywords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="long-text-keywords">
-                        <h3>Neutral Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.neutralKeywords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
-
-
-                    </div>
-
-                  </div>
-
-                  <div class="unit-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-                    <canvas id="bar" class="chart chart-bar"
-                      chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-                    </canvas>
-
-                  </div>
-
-                </div> -->
 
                 <div class="long-text-graph" ng-switch-when="long_text">
                     <button id="group-rating-graph-switch" ng-click="isFirstKeywordChartVisible = !isFirstKeywordChartVisible">Switch</button>
@@ -425,8 +369,6 @@
                     <!-- </div> -->
 
                 </div>
-
-
 
 
                 <!-- Template:: MULTIPLE-CHOICE -->
@@ -498,8 +440,6 @@
                 </div>
 
 
-
-
                 <!-- Template:: GROUP-RATINGs ##BAR CHART## -->
 
                 <div class="group-rating-graph" ng-switch-when="group_rating">
@@ -510,14 +450,10 @@
                     <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
                   </div>
 
-
-                  <div ng-hide="isBarVisible" class="group-rating-bar" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+                  <div ng-hide="isBarVisible" class="group-rating-bar">
 
                     <div class="unit-question-group">
-
                       <div class="unit-question-body">
-
-
                         <!-- We will loop on series -->
                         <div ng-repeat="option in question.series track by $index">
                           <div class="choice-label">
@@ -525,26 +461,20 @@
                             <span style="background-color: {{question.colors[$index].fillColor}}"></span>
                           </div>
                         </div>
-
                       </div>
-
                     </div>
 
-
-                    <div class="rating-question-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
+                    <div class="rating-question-graph full-width-graph">
                       <canvas id="bar" class="chart chart-bar"
                         chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
                       </canvas>
-
                     </div>
-
                   </div>
 
 
                   <!-- Template:: GROUP-RATINGs ##STAR RATING## -->
 
-                  <div ng-hide="!isBarVisible" class="group-rating-star" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+                  <div ng-hide="!isBarVisible" class="group-rating-star">
 
                     <div class="star-rating-all-group">
 
@@ -558,19 +488,16 @@
                           </ul>
                         </div>
 
-
-                        <div class="star-rating-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+                        <!-- ALL THE STAR DRAWINGS -->
+                        <div class="star-rating-question-graph">
+                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="{{question.heightStarGraph}}">
 
                             <!-- WHOLE GROUP -->
                             <g>
-
                               <!-- FOR CHOICE -->
                               <g ng-repeat="choice in question.starRating" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{100*$rootIndex}})">
 
                                 <!-- MARK::- may lead to anomalous  -->
-
                                 <!-- Stars -->
                                 <g ng-repeat="star in choice.starRatingsArray track by $index" ng-attr-transform="translate( {{80*$index}} ,0)">
                                   <defs>
@@ -579,23 +506,16 @@
                                           <stop ng-attr-offset="{{100*(star)}}%" stop-color="#FFFFFF" stop-opacity="1" />
                                       </linearGradient>
                                   </defs>
-
-
                                   <path transform="scale(1.5)" d="M20.388,10.918L32,12.118l-8.735,7.749L25.914,
                                            31.4l-9.893-6.088L6.127,31.4l2.695-11.533L0,
                                            12.118l11.547-1.2L16.026,0.6L20.388,10.918z"
                                       fill="url(#half_grad)" stroke-width="1" stroke="#F8E71C"/>
-
                                 </g>
-
                                 <text ng-attr-transform="translate({{5 * 80 + 50}} ,0)" font-size="24px" font-weight="bold" y="35">
                                   {{choice.ratingValue}}
                                 </text>
-
                               </g>
-
                             </g>
-
                           </svg>
 
                         </div>

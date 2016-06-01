@@ -84,7 +84,7 @@
           $mdDialog.cancel();
         };
         $scope.saveSettings = function() {
-          // console.log($scope.survey);
+
           var data = {};
           var config = {};
  
@@ -114,7 +114,7 @@
  
         };
         function successCallback(data) {
-            // console.log('Saved' + data);
+
         }
  
         function errorCallback(data) {
@@ -144,7 +144,7 @@
     }
  
     $scope.isTabSelected = function(item) {
-         // console.log($scope.activeTab);
+
          return $scope.activeTab == item.label;
     }
  
@@ -259,7 +259,6 @@
 
       // alert("Homecontroller, API2 call");
       $scope.questions = [];
-      // console.log(data);
       for (var i = 0; i < data.length; i++) {
         switch (data[i].type) {
           case 'group_rating':
@@ -268,7 +267,6 @@
             break;
           case 'rating':
             var ratingQuestion = data[i];
-            // console.log(ratingQuestion);
             setRatingQuestion();
             break;
           case 'short_text':
@@ -302,7 +300,6 @@
       function setShortTextQuestion() {
 
         var countData = [];
-        //console.log(shortText)
 
         for (var key in shortText['options_count']) {
           if (shortText['options_count'].hasOwnProperty(key)) {
@@ -326,14 +323,13 @@
 
         var countData = [],
             questionOptions = [];
-        // console.log(yesNo['options_count']);
+
         for (var key in yesNo['options_count']) {
-          // console.log(key);
+
           if (yesNo['options_count'].hasOwnProperty(key)) {
             countData.push( yesNo['options_count'][key] )
           }
         }
-        // console.log(countData);
 
         for (var key in yesNo['options_code']) {
           if (yesNo['options_code'].hasOwnProperty(key)) {
@@ -349,7 +345,7 @@
           data: countData
 
         };
-        // console.log(question);
+
         $scope.questions.push(question);
 
       }
@@ -383,94 +379,6 @@
         $scope.questions.push(question);
       }
 
-      // function setLongTextQuestion() {
-
-      //   var countData = [],
-      //       questionOptions = [];
-
-      //   for (var key in longText['sentiment']) {
-      //     if (longText['sentiment'].hasOwnProperty(key)) {
-      //       countData.push( [ longText['sentiment'][key] ] );
-
-
-      //       if (key == 'negative') {
-      //         questionOptions.push("Negative :" + longText['sentiment'][key]);
-      //       }
-
-      //       else if (key == 'positive') {
-      //         questionOptions.push("Positive :" + longText['sentiment'][key]);
-      //       }
-
-      //       else if (key == 'neutral') {
-      //         questionOptions.push("Neutral :" + longText['sentiment'][key]);
-      //       }
-
-      //     }
-      //   }
-
-        // var positiveKeyWords = [],
-        //     negativeKeywords = [],
-        //     neutralKeywords = [];
-
-      //   for (var key in longText['sentiment_segg']) {
-      //     if (longText['sentiment_segg'].hasOwnProperty(key)) {
-
-      //       if (longText['sentiment_segg'][key] == 'negative') {
-      //         negativeKeywords.push(key);
-      //       }
-
-      //       else if (longText['sentiment_segg'][key] == 'positive') {
-      //         positiveKeyWords.push(key);
-      //       }
-
-      //       else if (longText['sentiment_segg'][key] == 'neutral') {
-      //         neutralKeywords.push(key);
-      //       }
-
-
-      //     }
-      //   }
-
-      //   var barColorsForAllBars = {
-      //     'negative': '#FB6577',
-      //     'positive': '#A2EB52',
-      //     'neutral': '#DDDDDD'
-      //   };
-
-      //   var question = {
-
-      //     label: longText.label,
-      //     type: longText.type,
-          // positiveKeyWords: positiveKeyWords,
-          // negativeKeywords: negativeKeywords,
-          // neutralKeywords: neutralKeywords,
-      //     data: countData,
-      //     options: [],
-      //     series: ['Negative', 'Neutral', 'Positive'],
-      //     graphOptions: {
-      //       barShowStroke : false,
-      //       showScale: false,
-      //       barDatasetSpacing : 10
-      //     },
-      //     colors: [
-      //       {
-      //         'fillColor': barColorsForAllBars['negative']
-      //       },
-      //       {
-      //         'fillColor': barColorsForAllBars['neutral']
-      //       },
-      //       {
-      //         'fillColor': barColorsForAllBars['positive']
-      //       }
-      //     ]
-
-      //   };
-
-      //   $scope.questions.push(question);
-      //   // console.log(question)
-
-      // }
-
       function setLongTextQuestion() {
 
         var countData = [], keywords = [], reviews = [],
@@ -503,8 +411,6 @@
             reviews.push([key,longText['options_count'][key]]);
           }
         }
-
-        console.log(reviews);
 
         var barColorsForAllBars = {
           'negative': '#FB6577',
@@ -541,7 +447,6 @@
         };
 
         $scope.questions.push(question);
-        // console.log(question)
 
       }
 
@@ -566,7 +471,7 @@
             questionOptions.push( multipleChoice['options_code'][key] )
           }
         }
-        // console.log(countData);
+
         var question = {
 
           label: multipleChoice.label,
@@ -647,13 +552,8 @@
 
         for (var key in ratingQuestion['options_count']) {
           if (ratingQuestion['options_count'].hasOwnProperty(key)) {
-            console.log(key);
-
-            // THE FOLLOWING BLOCK NEEDS TO BE UNCOMMENTED FOR FRESHMENU
             
             var parsedKey = parseInt(key.slice(2));
-            // console.log(parsedKey);
-            // countData[parsedKey - 1] = ratingQuestion['options_count'][key];
             countData[parsedKey - 1] = ratingQuestion['options_count'][key];
           }
         }
@@ -684,8 +584,8 @@
 
       function setGroupRatingQuestion() {
 
-        var colors = ['#ED7357', '#F3AB73', '#FFF5C6'];
-
+        var colorsOptions = ['#ED7357', '#F3AB73', '#FFF5C6', '#000000', '#AA0000'];
+        var colors = [];
         var questionOptions = new Array(5),
             questionSeries = [];
 
@@ -715,7 +615,7 @@
             countData[i][j] = 0;
           }
         }
-        // console.log(countData);
+
         for (var key in groupRating['options_count']) {
           if (groupRating['options_count'].hasOwnProperty(key)) {
 
@@ -767,6 +667,9 @@
         }
 
 
+        for (var i = 0; i<questionOptions.length; i++){
+          colors.push({'fillColor': colorsOptions[i]});
+        }
 
         var question = {
 
@@ -774,6 +677,7 @@
           type: groupRating.type,
           data: countData,
           options: questionOptions,
+          heightStarGraph : (100 * questionOptions.length),
           series: questionSeries,
           graphOptions: {
             barShowStroke : false,
@@ -782,17 +686,7 @@
             scaleShowVerticalLines: false
           },
 
-          colors: [
-            {
-              'fillColor': colors[0]
-            },
-            {
-              'fillColor': colors[1]
-            },
-            {
-              'fillColor': colors[2]
-            }
-          ],
+          colors : colors,
 
           starRating: starRating
 
@@ -800,7 +694,6 @@
 
 
         $scope.questions.push(question);
-
       }
 
       function setRankingQuestionQuestion() {
@@ -839,8 +732,6 @@
           }
         }
 
-        console.log(countData);
-
         var rectWidth = 300;
 
         for (var i = 0; i < countData.length; i++) {
@@ -876,7 +767,6 @@
 
         var sortingOrder = [];
 
-        // console.log(rankingQuestion['options_count']);
         var list = rankingQuestion['options_count'];
         keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]})
         for (var key in keysSorted) {
@@ -1083,7 +973,6 @@
       function setShortTextQuestion() {
 
         var countData = [];
-        //console.log(shortText)
 
         for (var key in shortText['options_count']) {
           if (shortText['options_count'].hasOwnProperty(key)) {
@@ -1162,94 +1051,7 @@
         $scope.questions.push(question);
       }
 
-      // function setLongTextQuestion() {
-
-      //   var countData = [],
-      //       questionOptions = [];
-
-      //   for (var key in longText['sentiment']) {
-      //     if (longText['sentiment'].hasOwnProperty(key)) {
-      //       countData.push( [ longText['sentiment'][key] ] );
-
-
-      //       if (key == 'negative') {
-      //         questionOptions.push("Negative :" + longText['sentiment'][key]);
-      //       }
-
-      //       else if (key == 'positive') {
-      //         questionOptions.push("Positive :" + longText['sentiment'][key]);
-      //       }
-
-      //       else if (key == 'neutral') {
-      //         questionOptions.push("Neutral :" + longText['sentiment'][key]);
-      //       }
-
-      //     }
-      //   }
-
-      //   var positiveKeyWords = [],
-      //       negativeKeywords = [],
-      //       neutralKeywords = [];
-
-      //   for (var key in longText['sentiment_segg']) {
-      //     if (longText['sentiment_segg'].hasOwnProperty(key)) {
-
-      //       if (longText['sentiment_segg'][key] == 'negative') {
-      //         negativeKeywords.push(key);
-      //       }
-
-      //       else if (longText['sentiment_segg'][key] == 'positive') {
-      //         positiveKeyWords.push(key);
-      //       }
-
-      //       else if (longText['sentiment_segg'][key] == 'neutral') {
-      //         neutralKeywords.push(key);
-      //       }
-
-
-      //     }
-      //   }
-
-      //   var barColorsForAllBars = {
-      //     'negative': '#FB6577',
-      //     'positive': '#A2EB52',
-      //     'neutral': '#DDDDDD'
-      //   };
-
-      //   var question = {
-
-      //     label: longText.label,
-      //     type: longText.type,
-      //     positiveKeyWords: positiveKeyWords,
-      //     negativeKeywords: negativeKeywords,
-      //     neutralKeywords: neutralKeywords,
-      //     data: countData,
-      //     options: [],
-      //     series: ['Negative', 'Neutral', 'Positive'],
-      //     graphOptions: {
-      //       barShowStroke : false,
-      //       showScale: false,
-      //       barDatasetSpacing : 10
-      //     },
-      //     colors: [
-      //       {
-      //         'fillColor': barColorsForAllBars['negative']
-      //       },
-      //       {
-      //         'fillColor': barColorsForAllBars['neutral']
-      //       },
-      //       {
-      //         'fillColor': barColorsForAllBars['positive']
-      //       }
-      //     ]
-
-      //   };
-
-      //   $scope.questions.push(question);
-      //   // console.log(question)
-
-      // }
-
+     
       function setLongTextQuestion() {
 
         var countData = [], keywords = [], reviews = [],
@@ -1282,8 +1084,6 @@
             reviews.push([key,longText['options_count'][key]]);
           }
         }
-
-        console.log(reviews);
 
         var barColorsForAllBars = {
           'negative': '#FB6577',
@@ -1320,7 +1120,7 @@
         };
 
         $scope.questions.push(question);
-        // console.log(question)
+
 
       }
 
@@ -1334,7 +1134,7 @@
             countData.push( multipleChoice['options_count_segg'][key] )
           }
         }
-        // console.log(countData);
+
 
         for (var key in multipleChoice['options_code']) {
           if (multipleChoice['options_code'].hasOwnProperty(key)) {
@@ -1421,7 +1221,6 @@
           questionOptions[i] = i+1;
         }
 
-        // console.log(ratingQuestion['options_count']);
         for (var key in ratingQuestion['options_count']) {
           if (ratingQuestion['options_count'].hasOwnProperty(key)) {
 
@@ -1431,7 +1230,6 @@
           }
         }
 
-        // console.log(countData);
         var question = {
 
           label: ratingQuestion.label,
@@ -1458,8 +1256,8 @@
 
       function setGroupRatingQuestion() {
 
-        var colors = ['#ED7357', '#F3AB73', '#FFF5C6'];
-
+        var colorsOptions = ['#ED7357', '#F3AB73', '#FFF5C6', '#000000', '#AA0000'];
+        var colors = [];
         var questionOptions = new Array(5),
             questionSeries = [];
 
@@ -1489,7 +1287,7 @@
             countData[i][j] = 0;
           }
         }
-        // console.log(countData);
+
         for (var key in groupRating['options_count']) {
           if (groupRating['options_count'].hasOwnProperty(key)) {
 
@@ -1541,6 +1339,9 @@
         }
 
 
+        for (var i = 0; i<questionOptions.length; i++){
+          colors.push({'fillColor': colorsOptions[i]});
+        }
 
         var question = {
 
@@ -1548,6 +1349,7 @@
           type: groupRating.type,
           data: countData,
           options: questionOptions,
+          heightStarGraph : (100 * questionOptions.length),
           series: questionSeries,
           graphOptions: {
             barShowStroke : false,
@@ -1556,25 +1358,15 @@
             scaleShowVerticalLines: false
           },
 
-          colors: [
-            {
-              'fillColor': colors[0]
-            },
-            {
-              'fillColor': colors[1]
-            },
-            {
-              'fillColor': colors[2]
-            }
-          ],
+          colors : colors,
 
           starRating: starRating
 
         };
 
-        // console.log(question);
-        $scope.questions.push(question);
 
+        $scope.questions.push(question);
+      
       }
 
 
