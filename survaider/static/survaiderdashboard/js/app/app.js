@@ -14,6 +14,8 @@
     this.companyName = [];
     this.unitName = [];
     this.unitId = '';
+    this.unifiedRating = [];
+    this.sentimentsObject = [];
   }
 
   //Initializer
@@ -30,11 +32,12 @@
     self.setFeaturesData(data['parent_survey']['responses'][0]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][0]['avg_rating']);
     self.setRatingData(data['parent_survey']['responses'][1]['timed_agg']);
-    self.setSentimentsData(data['parent_survey']['sentiment']);
+    self.setSentimentsObjectData(data['parent_survey']['sentiment']);
     self.setTotalRespondents(data['parent_survey']['responses'][0]['total_resp']);
     self.setCompanyName(data['parent_survey']['meta']['company']);
     self.setUnitName(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
+    self.setUnifiedRating(data['parent_survey']['responses'][1]['avg_rating']);
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
 
@@ -78,7 +81,7 @@
     return months[index % months.length];
   }
 
-  app.prototype.setSentimentsData = function(sentiments){
+  app.prototype.setSentimentsObjectData = function(sentiments){
     var self = this;
     self.sentiments=[];
     function ucfirst(name) {
@@ -95,44 +98,87 @@
           'neutral': '#DDDDDD'
         },
         graphData={};
+    var positiveKeyWords = [],
+        negativeKeywords = [],
+        neutralKeywords = [];
 
         for (var vendor in sentiments) {
-            countData = [];
-            questionOptions = [];
-            for(var sentiment in sentiments[vendor]){
-                if (sentiments[vendor].hasOwnProperty(sentiment)) {
-                    countData.push([sentiments[vendor][sentiment]] );
-                    if (sentiment == 'negative') {
-                      questionOptions.push("Negative :" + sentiments[vendor][sentiment]);
+          countData = [];
+          questionOptions = [];
+          reviews = [];
+          positiveKeyWords = [];
+          negativeKeywords = [];
+          neutralKeywords = [];
+
+          for(var prop in sentiments[vendor]){
+              if (sentiments[vendor].hasOwnProperty(prop)) {
+
+                  // countData.push([sentiments[vendor][prop]]);
+                  
+                  if (prop == 'negative') {
+                    questionOptions.push("Negative :" + sentiments[vendor][prop]);
+                    countData.push([sentiments[vendor][prop]]);
+                  }
+                  else if (prop == 'positive') {
+                    questionOptions.push("Positive :" + sentiments[vendor][prop]);
+                    countData.push([sentiments[vendor][prop]]);
+                  }
+                  else if (prop == 'neutral') {
+                    questionOptions.push("Neutral :" + sentiments[vendor][prop]);
+                    countData.push([sentiments[vendor][prop]]);
+                  }
+                  else if (prop == 'options_count'){
+                    for (var key in sentiments[vendor]['options_count']) {
+                      if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
+                        reviews.push([key,sentiments[vendor]['options_count'][key]]);
+                      }
                     }
-                    else if (sentiment == 'positive') {
-                      questionOptions.push("Positive :" + sentiments[vendor][sentiment]);
-                    }
-                    else if (sentiment == 'neutral') {
-                      questionOptions.push("Neutral :" + sentiments[vendor][sentiment]);
-                    }
-                }
-            }
-            graphData={
-                label: vendor,
-                data: countData,
-                options: [],
-                series: ['Negative', 'Neutral', 'Positive'],
-                graphOptions: {
-                    barShowStroke : false,
-                    showScale: false,
-                    barDatasetSpacing : 10
-                },
-                colors: [
-                         {'fillColor': barColorsForAllBars['negative']},
-                         {'fillColor': barColorsForAllBars['neutral']},
-                         {'fillColor': barColorsForAllBars['positive']}
-                        ]
-            };
+                  }
+                  else if (prop == 'sentiment_segg'){
+                      for (var key in sentiments[vendor]['sentiment_segg']) {
+                        if (sentiments[vendor]['sentiment_segg'].hasOwnProperty(key)) {
+
+                            if (sentiments[vendor]['sentiment_segg'][key] == 'negative') {
+                              negativeKeywords.push(key);
+                            }
+
+                            else if (sentiments[vendor]['sentiment_segg'][key] == 'positive') {
+                              positiveKeyWords.push(key);
+                            }
+
+                            else if (sentiments[vendor]['sentiment_segg'][key] == 'neutral') {
+                              neutralKeywords.push(key);
+                            }
+                        }
+                      }
+                  }
+
+
+              }
+          }
+          graphData={
+              label: vendor,
+              data: countData,
+              reviews : reviews,
+              positiveKeyWords: positiveKeyWords,
+              negativeKeywords: negativeKeywords,
+              neutralKeywords: neutralKeywords,
+              options: questionOptions,
+              series: ['Negative', 'Neutral', 'Positive'],
+              graphOptions: {
+                  barShowStroke : false,
+                  showScale: false,
+                  barDatasetSpacing : 10
+              },
+              colors: [
+                       {'fillColor': barColorsForAllBars['negative']},
+                       {'fillColor': barColorsForAllBars['neutral']},
+                       {'fillColor': barColorsForAllBars['positive']}
+                      ]
+          };
             
-        this.sentiments.push(graphData);
-        // console.log(graphData);
-    }
+          this.sentimentsObject.push(graphData);
+        }
   }
   
   app.prototype.setFeaturesData = function(featuresData){
@@ -193,6 +239,11 @@
     }
 
   }
+
+  app.prototype.setUnifiedRating = function(uni_score){
+    var self = this;
+    self.unifiedRating = uni_score;
+  }  
 
   //Testing Functions
   app.RandomizeTheData = function(array, keyName){

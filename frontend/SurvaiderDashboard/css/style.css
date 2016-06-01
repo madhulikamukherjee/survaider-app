@@ -166,13 +166,14 @@ button {
     margin-bottom: 0.5em; }
 
 .rating-group {
-  width: 80%;
-  float: left;
-  padding: 0 2em; }
+  /*width: 50%;*/
+  /*float: left;*/
+  /*padding: 0 2em;*/
+}
 
 .total-respondents {
-  width: 20%;
-  float: right;
+  /*width: 20%;
+  float: right;*/
   text-align: center; }
   .total-respondents h3 {
     font-size: 1.5em; }
@@ -193,6 +194,16 @@ button {
       background-color: #000000;
       color: #FFFFFF; }
 
+.unified-rating {
+  /*width: 20%;*/
+  text-align: center; }
+  .unified-rating h3 {
+    font-size: 1.5em; }
+  .unified-rating h1 {
+    font-size: 3em;
+    /*margin: 1em 0;*/
+  }
+
 .rating-graph {
   margin-top: 2em;
   overflow: auto; }
@@ -205,10 +216,15 @@ button {
   }
 
 .units-graph {
-  width: 100%;
+  width: 75%;
   margin: 0 auto;
   overflow-x: scroll;
 }
+
+.units-graph > svg {
+  cursor: pointer;
+}
+
 
 .sv-feature-label a {
   display: block;
@@ -360,7 +376,9 @@ button {
 
 .long-text-keywords {
   margin-bottom: 2em;
-  margin-left: 1em; }
+  margin-left: 1em;
+  float: left;
+  }
   .long-text-keywords h3 {
     margin-bottom: 12px; }
   .long-text-keywords ul {
@@ -651,7 +669,9 @@ button {
         display: block; }
 
 .group-rating-graph,
-.multiple-choice-graph {
+.multiple-choice-graph,
+.long-text-graph,
+.channel-graph {
   position: relative; }
 
 #group-rating-graph-switch {

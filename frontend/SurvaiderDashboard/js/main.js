@@ -19,6 +19,20 @@
 
     $scope.colors = application.colors;
 
+
+    $scope.formatNumber = function(number){
+      if (number < 10 && number > 0) {
+        return "0" + number;
+      }
+      else{
+        return number;
+      }
+    }
+        
+    $scope.formatDate = function(date){
+      return new Date(date);
+    }
+    
     // Flag to show/hide the edit survey link
     var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search + window.location.hash);
@@ -167,11 +181,11 @@
       $scope.units = application.units;
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;
-      $scope.sentiments = application.sentiments;
+      $scope.sentimentsObject = application.sentimentsObject;
+      // console.log($scope.sentimentsObject);
       $scope.totalRespondents = application.totalRespondents;
+      $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
-      // $scope.unitName = application.unitName;
-      // alert("Homecontroller, API1 call");
 
       var numberOfFeatures = $scope.features.length;
 
@@ -255,7 +269,7 @@
             break;
           case 'rating':
             var ratingQuestion = data[i];
-            console.log(ratingQuestion);
+            // console.log(ratingQuestion);
             setRatingQuestion();
             break;
           case 'short_text':
@@ -370,9 +384,97 @@
         $scope.questions.push(question);
       }
 
+      // function setLongTextQuestion() {
+
+      //   var countData = [],
+      //       questionOptions = [];
+
+      //   for (var key in longText['sentiment']) {
+      //     if (longText['sentiment'].hasOwnProperty(key)) {
+      //       countData.push( [ longText['sentiment'][key] ] );
+
+
+      //       if (key == 'negative') {
+      //         questionOptions.push("Negative :" + longText['sentiment'][key]);
+      //       }
+
+      //       else if (key == 'positive') {
+      //         questionOptions.push("Positive :" + longText['sentiment'][key]);
+      //       }
+
+      //       else if (key == 'neutral') {
+      //         questionOptions.push("Neutral :" + longText['sentiment'][key]);
+      //       }
+
+      //     }
+      //   }
+
+        // var positiveKeyWords = [],
+        //     negativeKeywords = [],
+        //     neutralKeywords = [];
+
+      //   for (var key in longText['sentiment_segg']) {
+      //     if (longText['sentiment_segg'].hasOwnProperty(key)) {
+
+      //       if (longText['sentiment_segg'][key] == 'negative') {
+      //         negativeKeywords.push(key);
+      //       }
+
+      //       else if (longText['sentiment_segg'][key] == 'positive') {
+      //         positiveKeyWords.push(key);
+      //       }
+
+      //       else if (longText['sentiment_segg'][key] == 'neutral') {
+      //         neutralKeywords.push(key);
+      //       }
+
+
+      //     }
+      //   }
+
+      //   var barColorsForAllBars = {
+      //     'negative': '#FB6577',
+      //     'positive': '#A2EB52',
+      //     'neutral': '#DDDDDD'
+      //   };
+
+      //   var question = {
+
+      //     label: longText.label,
+      //     type: longText.type,
+          // positiveKeyWords: positiveKeyWords,
+          // negativeKeywords: negativeKeywords,
+          // neutralKeywords: neutralKeywords,
+      //     data: countData,
+      //     options: [],
+      //     series: ['Negative', 'Neutral', 'Positive'],
+      //     graphOptions: {
+      //       barShowStroke : false,
+      //       showScale: false,
+      //       barDatasetSpacing : 10
+      //     },
+      //     colors: [
+      //       {
+      //         'fillColor': barColorsForAllBars['negative']
+      //       },
+      //       {
+      //         'fillColor': barColorsForAllBars['neutral']
+      //       },
+      //       {
+      //         'fillColor': barColorsForAllBars['positive']
+      //       }
+      //     ]
+
+      //   };
+
+      //   $scope.questions.push(question);
+      //   // console.log(question)
+
+      // }
+
       function setLongTextQuestion() {
 
-        var countData = [],
+        var countData = [], keywords = [], reviews = [],
             questionOptions = [];
 
         for (var key in longText['sentiment']) {
@@ -395,28 +497,15 @@
           }
         }
 
-        var positiveKeyWords = [],
-            negativeKeywords = [],
-            neutralKeywords = [];
+        keywords = Object.keys(longText['keywords']).sort(function(a,b){return longText['keywords'][a]-longText['keywords'][b]})
 
-        for (var key in longText['sentiment_segg']) {
-          if (longText['sentiment_segg'].hasOwnProperty(key)) {
-
-            if (longText['sentiment_segg'][key] == 'negative') {
-              negativeKeywords.push(key);
-            }
-
-            else if (longText['sentiment_segg'][key] == 'positive') {
-              positiveKeyWords.push(key);
-            }
-
-            else if (longText['sentiment_segg'][key] == 'neutral') {
-              neutralKeywords.push(key);
-            }
-
-
+        for (var key in longText['options_count']) {
+          if (longText['options_count'].hasOwnProperty(key)) {
+            reviews.push([key,longText['options_count'][key]]);
           }
         }
+
+        console.log(reviews);
 
         var barColorsForAllBars = {
           'negative': '#FB6577',
@@ -428,9 +517,8 @@
 
           label: longText.label,
           type: longText.type,
-          positiveKeyWords: positiveKeyWords,
-          negativeKeywords: negativeKeywords,
-          neutralKeywords: neutralKeywords,
+          reviews : reviews,
+          keywords : keywords,
           data: countData,
           options: [],
           series: ['Negative', 'Neutral', 'Positive'],
@@ -460,12 +548,17 @@
 
       function setMultipleChoiceQuestion() {
 
-        var countData = [],
+        var countData = Array.apply(null, {length: Object.keys(multipleChoice['options_code']).length}).map(function() {return 0;}),
             questionOptions = [];
-
         for (var key in multipleChoice['options_count_segg']) {
           if (multipleChoice['options_count_segg'].hasOwnProperty(key)) {
-            countData.push( multipleChoice['options_count_segg'][key] )
+            var ind = -1;
+            for (var i=0; i < Object.keys(multipleChoice['options_code']).length; i++){
+              if (Object.keys(multipleChoice['options_code'])[i] == key){
+                ind = i;
+              }
+            }
+            countData[ind] = multipleChoice['options_count_segg'][key];
           }
         }
 
@@ -474,7 +567,7 @@
             questionOptions.push( multipleChoice['options_code'][key] )
           }
         }
-
+        // console.log(countData);
         var question = {
 
           label: multipleChoice.label,
@@ -511,9 +604,9 @@
               splitArray = key.split(delimeter);
 
             var codeArray = [];
-
             for (var i = 0; i < splitArray.length; i++) {
-              codeArray.push( $scope.toCharCode( parseInt(splitArray[i].substr(2, splitArray[i].length)) ) );
+              // There's a "-1" here because RANDOM HACK.
+              codeArray.push( $scope.toCharCode( parseInt(splitArray[i].substr(2, splitArray[i].length)) - 1) );
             }
 
             secondGrapghQuestionOptions.push( codeArray.join() );
@@ -555,12 +648,17 @@
 
         for (var key in ratingQuestion['options_count']) {
           if (ratingQuestion['options_count'].hasOwnProperty(key)) {
-            // console.log(key);
+            console.log(key);
+
+            // THE FOLLOWING BLOCK NEEDS TO BE UNCOMMENTED FOR FRESHMENU
+            
             var parsedKey = parseInt(key.slice(2));
             // console.log(parsedKey);
+            // countData[parsedKey - 1] = ratingQuestion['options_count'][key];
             countData[parsedKey - 1] = ratingQuestion['options_count'][key];
           }
         }
+
 
         var question = {
 
@@ -742,6 +840,8 @@
           }
         }
 
+        console.log(countData);
+
         var rectWidth = 300;
 
         for (var i = 0; i < countData.length; i++) {
@@ -777,17 +877,14 @@
 
         var sortingOrder = [];
 
-        for (var key in rankingQuestion['options_count']) {
-          if (rankingQuestion['options_count'].hasOwnProperty(key)) {
+        // console.log(rankingQuestion['options_count']);
+        var list = rankingQuestion['options_count'];
+        keysSorted = Object.keys(list).sort(function(a,b){return list[b]-list[a]})
+        for (var key in keysSorted) {
+          var theChoice = parseInt(keysSorted[key].substr(2, keysSorted[key].length));
+          sortingOrder.push( theChoice );
 
-            var theChoice = parseInt(key.substr(2, key.length));
-
-            sortingOrder.push( theChoice );
-
-          }
         }
-
-
 
         var question = {
 
@@ -864,7 +961,7 @@
     */
 
     var uri = '/api/dashboard/'+extracted_id+'/all/response';
-
+    // var uri = '/static/SurvaiderDashboard/API1_'+extracted_id+'.json';
     $http.get(uri).success(function(data){
 
       application.init(data);
@@ -873,6 +970,8 @@
       $scope.totalRespondents = application.totalRespondents;
       $scope.companyName = application.companyName;
       $scope.unitName = application.unitName;
+      $scope.sentimentsObject = application.sentimentsObject;
+      $scope.unifiedRating = application.unifiedRating;
       // alert("Unitcontroller, API1 call");
 
       $scope.ratingGraph = {
@@ -912,7 +1011,11 @@
     //   uri2 += ("_"+uri_dat.s_id);
     // }
     // uri2 += '.json';
+
+
+
     var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response';
+    // var uri2 = '/static/SurvaiderDashboard/API2_'+extracted_id+'.json';
       /*
       ***********************************************
       ***********************************************
@@ -1060,9 +1163,97 @@
         $scope.questions.push(question);
       }
 
+      // function setLongTextQuestion() {
+
+      //   var countData = [],
+      //       questionOptions = [];
+
+      //   for (var key in longText['sentiment']) {
+      //     if (longText['sentiment'].hasOwnProperty(key)) {
+      //       countData.push( [ longText['sentiment'][key] ] );
+
+
+      //       if (key == 'negative') {
+      //         questionOptions.push("Negative :" + longText['sentiment'][key]);
+      //       }
+
+      //       else if (key == 'positive') {
+      //         questionOptions.push("Positive :" + longText['sentiment'][key]);
+      //       }
+
+      //       else if (key == 'neutral') {
+      //         questionOptions.push("Neutral :" + longText['sentiment'][key]);
+      //       }
+
+      //     }
+      //   }
+
+      //   var positiveKeyWords = [],
+      //       negativeKeywords = [],
+      //       neutralKeywords = [];
+
+      //   for (var key in longText['sentiment_segg']) {
+      //     if (longText['sentiment_segg'].hasOwnProperty(key)) {
+
+      //       if (longText['sentiment_segg'][key] == 'negative') {
+      //         negativeKeywords.push(key);
+      //       }
+
+      //       else if (longText['sentiment_segg'][key] == 'positive') {
+      //         positiveKeyWords.push(key);
+      //       }
+
+      //       else if (longText['sentiment_segg'][key] == 'neutral') {
+      //         neutralKeywords.push(key);
+      //       }
+
+
+      //     }
+      //   }
+
+      //   var barColorsForAllBars = {
+      //     'negative': '#FB6577',
+      //     'positive': '#A2EB52',
+      //     'neutral': '#DDDDDD'
+      //   };
+
+      //   var question = {
+
+      //     label: longText.label,
+      //     type: longText.type,
+      //     positiveKeyWords: positiveKeyWords,
+      //     negativeKeywords: negativeKeywords,
+      //     neutralKeywords: neutralKeywords,
+      //     data: countData,
+      //     options: [],
+      //     series: ['Negative', 'Neutral', 'Positive'],
+      //     graphOptions: {
+      //       barShowStroke : false,
+      //       showScale: false,
+      //       barDatasetSpacing : 10
+      //     },
+      //     colors: [
+      //       {
+      //         'fillColor': barColorsForAllBars['negative']
+      //       },
+      //       {
+      //         'fillColor': barColorsForAllBars['neutral']
+      //       },
+      //       {
+      //         'fillColor': barColorsForAllBars['positive']
+      //       }
+      //     ]
+
+      //   };
+
+      //   $scope.questions.push(question);
+      //   // console.log(question)
+
+      // }
+
       function setLongTextQuestion() {
 
-        var countData = [],
+        var countData = [], keywords = [], reviews = [],
             questionOptions = [];
 
         for (var key in longText['sentiment']) {
@@ -1085,28 +1276,15 @@
           }
         }
 
-        var positiveKeyWords = [],
-            negativeKeywords = [],
-            neutralKeywords = [];
+        keywords = Object.keys(longText['keywords']).sort(function(a,b){return longText['keywords'][a]-longText['keywords'][b]})
 
-        for (var key in longText['sentiment_segg']) {
-          if (longText['sentiment_segg'].hasOwnProperty(key)) {
-
-            if (longText['sentiment_segg'][key] == 'negative') {
-              negativeKeywords.push(key);
-            }
-
-            else if (longText['sentiment_segg'][key] == 'positive') {
-              positiveKeyWords.push(key);
-            }
-
-            else if (longText['sentiment_segg'][key] == 'neutral') {
-              neutralKeywords.push(key);
-            }
-
-
+        for (var key in longText['options_count']) {
+          if (longText['options_count'].hasOwnProperty(key)) {
+            reviews.push([key,longText['options_count'][key]]);
           }
         }
+
+        console.log(reviews);
 
         var barColorsForAllBars = {
           'negative': '#FB6577',
@@ -1118,9 +1296,8 @@
 
           label: longText.label,
           type: longText.type,
-          positiveKeyWords: positiveKeyWords,
-          negativeKeywords: negativeKeywords,
-          neutralKeywords: neutralKeywords,
+          reviews : reviews,
+          keywords : keywords,
           data: countData,
           options: [],
           series: ['Negative', 'Neutral', 'Positive'],
@@ -1158,6 +1335,7 @@
             countData.push( multipleChoice['options_count_segg'][key] )
           }
         }
+        // console.log(countData);
 
         for (var key in multipleChoice['options_code']) {
           if (multipleChoice['options_code'].hasOwnProperty(key)) {
@@ -1203,7 +1381,8 @@
             var codeArray = [];
 
             for (var i = 0; i < splitArray.length; i++) {
-              codeArray.push( $scope.toCharCode( parseInt(splitArray[i].substr(2, splitArray[i].length)) ) );
+              // There's a "-1" here because RANDOM HACK.
+              codeArray.push( $scope.toCharCode( parseInt(splitArray[i].substr(2, splitArray[i].length)) -1 ) );
             }
 
             secondGrapghQuestionOptions.push( codeArray.join() );
@@ -1243,15 +1422,17 @@
           questionOptions[i] = i+1;
         }
 
+        // console.log(ratingQuestion['options_count']);
         for (var key in ratingQuestion['options_count']) {
           if (ratingQuestion['options_count'].hasOwnProperty(key)) {
 
-            var parsedKey = parseInt(key);
+            var parsedKey = parseInt(key.slice(2));
 
             countData[parsedKey - 1] = ratingQuestion['options_count'][key];
           }
         }
 
+        // console.log(countData);
         var question = {
 
           label: ratingQuestion.label,
@@ -1392,7 +1573,7 @@
 
         };
 
-
+        // console.log(question);
         $scope.questions.push(question);
 
       }
@@ -1495,8 +1676,6 @@
         $scope.questions.push(question);
 
       }
-
-
 
 
     });
