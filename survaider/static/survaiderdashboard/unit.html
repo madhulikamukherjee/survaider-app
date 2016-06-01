@@ -308,55 +308,47 @@
                 <!-- Template:: LONG-TEXT -->
 
 
-                <div ng-switch-when="long_text">
-
-                  <div class="unit-question-group">
+                <div class="long-text-graph" ng-switch-when="long_text">
+                    <button id="group-rating-graph-switch" ng-click="isFirstKeywordChartVisible = !isFirstKeywordChartVisible">Switch</button>
+                    <!-- <div class="unit-question-group"> -->
 
                     <div class="unit-question-header">
                       <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
                     </div>
 
-                    <div class="unit-question-body">
+                    <!-- </div> -->
 
-                      <div class="long-text-keywords">
-                        <h3>Positive Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.positiveKeyWords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
+                    <!-- <div class="unit-question-body"> -->
+                    <div ng-hide="isFirstKeywordChartVisible">
+                        <div class="long-text-keywords">
+                          <h3>Keywords:</h3>
+                          <ul>
+                            <li ng-repeat="keyword in question.keywords">
+                              <span ng-bind="keyword"></span>
+                            </li>
+                          </ul>
+                        </div> 
 
-                      <div class="long-text-keywords">
-                        <h3>Negative Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.negativeKeywords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="long-text-keywords">
-                        <h3>Neutral Keywords:</h3>
-                        <ul>
-                          <li ng-repeat="keyword in question.neutralKeywords">
-                            <span ng-bind="keyword"></span>
-                          </li>
-                        </ul>
-                      </div>
-
-
+                        <div class="unit-question-graph">
+                          <canvas id="bar" class="chart chart-bar"
+                            chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
+                          </canvas>
+                        </div>
                     </div>
 
-                  </div>
-
-                  <div class="unit-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-                    <canvas id="bar" class="chart chart-bar"
-                      chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-                    </canvas>
-
-                  </div>
+                    <div ng-hide="!isFirstKeywordChartVisible">
+                        <div class="short-text-graph" style="width: 1000px;">
+                          <div class="st-words-list-wrapper">
+                            <ul style="height: 300px; overflow: scroll;">
+                              <li ng-repeat="review in question.reviews"
+                              ng-style="review[1] === 'negative' && {'background-color': '#d7aa9a'}">
+                                <h3 ng-bind="review[0]"></h3>
+                              </li>
+                            </ul>
+                          </div>
+                        </div> 
+                    </div>
+                    <!-- </div> -->
 
                 </div>
 
