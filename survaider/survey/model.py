@@ -389,6 +389,15 @@ class Response(db.Document):
     def added(self):
         return self.metadata['started'] if 'started' in self.metadata else datetime.datetime.min
 
+    @property
+    def response_sm(self):
+        return {
+            'id': str(self),
+            'meta': self.metadata,
+            'parent_survey': self.parent_survey,
+            'responses': self.responses
+        }
+
 class ResponseSession(object):
 
     @staticmethod
@@ -510,8 +519,8 @@ class ResponseAggregation(object):
         return Response.objects(parent_survey = self.survey).count()
 # Zurez
 from bson.json_util import dumps
-def d(data):return json.loads(dumps(data))
 
+def d(data):return json.loads(dumps(data))
 class Aspect(db.Document):
     """docstring for Aspect"""
 
@@ -551,20 +560,25 @@ class IrapiData(object):
         js=[]
         # return aLists
         for i in aList:
-            i= HashId.decode(i)
-            raw =find({"parent_survey":ObjectId(i)})
-            raw= Response.objects(parent_survey=i)
+            child_id= HashId.decode(i)
+            raw = Response.objects(parent_survey=child_id)
+            # raw_data = [_.response_sm for _ in raw]
+            # js= js +d(raw_data)
             js= js +d(raw)
+
         return js
 
     def get_child_data(self,survey_id):
-        raw= db.survey.find({"_id":ObjectId(self.sid)})
+        # raw= db.survey.find({"_id":ObjectId(self.sid)})
+        raw=SurveyUnit.objects(referenced = self.sid)
         return d(raw)
     def get_data(self):
         dat = SurveyUnit.objects(referenced = self.sid)
         # return [_.repr for _ in dat if not _.hidden]
+
         flag= self.flag()
-        #return "ggg"
+        # return flag
+
         if flag==False:
             raw= Response.objects(parent_survey=self.sid)
             js= d(raw)
@@ -575,8 +589,18 @@ class IrapiData(object):
 
                 "WIll return all the responses "
                 # raw= db.response.find({"parent_survey":ObjectId(self.sid)})
-                raw=Response.objects(parent_survey=self.sid)
+                # raw=Response.objects(parent_survey=self.sid)
+                raw_temp = []
+                raw = Response.objects(parent_survey=self.sid)
+                # return raw.responses
+                # for i in raw: raw_temp.append(i.responses)
+                # return raw_temp
+                for i in raw:
+                    raw_temp.append(i.responses)
+                return raw_temp
+                # raw= raw_temp
                 js= d(raw)
+                # return self.get_multi_data(flag)
                 js = js+ self.get_multi_data(flag)
                 return js
             else:
@@ -585,15 +609,25 @@ class IrapiData(object):
                 raw=Response.objects(parent_survey=self.sid)
                 js= d(raw)
                 return js
-    def get_parent(self):
-        raw= db.survey.find({"_id":ObjectId(self.sid)})
 
-        js= d(raw)[0]
-        # return js['referenced']
-        if "referenced" in js:#Needs 0
-            return js['referenced']['$oid']
+    def get_parent(self):
+        # raw= db.survey.find({"_id":ObjectId(self.sid)})
+
+        raw = Survey.objects(id = self.sid)
+
+        js = [_.repr_sm for _ in raw if not _.hidden]
+        # js = d(raw)[0]
+
+        # if "referenced" in js:
+        #     return js['referenced']['$oid'] #it has a parent, id of which, is this.
+        # else:
+        #     return False # It is a parent itself
+
+        if 'rootid' in js[0]:
+            return js[0]['rootid'] #it has a parent, id of which, is this.
         else:
-            return False
+            return False # It is a parent itself
+
     def get_uuid_labels(self):
         # raw= db.survey.find({"_id":ObjectId(self.sid)})
         raw=SurveyUnit.objects(referenced = self.sid)

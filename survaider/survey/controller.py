@@ -27,7 +27,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation,TimedDash
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -763,7 +763,10 @@ class DashboardAPIController(Resource):
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
+
         response_data= d(lol.get_data())
+        return response_data
+
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
 
@@ -820,7 +823,7 @@ class DashboardAPIController(Resource):
                     timed[timestamp]=i['responses'][cid]
 
             options_count={}
-            # return "lol"
+
             timed_agg={}
             timed_agg_counter={}
             # try:
@@ -842,9 +845,6 @@ class DashboardAPIController(Resource):
             # except:pass
 
             if j_data['field_type']=="group_rating":
-
-                avg= Dash().get_avg_aspect(HashId.encode(survey_id))
-                avg= HashId.encode(survey_id)
                 # return temp
                 for i in temp:
                     # return i
@@ -863,7 +863,9 @@ class DashboardAPIController(Resource):
                             options_count[l]={}
                             options_count[l][k]=1
                 avg={}
+                # return options_count
                 for key in options_count:
+                    # return key
                     counter=0
 
                     for bkey in options_count[key]:
@@ -875,8 +877,15 @@ class DashboardAPIController(Resource):
 
                     new_key= option_code[key]
                     survey_avg = avg[key]
-                    avg[key]=survey_avg+float(aspect[new_key])
-                    avg[key]=round(avg[key]/2,2)
+
+                    #############################################################
+                    # WE NEED THE FOLLOWING TWO LINES BEFORE QIKSTAY DEPLOYMENT #
+                    #############################################################
+
+                    ## CURRENTLY THIS GIVES KEYERROR 'FOOD'
+                    
+                    # avg[key]=survey_avg+float(aspect[new_key])
+                    # avg[key]=round(avg[key]/2,2)
 
             elif j_data['field_type']=="rating":
                 # return temp
@@ -917,7 +926,7 @@ class DashboardAPIController(Resource):
 
                 # avg+=aspect['overall']*2
                 # avg=round(avg/2,2)
-            
+
             response={}
             response['cid']= cid
 
@@ -934,7 +943,6 @@ class DashboardAPIController(Resource):
             else:pass
             # response['survey_id']=survey_id
             response['options_count']=options_count
-
             response['label']=survey_data['label']
             # try:
             #     response['unit_name']=survey_name
@@ -943,16 +951,11 @@ class DashboardAPIController(Resource):
             response['total_resp']=len(response_data)
             # response['aspects']=aspect
             res.append(response)
-
         result= {}
         result["responses"]=res
         result["wordcloud"]=wordcloud
         result["sentiment"]=sentiment
         result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
-        avg_aspect= Dash().get_avg_aspect(HashId.encode(survey_id))
-        unified_avg_aspect= Dash().get(HashId.encode(survey_id))
-        result["aspects"]={"average_aspect":avg_aspect,"unified_aspect":unified_avg_aspect}
-      
         return result
         if len(wordcloud)!=0:
             res.append({"wordcloud":wordcloud})
@@ -1004,19 +1007,20 @@ class DashboardAPIController(Resource):
             """There is a parent"""
             parent_survey= flag0
 
-        flag= l.flag()
 
+        flag= l.flag()
+        # return flag
         if flag ==False:
             r= {}
-
-            r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
+            # return parent_survey
+            r['parent_survey']= self.logic(survey_id, parent_survey, provider, aggregate)
             return r
         else:
             if aggregate=="true":
 
                 response={}
                 response['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
-
+                return response
                 units=[]
                 pwc=[]
                 npwc={}
@@ -1065,6 +1069,7 @@ class IRAPI(Resource):
             return "No survey_id or uuid provided"
 
         lol = IrapiData(survey_id,start,end,aggregate)
+
         all_responses= lol.get_data()
         all_survey= lol.get_uuid_labels()
 
@@ -1076,10 +1081,10 @@ class IRAPI(Resource):
             s= IrapiData(parent_survey,start,end,aggregate)
             all_survey=s.get_uuid_labels()
         else:
-
             all_survey= lol.get_uuid_labels()
+        
         ret=[]
-        # return all_responses
+
         for i in range(len(all_survey)):
 
             j_data=all_survey[i]
@@ -1119,7 +1124,8 @@ class IRAPI(Resource):
                     if j_data['field_type']=='long_text':
                         # dat= DatumBox()
                         # sent= dat.get_sentiment(b)
-                        blob = TextBlob(b)
+
+                        blob = TextBlob(b['raw'])
                         sentence_sentiment = blob.sentences[0].sentiment.polarity
                         if sentence_sentiment > 0:
                             sent = 'positive'
@@ -1129,8 +1135,8 @@ class IRAPI(Resource):
                             sent = 'negative'
 
                         sentiment[sent]+=1
-                        options_count_segg[b]=sent
-                        long_text+=" "+b
+                        options_count_segg[b['raw']]=sent
+                        long_text+=" "+b['raw']
 
                     if j_data['field_type']=='multiple_choice':
                         
@@ -1148,7 +1154,7 @@ class IRAPI(Resource):
                                     else:options_count_segg[i]=1
                             # return options_count
 
-                    if j_data['field_type'] in["yes_no", "single_choice", "multiple_choice"]:
+                    if j_data['field_type'] in["yes_no", "single_choice", "multiple_choice", "short_text"]:
                         if b['raw'] in options_count:
                             pass
                         else:
@@ -1163,18 +1169,18 @@ class IRAPI(Resource):
                 values={}
                 for c in temp:
                     # return c
-                    aTempList=c['raw'].split("###") #split a##2###b##1### [ "a##1", "b##3", "c##2"]
+                    aTempList=c['raw'].split("###") #split a##2###b##1### [ "a_1##2", "a_2##1", "a_3##3"]
                     for d in aTempList:
-                        bTempList=d.split("##") #["a","1"]
-
-                        e= bTempList[0] #Values are a ,b
+                        # return d
+                        bTempList=d.split("##") #["a_1","2"]
+                        # return bTempList ["a_1", "2"]
+                        e = bTempList[0] #Values are a_1 ,a_2
                         rank_key= bTempList[1] #values are 1,2,3,4
+                        # return values
                         if e in values:
                             if rank_key in values[e]:
                                 values[e][rank_key]+=1
                             else:
-
-                                # values[e]={}
                                 values[e][rank_key]=1
 
                         else:
@@ -1190,6 +1196,7 @@ class IRAPI(Resource):
                             options_count[e]=int(options_count[e])+len(aTempList)-int(bTempList[1])
                         else:
                             options_count[e]=len(aTempList)-int(bTempList[1])
+
             elif j_data['field_type']=="group_rating":
                 for f in temp:
                     # return f
@@ -1222,7 +1229,8 @@ class IRAPI(Resource):
 
             if j_data['field_type']=='long_text':
                 response['sentiment']=sentiment
-                response['sentiment_segg']=options_count_segg
+                response['options_count']=options_count_segg
+                # response['sentiment_segg']=options_count_segg
                 keywords=wc
                 response['keywords']=keywords
             #response['garbage']=temp
@@ -1444,7 +1452,7 @@ class ResponseAPIController(Resource):
 """
 Had to rewrite again Damn you git pull and merge conflict!
 """
-class Dash():
+class Dash(Resource):
     """docstring for Dash -marker"""
     # NUMBER_OF_REVIEWS = []
     # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
@@ -1479,7 +1487,7 @@ class Dash():
         return len(reviews)
     def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
         # return "lol"
-        aspects=["food","price","service","ambience","value_for_money","room_service","cleanliness"] 
+        aspects=['food','service','price']
         providers=["facebook","zomato","tripadvisor","twitter"]
         response= {'survey_id':survey_id}
         if aspect=="all" and provider=="all":
@@ -1488,26 +1496,15 @@ class Dash():
                 objects= Aspect.objects(survey_id=survey_id,provider=j)
                 
                 if len(objects)!=0:
-                    temp={}
-                    for x in aspects:
-                        temp[x]=0
-                    # temp= {"food":0,"service":0,"price":0}
+                    temp= {"food":0,"service":0,"price":0}
                     for obj in objects:
-                        if obj.food !=None:temp['food']+=float(obj.food)
-                        if obj.service!=None:temp['service']+=float(obj.service)
-                        if obj.price!=None:temp['price']+=float(obj.price)
-                        if obj.ambience!=None:temp['ambience']+=float(obj.ambience)
-                        if obj.value_for_money!=None:temp['value_for_money']+=float(obj.value_for_money)
-                        if obj.room_service!=None:temp['room_service']+=float(obj.room_service)
-                        if obj.cleanliness!=None:temp['cleanliness']+=float(obj.cleanliness)
+                        temp['food']+=float(obj.food)
+                        temp['service']+=float(obj.service)
+                        temp['price']+=float(obj.price)
                     #Average below
                     temp['food']=temp['food']/len(objects)
                     temp['service']=temp['service']/len(objects)
                     temp['price']=temp['price']/len(objects)
-                    temp['ambience']+=temp['ambience']/len(objects)
-                    temp['value_for_money']+=temp['value_for_money']/len(objects)
-                    temp['room_service']+=temp['room_service']/len(objects)
-                    temp['cleanliness']+=temp['cleanliness']/len(objects)
                     response[j]=temp
         return response
         # Will return {"zomato":{"food":3,""}}
