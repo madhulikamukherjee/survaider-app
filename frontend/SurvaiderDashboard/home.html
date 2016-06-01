@@ -76,55 +76,15 @@
     </table>
   </div>
 
-  <!-- <div class="sv-modal" ng-show="isTicketModal">
-    <div class="modal-content">
-      <div class="ticket-modal">
-        <h2>In how many outlets?</h2>
-        <div class="ticket-form">
-          <div class="radio-group">
-            <input ng-model="ticketForm.isCheckAll" ng-click="ticketForm.checkAll()" id="all-units" type="radio" name="unit-type" />
-            <label for="all-units" ng-click="ticketForm.checkAll()">All</label>
-          </div>
-          <div class="radio-group">
-            <input ng-model="ticketForm.isCheckSome" ng-click="ticketForm.checkSome()" id="some-units" type="radio" name="unit-type" />
-            <label for="some-units" ng-click="ticketForm.checkSome()">Some</label>
-          </div>
-          <div class="units-selection">
-            <h4>Choose the oulets</h4>
-            <div class="checkboxes">
-              <div class="checkbox-group" ng-repeat="unit in ticketForm.units">
-                <input ng-model="unit.isSelected" id="unit-{{unit.id}}" type="checkbox" />
-                <label for="unit-{{unit.id}}" ng-bind="unit.name"></label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ticket-message">
-          <h3>Write the message task :</h3>
-          <textarea ng-model="ticketForm.ticketMessage"></textarea>
-        </div>
-        <button ng-click="ticketForm.sendTheTicketDetail()" type="button" class="ticket-action">Generate</button>
-      </div>
-      <a href="#" class="modal-close" ng-click="isTicketModal = !isTicketModal"></a>
-    </div>
-  </div> -->
-
-
   <div class="tabs" id="tabs">
 
     <nav>
       <ul>
-        <!-- <li class="tab-current"><a href="#section-1">Overall</a></li> -->
-        <!--li><a href="#section-1">Facebook</a></li>
-        <li><a href="#section-1">Twitter</a></li-->
-        <!-- <li><a href="#section-1">Tripadvisor</a></li>
-        <li><a href="#section-1">Facebook</a></li> -->
-
         <li ng-class="activeTab == overallTabLabel? 'tab-current': ''"
           ng-click="switchTab(overallTabLabel)"><a>Overall</a>
         </li>
 
-        <li ng-repeat="item in sentiments" ng-class="activeTab == '{{item.label}}'? 'tab-current': ''" ng-click="switchTab(item)">
+        <li ng-repeat="item in sentimentsObject" ng-class="activeTab == '{{item.label}}'? 'tab-current': ''" ng-click="switchTab(item)" ng-show="item.sumOfData !== 0">
           <a>{{item.label}}</a>
         </li>
       </ul>
@@ -134,7 +94,7 @@
 
       <div id="section-1">
 
-        <!-- App::Features -->
+        <!-- Feature circles -->
         <div class="sv-unit-features" ng-show="activeTab == overallTabLabel">
 
           <ul>
@@ -161,27 +121,24 @@
 
         </div>
 
-        <!-- Units -->
+        <!-- Bubble graph -->
         <div class="sv-units" ng-show="activeTab == overallTabLabel">
           <div class="units-graph" style="padding: 2em">
-
             <svg ng-attr-width="{{125*units.length}}" ng-attr-height="{{unitsGraph.outerWidth - 100}}">
-            <g ng-repeat="counter in makeANumberArray(6)" transform="translate(0,75)">
-              <!-- <line x1="30" ng-attr-y1="{{5 + 100*$index}}" ng-attr-x2="{{unitsGraph.outerWidth - 20}}" ng-attr-y2="{{5 + 100*$index}}" stroke="#DDDDDD" stroke-width="2" ></line> -->
-              <line x1="30" ng-attr-y1="{{5 + 100*$index}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{5 + 100*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
-              
-              <text x="10" ng-attr-y="{{5 + 100*$index}}" text-anchor="middle">{{6-counter}}</text>
-            </g>
-            <line x1="30" y1="20" x2="30" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
-            <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
-            <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
-              <g transform="translate({{$index*20}},75)">
-                <!-- <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle> -->
-                <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}">
-                  <title>{{features[$index].label}} - {{feature.score}}</title>
-                </circle>
+              <g ng-repeat="counter in makeANumberArray(6)" transform="translate(0,75)">
+                <line x1="30" ng-attr-y1="{{5 + 100*$index}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{5 + 100*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
+                <text x="10" ng-attr-y="{{5 + 100*$index}}" text-anchor="middle">{{6-counter}}</text>
               </g>
-              <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}">
+              <line x1="30" y1="20" x2="30" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
+              <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
+              <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
+                <g transform="translate({{$index*20}},75)">
+                <!-- <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle> -->
+                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}">
+                  <title>{{features[$index].label}} - {{feature.score}}</title>
+                  </circle>
+                </g>
+                <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}">
               <!-- <a xlink:href="{{'#/unit/' + unit.id}}"> -->
               
               <!-- <a xlink:href="{{'http://localhost:5000/survey/s:' + unit.id + '/analysis'}}"> -->
@@ -189,29 +146,18 @@
                 <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
                 <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.name}}</text>
                 <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 60}}" fill="#111" font-size="14px" text-anchor="middle">{{unit.overallScore}}</text>
-              </a>
-            </g>
-
-<!--             <g>
-              <a xlink:href="/addUnit">
-                <line ng-attr-x1="{{100 + 120*unitsGraph.addUnitX}}" ng-attr-x2="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
-                <circle ng-attr-cx="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
-                <text ng-attr-x="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">Add Unit</text>
-                <text ng-attr-x="{{100 + 120*(unitsGraph.addUnitX)}}" ng-attr-y="{{unitsGraph.height + 60}}" fill="#111" font-size="24px" text-anchor="middle">+</text>
-              </a>
-            </g> -->
+                </a>
+              </g>
             </svg>
-
           </div>
-
         </div>
-         
-            <!-- Unit:: Cards -->
+
+        <!-- Cards -->
         <div class="sv-unit-questions">
           <div class="channel-graph">
             <div ng-repeat="sentiment in sentimentsObject">
                 <li class="sv-unit-question-block ng-scope"
-                  ng-show="activeTab == sentiment.label || activeTab == overallTabLabel">
+                  ng-show="(activeTab == sentiment.label || activeTab == overallTabLabel) && (sentiment.sumOfData !== 0)">
                   <button id="group-rating-graph-switch" ng-click="isFirstChannelVisible = !isFirstChannelVisible">Switch</button>
                     
                     <div class="unit-question-header">
@@ -265,10 +211,12 @@
                         </div> 
                     </div>
                 </li>
+            
             </div>
           </div>
         </div>
-         
+
+        <!-- Questions -->
         <div class="sv-unit-questions" ng-show="activeTab == overallTabLabel">
 
           <ul>
@@ -747,7 +695,6 @@
               </div>
             </li>
           </ul>
-
         </div>
          
       </div>

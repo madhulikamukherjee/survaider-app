@@ -182,7 +182,6 @@
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;
       $scope.sentimentsObject = application.sentimentsObject;
-      // console.log($scope.sentimentsObject);
       $scope.totalRespondents = application.totalRespondents;
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;

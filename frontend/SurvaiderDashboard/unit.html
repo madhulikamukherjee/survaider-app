@@ -12,586 +12,637 @@
     <h1>Welcome, {{companyName}} {{unitName}}!</h1>
   </div>
 
-  <!-- Unit::Overall Qualitative Survaider Rating - QSR -->
-<!--   <h1 ng-bind="unitname" class="unit-name"></h1>
- -->
-  <div class="sv-overall-rating" ng-show="true">
-    
-    <div class="rating-group">
+  <div class="sv-overall-rating">
+    <table>
+      <colgroup>
+        <col span="1" style="width:50%">
+        <col span="1" style="width:25%">
+        <col span="1" style="width:25">
+      </colgroup>
+      <tr>
+        <td>
+          <div class="rating-group">
 
-      <div class="rating-header">
-        <h1>Overall Qualitative Survaider Rating - QSR</h1>
-      </div>
+            <div class="rating-header">
+              <h1>Overall Qualitative Survaider Rating - QSR</h1>
+            </div>
 
-     <!--  <div class="rating-graph" ng-init="graphWidth = 600; graphHeight = 200; pointRadius = 7; maxOrdinate = maxOrdinateFrom2DPointArray(unit.ratingData); abscissaSpacer = ((graphWidth - 20) + 2*pointRadius) / (unit.ratingData.length); borderWidth = 20">
-        <svg ng-attr-width="{{graphWidth}}" ng-attr-height="{{graphHeight}}">
-          <g>
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)/2}} ng-attr-y2="{{(graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{graphWidth}}" ng-attr-y1={{(graphHeight-25)}} ng-attr-y2="{{(graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
-          </g>
-          <g transform="translate(20, 0)">
-            <g transform="translate(5, 0)">
-              <g>
-                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-repeat="point in unit.ratingData track by $index" ng-attr-y="{{graphHeight - 5}}" ng-attr-x="{{$index*abscissaSpacer}}">
-                  {{$index | getTheMonthName}}
-                </text>
-              </g>
-            </g>
-            <g>
-              <line ng-repeat="point in unit.ratingData track by $index" ng-attr-x1="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-x2="{{(pointRadius + ($index+1)*abscissaSpacer)}}" ng-attr-y1="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" ng-attr-y2="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (unit.ratingData[$index+1].y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (unit.ratingData.length - 1)" />
-            </g>
-            <g>
-              <circle ng-repeat="point in unit.ratingData track by $index" ng-attr-r="{{pointRadius}}" ng-attr-cx="{{(pointRadius + $index*abscissaSpacer)}}" ng-attr-cy="{{ (graphHeight - borderWidth*2 + pointRadius) - ( (point.y) * ((graphHeight-borderWidth*2)/maxOrdinate) )}}" fill="#4D6AFF" />
-            </g>
-          </g>
-        </svg>
-      </div> -->
+            <div class="rating-graph">
+              <svg ng-attr-width="{{ratingGraph.graphWidth}}" ng-attr-height="{{ratingGraph.graphHeight}}">
+                <g>
+                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
+                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)/2}} ng-attr-y2="{{(ratingGraph.graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
+                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} ng-attr-y2="{{(ratingGraph.graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
+                </g>
+                <g transform="translate(20, 0)">
+                  <g ng-repeat="date in dates track by $index" transform="translate(5, 0)">
+                    <g>
+                      <line ng-attr-y1="{{ratingGraph.graphHeight - 20}}" ng-attr-x1="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-x2="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-y2="{{(ratingGraph.graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
+                    </g>
+                    <g>
+                      <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-attr-y="{{ratingGraph.graphHeight - 5}}" ng-attr-x="{{$index*ratingGraph.abscissaSpacer}}">
+                        <tspan>{{(formatDate(date)).getDate() + "-"}}</tspan>
+                        <tspan>{{formatNumber((formatDate(date)).getMonth() + 1)}}</tspan>
+                      </text>
+                    </g>
+                  </g>
+                  <g>
+                    <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + ($index+1)*ratingGraph.abscissaSpacer)}}" ng-attr-y1="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" ng-attr-y2="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (ratingPoints[$index+1].y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
+                  </g>
 
-      <div class="rating-graph">
-        <svg ng-attr-width="{{ratingGraph.graphWidth}}" ng-attr-height="{{ratingGraph.graphHeight}}">
-          <g>
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)/2}} ng-attr-y2="{{(ratingGraph.graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
-            <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} ng-attr-y2="{{(ratingGraph.graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
-          </g>
-          <g transform="translate(20, 0)">
-            <g ng-repeat="date in dates track by $index" transform="translate(5, 0)">
-              <g>
-                <line ng-attr-y1="{{ratingGraph.graphHeight - 20}}" ng-attr-x1="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-x2="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-y2="{{(ratingGraph.graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
-              </g>
-              <g>
-                <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-attr-y="{{ratingGraph.graphHeight - 5}}" ng-attr-x="{{$index*ratingGraph.abscissaSpacer}}">
-                  <tspan>{{(formatDate(date)).getDate() + "-"}}</tspan>
-                  <tspan>{{formatNumber((formatDate(date)).getMonth() + 1)}}</tspan>
-                </text>
-              </g>
-            </g>
-            <g>
-              <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + ($index+1)*ratingGraph.abscissaSpacer)}}" ng-attr-y1="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" ng-attr-y2="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (ratingPoints[$index+1].y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
-            </g>
+                  <g>
+                    <line ng-repeat="ticket in tickets" ng-attr-x1="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} y2="0" stroke="#FFE491" stroke-width="5" />
+                  </g>
 
-            <g>
-              <line ng-repeat="ticket in tickets" ng-attr-x1="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} y2="0" stroke="#FFE491" stroke-width="5" />
-            </g>
+                  <g>
+                    <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{ratingGraph.pointRadius}}" ng-attr-cx="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-cy="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" fill="#4D6AFF" />
+                  </g>
+                </g>
+              </svg>
+            </div>
 
-            <g>
-              <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{ratingGraph.pointRadius}}" ng-attr-cx="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-cy="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" fill="#4D6AFF" />
-            </g>
-          </g>
-        </svg>
-      </div>
+          </div>
+        </td>
+        <td>
+          <div class="unified-rating">
+            <h4>Survaider Quality Score</h3>
 
-    </div>
+            <h3 ng-bind="unifiedRating"></h1>
 
-    <div class="total-respondents">
-      <h3>Total Respondents</h3>
-      <h1 ng-bind="totalRespondents"></h1>
-    </div>
+            <!-- <a href="#" class="generate-ticket-btn" ng-click="prepareTicketModal()">Generate Ticket</a> -->
+          </div>
+        </td>
+        <td>
+          <div class="total-respondents">
+            <h4>Total Respondents</h3>
 
+            <h3 ng-bind="totalRespondents"></h1>
 
+            <!-- <a href="#" class="generate-ticket-btn" ng-click="prepareTicketModal()">Generate Ticket</a> -->
+          </div>
+        </td>
+      </tr>
+    </table>
   </div>
 
+  <div class="tabs" id="tabs">
 
-  <!-- Unit::Features -->
-  <div class="sv-unit-features">
+    <nav>
+      <ul>
+        <li ng-class="activeTab == overallTabLabel? 'tab-current': ''"
+          ng-click="switchTab(overallTabLabel)"><a>Overall</a>
+        </li>
 
-    <ul>
+        <li ng-repeat="item in sentiments" ng-class="activeTab == '{{item.label}}'? 'tab-current': ''" ng-click="switchTab(item)" ng-show="item.sumOfData !== 0">
+          <a>{{item.label}}</a>
+        </li>
+      </ul>
+    </nav>
 
-      <!--
-        ** Scope Model : feature (from unit.features)
-        ** Properties:-
-        *** label
-      -->
+    <div class="tab-content">
 
-      <li class="sv-unit-feature-block" ng-repeat="feature in features track by $index">
+      <div id="section-1">
 
-        <div class="unit-feature-score" style="background-color: {{colors[$index%colors.length]}}">
-          <h1 ng-bind="feature.rating"></h1>
+        <!-- Features circles -->
+        <div class="sv-unit-features">
+
+          <ul>
+
+            <!--
+              ** Scope Model : feature (from unit.features)
+              ** Properties:-
+              *** label
+            -->
+
+            <li class="sv-unit-feature-block" ng-repeat="feature in features track by $index">
+
+              <div class="unit-feature-score" style="background-color: {{colors[$index%colors.length]}}">
+                <h1 ng-bind="feature.rating"></h1>
+              </div>
+
+              <div class="unit-feature-label">
+                <h4 ng-bind="feature.label"></h4>
+              </div>
+
+            </li>
+
+          </ul>
+
         </div>
 
-        <div class="unit-feature-label">
-          <h4 ng-bind="feature.label"></h4>
-        </div>
-
-      </li>
-
-    </ul>
-
-  </div>
-
-  <!-- Unit:: Cards -->
-  <div class="sv-unit-questions">
-      <div ng-repeat="sentiment in sentiments">
-          <li class="sv-unit-question-block ng-scope">
-              <div style="width: 33.333%; float: left">
-                <div class="sentiment-group">
-                    <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
-                </div>
-                
-                <div class="sentiment-body">
-                    <div ng-repeat="item in sentiment.series ">
-                        <h3>{{item}} Rating: {{sentiment.data[$index][0]}}</h3>
-                    </div>
-                </div>
-              </div>
-              <div style="float: right; width: 33.333%;">
-                  <canvas id="bar" class="chart chart-bar ng-isolate-scope"
-                    chart-data="sentiment.data" chart-labels="sentiment.options"
-                    chart-series="sentiment.series"
-                    chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
-                  </canvas>
-              </div>
-          </li>
-      </div>
-  </div>
-
-  <!-- Unit::Questions -->
-  <div class="sv-unit-questions">
-
-    <ul>
-
-      <li class="sv-unit-question-block" ng-repeat="question in questions">
-
-        <div ng-switch on="question.type">
-
-          <!-- Template:: SHORTTEXT -->
-
-          <div ng-switch-when="short_text" ng-init="colors = ['#FFF46A','#F5A623']">
-
-            <div class="sh-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-            </div>
-
-            <div class="short-text-graph">
-
-              <div class="st-words-list-wrapper">
-                <ul>
-                  <li ng-repeat="word in question.data">
-                    <h3 ng-bind="word"></h3>
-                  </li>
-                </ul>
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <!-- Template:: YES-OR-NO -->
-
-          <div ng-switch-when="yes_no" ng-init="colors = ['#FFF46A','#F5A623']">
-
-            <div class="unit-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-
-              <div class="unit-question-body">
-
-                <div class="yes-no-label">
-                  <h1>a) Yes</h1>
-                  <span style="background-color: {{colors[0]}}"></span>
-                </div>
-                <div class="yes-no-label">
-                  <h1>b) No</h1>
-                  <span style="background-color: {{colors[1]}}"></span>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="unit-question-graph" ng-init="radiusForThePieChart = 75">
-
-              <canvas id="doughnut" class="chart chart-doughnut"
-                chart-data="question.data" chart-colours="colors" chart-labels="question.options">
-              </canvas>
-
-            </div>
-
-          </div>
-
-          <!-- Template:: SINGLE-CHOICE -->
-
-          <div ng-switch-when="single_choice" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
-
-            <div class="unit-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-
-              <div class="unit-question-body">
-
-                <div ng-repeat="option in question.options track by $index">
-                  <div class="choice-label">
-                    <h1>{{toCharCode($index) + ") " + option}}</h1>
-                    <span style="background-color: {{colors[$index]}}"></span>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="unit-question-graph" ng-init="radiusForThePieChart = 75">
-
-              <canvas id="pie" class="chart chart-pie"
-                chart-data="question.data" chart-colours="colors" chart-labels="question.options">
-              </canvas>
-
-            </div>
-
-          </div>
-
-
-
-
-          <!-- Template:: LONG-TEXT -->
-
-
-          <div ng-switch-when="long_text">
-
-            <div class="unit-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-              <div class="unit-question-body">
-
-                <div class="long-text-keywords">
-                  <h3>Positive Keywords:</h3>
-                  <ul>
-                    <li ng-repeat="keyword in question.positiveKeyWords">
-                      <span ng-bind="keyword"></span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="long-text-keywords">
-                  <h3>Negative Keywords:</h3>
-                  <ul>
-                    <li ng-repeat="keyword in question.negativeKeywords">
-                      <span ng-bind="keyword"></span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div class="long-text-keywords">
-                  <h3>Neutral Keywords:</h3>
-                  <ul>
-                    <li ng-repeat="keyword in question.neutralKeywords">
-                      <span ng-bind="keyword"></span>
-                    </li>
-                  </ul>
-                </div>
-
-
-              </div>
-
-            </div>
-
-            <div class="unit-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-              <canvas id="bar" class="chart chart-bar"
-                chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-              </canvas>
-
-            </div>
-
-          </div>
-
-
-
-
-          <!-- Template:: MULTIPLE-CHOICE -->
-
-
-          <div class="multiple-choice-graph" ng-switch-when="multiple_choice">
-
-            <button id="group-rating-graph-switch" ng-click="isFirstBarChartVisible = !isFirstBarChartVisible">Switch</button>
-
-            <div class="unit-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-
-              <div class="unit-question-body">
-
-                <div ng-repeat="option in question.options track by $index">
-                  <div class="choice-label">
-                    <h1>{{toCharCode($index) + ") " + option}}</h1>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div ng-hide="isFirstBarChartVisible" class="multiple-choice-first-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-              <canvas id="bar" class="chart chart-bar"
-                chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-              </canvas>
-
-            </div>
-
-            <div ng-hide="!isFirstBarChartVisible" class="multiple-choice-second-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-              <canvas id="bar" class="chart chart-bar"
-                chart-data="question.secondGraph.data" chart-labels="question.secondGraph.options" chart-series="question.secondGraph.series" chart-options="question.secondGraph.graphOptions" chart-colours="question.secondGraph.colors">
-              </canvas>
-
-            </div>
-
-          </div>
-
-
-          <!-- Template:: RATING-CHOICE -->
-
-          <div ng-switch-when="rating" ng-init="color = '#B8E986'">
-
-            <div class="unit-question-group">
-
-              <div class="unit-question-header">
-                <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-              </div>
-
-            </div>
-
-            <div class="rating-question-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-              <canvas id="bar" class="chart chart-bar"
-                chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-              </canvas>
-
-            </div>
-
-          </div>
-
-
-
-
-          <!-- Template:: GROUP-RATINGs ##BAR CHART## -->
-
-          <div class="group-rating-graph" ng-switch-when="group_rating">
-
-            <button id="group-rating-graph-switch" ng-click="isBarVisible = !isBarVisible">Switch</button>
-
-            <div class="unit-question-header">
-              <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-            </div>
-
-
-            <div ng-hide="isBarVisible" class="group-rating-bar" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
-
-              <div class="unit-question-group">
-
-                <div class="unit-question-body">
-
-
-                  <!-- We will loop on series -->
-                  <div ng-repeat="option in question.series track by $index">
-                    <div class="choice-label">
-                      <h1>{{toCharCode($index) + ") " + option}}</h1>
-                      <span style="background-color: {{question.colors[$index].fillColor}}"></span>
-                    </div>
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              <div class="rating-question-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-                <canvas id="bar" class="chart chart-bar"
-                  chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
-                </canvas>
-
-              </div>
-
-            </div>
-
-
-            <!-- Template:: GROUP-RATINGs ##STAR RATING## -->
-
-            <div ng-hide="!isBarVisible" class="group-rating-star" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
-
-              <div class="star-rating-all-group">
-
-                <div class="star-rating-graph-wrapper">
-
-                  <div class="star-rating-options">
-                    <ul>
-                      <li ng-repeat="option in question.series track by $index" class="star-rating-label">
-                        <h1>{{toCharCode($index) + ") " + option}}</h1>
+        <!-- Cards -->
+         <div class="sv-unit-questions">
+                <div class="channel-graph">
+                  <div ng-repeat="sentiment in sentimentsObject">
+                      <li class="sv-unit-question-block ng-scope"
+                        ng-show="(activeTab == sentiment.label || activeTab == overallTabLabel) && (sentiment.sumOfData !== 0)">
+                        <button id="group-rating-graph-switch" ng-click="isFirstChannelVisible = !isFirstChannelVisible">Switch</button>
+                          
+                          <div class="unit-question-header">
+                            <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
+                          </div>
+                          <div ng-hide="isFirstChannelVisible">
+                            <!-- <div style="width: 33.333%; float: left">
+                                <div class="unit-question-body"> -->
+                                  <div class="long-text-keywords">
+                                    <h3>Positive Keywords:</h3>
+                                    <ul>
+                                      <li ng-repeat="keyword in sentiment.positiveKeyWords">
+                                        <span ng-bind="keyword"></span>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                  <div class="long-text-keywords">
+                                    <h3>Negative Keywords:</h3>
+                                    <ul>
+                                      <li ng-repeat="keyword in sentiment.negativeKeywords">
+                                        <span ng-bind="keyword"></span>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                  <div class="long-text-keywords">
+                                    <h3>Neutral Keywords:</h3>
+                                    <ul>
+                                      <li ng-repeat="keyword in sentiment.neutralKeywords">
+                                        <span ng-bind="keyword"></span>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                <!-- </div>
+                            </div> -->
+                            <div class="unit-question-graph">
+                                  <canvas id="bar" class="chart chart-bar"
+                                    chart-data="sentiment.data" chart-labels="sentiment.options" chart-series="sentiment.series" chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
+                                  </canvas>
+                            </div>
+                          </div>
+                          <div ng-hide="!isFirstChannelVisible">
+                            <div class="short-text-graph" style="width: 1000px;">
+                                <div class="st-words-list-wrapper">
+                                  <ul style="height: 300px; overflow: scroll;">
+                                    <li ng-repeat="review in sentiment.reviews"
+                                    ng-style="review[1] === 'negative' && {'background-color': '#d7aa9a'}">
+                                      <h3 ng-bind="review[0]"></h3>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div> 
+                          </div>
                       </li>
-                    </ul>
+                  
+                  </div>
+                </div>
+              </div>
+
+        <!-- Questions -->
+        <div class="sv-unit-questions">
+
+          <ul>
+
+            <li class="sv-unit-question-block" ng-repeat="question in questions">
+
+              <div ng-switch on="question.type">
+
+                <!-- Template:: SHORTTEXT -->
+
+                <div ng-switch-when="short_text" ng-init="colors = ['#FFF46A','#F5A623']">
+
+                  <div class="sh-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
+
+                  </div>
+
+                  <div class="short-text-graph">
+
+                    <div class="st-words-list-wrapper">
+                      <ul>
+                        <li ng-repeat="word in question.data">
+                          <h3 ng-bind="word"></h3>
+                        </li>
+                      </ul>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                <!-- Template:: YES-OR-NO -->
+
+                <div ng-switch-when="yes_no" ng-init="colors = ['#FFF46A','#F5A623']">
+
+                  <div class="unit-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
+
+
+                    <div class="unit-question-body">
+
+                      <div class="yes-no-label">
+                        <h1>a) Yes</h1>
+                        <span style="background-color: {{colors[0]}}"></span>
+                      </div>
+                      <div class="yes-no-label">
+                        <h1>b) No</h1>
+                        <span style="background-color: {{colors[1]}}"></span>
+                      </div>
+
+                    </div>
+
                   </div>
 
 
-                  <div class="star-rating-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+                  <div class="unit-question-graph" ng-init="radiusForThePieChart = 75">
 
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+                    <canvas id="doughnut" class="chart chart-doughnut"
+                      chart-data="question.data" chart-colours="colors" chart-labels="question.options">
+                    </canvas>
 
-                      <!-- WHOLE GROUP -->
-                      <g>
+                  </div>
 
-                        <!-- FOR CHOICE -->
-                        <g ng-repeat="choice in question.starRating" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{100*$rootIndex}})">
+                </div>
 
-                          <!-- MARK::- may lead to anomalous  -->
+                <!-- Template:: SINGLE-CHOICE -->
 
-                          <!-- Stars -->
-                          <g ng-repeat="star in choice.starRatingsArray track by $index" ng-attr-transform="translate( {{80*$index}} ,0)">
-                            <defs>
-                                <linearGradient id="half_grad">
-                                    <stop ng-attr-offset="{{100*(star)}}%" stop-color="#F8E71C"/>
-                                    <stop ng-attr-offset="{{100*(star)}}%" stop-color="#FFFFFF" stop-opacity="1" />
-                                </linearGradient>
-                            </defs>
+                <div ng-switch-when="single_choice" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+
+                  <div class="unit-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
 
 
-                            <path transform="scale(1.5)" d="M20.388,10.918L32,12.118l-8.735,7.749L25.914,
-                                     31.4l-9.893-6.088L6.127,31.4l2.695-11.533L0,
-                                     12.118l11.547-1.2L16.026,0.6L20.388,10.918z"
-                                fill="url(#half_grad)" stroke-width="1" stroke="#F8E71C"/>
+                    <div class="unit-question-body">
+
+                      <div ng-repeat="option in question.options track by $index">
+                        <div class="choice-label">
+                          <h1>{{toCharCode($index) + ") " + option}}</h1>
+                          <span style="background-color: {{colors[$index]}}"></span>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="unit-question-graph" ng-init="radiusForThePieChart = 75">
+
+                    <canvas id="pie" class="chart chart-pie"
+                      chart-data="question.data" chart-colours="colors" chart-labels="question.options">
+                    </canvas>
+
+                  </div>
+
+                </div>
+
+
+
+
+                <!-- Template:: LONG-TEXT -->
+
+
+                <div ng-switch-when="long_text">
+
+                  <div class="unit-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
+
+                    <div class="unit-question-body">
+
+                      <div class="long-text-keywords">
+                        <h3>Positive Keywords:</h3>
+                        <ul>
+                          <li ng-repeat="keyword in question.positiveKeyWords">
+                            <span ng-bind="keyword"></span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div class="long-text-keywords">
+                        <h3>Negative Keywords:</h3>
+                        <ul>
+                          <li ng-repeat="keyword in question.negativeKeywords">
+                            <span ng-bind="keyword"></span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div class="long-text-keywords">
+                        <h3>Neutral Keywords:</h3>
+                        <ul>
+                          <li ng-repeat="keyword in question.neutralKeywords">
+                            <span ng-bind="keyword"></span>
+                          </li>
+                        </ul>
+                      </div>
+
+
+                    </div>
+
+                  </div>
+
+                  <div class="unit-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                    <canvas id="bar" class="chart chart-bar"
+                      chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
+                    </canvas>
+
+                  </div>
+
+                </div>
+
+
+
+
+                <!-- Template:: MULTIPLE-CHOICE -->
+
+
+                <div class="multiple-choice-graph" ng-switch-when="multiple_choice">
+
+                  <button id="group-rating-graph-switch" ng-click="isFirstBarChartVisible = !isFirstBarChartVisible">Switch</button>
+
+                  <div class="unit-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
+
+
+                    <div class="unit-question-body">
+
+                      <div ng-repeat="option in question.options track by $index">
+                        <div class="choice-label">
+                          <h1>{{toCharCode($index) + ") " + option}}</h1>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div ng-hide="isFirstBarChartVisible" class="multiple-choice-first-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                    <canvas id="bar" class="chart chart-bar"
+                      chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
+                    </canvas>
+
+                  </div>
+
+                  <div ng-hide="!isFirstBarChartVisible" class="multiple-choice-second-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                    <canvas id="bar" class="chart chart-bar"
+                      chart-data="question.secondGraph.data" chart-labels="question.secondGraph.options" chart-series="question.secondGraph.series" chart-options="question.secondGraph.graphOptions" chart-colours="question.secondGraph.colors">
+                    </canvas>
+
+                  </div>
+
+                </div>
+
+
+                <!-- Template:: RATING-CHOICE -->
+
+                <div ng-switch-when="rating" ng-init="color = '#B8E986'">
+
+                  <div class="unit-question-group">
+
+                    <div class="unit-question-header">
+                      <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                    </div>
+
+                  </div>
+
+                  <div class="rating-question-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                    <canvas id="bar" class="chart chart-bar"
+                      chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
+                    </canvas>
+
+                  </div>
+
+                </div>
+
+
+
+
+                <!-- Template:: GROUP-RATINGs ##BAR CHART## -->
+
+                <div class="group-rating-graph" ng-switch-when="group_rating">
+
+                  <button id="group-rating-graph-switch" ng-click="isBarVisible = !isBarVisible">Switch</button>
+
+                  <div class="unit-question-header">
+                    <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                  </div>
+
+
+                  <div ng-hide="isBarVisible" class="group-rating-bar" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+
+                    <div class="unit-question-group">
+
+                      <div class="unit-question-body">
+
+
+                        <!-- We will loop on series -->
+                        <div ng-repeat="option in question.series track by $index">
+                          <div class="choice-label">
+                            <h1>{{toCharCode($index) + ") " + option}}</h1>
+                            <span style="background-color: {{question.colors[$index].fillColor}}"></span>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="rating-question-graph full-width-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                      <canvas id="bar" class="chart chart-bar"
+                        chart-data="question.data" chart-labels="question.options" chart-series="question.series" chart-options="question.graphOptions" chart-colours="question.colors">
+                      </canvas>
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- Template:: GROUP-RATINGs ##STAR RATING## -->
+
+                  <div ng-hide="!isBarVisible" class="group-rating-star" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+
+                    <div class="star-rating-all-group">
+
+                      <div class="star-rating-graph-wrapper">
+
+                        <div class="star-rating-options">
+                          <ul>
+                            <li ng-repeat="option in question.series track by $index" class="star-rating-label">
+                              <h1>{{toCharCode($index) + ") " + option}}</h1>
+                            </li>
+                          </ul>
+                        </div>
+
+
+                        <div class="star-rating-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+
+                            <!-- WHOLE GROUP -->
+                            <g>
+
+                              <!-- FOR CHOICE -->
+                              <g ng-repeat="choice in question.starRating" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{100*$rootIndex}})">
+
+                                <!-- MARK::- may lead to anomalous  -->
+
+                                <!-- Stars -->
+                                <g ng-repeat="star in choice.starRatingsArray track by $index" ng-attr-transform="translate( {{80*$index}} ,0)">
+                                  <defs>
+                                      <linearGradient id="half_grad">
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#F8E71C"/>
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#FFFFFF" stop-opacity="1" />
+                                      </linearGradient>
+                                  </defs>
+
+
+                                  <path transform="scale(1.5)" d="M20.388,10.918L32,12.118l-8.735,7.749L25.914,
+                                           31.4l-9.893-6.088L6.127,31.4l2.695-11.533L0,
+                                           12.118l11.547-1.2L16.026,0.6L20.388,10.918z"
+                                      fill="url(#half_grad)" stroke-width="1" stroke="#F8E71C"/>
+
+                                </g>
+
+                                <text ng-attr-transform="translate({{5 * 80 + 50}} ,0)" font-size="24px" font-weight="bold" y="35">
+                                  {{choice.ratingValue}}
+                                </text>
+
+                              </g>
+
+                            </g>
+
+                          </svg>
+
+                        </div>
+
+                      </div>
+
+
+                    </div>
+
+
+                  </div>
+                </div>
+
+
+                <!-- Template:: RANKING QUESTION -->
+
+                <div ng-switch-when="ranking" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
+
+                  <div class="star-rating-all-group">
+
+                    <div class="group-rating-star-rating">
+
+                      <div class="unit-question-header">
+                        <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
+                      </div>
+
+                    </div>
+
+                    <div class="ranks-wrapper">
+                        <div class="choice-label" ng-repeat="label in question.data">
+                          <h1>{{'Rank ' + ($index+1)}}</h1>
+                          <span style="background-color: {{question.colors[$index]}}"></span>
+                        </div>
+                    </div>
+
+                    <div class="ranking-graph-wrapper">
+
+                      <div class="rank-rating-options">
+                        <ul>
+                          <li ng-repeat="option in question.options track by $index" class="star-rating-label">
+                            <h1>{{toCharCode($index) + ") " + option}}</h1>
+                          </li>
+                        </ul>
+                      </div>
+
+
+                      <div class="rank-rating-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
+
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+
+                          <!-- WHOLE GROUP -->
+                          <g>
+
+                            <!-- FOR CHOICE -->
+                            <g ng-repeat="choice in question.data" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{110*$rootIndex}})">
+
+                              <!-- MARK::- may lead to anomalous  -->
+
+                              <!-- Stars -->
+                              <g ng-repeat="value in choice.values track by $index">
+
+                                <rect ng-attr-width="{{value.width}}" ng-attr-x="{{value.xOfRext}}" height="40" ng-attr-fill="{{question.colors[$index]}}" />
+                                <text ng-attr-x="{{value.xOfRext + (value.width/2) - 10}}" y="25" font-size="16px" font-weight="bold">
+                                  {{value.mainValue}}
+                                </text>
+                              </g>
+
+                            </g>
 
                           </g>
 
-                          <text ng-attr-transform="translate({{5 * 80 + 50}} ,0)" font-size="24px" font-weight="bold" y="35">
-                            {{choice.ratingValue}}
-                          </text>
+                        </svg>
 
-                        </g>
-
-                      </g>
-
-                    </svg>
-
-                  </div>
-
-                </div>
-
-
-              </div>
-
-
-            </div>
-          </div>
-
-
-          <!-- Template:: RANKING QUESTION -->
-
-          <div ng-switch-when="ranking" ng-init="colors = ['#F0B24F', '#496063', '#6C6F3A'];">
-
-            <div class="star-rating-all-group">
-
-              <div class="group-rating-star-rating">
-
-                <div class="unit-question-header">
-                  <h1 ng-bind="'Q' + ($index+1) + '  ' + question.label"></h1>
-                </div>
-
-              </div>
-
-              <div class="ranks-wrapper">
-                  <div class="choice-label" ng-repeat="label in question.data">
-                    <h1>{{'Rank ' + ($index+1)}}</h1>
-                    <span style="background-color: {{question.colors[$index]}}"></span>
-                  </div>
-              </div>
-
-              <div class="ranking-graph-wrapper">
-
-                <div class="rank-rating-options">
-                  <ul>
-                    <li ng-repeat="option in question.options track by $index" class="star-rating-label">
-                      <h1>{{toCharCode($index) + ") " + option}}</h1>
-                    </li>
-                  </ul>
-                </div>
-
-
-                <div class="rank-rating-question-graph" ng-init="barWidth = 50; positiveData = question.response['positive_keywords']['data']; negativeData = question.response['negative_keywords']['data']">
-
-                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
-
-                    <!-- WHOLE GROUP -->
-                    <g>
-
-                      <!-- FOR CHOICE -->
-                      <g ng-repeat="choice in question.data" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{110*$rootIndex}})">
-
-                        <!-- MARK::- may lead to anomalous  -->
-
-                        <!-- Stars -->
-                        <g ng-repeat="value in choice.values track by $index">
-
-                          <rect ng-attr-width="{{value.width}}" ng-attr-x="{{value.xOfRext}}" height="40" ng-attr-fill="{{question.colors[$index]}}" />
-                          <text ng-attr-x="{{value.xOfRext + (value.width/2) - 10}}" y="25" font-size="16px" font-weight="bold">
-                            {{value.mainValue}}
-                          </text>
-                        </g>
-
-                      </g>
-
-                    </g>
-
-                  </svg>
-
-                </div>
-
-
-                <div class="ranking-board">
-
-                  <h1>In a nutshell</h1>
-
-                  <ul>
-                    <li ng-repeat="choice in question.board track by $index">
-
-                      <div class="board-label" ng-class="{ 'first-rank': $index == 0 }">
-                        <h2 ng-bind="$index+1">
-
-                        </h2>
                       </div>
-                      <h2 ng-bind="question.options[choice-1]"></h2>
 
-                    </li>
-                  </ul>
+
+                      <div class="ranking-board">
+
+                        <h1>In a nutshell</h1>
+
+                        <ul>
+                          <li ng-repeat="choice in question.board track by $index">
+
+                            <div class="board-label" ng-class="{ 'first-rank': $index == 0 }">
+                              <h2 ng-bind="$index+1">
+
+                              </h2>
+                            </div>
+                            <h2 ng-bind="question.options[choice-1]"></h2>
+
+                          </li>
+                        </ul>
+
+                      </div>
+
+                    </div>
+
+
+                  </div>
+
 
                 </div>
 
+
               </div>
 
+            </li>
 
-            </div>
-
-
-          </div>
-
+          </ul>
 
         </div>
 
-      </li>
-
-    </ul>
-
+      </div>
+    </div>
   </div>
-
 </div>

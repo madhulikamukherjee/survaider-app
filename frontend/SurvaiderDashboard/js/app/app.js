@@ -109,8 +109,9 @@
           positiveKeyWords = [];
           negativeKeywords = [];
           neutralKeywords = [];
-
+          sumOfData = 0;
           for(var prop in sentiments[vendor]){
+
               if (sentiments[vendor].hasOwnProperty(prop)) {
 
                   // countData.push([sentiments[vendor][prop]]);
@@ -118,14 +119,17 @@
                   if (prop == 'negative') {
                     questionOptions.push("Negative :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'positive') {
                     questionOptions.push("Positive :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'neutral') {
                     questionOptions.push("Neutral :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'options_count'){
                     for (var key in sentiments[vendor]['options_count']) {
@@ -159,6 +163,7 @@
           graphData={
               label: vendor,
               data: countData,
+              sumOfData : sumOfData,
               reviews : reviews,
               positiveKeyWords: positiveKeyWords,
               negativeKeywords: negativeKeywords,
