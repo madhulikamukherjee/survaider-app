@@ -763,7 +763,8 @@ class DashboardAPIController(Resource):
         aspect= AspectR(survey_id,provider).get()
         wordcloud= d(WordCloud(survey_id,provider).get())
         sentiment= Sentiment(survey_id,provider).get()
-        company_name=Survey.objects(id = survey_id).first().metadata['name']
+        company_name=Survey.objects(id = survey_id).first()
+        # return company_name
         # meta= ast.literal_eval(meta)
 
         response_data= lol.get_data()
@@ -1487,7 +1488,7 @@ class Dash(Resource):
     # ASPECTS.append([4.5, 4.1, 4.3]) # Facebook aspects for this hotel for all units combined
     # ASPECTS.append([3.9, 3.6, 4.0]) # Twitter aspects for this hotel for all units combined
     def get_child(self,survey_id):
-        objects= Relation.objects(parent=survey_id)
+        objects= Relation.objects(parent=survey_id) # ye null kyn hai?
         return objects
     def get_reviews_count(self,survey_id,provider="all"):
         if provider=="all":
@@ -1498,13 +1499,14 @@ class Dash(Resource):
     def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
         # return "lol"
         aspects=['food','service','price']
-        providers=["facebook","zomato","tripadvisor","twitter"]
+        # providers=["facebook","zomato","tripadvisor","twitter"]
+        providers=["zomato","tripadvisor"]
         response= {'survey_id':survey_id}
         if aspect=="all" and provider=="all":
             
             for j in providers:
                 objects= Aspect.objects(survey_id=survey_id,provider=j)
-                
+                # return len(objects)
                 if len(objects)!=0:
                     temp= {"food":0,"service":0,"price":0}
                     for obj in objects:
@@ -1516,6 +1518,15 @@ class Dash(Resource):
                     temp['service']=temp['service']/len(objects)
                     temp['price']=temp['price']/len(objects)
                     response[j]=temp
+                else:
+
+                    for i in providers:
+                        temp={}
+                        for j in aspects:
+                            temp[j]=0
+                        response[i]=temp
+
+
         return response
         # Will return {"zomato":{"food":3,""}}
     def data_form(self,survey_id,avg_aspect):
@@ -1542,19 +1553,23 @@ class Dash(Resource):
             aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
 
         uni = sum(aspect_contribution)
-        return uni
+        return {survey_id:uni}
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)
+        response=[]
         resp= {}
         for obj in objects:
             survey_id=obj.survey_id
             raw_data=self.get_avg_aspect(obj.survey_id)
+            # return raw_data
             pr_data=self.data_form(survey_id,raw_data)
             ASPECTS= pr_data[0]
             NUMBER_OF_REVIEWS= pr_data[1]
             NUMBER_OF_CHANNELS=2
-            return self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
+            response.append(self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS))
+        return response
     def get(self,parent_survey_id):
+
         return self.unified_avg_aspect(parent_survey_id)
                 # print(asp.price)
         # Add in your logic

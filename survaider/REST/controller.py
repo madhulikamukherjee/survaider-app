@@ -16,7 +16,7 @@ from survaider.notification.controller import (NotificationController,
                                                NotificationAggregation,
                                                SurveyTicketController)
 
-from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI
+from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI,Dash
 from survaider.minions.future import SurveySharePromiseController
 
 api = Api(app, prefix = '/api')
@@ -68,7 +68,7 @@ api.add_resource(DashboardAPIController,
 api.add_resource(IRAPI,
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response",
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
-# api.add_resource(AspectController,'/aspect/<string:survey_id>/<string:provider>/get')
+api.add_resource(Dash,"/dashboard/parent/<string:parent_survey_id>")
 
 ###############################
 

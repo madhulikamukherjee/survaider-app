@@ -629,7 +629,7 @@ class IrapiData(object):
         #     return js['referenced']['$oid'] #it has a parent, id of which, is this.
         # else:
         #     return False # It is a parent itself
-
+        return js
         if 'rootid' in js[0]:
             return js[0]['rootid'] #it has a parent, id of which, is this.
         else:
@@ -687,6 +687,7 @@ class Reviews(db.Document):
     rating = db.StringField()
     review = db.StringField()
     sentiment = db.StringField()
+    review_identifier=db.StringField(unique=True)
 
 class DataSort(object):
     """docstring for DataSort"""
