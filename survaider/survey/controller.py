@@ -666,6 +666,7 @@ class ResponseDocumentController(Resource):
 import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
+
 class AspectR(object):
     """docstring for AspectController"""
     def __init__(self,survey_id,provider):
@@ -757,30 +758,33 @@ class DashboardAPIController(Resource):
         """
 
         lol= IrapiData(survey_id,1,1,aggregate)
-        csi= lol.get_child_data(survey_id)[0]#child survey info
+        csi= lol.get_child_data(survey_id)#child survey info
+
         aspect= AspectR(survey_id,provider).get()
         wordcloud= d(WordCloud(survey_id,provider).get())
         sentiment= Sentiment(survey_id,provider).get()
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # meta= ast.literal_eval(meta)
 
-        response_data= d(lol.get_data())
-        return response_data
+        response_data= lol.get_data()
+        # return response_data
 
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
-
+    
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
-        # company_name= meta.metadata
+
         try:
-            survey_name= csi['unit_name']
-            created_by=csi['created_by'][0]['$oid']
+            survey_name= csi[0].unit_name
+            created_by= d(csi[0].created_by[0].id)["$oid"]
 
         except:
             survey_name="Parent Survey"
             created_by="Not Applicable"
+
+        # return created_by
 
         """ALT"""
         cids= []
@@ -795,6 +799,8 @@ class DashboardAPIController(Resource):
         for cid in cids:
             alol = DataSort(parent_survey,cid,aggregate)
             survey_data= alol.get_uuid_label()#?So wrong
+            # return survey_data
+
             j_data= d(survey_data)
 
             if "options" in survey_data['field_options']:
@@ -813,14 +819,14 @@ class DashboardAPIController(Resource):
             temp= []
             timed={}
             import time
-
+            # return d(response_data)
             for i in response_data:
-                if cid in i['responses']:
+                if cid in i[0]:
                     # return cid
-                    temp.append(i['responses'][cid]['raw'])
-                    timestamp= i['metadata']['modified']['$date']/1000
+                    temp.append(i[0][cid]['raw'])
+                    timestamp= d(i[1]['modified'])['$date']/1000
                     timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-                    timed[timestamp]=i['responses'][cid]
+                    timed[timestamp]=i[0][cid]
 
             options_count={}
 
@@ -1020,7 +1026,7 @@ class DashboardAPIController(Resource):
 
                 response={}
                 response['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
-                return response
+                # return response
                 units=[]
                 pwc=[]
                 npwc={}
@@ -1045,6 +1051,8 @@ class DashboardAPIController(Resource):
                 r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
                 return r
 
+
+def to_json(data):return json.loads(dumps(data))
 """InclusiveResponse"""
 class IRAPI(Resource):
     """
@@ -1062,26 +1070,30 @@ class IRAPI(Resource):
         return adict
 
     def get(self,survey_id,start=None,end=None,aggregate="false"):
+        
         try:
             survey_id=HashId.decode(survey_id)
 
         except ValueError:
             return "No survey_id or uuid provided"
 
+
         lol = IrapiData(survey_id,start,end,aggregate)
 
         all_responses= lol.get_data()
+    
         all_survey= lol.get_uuid_labels()
+        # return all_survey
 
-        if "referenced" in all_survey[0]:
+        # if "referenced" in all_survey[0]:
 
-            parent_survey= all_survey[0]['referenced']['$oid']
+        #     parent_survey= all_survey[0]['referenced']['$oid']
 
-            # parent_survey= HashId.decode(parent_survey)
-            s= IrapiData(parent_survey,start,end,aggregate)
-            all_survey=s.get_uuid_labels()
-        else:
-            all_survey= lol.get_uuid_labels()
+        #     # parent_survey= HashId.decode(parent_survey)
+        #     s= IrapiData(parent_survey,start,end,aggregate)
+        #     all_survey=s.get_uuid_labels()
+        # else:
+        #     all_survey= lol.get_uuid_labels()
         
         ret=[]
 
@@ -1090,8 +1102,8 @@ class IRAPI(Resource):
             j_data=all_survey[i]
 
             uuid= j_data['cid']
+            # return uuid
             response_data=all_responses
-
 
             try:
                 options=[]
@@ -1100,17 +1112,16 @@ class IRAPI(Resource):
                     options.append(j_data['field_options']['options'][i]['label'])
                     option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
             except:pass
+            # return option_code
             """Response Count """
             temp=[]
-
+            # return to_json(response_data[2][0])
             for a in range(len(response_data)):
                 try:
-                    temp.append(response_data[a]['responses'][uuid])
+                    temp.append(response_data[a][0][uuid])
                 except:
                     pass
-            # if uuid == "a957b9fe-864c-4391-8c80-ba90a19b92ea":
-            #     return temp
-
+            # return temp
             """Option Count"""
             options_count={}
             options_count_segg={}
@@ -1213,7 +1224,6 @@ class IRAPI(Resource):
                             options_count[l]={}
                             options_count[l][k]=1
             elif j_data['field_type']=="rating":
-                # return temp
                 for i in temp:
                     i = str(i['raw'])
                     if i in options_count:

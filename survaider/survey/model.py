@@ -558,54 +558,61 @@ class IrapiData(object):
 
     def get_multi_data(self, aList):
         js=[]
-        # return aLists
         for i in aList:
             child_id= HashId.decode(i)
+            print (child_id)
             raw = Response.objects(parent_survey=child_id)
-            # raw_data = [_.response_sm for _ in raw]
-            # js= js +d(raw_data)
-            js= js +d(raw)
+            raw_temp=[]           
+            for i in raw:
+                temp_j=[]
+                temp_j.append(i.responses)
+                temp_j.append(i.metadata)
+                raw_temp.append(temp_j)
+            js= js + raw_temp
 
         return js
 
     def get_child_data(self,survey_id):
         # raw= db.survey.find({"_id":ObjectId(self.sid)})
-        raw=SurveyUnit.objects(referenced = self.sid)
-        return d(raw)
-    def get_data(self):
-        dat = SurveyUnit.objects(referenced = self.sid)
-        # return [_.repr for _ in dat if not _.hidden]
+        raw=SurveyUnit.objects(id = survey_id)
+        # raw_temp = []
+        # for i in raw:
+        #     raw_temp.append(i)
+        
+        return raw
 
+    def get_data(self):
+        dat = Survey.objects(id = self.sid)
+        # return d(dat)
         flag= self.flag()
         # return flag
 
         if flag==False:
             raw= Response.objects(parent_survey=self.sid)
-            js= d(raw)
-
-            return js
+            raw_temp=[]           
+            for i in raw:
+                temp_j=[]
+                temp_j.append(i.responses)
+                temp_j.append(i.metadata)
+                raw_temp.append(temp_j)
+            return raw_temp
         else:
             if self.agg=="true":
 
                 "WIll return all the responses "
-                # raw= db.response.find({"parent_survey":ObjectId(self.sid)})
-                # raw=Response.objects(parent_survey=self.sid)
-                raw_temp = []
-                raw = Response.objects(parent_survey=self.sid)
-                # return raw.responses
-                # for i in raw: raw_temp.append(i.responses)
-                # return raw_temp
+
+                raw = Response.objects(parent_survey = self.sid)
+                raw_temp=[]           
                 for i in raw:
-                    raw_temp.append(i.responses)
-                return raw_temp
-                # raw= raw_temp
-                js= d(raw)
-                # return self.get_multi_data(flag)
-                js = js+ self.get_multi_data(flag)
+                    temp_j=[]
+                    temp_j.append(i.responses)
+                    temp_j.append(i.metadata)
+                    raw_temp.append(temp_j)
+                # return raw_temp
+                js = raw_temp + self.get_multi_data(flag)
                 return js
             else:
 
-                # raw= db.response.find({"parent_survey":ObjectId(self.sid)})
                 raw=Response.objects(parent_survey=self.sid)
                 js= d(raw)
                 return js
@@ -630,30 +637,32 @@ class IrapiData(object):
 
     def get_uuid_labels(self):
         # raw= db.survey.find({"_id":ObjectId(self.sid)})
-        raw=SurveyUnit.objects(referenced = self.sid)
-        m= int(self.start)-1
-        n=int(self.end)
-        # return d(raw)[0]['structure']['fields'][a:b]
+        raw=Survey.objects(id = self.sid)
 
-        if "fields" in d(raw)[0]['structure']:
-            # raw= db.survey.find({"_id":ObjectId(self.sid)
-            a= d(db.survey.find({"_id":ObjectId(self.sid)}))[0]
+        m = int(self.start)-1
+        n = int(self.end)
+
+
+        if "fields" in d(raw[0].structure):
+            a= raw[0]
             if m==-1 and n==0:
-                return a['structure']['fields']
-            else: return a['structure']['fields'][m:n]
-            a= db.survey.find({"_id":ObjectId(self.sid)})
-            return d(a)[0]['structure']['fields'][m:n]
+                return a.structure['fields']
 
-        return d(db.survey.find({"_id":ObjectId(self.sid)}))
+            else:
+                return a.structure['fields'][m:n]
+
+        return d(raw[0].structure['fields']) # fallback
+    
     def survey_strct(self):
+        try:
+            raw=Survey.objects(id = HashId.decode(self.sid))
+        except:
+            raw=Survey.objects(id = self.sid)
 
-        # raw= db.survey.find({"_id":ObjectId(self.sid)})
-        raw=SurveyUnit.objects(referenced = self.sid)
-        # raw= db.survey.find({"$and":[{"_id":ObjectId(self.sid)},{"structure.fields.field_options.options.label":"Room Service"}]})
-        # return d(raw)
-        js=d(raw)[0]['structure']['fields']
-        # js= d(raw)
+        js=raw[0]['structure']['fields']
+ 
         return js
+
     def ret(self):
         try:
             # raw= db.survey.find({"_id":ObjectId(self.sid)})
@@ -746,8 +755,14 @@ class DataSort(object):
         #Extract the particular cid from the survey structure
         # raw_label=db.survey.find() #returns empty
         # raw_label=db.survey.find({"_id":ObjectId(self.sid)})
-        raw_label=SurveyUnit.objects(referenced = self.sid)
-        aList= d(raw_label)[0]['structure']['fields'] #A backup liseturn aList
+        try:
+            raw_label=Survey.objects(id = HashId.decode(self.sid))
+        except:
+            raw_label=Survey.objects(id = self.sid)
+        # return d(raw_label)
+
+        aList= raw_label[0].structure['fields'] #A backup liseturn aList
+        # return aList
         # aList= d(raw_label)
         # return aList
         for i in aList:
