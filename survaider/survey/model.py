@@ -547,6 +547,7 @@ class IrapiData(object):
 
     def flag(self):
         dat = SurveyUnit.objects(referenced = self.sid)
+        return d(dat)
         js= [_.repr for _ in dat if not _.hidden]
         if len(js)!=0:
             children=[]
