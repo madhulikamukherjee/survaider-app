@@ -547,7 +547,7 @@ class IrapiData(object):
 
     def flag(self):
         dat = SurveyUnit.objects(referenced = self.sid)
-        return d(dat)
+        # return d(dat)
         js= [_.repr for _ in dat if not _.hidden]
         if len(js)!=0:
             children=[]
@@ -574,19 +574,13 @@ class IrapiData(object):
         return js
 
     def get_child_data(self,survey_id):
-        # raw= db.survey.find({"_id":ObjectId(self.sid)})
+
         raw=SurveyUnit.objects(id = survey_id)
-        # raw_temp = []
-        # for i in raw:
-        #     raw_temp.append(i)
-        
         return raw
 
     def get_data(self):
         dat = Survey.objects(id = self.sid)
-        # return d(dat)
         flag= self.flag()
-        # return flag
 
         if flag==False:
             raw= Response.objects(parent_survey=self.sid)
@@ -619,10 +613,8 @@ class IrapiData(object):
                 return js
 
     def get_parent(self):
-        # raw= db.survey.find({"_id":ObjectId(self.sid)})
 
         raw = Survey.objects(id = self.sid)
-
         js = [_.repr_sm for _ in raw if not _.hidden]
         # js = d(raw)[0]
 
@@ -630,19 +622,17 @@ class IrapiData(object):
         #     return js['referenced']['$oid'] #it has a parent, id of which, is this.
         # else:
         #     return False # It is a parent itself
-        return js
+        # return js
         if 'rootid' in js[0]:
-            return js[0]['rootid'] #it has a parent, id of which, is this.
+            return js[0]['rootid']
         else:
-            return False # It is a parent itself
+            return False
 
     def get_uuid_labels(self):
-        # raw= db.survey.find({"_id":ObjectId(self.sid)})
         raw=Survey.objects(id = self.sid)
 
         m = int(self.start)-1
         n = int(self.end)
-
 
         if "fields" in d(raw[0].structure):
             a= raw[0]
@@ -661,12 +651,12 @@ class IrapiData(object):
             raw=Survey.objects(id = self.sid)
 
         js=raw[0]['structure']['fields']
+        # js=raw[0]
  
         return js
 
     def ret(self):
         try:
-            # raw= db.survey.find({"_id":ObjectId(self.sid)})
             raw=SurveyUnit.objects(referenced = self.sid)
             return d(raw)
         except:return "Errors"

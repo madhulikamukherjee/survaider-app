@@ -3,7 +3,6 @@
   //Constructor
   function app(){
     this.features = [];
-    //this.questions = [];
     this.units = [];
     this.ratingPoints = [];
     this.surveyQuestions = [];
@@ -29,19 +28,19 @@
     */
 
     self.features = [];
-    self.setFeaturesData(data['parent_survey']['responses'][0]['options_code']);
-    self.setFeaturesScore(data['parent_survey']['responses'][0]['avg_rating']);
-    self.setRatingData(data['parent_survey']['responses'][1]['timed_agg']);
+    self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
+    self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
+    self.setRatingData(data['parent_survey']['responses'][0]['timed_agg']);
     self.setSentimentsObjectData(data['parent_survey']['sentiment']);
-    self.setTotalRespondents(data['parent_survey']['responses'][0]['total_resp']);
+    self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
     self.setCompanyName(data['parent_survey']['meta']['company']);
     self.setUnitName(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
-    self.setUnifiedRating(data['parent_survey']['responses'][1]['avg_rating']);
+    self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
 
-    self.TIMEDAGGR = data['parent_survey']['responses'][1]['timed_agg'];
+    self.TIMEDAGGR = data['parent_survey']['responses'][0]['timed_agg'];
     self.TIMEDAGGR = Object.keys(self.TIMEDAGGR);
 
     var l = self.TIMEDAGGR[0],
@@ -66,7 +65,7 @@
     if (data['parent_survey']['meta']['unit_name'] == "Parent Survey"){
       data.units.forEach(function(u, idx){
         // var tempUnit = new unit(idx+1, u['meta'].unit_name, u['responses'][1].avg_rating);
-        var tempUnit = new unit(u['meta'].id, u['meta'].unit_name, u['responses'][1].avg_rating);
+        var tempUnit = new unit(u['meta'].id, u['meta'].unit_name, u['responses'][0].avg_rating);
         tempUnit.setFeaturesData(u['responses'][0].avg_rating);
 
         self.units.push(tempUnit);
