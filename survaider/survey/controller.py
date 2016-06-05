@@ -1001,8 +1001,13 @@ class DashboardAPIController(Resource):
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
-            jupiter_data = Dash().get(HashId.encode(parent_survey))
+            try:
+                jupiter_data = Dash().get(HashId.encode(parent_survey))
+            except:
+                jupiter_data = Dash().get(parent_survey)
+
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
+ 
 
         # return aspect_data
         try:
@@ -1248,6 +1253,7 @@ class DashboardAPIController(Resource):
         flag= l.flag()
         # return flag
         # return parent_survey
+
         if flag ==False:
             r= {}
             r['parent_survey']= self.logic(survey_id, parent_survey, provider, aggregate)
@@ -1262,13 +1268,13 @@ class DashboardAPIController(Resource):
                 pwc=[]
                 npwc={}
                 for i in flag:
+                    # return HashId.decode(i)
                     units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
                     wc= WordCloud(HashId.decode(i),provider).get()
 
                     pwc.append(wc)
                 # Crude Code Alert: needs to be automated and refined!
 
-                # import operator
                 wc= self.com(pwc)
                 # return wc
                 # units.append(self.logic(survey_id,parent_survey,"false"))
