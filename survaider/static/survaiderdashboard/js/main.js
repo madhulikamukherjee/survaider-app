@@ -854,6 +854,7 @@
     $http.get(uri).success(function(data){
 
       application.init(data);
+      $scope.features = application.features;
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;
       $scope.totalRespondents = application.totalRespondents;

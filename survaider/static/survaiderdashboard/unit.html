@@ -104,7 +104,7 @@
       <div id="section-1">
 
         <!-- Features circles -->
-        <div class="sv-unit-features">
+        <div class="sv-unit-features" ng-show="activeTab == overallTabLabel">
 
           <ul>
 
@@ -114,10 +114,10 @@
               *** label
             -->
 
-            <li class="sv-unit-feature-block" ng-repeat="feature in features track by $index">
+            <li class="sv-unit-feature-block" ng-show="activeTab == overallTabLabel" ng-repeat="feature in features track by $index">
 
               <div class="unit-feature-score" style="background-color: {{colors[$index%colors.length]}}">
-                <h1 ng-bind="feature.rating"></h1>
+                <h1 ng-bind="feature.score"></h1>
               </div>
 
               <div class="unit-feature-label">
@@ -302,11 +302,7 @@
 
                 </div>
 
-
-
-
                 <!-- Template:: LONG-TEXT -->
-
 
                 <div class="long-text-graph" ng-switch-when="long_text">
                     <button id="group-rating-graph-switch" ng-click="isFirstKeywordChartVisible = !isFirstKeywordChartVisible">Switch</button>
@@ -352,11 +348,7 @@
 
                 </div>
 
-
-
-
                 <!-- Template:: MULTIPLE-CHOICE -->
-
 
                 <div class="multiple-choice-graph" ng-switch-when="multiple_choice">
 
@@ -400,7 +392,6 @@
 
                 </div>
 
-
                 <!-- Template:: RATING-CHOICE -->
 
                 <div ng-switch-when="rating" ng-init="color = '#B8E986'">
@@ -422,9 +413,6 @@
                   </div>
 
                 </div>
-
-
-
 
                 <!-- Template:: GROUP-RATINGs ##BAR CHART## -->
 
@@ -504,7 +492,6 @@
                     </div>
                   </div>
                 </div>
-
 
                 <!-- Template:: RANKING QUESTION -->
 
