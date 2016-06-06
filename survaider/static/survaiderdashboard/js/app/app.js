@@ -13,6 +13,7 @@
     this.companyName = [];
     this.unitName = [];
     this.unitId = '';
+
     this.unifiedRating = [];
     this.sentimentsObject = [];
   }
@@ -35,6 +36,7 @@
     self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
     self.setCompanyName(data['parent_survey']['meta']['company']);
     self.setUnitName(data['parent_survey']['meta']['unit_name']);
+    // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
     // self.unitName = data['parent_survey']['meta'].unit_name;
@@ -65,8 +67,9 @@
     if (data['parent_survey']['meta']['unit_name'] == "Parent Survey"){
       data.units.forEach(function(u, idx){
         // var tempUnit = new unit(idx+1, u['meta'].unit_name, u['responses'][1].avg_rating);
-        var tempUnit = new unit(u['meta'].id, u['meta'].unit_name, u['responses'][0].avg_rating);
-        tempUnit.setFeaturesData(u['responses'][0].avg_rating);
+        var tempUnit = new unit(u['meta'].id, u['meta'].unit_name,u['responses'][0].avg_rating);
+        tempUnit.setFeaturesData(u['responses'][1].avg_rating);
+        tempUnit.setCityName(u['meta'].unit_name);
 
         self.units.push(tempUnit);
       });
@@ -223,6 +226,40 @@
     var self = this;
     self.unitId = unit_id;
   }
+
+  // app.prototype.setUnitCity = function(unitname){
+  //   var self = this;
+  //   self.unitCity = '';
+
+  //   t = unitname;
+  //   words = t.split(' ');
+  //   num_of_words = t.split(' ').length
+  //   num_of_chars = t.split('').length
+  //   words_fit = [];
+  //   words_dont_fit = [];
+
+  //   if (num_of_chars > 18) {
+  //     if (num_of_words > 2) {
+  //       var num_of_chars_fit = 0;
+
+  //       for (var i = 0; i < num_of_words; i++){
+  //         num_of_chars_fit += words[i].split('').length;
+  //         if (num_of_chars_fit < 18){
+  //           words_fit.append(words[i]);
+  //         }
+  //         else {
+  //           words_dont_fit.append(words[i]);
+  //         }
+  //       }
+
+  //       self.unitName = words_fit.join(' ');
+  //       self.unitCity = words_dont_fit.join(' ');
+  //     }
+  //   }
+
+
+  //   // self.unitId = unit_id;
+  // }
 
   app.prototype.setCompanyName = function(company_Name){
     var self = this;

@@ -145,7 +145,8 @@
                 <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
                 <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
                 <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.name}}</text>
-                <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 60}}" fill="#111" font-size="14px" text-anchor="middle">{{unit.overallScore}}</text>
+                <text ng-show="unit.city !== 0" ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 55}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.city}}</text>
+                <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 70}}" fill="#111" font-size="14px" text-anchor="middle">{{unit.overallScore}}</text>
                 </a>
               </g>
             </svg>
