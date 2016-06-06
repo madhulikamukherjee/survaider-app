@@ -525,13 +525,14 @@ class Aspect(db.Document):
     """docstring for Aspect"""
 
     sector=db.StringField()
-    food=db.StringField()
-    service=db.StringField()
-    price=db.StringField()
+    # food=db.StringField()
+    # service=db.StringField()
+    # price=db.StringField()
     ambience=db.StringField()
     value_for_money=db.StringField()
     room_service=db.StringField()
     cleanliness=db.StringField()
+    amenities=db.StringField()
     overall=db.StringField()
     survey_id=db.StringField()
     provider=db.StringField()

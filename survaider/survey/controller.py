@@ -682,33 +682,30 @@ class AspectR(object):
             aspects= Aspect.objects(survey_id=self.sid)
         return d(aspects)
         if len(aspects)==0:
-            response={"food":0,"service":0,"price":0,'value_for_money':0,'room_service':0,'cleanliness':0,"overall":0}
+            response={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0,'amenities':0,"overall":0}
             return response
             #return json.dumps({"status":"failure","message":"No Aspect Found"})
         div= float(len(aspects))
-        food=0
-        service=0
-        price=0
+        ambience=0
         value_for_money=0
         room_service=0
         cleanliness=0
+        amenities=0
         overall=0
         for i in aspects:
-            food+= float(i.food)
-            service+= float(i.service)
-            price+=float(i.price)
+            ambience+= float(i.ambience)
             value_for_money+=float(i.value_for_money)
             room_service+=float(i.room_service)
             cleanliness+= float(i.cleanliness)
+            amenities+= float(i.amenities)
             overall+=float(i.overall)
-        food=round(float(food)/div,2)
-        service=round(float(service)/div,2)
-        price=round(float(price)/div,2)
+        ambience=round(float(ambience)/div,2)
         value_for_money=round(float(i.value_for_money)/div,2)
         room_service=round(float(i.room_service)/div,2)
         cleanliness=round(float(i.cleanliness)/div,2)
+        amenities=round(float(i.amenities)/div,2)
         overall=round(float(overall)/div,2)
-        response={"food":food,"service":service,"price":price,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"overall":overall}
+        response={"ambience":ambience,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"amenities":amenities,"overall":overall}
         return response
         #return (food,service,price,overall)
 class Sentiment(object):
@@ -1734,7 +1731,7 @@ class Dash(Resource):
         return len(reviews)
     def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
         # return "lol"
-        aspects=['food','service','price',"value_for_money",'room_service','cleanliness']
+        aspects=["ambience","value_for_money","room_service","cleanliness","amenities"]
         # providers=["facebook","zomato","tripadvisor","twitter"]
         providers=["tripadvisor"]
         response= {}
@@ -1745,21 +1742,19 @@ class Dash(Resource):
                 # return len(objects)
                 if len(objects)!=0:
                     # temp= {"food":0,"service":0,"price":0}
-                    temp={"food":0,"service":0,"price":0,'value_for_money':0,'room_service':0,'cleanliness':0}
+                    temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
                     for obj in objects:
-                        temp['food']+=float(obj.food)
-                        temp['service']+=float(obj.service)
-                        temp['price']+=float(obj.price)
+                        temp['ambience']+=float(obj.ambience)
                         temp['value_for_money']+=float(obj.value_for_money)
                         temp['room_service']+=float(obj.room_service)
                         temp['cleanliness']+=float(obj.cleanliness)
+                        temp['amenities']+=float(obj.amenities)
                     #Average below
-                    temp['food']=round(temp['food']/len(objects), 2)
-                    temp['service']=round(temp['service']/len(objects), 2)
-                    temp['price']=round(temp['price']/len(objects), 2)
+                    temp['ambience']=round(temp['ambience']/len(objects), 2)
                     temp['value_for_money']=round(temp['value_for_money']/len(objects), 2)
                     temp['room_service']=round(temp['room_service']/len(objects), 2)
                     temp['cleanliness']=round(temp['cleanliness']//len(objects), 2)
+                    temp['amenities']=round(temp['amenities']//len(objects), 2)
                     # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                     response[j]=temp
                 else:
@@ -1776,7 +1771,7 @@ class Dash(Resource):
     def data_form(self,survey_id,avg_aspect):
         # Convert Data to fit in unified rating
         providers=["tripadvisor"]
-        aspects=['food','service','price',"value_for_money",'room_service','cleanliness']
+        aspects=['ambience',"value_for_money",'room_service','cleanliness','amenities']
         ASPECT=[]
         NUMBER_OF_REVIEWS=[]
         for i in providers:
