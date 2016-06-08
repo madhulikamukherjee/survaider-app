@@ -142,34 +142,43 @@
                             <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
                           </div>
                           <div ng-hide="isFirstChannelVisible">
-                            <!-- <div style="width: 33.333%; float: left">
-                                <div class="unit-question-body"> -->
-                                  <div class="long-text-keywords">
-                                    <h3>Positive Keywords:</h3>
-                                    <ul>
-                                      <li ng-repeat="keyword in sentiment.positiveKeyWords">
-                                        <span ng-bind="keyword"></span>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                  <div class="long-text-keywords">
-                                    <h3>Negative Keywords:</h3>
-                                    <ul>
-                                      <li ng-repeat="keyword in sentiment.negativeKeywords">
-                                        <span ng-bind="keyword"></span>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                  <div class="long-text-keywords">
-                                    <h3>Neutral Keywords:</h3>
-                                    <ul>
-                                      <li ng-repeat="keyword in sentiment.neutralKeywords">
-                                        <span ng-bind="keyword"></span>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                <!-- </div>
-                            </div> -->
+                              <!-- <div style="width: 33.333%; float: left">
+                                  <div class="unit-question-body"> -->
+                                    <!-- <div class="long-text-keywords">
+                                      <h3>Positive Keywords:</h3>
+                                      <ul>
+                                        <li ng-repeat="keyword in sentiment.positiveKeyWords">
+                                          <span ng-bind="keyword"></span>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                    <div class="long-text-keywords">
+                                      <h3>Negative Keywords:</h3>
+                                      <ul>
+                                        <li ng-repeat="keyword in sentiment.negativeKeywords">
+                                          <span ng-bind="keyword"></span>
+                                        </li>
+                                      </ul>
+                                    </div>
+                                    <div class="long-text-keywords">
+                                      <h3>Neutral Keywords:</h3>
+                                      <ul>
+                                        <li ng-repeat="keyword in sentiment.neutralKeywords">
+                                          <span ng-bind="keyword"></span>
+                                        </li>
+                                      </ul>
+                                    </div> -->
+
+                                    <div class="long-text-keywords">
+                                      <h3>Keywords:</h3>
+                                        <ul>
+                                          <li ng-repeat="key in sentiment.KeyWords">
+                                            <span ng-bind="key"></span>
+                                          </li>
+                                        </ul>
+                                    </div> 
+                                  <!-- </div>
+                              </div> -->
                             <div class="unit-question-graph">
                                   <canvas id="bar" class="chart chart-bar"
                                     chart-data="sentiment.data" chart-labels="sentiment.options" chart-series="sentiment.series" chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
@@ -181,7 +190,7 @@
                                 <div class="st-words-list-wrapper">
                                   <ul style="height: 300px; overflow: scroll;">
                                     <li ng-repeat="review in sentiment.reviews"
-                                    ng-style="review[1] === 'negative' && {'background-color': '#d7aa9a'}">
+                                    ng-style="review[1] === 'Negative' && {'background-color': '#d7aa9a'}">
                                       <h3 ng-bind="review[0]"></h3>
                                     </li>
                                   </ul>

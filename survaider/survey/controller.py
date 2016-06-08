@@ -708,53 +708,142 @@ class AspectR(object):
         response={"ambience":ambience,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"amenities":amenities,"overall":overall}
         return response
         #return (food,service,price,overall)
-class Sentiment(object):
-    def __init__(self,survey_id,provider="all"):
-        self.sid=survey_id
+class Sentiment_OverallPolarity(object):
+    def __init__(self,survey_id, from_child, provider="all", children_list=[]):
+        self.sid=HashId.encode(survey_id)
         self.p= provider
+        self.from_child = from_child
+        self.children_list = children_list
     def get(self):
-        providers=["zomato","tripadvisor"]
-        sents=["positive","negative","neutral"]
-        response= {}
-        if self.p=="all":
-            for i in providers:
-                response[i]={}
+        providers=["tripadvisor","zomato"]
+        sents=["Positive","Negative","Neutral"]
+        overall = {}
+        reviews = {}
+        if self.from_child:
+            # Coming directly from child. Calculate overall sentiments as well as reviews.
+            if self.p=="all":
+                for i in providers:
+                    overall[i] = {}
+                    reviews[i] = {}
+                    for j in sents:
+                        result= Reviews.objects(survey_id = self.sid, provider=i, sentiment= j)
+                        for obj in result:
+                            reviews[i][obj.review] = obj.sentiment
+                        overall[i][j]=len(result)
+            else:
+                overall[self.p]={}
                 for j in sents:
-                    result= Reviews.objects(survey_id= self.sid,provider=i,sentiment= j)
+                        result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
+                        if isparent:
+                            for obj in result:
+                                reviews[self.p][obj.review] = obj.sentiment
+                        overall[self.p][j]=len(result)
 
-                    response[i][j]=len(result)
-        else:
-            response[self.p]={}
-            for j in sents:
-                    result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
-                    response[self.p][j]=len(result)
-        return response
+            return [overall, reviews]
+        
+        if not self.from_child:
+
+            # this call is coming from parent dashboard. Survey ID could be parent or derivative child.
+            # if its a parent, then children list is provided. If not parent, then children list is empty.
+
+            if len(self.children_list) !=0 :
+                # then its obviously parent. Dont calculate reviews. Just overall sentiments of parent, for all children combined.
+                if self.p=="all":
+                    for i in providers:
+                        overall[i] = {}
+                        for j in sents:
+                            result = []
+                            for child in self.children_list:
+                                result += Reviews.objects(survey_id = child, provider=i, sentiment= j)
+                            overall[i][j]=len(result)
+                else:
+                    overall[self.p]={}
+                    for j in sents:
+                        for child in self.children_list:
+                            result += Reviews.objects(survey_id= child, provider=self.p, sentiment= j)
+                        overall[self.p][j]=len(result)
+                return overall
+            
+            if len(self.children_list) == 0:
+                # do nothing
+                return []
+
+# class Sentiment_Reviews(object):
+#     def __init__(self,survey_id,provider="all"):
+#         self.sid=HashId.encode(survey_id)
+#         self.p= provider
+#     def get(self):
+#         providers=["zomato","tripadvisor"]
+#         sents=["Positive","Negative","Neutral"]
+#         response= {}
+#         if self.p=="all":
+#             for i in providers:
+#                 response[i]={}
+#                 for j in sents:
+#                     result= Reviews.objects(survey_id = self.sid, provider=i, sentiment= j)
+#                     response[i][j]=len(result)
+#         else:
+#             response[self.p]={}
+#             for j in sents:
+#                     result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
+#                     response[self.p][j]=len(result)
+#         return response
+
 
 class WordCloud(object):
     """docstring for WordCloud"""
-    def __init__(self,survey_id,provider):
+    def __init__(self, survey_id, provider, from_child, children_list):
+
         self.sid= HashId.encode(survey_id)
         self.p=provider
+        self.from_child = from_child
+        self.children_list = children_list
 
     def get(self):
         new_wc={}
-        provider="all"
-        if self.p!="all":
-            provider=self.p
-            wc= WordCloudD.objects(survey_id=self.sid,provider=self.p)
-            new_wc[provider]={}
-            for i in wc:
-                new_wc[provider].update(i.wc)
-
-        else:
-            providers= ["tripadvisor","zomato"]
-            for x in providers:
-                wc= WordCloudD.objects(survey_id=self.sid,provider=x)
-            # wc= WordCloudD.objects(survey_id=self.sid)
-                new_wc[x]={}
+        if self.from_child:
+            # API call coming directly from child. Calculate wordcloud.
+            if self.p!="all":
+                provider=self.p
+                wc= WordCloudD.objects(survey_id=self.sid,provider=self.p)
+                new_wc[provider]={}
                 for i in wc:
-                    new_wc[x].update(i.wc)
-        return new_wc
+                    new_wc[provider].update(i.wc)
+            else:
+                providers= ["tripadvisor","zomato"]
+                for x in providers:
+                    wc= WordCloudD.objects(survey_id=self.sid,provider=x)
+                    new_wc[x]={}
+                    for i in wc:
+                        new_wc[x].update(i.wc)
+            return new_wc
+
+        if not self.from_child:
+            #API call could be coming from parent or child. If parent, then children list is provided, otherwise its empty.
+            if len(self.children_list) != 0:
+                #Then its obviously parent. Calculate wordcloud for all children combined.
+                if self.p!="all":
+                    provider=self.p
+                    wc = []
+                    for child in self.children_list:
+                        wc += WordCloudD.objects(survey_id=child,provider=self.p)
+                    new_wc[provider]={}
+                    for i in wc:
+                        new_wc[provider].update(i.wc)
+                else:
+                    providers= ["tripadvisor","zomato"]
+                    for x in providers:
+                        wc = []
+                        for child in self.children_list:
+                            wc += WordCloudD.objects(survey_id=child,provider=x)
+                        new_wc[x]={}
+                        for i in wc:
+                            new_wc[x].update(i.wc)
+            return new_wc
+            
+            if len(self.children_list) == 0:
+                #do nothing
+                return []
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
@@ -973,7 +1062,7 @@ class DashboardAPIController(Resource):
     #     # res.append ({})
     #     return res
     
-    def logic(self,survey_id,parent_survey,provider,aggregate="false"):
+    def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false",children_list=[]):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
@@ -981,8 +1070,9 @@ class DashboardAPIController(Resource):
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)#child survey info
 
-        wordcloud= d(WordCloud(survey_id,provider).get())
-        sentiment= Sentiment(survey_id,provider).get()
+        wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get())
+        # return wordcloud
+
         company_name=Survey.objects(id = survey_id).first().metadata['name']
         # return d(company_name)
         response_data= lol.get_data()
@@ -994,6 +1084,7 @@ class DashboardAPIController(Resource):
             survey_strct= d(lol.survey_strct())
             jupiter_data = Dash().get(HashId.encode(survey_id))
             aspect_data = jupiter_data["owner_aspects"]
+
     
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
@@ -1004,9 +1095,30 @@ class DashboardAPIController(Resource):
                 jupiter_data = Dash().get(parent_survey)
 
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
- 
 
-        # return aspect_data
+        returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get()
+        # return returned_sentiment
+
+        if from_child:
+            overall_sentiments = returned_sentiment[0]
+            review_sentiments = returned_sentiment[1]
+        else:
+            overall_sentiments = returned_sentiment
+
+        sentiment = {}
+
+        for channel in overall_sentiments:
+            sentiment[channel] = {}
+            sentiment[channel]["sentiment_segg"] = wordcloud[channel]
+
+            for sent in overall_sentiments[channel]:
+                sentiment[channel][sent] = overall_sentiments[channel][sent]
+
+            if from_child:
+                sentiment[channel]["options_count"] = review_sentiments[channel]
+
+        # return sentiment
+
         try:
             survey_name= csi[0].unit_name
             created_by= d(csi[0].created_by[0].id)["$oid"]
@@ -1189,8 +1301,9 @@ class DashboardAPIController(Resource):
 
         result= {}
         result["responses"]=res
-        result["wordcloud"]=wordcloud
+        
         result["sentiment"]=sentiment
+
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
         return result
         
@@ -1242,47 +1355,48 @@ class DashboardAPIController(Resource):
         #Check for parent too.
         flag0= l.get_parent()
         # return flag0
+
+        
+
         if flag0!=False:
             """There is a parent"""
             parent_survey= flag0
-
 
         flag= l.flag()
         # return flag
         # return parent_survey
 
+        from_child = 0
+
         if flag ==False:
             r= {}
-            r['parent_survey']= self.logic(survey_id, parent_survey, provider, aggregate)
+            from_child = 1
+            r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate)
             return r
         else:
             if aggregate=="true":
                 # return HashId.encode(survey_id)
+                children_list = flag
                 response={}
-                response['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
+                response['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider,aggregate,children_list)
                 # return response
                 units=[]
                 pwc=[]
                 npwc={}
                 for i in flag:
-                    # return HashId.decode(i)
-                    units.append(self.logic(HashId.decode(i),parent_survey,provider,aggregate))
-                    wc= WordCloud(HashId.decode(i),provider).get()
+                    units.append(self.logic(HashId.decode(i),parent_survey, from_child, provider,aggregate))
+                    # wc= WordCloud(HashId.decode(i),provider, from_child, children_list).get()
+                    # pwc.append(wc)
 
-                    pwc.append(wc)
-                # Crude Code Alert: needs to be automated and refined!
+                # wc= self.com(pwc)
 
-                wc= self.com(pwc)
-                # return wc
-                # units.append(self.logic(survey_id,parent_survey,"false"))
-                response['wordcloud']=wc
+                # response['wordcloud']=wc
                 response['units']=units
 
-                # return "true"
                 return response
             else:
                 r= {}
-                r['parent_survey']= self.logic(survey_id,parent_survey,provider,aggregate)
+                r['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider, aggregate)
                 return r
 
 
@@ -1740,7 +1854,8 @@ class Dash(Resource):
             for j in providers:
                 objects= Aspect.objects(survey_id=survey_id,provider=j)
                 # return len(objects)
-                if len(objects)!=0:
+                length_objects = len(objects)
+                if length_objects!=0:
                     # temp= {"food":0,"service":0,"price":0}
                     temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
                     for obj in objects:
@@ -1750,11 +1865,11 @@ class Dash(Resource):
                         temp['cleanliness']+=float(obj.cleanliness)
                         temp['amenities']+=float(obj.amenities)
                     #Average below
-                    temp['ambience']=round(temp['ambience']/len(objects), 2)
-                    temp['value_for_money']=round(temp['value_for_money']/len(objects), 2)
-                    temp['room_service']=round(temp['room_service']/len(objects), 2)
-                    temp['cleanliness']=round(temp['cleanliness']//len(objects), 2)
-                    temp['amenities']=round(temp['amenities']//len(objects), 2)
+                    temp['ambience']=round(temp['ambience']/length_objects, 2)
+                    temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
+                    temp['room_service']=round(temp['room_service']/length_objects, 2)
+                    temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
+                    temp['amenities']=round(temp['amenities']/length_objects, 2)
                     # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                     response[j]=temp
                 else:
@@ -1781,7 +1896,7 @@ class Dash(Resource):
             # temp1=[avg_aspect[i]['food'],avg_aspect[i]['price'],avg_aspect[i]['service']]
             ASPECT.append(temp1)
             temp2=(self.get_reviews_count(survey_id,i))
-            print (survey_id, temp2)
+            # print (survey_id, temp2)
             NUMBER_OF_REVIEWS.append(temp2)
         return [ASPECT,NUMBER_OF_REVIEWS]
 
@@ -1859,7 +1974,6 @@ class Dash(Resource):
                 else:
                     overall[aspect] += channel_data[aspect]
         return overall
-
 
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)

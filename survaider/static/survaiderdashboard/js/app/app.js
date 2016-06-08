@@ -108,9 +108,10 @@
           countData = [];
           questionOptions = [];
           reviews = [];
-          positiveKeyWords = [];
-          negativeKeywords = [];
-          neutralKeywords = [];
+          // positiveKeyWords = [];
+          // negativeKeywords = [];
+          // neutralKeywords = [];
+          KeyWords = [];
           sumOfData = 0;
           for(var prop in sentiments[vendor]){
 
@@ -118,17 +119,17 @@
 
                   // countData.push([sentiments[vendor][prop]]);
                   
-                  if (prop == 'negative') {
+                  if (prop == 'Negative') {
                     questionOptions.push("Negative :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
                     sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
-                  else if (prop == 'positive') {
+                  else if (prop == 'Positive') {
                     questionOptions.push("Positive :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
                     sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
-                  else if (prop == 'neutral') {
+                  else if (prop == 'Neutral') {
                     questionOptions.push("Neutral :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
                     sumOfData += parseInt([sentiments[vendor][prop]]);
@@ -142,20 +143,21 @@
                   }
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
-                        if (sentiments[vendor]['sentiment_segg'].hasOwnProperty(key)) {
+                        KeyWords.push(key);
+                        // if (sentiments[vendor]['sentiment_segg'].hasOwnProperty(key)) {
 
-                            if (sentiments[vendor]['sentiment_segg'][key] == 'negative') {
-                              negativeKeywords.push(key);
-                            }
+                        //     if (sentiments[vendor]['sentiment_segg'][key] == 'negative') {
+                        //       negativeKeywords.push(key);
+                        //     }
 
-                            else if (sentiments[vendor]['sentiment_segg'][key] == 'positive') {
-                              positiveKeyWords.push(key);
-                            }
+                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'positive') {
+                        //       positiveKeyWords.push(key);
+                        //     }
 
-                            else if (sentiments[vendor]['sentiment_segg'][key] == 'neutral') {
-                              neutralKeywords.push(key);
-                            }
-                        }
+                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'neutral') {
+                        //       neutralKeywords.push(key);
+                        //     }
+                        // }
                       }
                   }
 
@@ -167,9 +169,7 @@
               data: countData,
               sumOfData : sumOfData,
               reviews : reviews,
-              positiveKeyWords: positiveKeyWords,
-              negativeKeywords: negativeKeywords,
-              neutralKeywords: neutralKeywords,
+              KeyWords: KeyWords,
               options: questionOptions,
               series: ['Negative', 'Neutral', 'Positive'],
               graphOptions: {

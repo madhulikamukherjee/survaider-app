@@ -138,7 +138,7 @@
                   <title>{{features[$index].label}} - {{feature.score}}</title>
                   </circle>
                 </g>
-                <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}">
+                <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}" onclick="window.location.reload(true);">
               <!-- <a xlink:href="{{'#/unit/' + unit.id}}"> -->
               
               <!-- <a xlink:href="{{'http://localhost:5000/survey/s:' + unit.id + '/analysis'}}"> -->
@@ -167,30 +167,39 @@
                     <div ng-hide="isFirstChannelVisible">
                       <!-- <div style="width: 33.333%; float: left">
                           <div class="unit-question-body"> -->
+                                <!-- <div class="long-text-keywords">
+                                  <h3>Positive Keywords:</h3>
+                                  <ul>
+                                    <li ng-repeat="keyword in sentiment.positiveKeyWords">
+                                      <span ng-bind="keyword"></span>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <div class="long-text-keywords">
+                                  <h3>Negative Keywords:</h3>
+                                  <ul>
+                                    <li ng-repeat="keyword in sentiment.negativeKeywords">
+                                      <span ng-bind="keyword"></span>
+                                    </li>
+                                  </ul>
+                                </div>
+                                <div class="long-text-keywords">
+                                  <h3>Neutral Keywords:</h3>
+                                  <ul>
+                                    <li ng-repeat="keyword in sentiment.neutralKeywords">
+                                      <span ng-bind="keyword"></span>
+                                    </li>
+                                  </ul>
+                                </div> -->
+
                             <div class="long-text-keywords">
-                              <h3>Positive Keywords:</h3>
-                              <ul>
-                                <li ng-repeat="keyword in sentiment.positiveKeyWords">
-                                  <span ng-bind="keyword"></span>
-                                </li>
-                              </ul>
-                            </div>
-                            <div class="long-text-keywords">
-                              <h3>Negative Keywords:</h3>
-                              <ul>
-                                <li ng-repeat="keyword in sentiment.negativeKeywords">
-                                  <span ng-bind="keyword"></span>
-                                </li>
-                              </ul>
-                            </div>
-                            <div class="long-text-keywords">
-                              <h3>Neutral Keywords:</h3>
-                              <ul>
-                                <li ng-repeat="keyword in sentiment.neutralKeywords">
-                                  <span ng-bind="keyword"></span>
-                                </li>
-                              </ul>
-                            </div>
+                              <h3>Keywords:</h3>
+                                <ul>
+                                  <li ng-repeat="key in sentiment.KeyWords">
+                                    <span ng-bind="key"></span>
+                                  </li>
+                                </ul>
+                            </div> 
                           <!-- </div>
                       </div> -->
                       <div class="unit-question-graph">
@@ -203,10 +212,13 @@
                       <div class="short-text-graph" style="width: 1000px;">
                           <div class="st-words-list-wrapper">
                             <ul style="height: 300px; overflow: scroll;">
-                              <li ng-repeat="review in sentiment.reviews"
+                              <li>
+                                <h3>Check for individual negative reviews in unit dashboards!</h3>
+                              </li>
+                              <!-- <li ng-repeat="review in sentiment.reviews"
                               ng-style="review[1] === 'negative' && {'background-color': '#d7aa9a'}">
                                 <h3 ng-bind="review[0]"></h3>
-                              </li>
+                              </li> -->
                             </ul>
                           </div>
                         </div> 
