@@ -1979,8 +1979,11 @@ class Dash(Resource):
         channel_contribution = {}
 
         for p in providers:
-            channel_contribution[p] = (num_reviews_channel[survey_id][p]*100/total_reviews_survey)*avg_of_aspects[p]/5
-
+            try:
+                channel_contribution[p] = (num_reviews_channel[survey_id][p]*100/total_reviews_survey)*avg_of_aspects[p]/5
+            except ZeroDivisionError:
+                channel_distribution[p] = 0
+                
         uni = round(sum(channel_contribution.values()), 2)
         return uni
     
