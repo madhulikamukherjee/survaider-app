@@ -1781,6 +1781,7 @@ class Dash(Resource):
             # temp1=[avg_aspect[i]['food'],avg_aspect[i]['price'],avg_aspect[i]['service']]
             ASPECT.append(temp1)
             temp2=(self.get_reviews_count(survey_id,i))
+            print (survey_id, temp2)
             NUMBER_OF_REVIEWS.append(temp2)
         return [ASPECT,NUMBER_OF_REVIEWS]
 
