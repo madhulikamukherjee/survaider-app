@@ -1083,6 +1083,7 @@ class DashboardAPIController(Resource):
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
             jupiter_data = Dash().get(HashId.encode(survey_id))
+            # return jupiter_data
             aspect_data = jupiter_data["owner_aspects"]
 
     
@@ -1093,8 +1094,9 @@ class DashboardAPIController(Resource):
                 jupiter_data = Dash().get(HashId.encode(parent_survey))
             except:
                 jupiter_data = Dash().get(parent_survey)
-
+            # return jupiter_data
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
+
 
         returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get()
         # return returned_sentiment
@@ -1812,51 +1814,74 @@ Had to rewrite again Damn you git pull and merge conflict!
 """
 class Dash(Resource):
     """docstring for Dash -marker"""
-    # NUMBER_OF_REVIEWS = []
-    # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(304) # Number of reviews from Zomato for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(30) # Number of reviews from Facebook for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(14) # Number of reviews from Twitter for this hotel for all its child units combined
-
-    # ASPECTS = [] # [food, price, service]
-    # ASPECTS.append([4.2, 3.8, 3.7]) # Tripadvisor aspects for this hotel for all units combined
-    # ASPECTS.append([4.1, 4.0, 3.8]) # Zomato aspects for this hotel for all units combined
-    # ASPECTS.append([4.5, 4.1, 4.3]) # Facebook aspects for this hotel for all units combined
-    # ASPECTS.append([3.9, 3.6, 4.0]) # Twitter aspects for this hotel for all units combined
-    # NUMBER_OF_REVIEWS = []
-    # NUMBER_OF_REVIEWS.append(252) # Number of reviews from Tripadvisor for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(304) # Number of reviews from Zomato for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(30) # Number of reviews from Facebook for this hotel for all its child units combined
-    # NUMBER_OF_REVIEWS.append(14) # Number of reviews from Twitter for this hotel for all its child units combined
-
-    # ASPECTS = [] # [food, price, service]
-    # ASPECTS.append([4.2, 3.8, 3.7]) # Tripadvisor aspects for this hotel for all units combined
-    # ASPECTS.append([4.1, 4.0, 3.8]) # Zomato aspects for this hotel for all units combined
-    # ASPECTS.append([4.5, 4.1, 4.3]) # Facebook aspects for this hotel for all units combined
-    # ASPECTS.append([3.9, 3.6, 4.0]) # Twitter aspects for this hotel for all units combined
+    
     def get_child(self,survey_id):
-        objects= Relation.objects(parent=survey_id) # ye null kyn hai?
+        objects= Relation.objects(parent=survey_id)
         return objects
     def get_reviews_count(self,survey_id,provider="all"):
+        result = {}
         if provider=="all":
-            reviews= Reviews.objects(survey_id= survey_id)
+            providers = ["tripadvisor", "zomato"]
+            for j in providers:
+                reviews = Reviews.objects(survey_id= survey_id, provider = j)
+                result[j] = len(reviews)
+
         if provider!="all":
             reviews=Reviews.objects(survey_id=survey_id,provider=provider)
-        return len(reviews)
-    def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
-        # return "lol"
+            result[provider] = len(reviews)
+
+        return result
+
+    # def get_avg_aspect(self,survey_id,provider="all",aspect="all"):
+    #     # return "lol"
+    #     aspects=["ambience","value_for_money","room_service","cleanliness","amenities"]
+    #     providers=["facebook","zomato","tripadvisor","twitter"]
+    #     # providers=["tripadvisor"]
+    #     response= {}
+    #     if aspect=="all" and provider=="all":
+    #         for j in providers:
+    #             objects= Aspect.objects(survey_id=survey_id,provider=j)
+    #             length_objects = len(objects)
+    #             if length_objects!=0:
+    #                 # temp= {"food":0,"service":0,"price":0}
+    #                 temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
+    #                 for obj in objects:
+    #                     temp['ambience']+=float(obj.ambience)
+    #                     temp['value_for_money']+=float(obj.value_for_money)
+    #                     temp['room_service']+=float(obj.room_service)
+    #                     temp['cleanliness']+=float(obj.cleanliness)
+    #                     temp['amenities']+=float(obj.amenities)
+    #                 #Average below
+    #                 temp['ambience']=round(temp['ambience']/length_objects, 2)
+    #                 temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
+    #                 temp['room_service']=round(temp['room_service']/length_objects, 2)
+    #                 temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
+    #                 temp['amenities']=round(temp['amenities']/length_objects, 2)
+    #                 # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
+    #                 response[j]=temp
+    #             else:
+
+    #                 for i in providers:
+    #                     temp={}
+    #                     for j in aspects:
+    #                         temp[j]=0
+    #                     response[i]=temp
+
+
+    #     return response
+    #     # Will return {"zomato":{"food":3,""}}
+
+    def get_avg_aspect(self,survey_id,provider="all"):
+
         aspects=["ambience","value_for_money","room_service","cleanliness","amenities"]
-        # providers=["facebook","zomato","tripadvisor","twitter"]
-        providers=["tripadvisor"]
+        providers=["tripadvisor","zomato"]
+        # providers=["tripadvisor"]
         response= {}
-        if aspect=="all" and provider=="all":
-            
+        if provider=="all":
             for j in providers:
-                objects= Aspect.objects(survey_id=survey_id,provider=j)
-                # return len(objects)
+                objects= Aspect.objects(survey_id=survey_id, provider=j)
                 length_objects = len(objects)
                 if length_objects!=0:
-                    # temp= {"food":0,"service":0,"price":0}
                     temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
                     for obj in objects:
                         temp['ambience']+=float(obj.ambience)
@@ -1872,18 +1897,39 @@ class Dash(Resource):
                     temp['amenities']=round(temp['amenities']/length_objects, 2)
                     # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                     response[j]=temp
+                    
+                
                 else:
+                    response[j]={}
 
-                    for i in providers:
-                        temp={}
-                        for j in aspects:
-                            temp[j]=0
-                        response[i]=temp
-
-
+        else :
+            objects = Aspect.objects(survey_id=survey_id,provider=provider)
+            length_objects = len(objects)
+            if length_objects!=0:
+                temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
+                for obj in objects:
+                    temp['ambience']+=float(obj.ambience)
+                    temp['value_for_money']+=float(obj.value_for_money)
+                    temp['room_service']+=float(obj.room_service)
+                    temp['cleanliness']+=float(obj.cleanliness)
+                    temp['amenities']+=float(obj.amenities)
+                #Average below
+                temp['ambience']=round(temp['ambience']/length_objects, 2)
+                temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
+                temp['room_service']=round(temp['room_service']/length_objects, 2)
+                temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
+                temp['amenities']=round(temp['amenities']/length_objects, 2)
+                # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
+                response[provider]=temp
+                
+            else:
+                response[provider] = {}
         return response
+
         # Will return {"zomato":{"food":3,""}}
-    def data_form(self,survey_id,avg_aspect):
+
+
+    def data_form(self,survey_id,raw_data):
         # Convert Data to fit in unified rating
         providers=["tripadvisor"]
         aspects=['ambience',"value_for_money",'room_service','cleanliness','amenities']
@@ -1892,77 +1938,52 @@ class Dash(Resource):
         for i in providers:
             temp1=[]
             for x in aspects:
-                temp1.append(avg_aspect[i][x])
-            # temp1=[avg_aspect[i]['food'],avg_aspect[i]['price'],avg_aspect[i]['service']]
+                temp1.append(raw_data[i][x])
+
             ASPECT.append(temp1)
-            temp2=(self.get_reviews_count(survey_id,i))
-            # print (survey_id, temp2)
+
+            temp2=self.get_reviews_count(survey_id,i)
+ 
             NUMBER_OF_REVIEWS.append(temp2)
+
+
         return [ASPECT,NUMBER_OF_REVIEWS]
 
-    def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, NUMBER_OF_REVIEWS, ASPECTS):
-        avg_of_aspects = []
-        for i in range(0,NUMBER_OF_CHANNELS):
-            avg_of_aspects.append(sum(ASPECTS[i])/float(len(ASPECTS[i])))
+    # def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, num_reviews_children, ASPECTS):
+    #     avg_of_aspects = []
+    #     for i in range(0,NUMBER_OF_CHANNELS):
+    #         avg_of_aspects.append(sum(ASPECTS[i])/float(len(ASPECTS[i])))
 
-        total_reviews = sum(NUMBER_OF_REVIEWS)
-        aspect_contribution = []
+    #     total_reviews = sum(num_reviews_children)
+    #     aspect_contribution = []
 
-        for i in range(0,NUMBER_OF_CHANNELS):
-            aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
+    #     for i in range(0,NUMBER_OF_CHANNELS):
+    #         aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
 
-        uni = round(sum(aspect_contribution), 2)
+    #     uni = round(sum(aspect_contribution), 2)
+    #     return uni
+
+    def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
+        avg_of_aspects = {}
+        # print (ASPECTS)
+        providers = ["tripadvisor", "zomato"]
+        channel_contribution = {}
+
+        for provider in providers:
+            try:
+                avg_of_aspects[provider] = sum(ASPECTS[survey_id][provider].values())/float(len(ASPECTS[survey_id][provider]))
+            except ZeroDivisionError:
+                avg_of_aspects[provider] = 0
+
+        total_reviews_survey = sum(num_reviews_channel[survey_id].values())
+        channel_contribution = {}
+
+        for p in providers:
+            channel_contribution[p] = (num_reviews_channel[survey_id][p]*100/total_reviews_survey)*avg_of_aspects[p]/5
+
+        uni = round(sum(channel_contribution.values()), 2)
         return uni
-    # def unified_avg_aspect(self,parent_survey_id):
-    #     objects= self.get_child(parent_survey_id)
-    #     response=[]
-    #     resp= {}
-    #     avg={}
-    #     owner_aspects = []
-    #     owner_unified = 0
-    #     providers=["tripadvisor"]
-
-    #     for obj in objects:
-    #         survey_id=obj.survey_id
-    #         raw_data=self.get_avg_aspect(obj.survey_id)
-    #         avg[obj.survey_id]=raw_data
-    #         # return raw_data
-    #         pr_data=self.data_form(survey_id,raw_data)
-    #         ASPECTS= pr_data[0]
-    #         NUMBER_OF_REVIEWS= pr_data[1]
-    #         NUMBER_OF_CHANNELS=1
-    #         response.append(self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS))
-
-    #     # Averaging unified scores of units
-    #     for i in response:
-    #         for k in i:
-    #             owner_unified += i[k]
-    #     owner_unified = round(owner_unified/len(response), 2)
-
-    #     # Averaging aspect scores of units
-    #     for provider in providers:
-    #         provider_dict = {provider: []}
-    #         owner_aspects.insert(providers.index(provider), provider_dict)
-    #         for child in avg:
-    #             provider_data = avg[child][provider]
-    #             # adding for all aspects
-    #             for aspect in provider_data:
-    #                 if not any(aspect in d for d in [item for item in owner_aspects if provider in item.keys()][0][provider]):
-    #                     [item for item in owner_aspects if provider in item.keys()][0][provider].append({aspect: provider_data[aspect]})
-    #                 else:
-    #                     current_provider_data = [item for item in owner_aspects if provider in item.keys()][0][provider]
-    #                     current_aspect_data = [f for f in current_provider_data if aspect in f.keys()][0]
-    #                     index_aspect_data = current_provider_data.index(current_aspect_data)
-    #                     current_provider_data[index_aspect_data][aspect] += provider_data[aspect]
-
-    #         # dividing for all aspects with number of units
-    #         calculated_provider_data = [item for item in owner_aspects if provider in item.keys()][0][provider]
-    #         for i in range(len(calculated_provider_data)):
-    #             for key, value in calculated_provider_data[i].items():
-    #                 calculated_provider_data[i][key] =  round(calculated_provider_data[i][key]/len(response), 2)
-
-    #     return {"units_unified":response,"units_aspects":avg, "owner_unified": owner_unified, "owner_aspects": owner_aspects}
-
+    
     def average_for_all_channels(self, all_channel_data):
         overall = {}
 
@@ -1975,29 +1996,107 @@ class Dash(Resource):
                     overall[aspect] += channel_data[aspect]
         return overall
 
+    # def unified_avg_aspect(self,parent_survey_id):
+    #     objects= self.get_child(parent_survey_id)
+    #     response={}
+    #     resp= {}
+    #     avg={}
+    #     owner_aspects = {}
+    #     owner_unified = 0
+    #     providers=["tripadvisor","zomato"]
+    #     num_reviews_children = {}
+
+    #     for obj in objects:
+    #         survey_id=obj.survey_id
+    #         raw_data=self.get_avg_aspect(obj.survey_id)
+    #         avg[obj.survey_id]=raw_data
+    #         pr_data=self.data_form(survey_id,raw_data)
+    #         ASPECTS= pr_data[0]
+    #         NUMBER_OF_REVIEWS= pr_data[1]
+
+            
+    #         num_reviews_children[survey_id] = NUMBER_OF_REVIEWS[0]
+
+    #         NUMBER_OF_CHANNELS=1
+    #         response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
+
+    #     # return num_reviews_children
+
+    #     # Averaging unified scores of units
+    #     if len(response) == 0:
+    #         owner_unified = 0
+    #     else:
+    #         owner_unified = round(sum(response.values())/len(response), 2)
+
+    #     # Averaging aspect scores of units
+    #     for provider in providers:
+    #         owner_aspects[provider] = {}
+    #         for child in avg:
+    #             provider_data = avg[child][provider]
+    #             # adding for all aspects
+    #             # return owner_aspects[provider]
+    #             for aspect in provider_data:
+    #                 if aspect not in owner_aspects[provider]:
+    #                     owner_aspects[provider][aspect] =  provider_data[aspect]
+    #                 else:
+    #                     owner_aspects[provider][aspect] += provider_data[aspect]
+
+    #         # dividing for all aspects with number of units
+    #         calculated_provider_data = owner_aspects[provider]
+    #         for key in calculated_provider_data:
+    #             calculated_provider_data[key] =  round(calculated_provider_data[key]/len(response), 2)
+
+
+    #     # Averaging computed aspects for all channels, for the owner
+
+    #     overall_owner = self.average_for_all_channels(owner_aspects)
+    #     owner_aspects["overall_aspects"] = overall_owner
+
+    #     # Averaging computed aspects for all channels, for all units
+
+    #     for unit in avg:
+    #         overall_unit = self.average_for_all_channels(avg[unit])
+    #         avg[unit]["overall_aspects"] = overall_unit
+
+    #     # Appending unified score for owner, and total channel responses for owner, in the final structure
+    #     owner_aspects["unified"] = owner_unified
+    #     owner_aspects["total_resp"] = sum(num_reviews_children.values())
+
+    #     # Appending unified score for units, and total channel responses for units, in the final structure
+    #     for unit in avg:
+    #         if unit in response:
+    #             avg[unit]["unified"] = response[unit]
+    #         if unit in num_reviews_children:
+    #             avg[unit]["total_resp"] = num_reviews_children[unit]
+
+    #     return {"units_aspects":avg, "owner_aspects": owner_aspects}
+   
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)
+        NUMBER_OF_CHANNELS=2
         response={}
         resp= {}
         avg={}
         owner_aspects = {}
         owner_unified = 0
-        providers=["tripadvisor"]
+        providers=["tripadvisor","zomato"]
+        num_reviews_channel = {}
         num_reviews_children = {}
+        ASPECTS = {}
 
         for obj in objects:
             survey_id=obj.survey_id
-            raw_data=self.get_avg_aspect(obj.survey_id)
+            raw_data=self.get_avg_aspect(obj.survey_id) # all aspects, for this survey, for all channels
             avg[obj.survey_id]=raw_data
-            # return raw_data
-            pr_data=self.data_form(survey_id,raw_data)
-            ASPECTS= pr_data[0]
-            NUMBER_OF_REVIEWS= pr_data[1]
-            num_reviews_children[survey_id] = NUMBER_OF_REVIEWS[0]
-            NUMBER_OF_CHANNELS=1
-            response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
+            review_count_channels = self.get_reviews_count(survey_id)
+            ASPECTS[survey_id] = raw_data
+            for p in review_count_channels:
+                num_reviews_channel[survey_id] = review_count_channels
 
-        # return num_reviews_children
+        for obj in objects:
+            survey_id = obj.survey_id
+            num_reviews_children[survey_id] = sum(num_reviews_channel[survey_id].values())
+            response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,num_reviews_channel,ASPECTS)
 
         # Averaging unified scores of units
         if len(response) == 0:
