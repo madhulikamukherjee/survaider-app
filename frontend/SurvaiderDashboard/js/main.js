@@ -58,7 +58,7 @@
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
       $mdDialog.show({
         controller: DialogController,
-        templateUrl: '/static/SurvaiderDashboard/dialogs/' + modal + '.html',
+        templateUrl: '/static/survaiderdashboard/dialogs/' + modal + '.html',
         parent: angular.element(document.body),
         targetEvent: ev,
         clickOutsideToClose:true,
