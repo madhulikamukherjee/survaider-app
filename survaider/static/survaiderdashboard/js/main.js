@@ -36,14 +36,16 @@
     // Flag to show/hide the edit survey link
     var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search + window.location.hash);
+    $scope.ParentId = uri_dat.s_id;
     if (uri_dat.parent) {
       $scope.isEditSurveyEnabled = true;
+
     }
     else {
       $scope.isEditSurveyEnabled = false;
     }
 
-    $scope.ParentId = uri_dat.s_id;
+    
     $scope.makeANumberArray = function(size){
       var temp = new Array(size);
       for (var i = 0; i < temp.length; i++) {
@@ -185,7 +187,7 @@
       $scope.totalRespondents = application.totalRespondents;
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
-
+      // console.log($scope.features);
       var numberOfFeatures = $scope.features.length;
 
       $scope.theGraph = {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="" ng-app="SurvaiderDashboard">
+<html class="no-js" lang="" ng-app="SurvaiderDashboard" ng-controller="MainController">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -50,7 +50,7 @@
                 </li>
                 
                 <li ng-show="isEditSurveyEnabled">
-                  <a ng-href="http://localhost:5000/survey/s:{{ParentId}}/edit">Edit Survey</a>
+                  <a ng-href="/survey/s:{{ParentId}}/edit">Edit Survey</a>
                 </li>
                 <li>
                   <a ng-click="showModal($event, 'shareSurvey')">Share</a>
