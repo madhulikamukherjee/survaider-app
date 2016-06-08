@@ -1083,8 +1083,6 @@ class DashboardAPIController(Resource):
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
             jupiter_data = Dash().get(HashId.encode(survey_id))
-
-            return jupiter_data
             aspect_data = jupiter_data["owner_aspects"]
 
     
@@ -1095,8 +1093,6 @@ class DashboardAPIController(Resource):
                 jupiter_data = Dash().get(HashId.encode(parent_survey))
             except:
                 jupiter_data = Dash().get(parent_survey)
-
-            return jupiter_data
 
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
 
@@ -1305,7 +1301,7 @@ class DashboardAPIController(Resource):
 
         result= {}
         result["responses"]=res
-        
+
         result["sentiment"]=sentiment
 
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
@@ -1911,7 +1907,7 @@ class Dash(Resource):
 
         total_reviews = sum(NUMBER_OF_REVIEWS)
         aspect_contribution = []
-        return total_reviews
+
         for i in range(0,NUMBER_OF_CHANNELS):
             aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
 
@@ -2001,11 +1997,9 @@ class Dash(Resource):
             NUMBER_OF_CHANNELS=1
             response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
 
-        return response
         # return num_reviews_children
 
         # Averaging unified scores of units
-
         if len(response) == 0:
             owner_unified = 0
         else:
