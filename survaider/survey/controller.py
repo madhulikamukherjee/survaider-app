@@ -1911,7 +1911,7 @@ class Dash(Resource):
 
         total_reviews = sum(NUMBER_OF_REVIEWS)
         aspect_contribution = []
-
+        return total_reviews
         for i in range(0,NUMBER_OF_CHANNELS):
             aspect_contribution.append((NUMBER_OF_REVIEWS[i]*100/total_reviews)*avg_of_aspects[i]/5)
 
