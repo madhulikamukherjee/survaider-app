@@ -122,16 +122,19 @@
                   if (prop == 'Negative') {
                     questionOptions.push("Negative :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    console.log("negative hain: ", [sentiments[vendor][prop]])
                     sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'Positive') {
                     questionOptions.push("Positive :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    console.log("positive hain: ", [sentiments[vendor][prop]])
                     sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'Neutral') {
                     questionOptions.push("Neutral :" + sentiments[vendor][prop]);
                     countData.push([sentiments[vendor][prop]]);
+                    console.log("neutral hain: ", [sentiments[vendor][prop]])
                     sumOfData += parseInt([sentiments[vendor][prop]]);
                   }
                   else if (prop == 'options_count'){
@@ -183,7 +186,7 @@
                        {'fillColor': barColorsForAllBars['positive']}
                       ]
           };
-            
+          console.log(countData);
           this.sentimentsObject.push(graphData);
         }
   }
