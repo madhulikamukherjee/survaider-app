@@ -103,6 +103,7 @@
     // var positiveKeyWords = [],
     //     negativeKeywords = [],
     //     neutralKeywords = [];
+  var sent_array = ["Negative", "Neutral", "Positive"];
 
         for (var vendor in sentiments) {
           countData = [];
@@ -113,31 +114,26 @@
           // neutralKeywords = [];
           KeyWords = [];
           sumOfData = 0;
+          var index_sent = 0;
           for(var prop in sentiments[vendor]){
 
               if (sentiments[vendor].hasOwnProperty(prop)) {
-
-                  // countData.push([sentiments[vendor][prop]]);
-                  
-                  if (prop == 'Negative') {
-                    questionOptions.push("Negative :" + sentiments[vendor][prop]);
-                    countData.push([sentiments[vendor][prop]]);
-                    console.log("negative hain: ", [sentiments[vendor][prop]])
-                    sumOfData += parseInt([sentiments[vendor][prop]]);
-                  }
-                  else if (prop == 'Positive') {
-                    questionOptions.push("Positive :" + sentiments[vendor][prop]);
-                    countData.push([sentiments[vendor][prop]]);
-                    console.log("positive hain: ", [sentiments[vendor][prop]])
-                    sumOfData += parseInt([sentiments[vendor][prop]]);
-                  }
-                  else if (prop == 'Neutral') {
-                    questionOptions.push("Neutral :" + sentiments[vendor][prop]);
-                    countData.push([sentiments[vendor][prop]]);
-                    console.log("neutral hain: ", [sentiments[vendor][prop]])
-                    sumOfData += parseInt([sentiments[vendor][prop]]);
-                  }
-                  else if (prop == 'options_count'){
+                  // if (prop == 'Negative') {
+                  //   questionOptions.push("Negative :" + sentiments[vendor][prop]);
+                  //   countData.push([sentiments[vendor][prop]]);
+                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
+                  // }
+                  // else if (prop == 'Positive') {
+                  //   questionOptions.push("Positive :" + sentiments[vendor][prop]);
+                  //   countData.push([sentiments[vendor][prop]]);
+                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
+                  // }
+                  // else if (prop == 'Neutral') {
+                  //   questionOptions.push("Neutral :" + sentiments[vendor][prop]);
+                  //   countData.push([sentiments[vendor][prop]]);
+                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
+                  // }
+                  if (prop == 'options_count'){
                     for (var key in sentiments[vendor]['options_count']) {
                       if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
                         reviews.push([key,sentiments[vendor]['options_count'][key]]);
@@ -167,6 +163,14 @@
 
               }
           }
+
+          for (index_sent = 0; index_sent < sent_array.length; index_sent++ ){
+              questionOptions.push(sent_array[index_sent] +" :" + sentiments[vendor][sent_array[index_sent]]);
+              countData.push([sentiments[vendor][sent_array[index_sent]]]);
+              sumOfData += parseInt([sentiments[vendor][sent_array[index_sent]]]);
+          }
+
+
           graphData={
               label: vendor,
               data: countData,
