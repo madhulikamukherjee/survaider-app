@@ -100,9 +100,9 @@
           'neutral': '#DDDDDD'
         },
         graphData={};
-    var positiveKeyWords = [],
-        negativeKeywords = [],
-        neutralKeywords = [];
+    // var positiveKeyWords = [],
+    //     negativeKeywords = [],
+    //     neutralKeywords = [];
 
         for (var vendor in sentiments) {
           countData = [];
