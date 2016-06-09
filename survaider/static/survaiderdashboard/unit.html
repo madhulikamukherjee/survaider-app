@@ -93,7 +93,7 @@
           ng-click="switchTab(overallTabLabel)"><a>Overall</a>
         </li>
 
-        <li ng-repeat="item in sentiments" ng-class="activeTab == '{{item.label}}'? 'tab-current': ''" ng-click="switchTab(item)" ng-show="item.sumOfData !== 0">
+        <li ng-repeat="item in sentimentsObject" ng-class="activeTab == '{{item.label}}'? 'tab-current': ''" ng-click="switchTab(item)" ng-show="item.sumOfData !== 0">
           <a>{{item.label}}</a>
         </li>
       </ul>
