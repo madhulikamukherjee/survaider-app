@@ -1433,17 +1433,6 @@ class IRAPI(Resource):
         all_responses= lol.get_data()
     
         all_survey= lol.get_uuid_labels()
-        # return all_survey
-
-        # if "referenced" in all_survey[0]:
-
-        #     parent_survey= all_survey[0]['referenced']['$oid']
-
-        #     # parent_survey= HashId.decode(parent_survey)
-        #     s= IrapiData(parent_survey,start,end,aggregate)
-        #     all_survey=s.get_uuid_labels()
-        # else:
-        #     all_survey= lol.get_uuid_labels()
         
         ret=[]
 
@@ -1452,7 +1441,7 @@ class IRAPI(Resource):
             j_data=all_survey[i]
 
             uuid= j_data['cid']
-            # return uuid
+
             response_data=all_responses
 
             try:
@@ -1479,15 +1468,15 @@ class IRAPI(Resource):
             long_text=""
 
             if j_data['field_type'] not in ["ranking","rating","group_rating"]:
-                # return temp
                 for b in temp:
-                    # return b
                     if j_data['field_type']=='long_text':
-                        # dat= DatumBox()
-                        # sent= dat.get_sentiment(b)
 
                         blob = TextBlob(b['raw'])
-                        sentence_sentiment = blob.sentences[0].sentiment.polarity
+                        try:
+                            sentence_sentiment = blob.sentences[0].sentiment.polarity
+                        except IndexError:
+                            sentence_sentiment = 0
+
                         if sentence_sentiment > 0:
                             sent = 'positive'
                         if sentence_sentiment == 0:
@@ -1500,8 +1489,6 @@ class IRAPI(Resource):
                         long_text+=" "+b['raw']
 
                     if j_data['field_type']=='multiple_choice':
-                        
-                            # return b
                             split_b= b['raw'].split('###')
                             if len(split_b)==0:
                                 if split_b[0] in options_count_segg:
@@ -1513,7 +1500,6 @@ class IRAPI(Resource):
                                     if i in options_count_segg:
                                         options_count_segg[i]+=1
                                     else:options_count_segg[i]=1
-                            # return options_count
 
                     if j_data['field_type'] in["yes_no", "single_choice", "multiple_choice", "short_text"]:
                         if b['raw'] in options_count:
@@ -1897,8 +1883,6 @@ class Dash(Resource):
                     temp['amenities']=round(temp['amenities']/length_objects, 2)
                     # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                     response[j]=temp
-                    
-                
                 else:
                     response[j]={}
 
@@ -1982,7 +1966,7 @@ class Dash(Resource):
                 channel_contribution[p] = (num_reviews_channel[survey_id][p]*100/total_reviews_survey)*avg_of_aspects[p]/5
             except ZeroDivisionError:
                 channel_contribution[p] = 0
-        
+
         uni = round(sum(channel_contribution.values()), 2)
         return uni
     
