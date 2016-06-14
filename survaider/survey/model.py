@@ -562,7 +562,7 @@ class IrapiData(object):
         js=[]
         for i in aList:
             child_id= HashId.decode(i)
-            print (child_id)
+            # print (child_id)
             raw = Response.objects(parent_survey=child_id)
             raw_temp=[]           
             for i in raw:
@@ -604,7 +604,7 @@ class IrapiData(object):
                     temp_j.append(i.responses)
                     temp_j.append(i.metadata)
                     raw_temp.append(temp_j)
-                # return raw_temp
+
                 js = raw_temp + self.get_multi_data(flag)
                 return js
             else:
@@ -617,13 +617,7 @@ class IrapiData(object):
 
         raw = Survey.objects(id = self.sid)
         js = [_.repr_sm for _ in raw if not _.hidden]
-        # js = d(raw)[0]
 
-        # if "referenced" in js:
-        #     return js['referenced']['$oid'] #it has a parent, id of which, is this.
-        # else:
-        #     return False # It is a parent itself
-        # return js
         if 'rootid' in js[0]:
             return js[0]['rootid']
         else:
@@ -689,7 +683,6 @@ class DataSort(object):
         self.uuid= uuid
         self.agg= aggregate
     def get_survey(self):
-        # survey= db.survey.find({"_id":ObjectId(self.sid)}) #Got the particular survey.
         survey=SurveyUnit.objects(referenced=self.sid)
         return d(survey)
     def get_response(self):

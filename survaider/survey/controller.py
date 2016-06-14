@@ -847,259 +847,39 @@ class WordCloud(object):
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
-
-    # def logic(self,survey_id,parent_survey,provider,aggregate="false"):
-    #     """
-    #     Logic : The child needs to copy their parents survey structure , pass the parent survey strc
-    #     """
-    #     # return parent_survey
-    #     lol= IrapiData(survey_id,1,1,aggregate)
-    #     csi= lol.get_child_data(survey_id)#child survey info
-
-    #     # aspect= AspectR(survey_id,provider).get()
-    #     # return aspect
-
-    #     # aspects = Dash().get(HashId.encode(survey_id))
-    #     # return aspects
-
-    #     wordcloud= d(WordCloud(survey_id,provider).get())
-    #     sentiment= Sentiment(survey_id,provider).get()
-    #     company_name=Survey.objects(id = survey_id).first().metadata['name']
-    #     # return d(company_name)
-    #     response_data= lol.get_data()
-    #     # return response_data
-
-    #     # return HashId.encode(survey_id)
-    #     # return d(parent_survey)
-    #     if parent_survey==survey_id:
-    #         # return True
-    #         survey_strct= d(lol.survey_strct())
-    #         jupiter_data = Dash().get(HashId.encode(survey_id))
     
-    #     elif parent_survey!=survey_id:
-    #         s= IrapiData(parent_survey,1,1,aggregate)
-    #         survey_strct=d(s.survey_strct())
-    #         jupiter_data = Dash().get(HashId.encode(parent_survey))
-
-    #     # return jupiter_data
-    #     try:
-    #         survey_name= csi[0].unit_name
-    #         created_by= d(csi[0].created_by[0].id)["$oid"]
-
-    #     except:
-    #         survey_name="Parent Survey"
-    #         created_by="Not Applicable"
-
-    #     """ALT"""
-    #     cids= []
-    #     # return d(survey_strct)
-    #     for i in survey_strct:
-    #         # return d(i)
-    #         x= i['field_options']
-    #         if "deletable" in x:
-    #             cids.append(i['cid'])
-
-    #     """ END"""
-    #     res=[]
-    #     r= {}
-    #     for cid in cids:
-    #         alol = DataSort(parent_survey,cid,aggregate)
-    #         survey_data= alol.get_uuid_label()#?So wrong
-    #         # return survey_data
-
-    #         j_data= d(survey_data)
-
-    #         if "options" in survey_data['field_options']:
-    #             try:
-    #                 # options=[]
-    #                 option_code={}
-
-    #                 for i in range(len(j_data['field_options']['options'])):
-    #                     # options.append(j_data['field_options']['options'][i]['label'])
-    #                     option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
-    #             except :
-    #                 pass
-
-    #         else:pass
-
-    #         temp= []
-    #         timed={}
-    #         import time
-    #         # return d(response_data)
-    #         for i in response_data:
-    #             if cid in i[0]:
-    #                 # return cid
-    #                 temp.append(i[0][cid]['raw'])
-    #                 timestamp= d(i[1]['modified'])['$date']/1000
-    #                 timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-    #                 timed[timestamp]=i[0][cid]
-
-    #         options_count={}
-
-    #         timed_agg={}
-    #         timed_agg_counter={}
-
-
-    #         if j_data['field_type']=="group_rating":
-    #             # return temp
-    #             for i in temp:
-    #                 # return i
-    #                 aTempList= i.split("###")
-    #                 for j in aTempList:
-    #                     bTempList= j.split("##")
-
-    #                     l= bTempList[0]
-    #                     k= bTempList[1]
-    #                     if l in options_count:
-    #                         if k in options_count[l]:
-    #                             options_count[l][k]+=1
-    #                         else:
-    #                             options_count[l][k]=1
-    #                     else:
-    #                         options_count[l]={}
-    #                         options_count[l][k]=1
-    #             avg={}
-    #             # return options_count
-    #             for key in options_count:
-    #                 # return key
-    #                 counter=0
-
-    #                 for bkey in options_count[key]:
-    #                     if int(bkey)!=0:
-    #                         counter+= float(bkey) * options_count[key][bkey]
-    #                     else:pass
-
-    #                 avg[key]= round(float(counter)/len(temp),2)
-
-    #                 new_key= option_code[key]
-    #                 survey_avg = avg[key]
-
-    #                 #############################################################
-    #                 # WE NEED THE FOLLOWING TWO LINES BEFORE QIKSTAY DEPLOYMENT #
-    #                 #############################################################
-
-    #                 ## CURRENTLY THIS GIVES KEYERROR 'FOOD'
-    #                 # return "hello   "
-    #                 # avg[key]=survey_avg+float(aspect[new_key])
-    #                 # avg[key]=round(avg[key]/2,2)
-
-    #         elif j_data['field_type']=="rating":
-    #             # return temp
-    #             for i in temp:
-    #                 # return i
-    #                 if str(i[2:]) in options_count:
-    #                     options_count[str(i[2:])]+=1
-    #                 else:
-    #                     options_count[str(i[2:])]=1
-
-    #             ll= 0
-    #             for j in temp:
-    #                 ll= float(ll)+float(j[2:])
-
-    #             if len(temp) != 0:
-    #                 avg=round(ll/len(temp),2)
-    #             else:
-    #                 avg=0
-                
-
-    #             for time , value in timed.items():
-
-    #                 if time[:10] not in timed_agg_counter:
-    #                     timed_agg_counter[time[:10]]=0
-    #                 if time[:10] in timed_agg:
-    #                     timed_agg[time[:10]]+=int(value['raw'][2:])
-    #                     timed_agg_counter[time[:10]]+=1
-
-    #                 else:
-    #                     timed_agg[time[:10]]=int(value['raw'][2:])
-    #                     timed_agg_counter[time[:10]]=1
-    #             timed_final={}
-    #             for time,value in timed_agg.items():
-    #                 avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
-    #                 timed_final[time]=avg
-
-    #             # TAKING AVERAGE FROM EXTERNAL APP DATA
-
-    #             # avg+=aspect['overall']*2
-    #             # avg=round(avg/2,2)
-
-    #         response={}
-    #         response['cid']= cid
-
-    #         aspects=Aspect(survey_id)
-    #         try:
-    #             response['avg_rating']=avg
-
-    #         except:pass
-    #         if j_data['field_type']=='rating':
-    #             response['timed_agg']=timed_final
-    #             response['timed']=timed
-    #         if j_data['field_type']=="group_rating":
-    #             response['options_code']=option_code
-    #         else:pass
-    #         # response['survey_id']=survey_id
-    #         response['options_count']=options_count
-    #         response['label']=survey_data['label']
-    #         # try:
-    #         #     response['unit_name']=survey_name
-    #         #     response['created_by']=created_by
-    #         # except:pass
-    #         response['total_resp']=len(response_data)
-    #         # response['aspects']=aspect
-    #         res.append(response)
-    #     result= {}
-    #     result["responses"]=res
-    #     result["wordcloud"]=wordcloud
-    #     result["sentiment"]=sentiment
-    #     result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
-    #     return result
-    #     if len(wordcloud)!=0:
-    #         res.append({"wordcloud":wordcloud})
-    #     res.append({"sentiment":sentiment})
-    #     res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
-    #     # res.append({"company":company_name})
-    #     # res.append({'id':HashId.encode(survey_id)})
-    #     # res.append ({})
-    #     return res
-    
-    def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false",children_list=[]):
+    def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false", jupiter_data = [], children_list=[]):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
-        # return parent_survey
+
+        print ("CALLED DASHBOARD LOGIC", HashId.encode(survey_id))
+
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)#child survey info
 
         wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get())
-        # return wordcloud
 
         company_name=Survey.objects(id = survey_id).first().metadata['name']
-        # return d(company_name)
-        response_data= lol.get_data()
-        # return response_data
 
-        # return HashId.encode(survey_id)
-        # return d(parent_survey)
+        response_data= lol.get_data()
+
         if parent_survey==survey_id:
             survey_strct= d(lol.survey_strct())
-            jupiter_data = Dash().get(HashId.encode(survey_id))
-            # return jupiter_data
+            # jupiter_data = Dash().get(HashId.encode(survey_id))
             aspect_data = jupiter_data["owner_aspects"]
-
     
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
-            try:
-                jupiter_data = Dash().get(HashId.encode(parent_survey))
-            except:
-                jupiter_data = Dash().get(parent_survey)
-            # return jupiter_data
+            # try:
+            #     jupiter_data = Dash().get(HashId.encode(parent_survey))
+            # except:
+            #     jupiter_data = Dash().get(parent_survey)
+
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
 
-
         returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get()
-        # return returned_sentiment
 
         if from_child:
             overall_sentiments = returned_sentiment[0]
@@ -1119,8 +899,6 @@ class DashboardAPIController(Resource):
             if from_child:
                 sentiment[channel]["options_count"] = review_sentiments[channel]
 
-        # return sentiment
-
         try:
             survey_name= csi[0].unit_name
             created_by= d(csi[0].created_by[0].id)["$oid"]
@@ -1131,14 +909,12 @@ class DashboardAPIController(Resource):
 
         """ALT"""
         cids= []
-        # return d(survey_strct)
+
         for i in survey_strct:
-            # return d(i)
+
             x= i['field_options']
             if (("deletable" in x) and (i["field_type"] == "rating")):
                 cids.append(i['cid'])
-
-        # return cids
 
         """ END"""
         res=[]
@@ -1303,18 +1079,10 @@ class DashboardAPIController(Resource):
 
         result= {}
         result["responses"]=res
-
         result["sentiment"]=sentiment
-
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
         return result
-        
-        # if len(wordcloud)!=0:
-        #     res.append({"wordcloud":wordcloud})
-        # res.append({"sentiment":sentiment})
-        # res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
 
-        # return res
     def com(self,pwc):
         pwc_keys= ["zomato","tripadvisor"]
         npwc={}
@@ -1344,49 +1112,45 @@ class DashboardAPIController(Resource):
 
 
     def get(self,survey_id,provider,aggregate="false"):
-
-        ##First get for all surveys
-        # return survey_id
+        print ("CALLED DASHBOARD", survey_id)
         survey_id=HashId.decode(survey_id)
-        # return d(survey_id)
 
         parent_survey= survey_id
         l = IrapiData(survey_id,1,1,aggregate)
 
-        #Check if survey has children.
-        #Check for parent too.
         flag0= l.get_parent()
-        # return flag0
-
-        
 
         if flag0!=False:
             """There is a parent"""
             parent_survey= flag0
 
         flag= l.flag()
-        # return flag
-        # return parent_survey
 
         from_child = 0
+
+        try:
+            jupiter_data = Dash().get(HashId.encode(parent_survey))
+        except:
+            jupiter_data = Dash().get(parent_survey)
 
         if flag ==False:
             r= {}
             from_child = 1
-            r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate)
+            r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate, jupiter_data)
             return r
         else:
             if aggregate=="true":
                 # return HashId.encode(survey_id)
                 children_list = flag
                 response={}
-                response['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider,aggregate,children_list)
+                response['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider, aggregate, jupiter_data, children_list)
                 # return response
+
                 units=[]
                 pwc=[]
                 npwc={}
                 for i in flag:
-                    units.append(self.logic(HashId.decode(i),parent_survey, from_child, provider,aggregate))
+                    units.append(self.logic(HashId.decode(i),parent_survey, from_child, provider,aggregate, jupiter_data))
                     # wc= WordCloud(HashId.decode(i),provider, from_child, children_list).get()
                     # pwc.append(wc)
 
@@ -1398,7 +1162,7 @@ class DashboardAPIController(Resource):
                 return response
             else:
                 r= {}
-                r['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider, aggregate)
+                r['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider, aggregate, jupiter_data)
                 return r
 
 
@@ -1420,7 +1184,7 @@ class IRAPI(Resource):
         return adict
 
     def get(self,survey_id,start=None,end=None,aggregate="false"):
-        
+        # print ("CALLED IRAPI", survey_id)
         try:
             survey_id=HashId.decode(survey_id)
 
@@ -2132,7 +1896,10 @@ class Dash(Resource):
                 avg[unit]["total_resp"] = num_reviews_children[unit]
 
         return {"units_aspects":avg, "owner_aspects": owner_aspects}
+
     def get(self,parent_survey_id):
+        print ("CALLED DASH", parent_survey_id)
+
         # return HashId.encode(parent_survey_id)
         return self.unified_avg_aspect(parent_survey_id)
 
