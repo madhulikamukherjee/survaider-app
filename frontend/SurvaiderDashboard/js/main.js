@@ -175,9 +175,10 @@
 
     // var uri = '/static/SurvaiderDashboard/API1_parent.json';
     var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
-
+    $scope.loading = 0;
+    $scope.loading++;
     $http.get(uri).success(function(data){
-
+      
       application.init(data);
       $scope.features = application.features;
       $scope.units = application.units;
@@ -240,18 +241,20 @@
       }
 
       $scope.unitsGraph['addUnitX'] = $scope.units.length;
-
+      $scope.loading--;
 
     });
 
    
       // var uri2 = '/static/SurvaiderDashboard/API2_parent.json'
 
-      var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response/true';
-      /*
-      ***********************************************
-      ***********************************************
-      */
+    var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response/true';
+    /*
+    ***********************************************
+    ***********************************************
+    */
+
+    $scope.loading++;
     $http.get(uri2).success(function(data){
 
       // Setting the features name(from the key 'option_code')
@@ -826,6 +829,8 @@
       return max;
     }
 
+    $scope.loading--;
+
   }]);
 
   appModule.controller('UnitController', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
@@ -853,6 +858,10 @@
 
     var uri = '/api/dashboard/'+extracted_id+'/all/response';
     // var uri = '/static/SurvaiderDashboard/API1_'+extracted_id+'.json';
+
+    $scope.loading = 0;
+    $scope.loading++;
+
     $http.get(uri).success(function(data){
 
       application.init(data);
@@ -881,6 +890,8 @@
       }else{
             $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
       }
+
+      $scope.loading--;
 
     });
 
@@ -912,6 +923,7 @@
       ***********************************************
       ***********************************************
       */
+    $scope.loading++;
     $http.get(uri2).success(function(data){
 
       // Setting the features name(from the key 'option_code')
@@ -1494,6 +1506,8 @@
 
       return max;
     }
+
+    $scope.loading--;
 
   }]);
 

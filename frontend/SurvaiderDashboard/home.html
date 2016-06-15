@@ -1,8 +1,12 @@
 <div id="main-content" class="sv-main-content" ng-controller="HomeController">
+  <div id="spinner" ng-show="loading">
+    <img src="http://www.snapstouch.com/images/loading.gif" class="ajax-loader"/>
+  </div>
 
   <div class="sv-company-name">
     <h1>Welcome, {{companyName}}!</h1>
   </div>
+
   <div class="sv-overall-rating">
     <table>
       <colgroup>
