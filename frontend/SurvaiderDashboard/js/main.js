@@ -77,7 +77,8 @@
       });
  
       function DialogController($scope, $mdDialog, $location) {
-        $scope.surveyUrl = $location.absUrl();
+        // $scope.surveyUrl = $location.absUrl();
+        $scope.surveyUrl = 'http://survaider.com/survey/s:'+ uri_dat.s_id +'/simple';
         $scope.surveyName = application.companyName + ' - ' + application.unitName;
         $scope.hide = function() {
           $mdDialog.hide();
