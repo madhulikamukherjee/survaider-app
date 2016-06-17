@@ -972,19 +972,16 @@
       }
 
 
-      // Setting the features name(from the key 'option_code')
-      // and the average rating(from the key 'avg_rating')
-      // in an object { 'label', 'rating' } and pushing it in an array
-      // $scope.features
-      $scope.features = [];
-      var theOptionCodeObject = groupRating['options_code'],
-          theAvgRatingObject = groupRating['avg_rating'];
+      
+      // $scope.features = [];
+      // var theOptionCodeObject = groupRating['options_code'],
+      //     theAvgRatingObject = groupRating['avg_rating'];
 
-      for (var key in theOptionCodeObject) {
-        if (theOptionCodeObject.hasOwnProperty(key)) {
-          $scope.features.push( { label: theOptionCodeObject[key], rating: theAvgRatingObject[key]  } )
-        }
-      }
+      // for (var key in theOptionCodeObject) {
+      //   if (theOptionCodeObject.hasOwnProperty(key)) {
+      //     $scope.features.push( { label: theOptionCodeObject[key], rating: theAvgRatingObject[key]  } )
+      //   }
+      // }
 
       function setShortTextQuestion() {
 
