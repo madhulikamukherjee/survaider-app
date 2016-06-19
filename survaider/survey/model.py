@@ -672,7 +672,7 @@ class InsightsAggregator(object):
         ordered_dates_list = sorted(unordered_insight_dict, key = lambda t: datetime.datetime.strptime(t, '%d-%m-%Y'), reverse=True)
         ordered_insights_list = []
         for i in ordered_dates_list:
-            ordered_insights_list.append([i, unordered_insight_dict[i]])
+            ordered_insights_list.append([i, list(unordered_insight_dict[i].values())])
         return ordered_insights_list
 
 class Dashboard(IrapiData):
