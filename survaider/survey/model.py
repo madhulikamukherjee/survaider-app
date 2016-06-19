@@ -656,6 +656,25 @@ class IrapiData(object):
             return d(raw)
         except:return "Errors"
 
+class Insights(db.Document):
+    survey_id = db.StringField()
+    insights = db.DictField()
+
+class InsightsAggregator(object):
+    def __init__(self, survey_id):
+        self.sid = survey_id
+
+    def getInsights(self):
+        raw_data = Insights.objects(survey_id = HashId.encode(self.sid))
+        if len(raw_data)==0:
+            return None
+        unordered_insight_dict = d(raw_data[0].insights)
+        ordered_dates_list = sorted(unordered_insight_dict, key = lambda t: datetime.datetime.strptime(t, '%d-%m-%Y'), reverse=True)
+        ordered_insights_list = []
+        for i in ordered_dates_list:
+            ordered_insights_list.append([i, unordered_insight_dict[i]])
+        return ordered_insights_list
+
 class Dashboard(IrapiData):
     """docstring for Dashboard"""
     def __init__(self,survey_id):

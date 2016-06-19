@@ -27,7 +27,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation
+from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation,InsightsAggregator
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -183,7 +183,6 @@ class SurveyController(Resource):
             ret.update(svey.repr)
 
             return ret, 200 + int(ret.get('partial', 0))
-
 
 class SurveyMetaController(Resource):
 
@@ -708,6 +707,7 @@ class AspectR(object):
         response={"ambience":ambience,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"amenities":amenities,"overall":overall}
         return response
         #return (food,service,price,overall)
+
 class Sentiment_OverallPolarity(object):
     def __init__(self,survey_id, from_child, provider="all", children_list=[]):
         self.sid=HashId.encode(survey_id)
@@ -767,28 +767,6 @@ class Sentiment_OverallPolarity(object):
             if len(self.children_list) == 0:
                 # do nothing
                 return []
-
-# class Sentiment_Reviews(object):
-#     def __init__(self,survey_id,provider="all"):
-#         self.sid=HashId.encode(survey_id)
-#         self.p= provider
-#     def get(self):
-#         providers=["zomato","tripadvisor"]
-#         sents=["Positive","Negative","Neutral"]
-#         response= {}
-#         if self.p=="all":
-#             for i in providers:
-#                 response[i]={}
-#                 for j in sents:
-#                     result= Reviews.objects(survey_id = self.sid, provider=i, sentiment= j)
-#                     response[i][j]=len(result)
-#         else:
-#             response[self.p]={}
-#             for j in sents:
-#                     result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
-#                     response[self.p][j]=len(result)
-#         return response
-
 
 class WordCloud(object):
     """docstring for WordCloud"""
@@ -863,11 +841,17 @@ class DashboardAPIController(Resource):
         company_name=Survey.objects(id = survey_id).first().metadata['name']
 
         response_data= lol.get_data()
+        result= {}
 
         if parent_survey==survey_id:
+
             survey_strct= d(lol.survey_strct())
             # jupiter_data = Dash().get(HashId.encode(survey_id))
             aspect_data = jupiter_data["owner_aspects"]
+            insight_data = InsightsAggregator(survey_id).getInsights()
+            if insight_data!= None:
+                result['insights'] = insight_data
+
     
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
@@ -922,7 +906,6 @@ class DashboardAPIController(Resource):
         for cid in cids:
             alol = DataSort(parent_survey,cid,aggregate)
             survey_data= alol.get_uuid_label()#?So wrong
-            # return survey_data
 
             j_data= d(survey_data)
 
@@ -1077,7 +1060,7 @@ class DashboardAPIController(Resource):
         res[0]["avg_rating"] = aspect_data["unified"]
         # Done with both sets of inputs for dashboard - line graph and feature circles
 
-        result= {}
+        
         result["responses"]=res
         result["sentiment"]=sentiment
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
@@ -1164,7 +1147,6 @@ class DashboardAPIController(Resource):
                 r= {}
                 r['parent_survey']= self.logic(survey_id,parent_survey, from_child, provider, aggregate, jupiter_data)
                 return r
-
 
 def to_json(data):return json.loads(dumps(data))
 """InclusiveResponse"""
