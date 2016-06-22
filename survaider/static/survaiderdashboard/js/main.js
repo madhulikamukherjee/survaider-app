@@ -189,6 +189,7 @@
       $scope.totalRespondents = application.totalRespondents;
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
+      $scope.insights = application.insights;
       // console.log($scope.features);
       var numberOfFeatures = $scope.features.length;
 

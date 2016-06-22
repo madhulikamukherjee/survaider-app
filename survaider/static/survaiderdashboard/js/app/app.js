@@ -16,6 +16,7 @@
 
     this.unifiedRating = [];
     this.sentimentsObject = [];
+    this.insights = [];
   }
 
   //Initializer
@@ -39,6 +40,8 @@
     // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
+    self.setInsights(data['parent_survey']['insights']);
+
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
 
@@ -103,7 +106,7 @@
     // var positiveKeyWords = [],
     //     negativeKeywords = [],
     //     neutralKeywords = [];
-  var sent_array = ["Negative", "Neutral", "Positive"];
+    var sent_array = ["Negative", "Neutral", "Positive"];
 
         for (var vendor in sentiments) {
           countData = [];
@@ -164,12 +167,11 @@
               }
           }
 
-          for (index_sent = 0; index_sent < sent_array.length; index_sent++ ){
+          for (index_sent = 0; index_sent < sent_array.length; index_sent++){
               questionOptions.push(sent_array[index_sent] +" :" + sentiments[vendor][sent_array[index_sent]]);
               countData.push([sentiments[vendor][sent_array[index_sent]]]);
               sumOfData += parseInt([sentiments[vendor][sent_array[index_sent]]]);
           }
-
 
           graphData={
               label: vendor,
@@ -291,6 +293,28 @@
   app.prototype.setUnifiedRating = function(uni_score){
     var self = this;
     self.unifiedRating = uni_score;
+  }  
+
+  app.prototype.setInsights = function(insights){
+    var self = this;
+    pretty_insights = [];
+    if (typeof insights != "undefined"){
+      num_of_weeks = insights.length;
+      for (var i = 0; i < num_of_weeks; i++){
+        insights_week = {};
+        if (i == 0){
+          insights_week["date"] = "This week";
+          insights_week["data"] = insights[i][1];
+        }
+        else{
+          insights_week["date"] = insights[i][0];
+          insights_week["data"] = insights[i][1];
+        }
+        pretty_insights.push(insights_week);
+      }
+    }
+    self.insights = pretty_insights;
+
   }  
 
   //Testing Functions
