@@ -82,6 +82,17 @@ survey_struct_schema = {
 starter_template = {
     "fields": [
         {
+            "cid": "85cc8a14-9cff-0x62-2016-d723s4r82bh2",
+            "field_options": {
+                "options": [
+                ],
+                "deletable": False,
+            },
+            "field_type": "single_choice",
+            "label": "Which hotel did you stay at?",
+            "required": True,
+        },
+        {
             "cid": "73cc8a14-9cff-4a55-a9dc-d723ce382eb5",
             "field_options": {
                 "options": [

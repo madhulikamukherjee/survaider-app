@@ -73,9 +73,7 @@ class SurveyController(Resource):
         usr  = User.objects(id = current_user.id).first()
         svey.created_by.append(usr)
         ret = {}
-        #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
-        #And among the try except else. any one will run.
-        #So I added a put request where Prashy had asked me to
+
         try:
             args = self.post_args()
             Test(init="1").save() # the value init is the identifier.
@@ -169,14 +167,29 @@ class SurveyController(Resource):
             svey.metadata['name'] = name
 
             struct_dict = starter_template
-            opt = []
+            aspects_opt = []
             for option in tags:
-                opt.append({
+                aspects_opt.append({
                     'checked': False,
                     'label': option
                 })
 
-            struct_dict['fields'][0]['field_options']['options'] = opt
+            unit_names = []
+            for unit in payload['units']:
+                unit_names.append(unit['unit_name'])
+
+            units_opt = []
+            for unit_name in unit_names:
+                units_opt.append({
+                    'checked': False,
+                    'label': unit_name
+                    })
+
+            # Populating single_choice question
+            struct_dict['fields'][0]['field_options']['options'] = units_opt
+
+            # Populating group_rating question
+            struct_dict['fields'][1]['field_options']['options'] = aspects_opt
             svey.struct = struct_dict
             svey.save()
             ret['pl'] = payload
@@ -1095,7 +1108,6 @@ class DashboardAPIController(Resource):
                         # return v
                         wc[keyword]=value
         return wc
-
 
     def get(self,survey_id,provider,aggregate="false"):
         print ("CALLED DASHBOARD", survey_id)
