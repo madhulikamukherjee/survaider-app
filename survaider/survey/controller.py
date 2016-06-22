@@ -27,7 +27,7 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation,InsightsAggregator
+from survaider.survey.model import DataSort, IrapiData, Dashboard, Aspect, WordCloudD, Reviews, Relation, InsightsAggregator, LeaderboardAggregator
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -851,6 +851,9 @@ class DashboardAPIController(Resource):
             insight_data = InsightsAggregator(survey_id).getInsights()
             if insight_data!= None:
                 result['insights'] = insight_data
+            leaderboard = LeaderboardAggregator(survey_id).getLeaderboard()
+            if leaderboard!=None:
+                result['leaderboard'] = leaderboard
 
     
         elif parent_survey!=survey_id:

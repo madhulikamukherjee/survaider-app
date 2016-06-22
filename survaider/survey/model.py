@@ -656,6 +656,28 @@ class IrapiData(object):
             return d(raw)
         except:return "Errors"
 
+class Leaderboard(db.Document):
+    survey_ID = db.StringField()
+    competitors = db.DictField()
+
+class LeaderboardAggregator(object):
+    def __init__(self, survey_id):
+        self.sid = survey_id
+
+    def getLeaderboard(self):
+        raw_data = Leaderboard.objects(survey_ID = HashId.encode(self.sid))
+        if len(raw_data) == 0:
+            return None
+        ordered_leaderboard_list = []
+        unordered_leaderboard_dict = d(raw_data[0].competitors)
+
+        ordered_scores_list = sorted(unordered_leaderboard_dict, key = unordered_leaderboard_dict.get, reverse=True)
+
+        for i in ordered_scores_list:
+            ordered_leaderboard_list.append([i, unordered_leaderboard_dict[i]])
+
+        return ordered_leaderboard_list
+
 class Insights(db.Document):
     survey_id = db.StringField()
     insights = db.DictField()
@@ -666,7 +688,7 @@ class InsightsAggregator(object):
 
     def getInsights(self):
         raw_data = Insights.objects(survey_id = HashId.encode(self.sid))
-        if len(raw_data)==0:
+        if len(raw_data) == 0:
             return None
         unordered_insight_dict = d(raw_data[0].insights)
         ordered_dates_list = sorted(unordered_insight_dict, key = lambda t: datetime.datetime.strptime(t, '%d-%m-%Y'), reverse=True)
