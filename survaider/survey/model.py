@@ -537,7 +537,6 @@ class Aspect(db.Document):
     survey_id=db.StringField()
     provider=db.StringField()
 
-
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
@@ -802,6 +801,7 @@ class Relation(db.Document):
     survey_id = db.StringField()
     provider = db.StringField()
     parent = db.StringField()
+
 class TimedDash(db.Document):
     dash_value= db.StringField()
     time= db.DateTimeField(default = datetime.datetime.now)

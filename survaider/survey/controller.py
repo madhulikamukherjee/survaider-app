@@ -174,15 +174,16 @@ class SurveyController(Resource):
                     'label': option
                 })
 
-            unit_names = []
+            unit_details = []
             for unit in payload['units']:
-                unit_names.append(unit['unit_name'])
+                unit_details.append([unit['unit_name'], unit["id"]])
 
             units_opt = []
-            for unit_name in unit_names:
+            for unit_detail in unit_details:
                 units_opt.append({
                     'checked': False,
-                    'label': unit_name
+                    'label': unit_detail[0],
+                    'unit_id': unit_detail[1]
                     })
 
             # Populating single_choice question
