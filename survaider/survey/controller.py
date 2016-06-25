@@ -1119,6 +1119,8 @@ class DashboardAPIController(Resource):
         except:
             jupiter_data = Dash().get(parent_survey)
 
+        return jupiter_data
+        
         if flag ==False:
             r= {}
             from_child = 1
