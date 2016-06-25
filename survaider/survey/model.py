@@ -715,6 +715,8 @@ class Reviews(db.Document):
     review = db.StringField()
     sentiment = db.StringField()
     review_identifier=db.StringField(unique=True)
+    date_added=db.StringField()
+    datetime=db.DateTimeField()
 
 class DataSort(object):
     """docstring for DataSort"""
