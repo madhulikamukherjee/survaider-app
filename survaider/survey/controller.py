@@ -1757,7 +1757,7 @@ class Dash(Resource):
         for unit in avg:
             overall_unit = self.average_for_all_channels(avg[unit])
             avg[unit]["overall_aspects"] = overall_unit
-        print ("OVERALL UNIT: ", overall_unit)
+        print ("AVG OF UNITS: ", avg)
 
         # Appending unified score for owner, and total channel responses for owner, in the final structure
         owner_aspects["unified"] = owner_unified
