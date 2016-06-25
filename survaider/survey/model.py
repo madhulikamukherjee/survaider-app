@@ -717,6 +717,7 @@ class Reviews(db.Document):
     review_identifier=db.StringField(unique=True)
     date_added=db.StringField()
     datetime=db.DateTimeField()
+    meta = {'strict': False}
 
 class DataSort(object):
     """docstring for DataSort"""
