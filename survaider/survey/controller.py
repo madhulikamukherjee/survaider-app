@@ -1551,6 +1551,7 @@ class Dash(Resource):
     """docstring for Dash -marker"""
     
     def get_child(self,survey_id):
+        print ("GETTING CHILDREN FOR", survey_id)
         objects= Relation.objects(parent=survey_id)
         return objects
     def get_reviews_count(self,survey_id,provider="all"):
