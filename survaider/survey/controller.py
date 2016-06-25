@@ -1695,6 +1695,7 @@ class Dash(Resource):
    
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)
+        print ("NUMBER OF CHILDREN", len(objects))
         NUMBER_OF_CHANNELS=2
         response={}
         resp= {}
