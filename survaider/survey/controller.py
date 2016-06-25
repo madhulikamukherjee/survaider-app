@@ -830,7 +830,7 @@ class DashboardAPIController(Resource):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
-
+        return jupiter_data
         print ("CALLED DASHBOARD LOGIC", HashId.encode(survey_id))
 
         lol= IrapiData(survey_id,1,1,aggregate)
