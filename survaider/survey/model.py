@@ -536,6 +536,7 @@ class Aspect(db.Document):
     overall=db.StringField()
     survey_id=db.StringField()
     provider=db.StringField()
+    meta = {'strict': False}
 
 
 class IrapiData(object):
