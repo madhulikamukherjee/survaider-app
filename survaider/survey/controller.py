@@ -1120,7 +1120,7 @@ class DashboardAPIController(Resource):
             jupiter_data = Dash().get(parent_survey)
 
         return jupiter_data
-        
+
         if flag ==False:
             r= {}
             from_child = 1
@@ -1578,6 +1578,7 @@ class Dash(Resource):
         response= {}
         if provider=="all":
             for j in providers:
+                print ("FINDING ASPECTS FOR: ", survey_id)
                 objects= Aspect.objects(survey_id=survey_id, provider=j)
                 length_objects = len(objects)
                 print ("NUMBER OF ASPECTS", length_objects)
@@ -1711,6 +1712,7 @@ class Dash(Resource):
         ASPECTS = {}
 
         for obj in objects:
+            print ("INSIDE OBJECTS")
             survey_id=obj.survey_id
             raw_data=self.get_avg_aspect(obj.survey_id) # all aspects, for this survey, for all channels
             print ("RAW DATA", raw_data)
