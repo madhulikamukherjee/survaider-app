@@ -125,33 +125,6 @@
 
         </div>
 
-
-        <div style="padding: 2em">
-            <select ng-model="filterAspect" ng-change="filterData()">
-                <option value="">Aspect</option>
-                <option ng-repeat="series in hotelsRatings.series track by $index" value="{{$index}}">{{series}}</option>
-            </select>
-            <select ng-model="filterMode" ng-change="filterData()">
-                <option value="">Order</option>
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
-        <div style="padding: 2em">
-            <h3>
-                {{hotelsRatings.name}}
-            </h3>
-            <div>
-                <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar"
-                    chart-data="hotelsRatings.data"
-                    chart-labels="hotelsRatings.labels"
-                    chart-series="hotelsRatings.series"
-                    chart-options="hotelsRatings.graphOptions"
-                    chart-colours="hotelsRatings.colors">
-              </canvas>
-            </div>
-
-        </div>
         <!-- Bubble graph -->
         <div class="sv-units" ng-show="activeTab == overallTabLabel">
           <div class="units-graph" style="padding: 2em">
@@ -166,12 +139,12 @@
                 <g transform="translate({{$index*20}},75)">
                 <!-- <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle> -->
                   <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}">
-                      <title>{{features[$index].label}} - {{feature.score}}</title>
+                  <title>{{features[$index].label}} - {{feature.score}}</title>
                   </circle>
                 </g>
                 <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}" onclick="window.location.reload(true);">
               <!-- <a xlink:href="{{'#/unit/' + unit.id}}"> -->
-
+              
               <!-- <a xlink:href="{{'http://localhost:5000/survey/s:' + unit.id + '/analysis'}}"> -->
                 <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
                 <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
@@ -184,28 +157,6 @@
           </div>
         </div>
 
-        <!-- Insights -->
-        <!-- <div class="sv-insights">
-          <div class="channel-graph">
-            <div ng-repeat="week in insights">
-              <li class="sv-unit-question-block ng-scope">
-                <div class="unit-question-header">
-                  <h1 ng-bind="week.date" class="ng-binding"></h1>
-                </div>
-                <div class="insights-block" style="width: 1000px;">
-                  <div class="st-words-list-wrapper">
-                    <ul style="height: 300px; overflow: scroll;">
-                      <li ng-repeat="insight in week.data">
-                        <h3 ng-bind="insight"></h3>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </li>
-            </div>
-          </div>
-        </div> -->
-
         <!-- Cards -->
         <div class="sv-unit-questions">
           <div class="channel-graph">
@@ -213,7 +164,7 @@
                 <li class="sv-unit-question-block ng-scope"
                   ng-show="(activeTab == sentiment.label || activeTab == overallTabLabel) && (sentiment.sumOfData !== 0)">
                   <button id="group-rating-graph-switch" ng-click="isFirstChannelVisible = !isFirstChannelVisible">Switch</button>
-
+                    
                     <div class="unit-question-header">
                       <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
                     </div>
@@ -252,7 +203,7 @@
                                     <span ng-bind="key"></span>
                                   </li>
                                 </ul>
-                            </div>
+                            </div> 
                           <!-- </div>
                       </div> -->
                       <div class="unit-question-graph">
@@ -274,10 +225,10 @@
                               </li> -->
                             </ul>
                           </div>
-                        </div>
+                        </div> 
                     </div>
                 </li>
-
+            
             </div>
           </div>
         </div>
@@ -411,7 +362,7 @@
                               <span ng-bind="keyword"></span>
                             </li>
                           </ul>
-                        </div>
+                        </div> 
 
                         <div class="unit-question-graph">
                           <canvas id="bar" class="chart chart-bar"
@@ -430,7 +381,7 @@
                               </li>
                             </ul>
                           </div>
-                        </div>
+                        </div> 
                     </div>
                     <!-- </div> -->
 
@@ -540,7 +491,59 @@
 
                   <!-- Template:: GROUP-RATINGs ##STAR RATING## -->
 
+                  <div ng-hide="!isBarVisible" class="group-rating-star">
 
+                    <div class="star-rating-all-group">
+
+                      <div class="star-rating-graph-wrapper">
+
+                        <div class="star-rating-options">
+                          <ul>
+                            <li ng-repeat="option in question.series track by $index" class="star-rating-label">
+                              <h1>{{toCharCode($index) + ") " + option}}</h1>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <!-- ALL THE STAR DRAWINGS -->
+                        <div class="star-rating-question-graph">
+                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="{{question.heightStarGraph}}">
+
+                            <!-- WHOLE GROUP -->
+                            <g>
+                              <!-- FOR CHOICE -->
+                              <g ng-repeat="choice in question.starRating" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{100*$rootIndex}})">
+
+                                <!-- MARK::- may lead to anomalous  -->
+                                <!-- Stars -->
+                                <g ng-repeat="star in choice.starRatingsArray track by $index" ng-attr-transform="translate( {{80*$index}} ,0)">
+                                  <defs>
+                                      <linearGradient id="half_grad">
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#F8E71C"/>
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#FFFFFF" stop-opacity="1" />
+                                      </linearGradient>
+                                  </defs>
+                                  <path transform="scale(1.5)" d="M20.388,10.918L32,12.118l-8.735,7.749L25.914,
+                                           31.4l-9.893-6.088L6.127,31.4l2.695-11.533L0,
+                                           12.118l11.547-1.2L16.026,0.6L20.388,10.918z"
+                                      fill="url(#half_grad)" stroke-width="1" stroke="#F8E71C"/>
+                                </g>
+                                <text ng-attr-transform="translate({{5 * 80 + 50}} ,0)" font-size="24px" font-weight="bold" y="35">
+                                  {{choice.ratingValue}}
+                                </text>
+                              </g>
+                            </g>
+                          </svg>
+
+                        </div>
+
+                      </div>
+
+
+                    </div>
+
+
+                  </div>
                 </div>
 
 
@@ -630,7 +633,7 @@
             </li>
           </ul>
         </div>
-
+         
       </div>
 
     </div>
