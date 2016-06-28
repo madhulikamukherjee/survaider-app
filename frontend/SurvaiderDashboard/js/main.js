@@ -129,7 +129,7 @@
 
   }]);
 
-  appModule.controller('HomeController', [ '$scope', '$http', '$location',function($scope, $http, $location){
+  appModule.controller('HomeController', [ '$scope', '$http', '$location', '$timeout',function($scope, $http, $location, $timeout){
     // This is used for Overall tab
     $scope.overallTabLabel = 'all';
 
@@ -218,6 +218,17 @@
         hotelsRatings.data = sortedData;
         return hotelsRatings;
     };
+    var _adjustBarChartDynamicWidth = function() {
+      if ($scope.hotelsRatings.labels.length > 3) {
+            angular.element(document.querySelector('.bar-chart--hotels')).attr('style', 'width:' +
+              $scope.hotelsRatings.labels.length * 150 + 'px;');
+            // Once page is loaded,we need to remove the style
+            $timeout(function() {
+              angular.element(document.querySelector('.bar-chart--hotels')).removeAttr('style');
+            }, 1000);
+        }
+    };
+ 
 
     //HTTP-MARK::- Dashboard API Call which returns top-most line graph data
     //and unit-graph data
@@ -237,8 +248,11 @@
           if ($scope.filterMode && $scope.filterAspect) {
             // Apply filter to update data
             $scope.hotelsRatings = _filterData(application.hotelsRatings, $scope.filterAspect, $scope.filterMode);
+            // Need to reapply the dynamic styling to handle large data
+            _adjustBarChartDynamicWidth();
           }
       };
+      _adjustBarChartDynamicWidth();
       $scope.leaderboard = application.leaderboard;
       $scope.insights = application.insights;
       $scope.units = application.units;

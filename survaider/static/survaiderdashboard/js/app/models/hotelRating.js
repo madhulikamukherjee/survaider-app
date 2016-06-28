@@ -10,7 +10,7 @@
     this.graphOptions = {
         barShowStroke : true,
         showScale: true,
-        barDatasetSpacing : 10
+        barDatasetSpacing : 10,
     },
     this.colors = ['#B8E986', '#92C4FF', '#B86DF9', '#F4596C', '#F7CC85'];
   }

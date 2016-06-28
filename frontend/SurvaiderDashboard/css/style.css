@@ -813,3 +813,21 @@ svg.long-text text {
  .insights-container blockquote {
      background: white;
  }
+
+ 
+ .bar-chart--hotels {
+     /*width: 3000px;*/
+     height:500px !important;
+ }
+ 
+ .bar-chart--hotels .chart-container {
+     width:99%;
+     overflow-x: scroll;
+     position: relative;
+     overflow-y: hidden;
+     height: 400px !important;
+ }
+ 
+ .bar-chart--hotels {
+     overflow-x: hidden;
+ }

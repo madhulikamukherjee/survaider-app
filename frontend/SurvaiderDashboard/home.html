@@ -148,8 +148,8 @@
 <!--               <h3>
                   {{hotelsRatings.name}}
               </h3> -->
-              <div>
-                  <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar"
+              <div class="bar-chart--hotels" style="width:{{chartResizeProp*150}}px">
+                  <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar chart--hotels_canvas"
                       chart-data="hotelsRatings.data"
                       chart-labels="hotelsRatings.labels"
                       chart-series="hotelsRatings.series"
