@@ -126,21 +126,7 @@
           for(var prop in sentiments[vendor]){
 
               if (sentiments[vendor].hasOwnProperty(prop)) {
-                  // if (prop == 'Negative') {
-                  //   questionOptions.push("Negative :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
-                  // else if (prop == 'Positive') {
-                  //   questionOptions.push("Positive :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
-                  // else if (prop == 'Neutral') {
-                  //   questionOptions.push("Neutral :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
+
                   if (prop == 'options_count'){
                     for (var key in sentiments[vendor]['options_count']) {
                       if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
@@ -151,20 +137,7 @@
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
                         KeyWords.push(key);
-                        // if (sentiments[vendor]['sentiment_segg'].hasOwnProperty(key)) {
 
-                        //     if (sentiments[vendor]['sentiment_segg'][key] == 'negative') {
-                        //       negativeKeywords.push(key);
-                        //     }
-
-                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'positive') {
-                        //       positiveKeyWords.push(key);
-                        //     }
-
-                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'neutral') {
-                        //       neutralKeywords.push(key);
-                        //     }
-                        // }
                       }
                   }
 
@@ -249,24 +222,29 @@
 
 app.prototype.setLeaderboard = function(leaderboardData){
    var self = this;
-   for (var index = 0; index < leaderboardData.length; index++) {
-       self.leaderboard.push(new leaderboardEntry(
-           leaderboardData[index][0],
-           leaderboardData[index][1]
-       ));
+   if (typeof leaderboardData !== 'undefined'){
+     for (var index = 0; index < leaderboardData.length; index++) {
+         self.leaderboard.push(new leaderboardEntry(
+             leaderboardData[index][0],
+             leaderboardData[index][1]
+         ));
+     }
    }
  }
 
   app.prototype.setInsights = function(insightsData){
     var self = this;
-    for (var index = 0; index < insightsData.length; index++) {
-        var news = [];
-        self.insights.push(
-            new insight(
-                insightsData[index][0],
-                insightsData[index][1]
-            )
-        );
+    if (typeof insightsData !== 'undefined'){
+      var num_of_weeks = insightsData.length;
+      for (var index = 0; index < num_of_weeks; index++) {
+          var news = [];
+          self.insights.push(
+              new insight(
+                  insightsData[index][0],
+                  insightsData[index][1]
+              )
+          );
+      }
     }
   }
     app.prototype.setFeaturesScore = function(featuresData){
