@@ -4,7 +4,6 @@
   function app(){
     this.features = [];
     this.hotelsRatings = {};
-    this.leaderboard = [];
     this.units = [];
     this.ratingPoints = [];
     this.surveyQuestions = [];
@@ -34,10 +33,9 @@
     self.features = [];
     self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
+    console.log(self.features);
     self.setFeaturesColor();
     self.setHotelsRatings(data);
-    self.setLeaderboard(data['parent_survey']['leaderboard']);
-    self.setInsights(data['parent_survey']['insights']);
     self.setRatingData(data['parent_survey']['responses'][0]['timed_agg']);
     self.setSentimentsObjectData(data['parent_survey']['sentiment']);
     self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
@@ -46,6 +44,7 @@
     // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
+    // self.setInsights(data['parent_survey']['insights']);
 
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
@@ -224,7 +223,7 @@
 
     var iter = 0;
     for (var unit in units) {
-        chartLabels.push(units[unit]['meta']['unit_name'] + ' - ' + units[unit]['responses'][0]['avg_rating']);
+        chartLabels.push(units[unit]['meta']['unit_name']);
         var optionsCode = units[unit]['responses'][1]['options_code'];
         var avgRating = units[unit]['responses'][1]['avg_rating'];
         // Need to prepare this only for 1st unit
@@ -247,29 +246,7 @@
     self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries);
   }
 
-app.prototype.setLeaderboard = function(leaderboardData){
-   var self = this;
-   for (var index = 0; index < leaderboardData.length; index++) {
-       self.leaderboard.push(new leaderboardEntry(
-           leaderboardData[index][0],
-           leaderboardData[index][1]
-       ));
-   }
- }
-
-  app.prototype.setInsights = function(insightsData){
-    var self = this;
-    for (var index = 0; index < insightsData.length; index++) {
-        var news = [];
-        self.insights.push(
-            new insight(
-                insightsData[index][0],
-                insightsData[index][1]
-            )
-        );
-    }
-  }
-    app.prototype.setFeaturesScore = function(featuresData){
+  app.prototype.setFeaturesScore = function(featuresData){
     var self = this;
     var index = 0;
 
@@ -305,6 +282,40 @@ app.prototype.setLeaderboard = function(leaderboardData){
     self.unitId = unit_id;
   }
 
+  // app.prototype.setUnitCity = function(unitname){
+  //   var self = this;
+  //   self.unitCity = '';
+
+  //   t = unitname;
+  //   words = t.split(' ');
+  //   num_of_words = t.split(' ').length
+  //   num_of_chars = t.split('').length
+  //   words_fit = [];
+  //   words_dont_fit = [];
+
+  //   if (num_of_chars > 18) {
+  //     if (num_of_words > 2) {
+  //       var num_of_chars_fit = 0;
+
+  //       for (var i = 0; i < num_of_words; i++){
+  //         num_of_chars_fit += words[i].split('').length;
+  //         if (num_of_chars_fit < 18){
+  //           words_fit.append(words[i]);
+  //         }
+  //         else {
+  //           words_dont_fit.append(words[i]);
+  //         }
+  //       }
+
+  //       self.unitName = words_fit.join(' ');
+  //       self.unitCity = words_dont_fit.join(' ');
+  //     }
+  //   }
+
+
+  //   // self.unitId = unit_id;
+  // }
+
   app.prototype.setCompanyName = function(company_Name){
     var self = this;
     self.companyName = company_Name;
@@ -330,26 +341,26 @@ app.prototype.setLeaderboard = function(leaderboardData){
     self.unifiedRating = uni_score;
   }
 
-  // app.prototype.setInsights = function(insights){
-  //   var self = this;
-  //   pretty_insights = [];
-  //   num_of_weeks = insights.length;
-  //   for (var i = 0; i < num_of_weeks; i++){
-  //     insights_week = {};
-  //     if (i == 0){
-  //       insights_week["date"] = "This week";
-  //       insights_week["data"] = insights[i][1];
-  //     }
-  //     else{
-  //       insights_week["date"] = insights[i][0];
-  //       insights_week["data"] = insights[i][1];
-  //     }
-  //     pretty_insights.push(insights_week);
-  //   }
+  app.prototype.setInsights = function(insights){
+    var self = this;
+    pretty_insights = [];
+    num_of_weeks = insights.length;
+    for (var i = 0; i < num_of_weeks; i++){
+      insights_week = {};
+      if (i == 0){
+        insights_week["date"] = "This week";
+        insights_week["data"] = insights[i][1];
+      }
+      else{
+        insights_week["date"] = insights[i][0];
+        insights_week["data"] = insights[i][1];
+      }
+      pretty_insights.push(insights_week);
+    }
 
-  //   self.insights = pretty_insights;
+    self.insights = pretty_insights;
 
-  // }
+  }
 
   //Testing Functions
   app.RandomizeTheData = function(array, keyName){
