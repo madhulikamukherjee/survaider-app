@@ -3,6 +3,7 @@
   //Constructor
   function app(){
     this.features = [];
+    this.hotelsRatings = {};
     this.units = [];
     this.ratingPoints = [];
     this.surveyQuestions = [];
@@ -32,6 +33,9 @@
     self.features = [];
     self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
+    console.log(self.features);
+    self.setFeaturesColor();
+    self.setHotelsRatings(data);
     self.setRatingData(data['parent_survey']['responses'][0]['timed_agg']);
     self.setSentimentsObjectData(data['parent_survey']['sentiment']);
     self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
@@ -40,7 +44,7 @@
     // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
-    self.setInsights(data['parent_survey']['insights']);
+    // self.setInsights(data['parent_survey']['insights']);
 
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
@@ -192,21 +196,54 @@
                        {'fillColor': barColorsForAllBars['positive']}
                       ]
           };
-          console.log(countData);
           this.sentimentsObject.push(graphData);
         }
   }
-  
+
   app.prototype.setFeaturesData = function(featuresData){
     var self = this;
     var index = 0;
 
     for (var prop in featuresData) {
       if( featuresData.hasOwnProperty( prop ) ) {
-        self.features.push({ id: (index+1), label: featuresData[prop] });
+        self.features.push(
+            new feature(index+1, featuresData[prop])
+        );
       }
       index++;
     }
+  }
+
+  app.prototype.setHotelsRatings = function(parentSurveyData){
+    var self = this;
+    var units = parentSurveyData['units'];
+    var chartLabels = [];
+    var chartSeries = [];
+    var chartData = [];
+
+    var iter = 0;
+    for (var unit in units) {
+        chartLabels.push(units[unit]['meta']['unit_name']);
+        var optionsCode = units[unit]['responses'][1]['options_code'];
+        var avgRating = units[unit]['responses'][1]['avg_rating'];
+        // Need to prepare this only for 1st unit
+        if (iter === 0) {
+            for (var unitFeature in optionsCode) {
+                chartSeries.push(optionsCode[unitFeature]);
+            }
+        }
+
+        var featureRatingIter = 0;
+        for (var featureRating in avgRating) {
+            if (!chartData[featureRatingIter]) {
+                chartData[featureRatingIter] = [];
+            }
+            chartData[featureRatingIter].push(avgRating[featureRating]);
+            featureRatingIter++;
+        }
+        iter++;
+    }
+    self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries);
   }
 
   app.prototype.setFeaturesScore = function(featuresData){
@@ -218,6 +255,15 @@
         self.features[index]['score'] = featuresData[prop];
       }
       index++;
+    }
+  }
+
+  app.prototype.setFeaturesColor = function() {
+    var self = this;
+    for (var index = 0; index < self.colors.length; index++ ) {
+      self.features[index]['colors'].push({
+          'fillColor': this.colors[index]
+      });
     }
   }
 
@@ -293,29 +339,28 @@
   app.prototype.setUnifiedRating = function(uni_score){
     var self = this;
     self.unifiedRating = uni_score;
-  }  
+  }
 
   app.prototype.setInsights = function(insights){
     var self = this;
     pretty_insights = [];
-    if (typeof insights != "undefined"){
-      num_of_weeks = insights.length;
-      for (var i = 0; i < num_of_weeks; i++){
-        insights_week = {};
-        if (i == 0){
-          insights_week["date"] = "This week";
-          insights_week["data"] = insights[i][1];
-        }
-        else{
-          insights_week["date"] = insights[i][0];
-          insights_week["data"] = insights[i][1];
-        }
-        pretty_insights.push(insights_week);
+    num_of_weeks = insights.length;
+    for (var i = 0; i < num_of_weeks; i++){
+      insights_week = {};
+      if (i == 0){
+        insights_week["date"] = "This week";
+        insights_week["data"] = insights[i][1];
       }
+      else{
+        insights_week["date"] = insights[i][0];
+        insights_week["data"] = insights[i][1];
+      }
+      pretty_insights.push(insights_week);
     }
+
     self.insights = pretty_insights;
 
-  }  
+  }
 
   //Testing Functions
   app.RandomizeTheData = function(array, keyName){

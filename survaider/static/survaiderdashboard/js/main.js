@@ -171,6 +171,54 @@
       return new Date(date);
     }
 
+    var _getReorderIndex = function(data, aspect, mode) {
+        // This is the order in which all objects are to be reordered
+        var hotelOrder = [];
+        var sortedData = [];
+        var origArray = data[aspect];
+        var clonedArray = origArray.slice();
+        if (mode === 'asc') {
+            sortedData = clonedArray.sort(function(a, b){
+              return a - b;
+            });
+        } else {
+            sortedData = clonedArray.sort(function(a, b){
+              return b - a;
+            });
+        }
+
+        for (var index = 0; index < data[aspect].length; index++) {
+            hotelOrder.push(
+                data[aspect].indexOf(sortedData[index])
+            );
+        }
+        return hotelOrder;
+    };
+
+    var _filterData = function(hotelsRatings, aspect, mode) {
+        var hotelOrder = _getReorderIndex(hotelsRatings.data, aspect, mode);
+        // Update labels as per new hotel order
+        var sortedLabels = hotelsRatings.labels.slice();
+        var sortedData = hotelsRatings.data.slice();
+        for (var index = 0; index < hotelOrder.length; index++) {
+            sortedLabels[index] = hotelsRatings.labels[hotelOrder[index]];
+        }
+
+        // Sort data in the order
+        for (var iter = 0; iter < sortedData.length; iter++) {
+            var item = sortedData[iter].slice();
+            // Iterate through each array in data and sort by order
+            for (index = 0; index < item.length; index++) {
+                item[index] = hotelsRatings.data[iter][hotelOrder[index]];
+            }
+            sortedData[iter] = item;
+        }
+
+        hotelsRatings.labels = sortedLabels;
+        hotelsRatings.data = sortedData;
+        return hotelsRatings;
+    };
+
     //HTTP-MARK::- Dashboard API Call which returns top-most line graph data
     //and unit-graph data
 
@@ -182,6 +230,15 @@
       
       application.init(data);
       $scope.features = application.features;
+      $scope.hotelsRatings = application.hotelsRatings;
+      console.log("OIGINAL");
+      console.log($scope.hotelsRatings.data);
+      $scope.filterData = function() {
+          if ($scope.filterMode && $scope.filterAspect) {
+            // Apply filter to update data
+            $scope.hotelsRatings = _filterData(application.hotelsRatings, $scope.filterAspect, $scope.filterMode);
+          }
+      };
       $scope.units = application.units;
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;
@@ -219,11 +276,11 @@
       $scope.ratingGraph['abscissaSpacer'] = 60;
 
       if ($scope.ratingPoints.length*65 < 695) {
-            $scope.ratingGraph['graphWidth']=695;  
+            $scope.ratingGraph['graphWidth']=695;
       }else{
-            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
+            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;
       }
-      
+
 
 
       $scope.ticketDetails = {
