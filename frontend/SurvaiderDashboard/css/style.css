@@ -210,16 +210,51 @@ button {
   overflow: auto; }
 
 .sv-insights,
-.sv-features,
-.sv-units {
+.sv-features{
   padding: 2em 2.5em;
   background-color: #fff;
+  /*margin: 4em 0; */
+  }
+
+.sv-units {
+  padding: 2em 2.5em;
+  background-color: #F6F2F2;
   /*margin: 4em 0; */
   }
 
 .sv-week-block {
   padding: 2em 2.5em;
   background-color: #AEAEAE;
+}
+
+.filter-dropdowns{
+  float: right;
+  /*padding: 2em;
+  border: 1px solid #ccc;
+  width: 120px;
+  border-radius: 3px;
+  overflow: hidden;*/
+  
+}
+
+.filter-dropdowns select {
+    float: left;
+    margin:5px;
+    padding: 5px 8px;
+    border: none;
+    box-shadow: none;
+    background-image: none;
+    -webkit-appearance: none;
+    background: #fafafa url("img/icon-select.png") no-repeat 90% 50%;
+}
+
+.filter-dropdowns select:focus {
+    outline: none;
+}
+
+.overall-bar {
+  padding: 2em;
+
 }
 
 .units-graph {
@@ -306,7 +341,8 @@ button {
 /*---------------------------------------------------*/
 /*---------------------------------------------------*/
 .sv-unit-features {
-  margin-top: 2.5em; }
+  margin-top: 2.5em; 
+  margin-bottom: 1em; }
   .sv-unit-features ul {
     text-align: center; }
 
@@ -760,4 +796,20 @@ svg.long-text text {
  .dialog-header-icon {
      width: 30px;
      margin: 0 10px -5px 0;
+ }
+
+ 
+ .insights-container {
+     padding: 5px;
+     background: rgba(250,250,250,0.87);
+     border-radius: 0.5em;
+ }
+ 
+ .insights-container p {
+     padding: 5px;
+     border-bottom: 1px solid grey;
+ }
+ 
+ .insights-container blockquote {
+     background: white;
  }

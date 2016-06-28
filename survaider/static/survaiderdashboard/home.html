@@ -8,6 +8,11 @@
   </div>
 
   <div class="sv-overall-rating">
+    <!-- Leaderboard -->
+    <ng-include src="'/static/survaiderdashboard/views/templates/leaderboard.html'"></ng-include>
+    <!-- Insights -->
+    <ng-include src="'/static/survaiderdashboard/views/templates/insights.html'"></ng-include>
+
     <table>
       <colgroup>
         <col span="1" style="width:50%">
@@ -125,35 +130,39 @@
 
         </div>
 
-
-        <div style="padding: 2em">
-            <select ng-model="filterAspect" ng-change="filterData()">
-                <option value="">Aspect</option>
-                <option ng-repeat="series in hotelsRatings.series track by $index" value="{{$index}}">{{series}}</option>
-            </select>
-            <select ng-model="filterMode" ng-change="filterData()">
-                <option value="">Order</option>
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
-        </div>
-        <div style="padding: 2em">
-            <h3>
-                {{hotelsRatings.name}}
-            </h3>
-            <div>
-                <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar"
-                    chart-data="hotelsRatings.data"
-                    chart-labels="hotelsRatings.labels"
-                    chart-series="hotelsRatings.series"
-                    chart-options="hotelsRatings.graphOptions"
-                    chart-colours="hotelsRatings.colors">
-              </canvas>
-            </div>
-
-        </div>
-        <!-- Bubble graph -->
+        <!-- Overall Bar Graph -->
         <div class="sv-units" ng-show="activeTab == overallTabLabel">
+          <div class="filter-dropdowns">
+              <div style="float:left; margin:5px; padding: 5px 8px;">Filter : </div>
+              <select ng-model="filterAspect" ng-change="filterData()">
+                  <option value="">Aspect</option>
+                  <option ng-repeat="series in hotelsRatings.series track by $index" value="{{$index}}">{{series}}</option>
+              </select>
+              <select ng-model="filterMode" ng-change="filterData()">
+                  <option value="">Order</option>
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+              </select>
+          </div>
+          <div class="overall-bar">
+<!--               <h3>
+                  {{hotelsRatings.name}}
+              </h3> -->
+              <div>
+                  <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar"
+                      chart-data="hotelsRatings.data"
+                      chart-labels="hotelsRatings.labels"
+                      chart-series="hotelsRatings.series"
+                      chart-options="hotelsRatings.graphOptions"
+                      chart-colours="hotelsRatings.colors">
+                </canvas>
+              </div>
+          </div>
+        </div>
+
+
+        <!-- Bubble graph -->
+        <!-- <div class="sv-units" ng-show="activeTab == overallTabLabel">
           <div class="units-graph" style="padding: 2em">
             <svg ng-attr-width="{{125*units.length}}" ng-attr-height="{{unitsGraph.outerWidth - 100}}">
               <g ng-repeat="counter in makeANumberArray(6)" transform="translate(0,75)">
@@ -164,15 +173,12 @@
               <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
               <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
                 <g transform="translate({{$index*20}},75)">
-                <!-- <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}"></circle> -->
+                
                   <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}">
                       <title>{{features[$index].label}} - {{feature.score}}</title>
                   </circle>
                 </g>
                 <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}" onclick="window.location.reload(true);">
-              <!-- <a xlink:href="{{'#/unit/' + unit.id}}"> -->
-
-              <!-- <a xlink:href="{{'http://localhost:5000/survey/s:' + unit.id + '/analysis'}}"> -->
                 <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
                 <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
                 <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.name}}</text>
@@ -182,7 +188,7 @@
               </g>
             </svg>
           </div>
-        </div>
+        </div> -->
 
         <!-- Insights -->
         <!-- <div class="sv-insights">
