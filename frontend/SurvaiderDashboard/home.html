@@ -8,16 +8,15 @@
   </div>
 
   <div class="sv-overall-rating">
-    <!-- Leaderboard -->
-    <ng-include ng-show="leaderboard.length != 0" src="'/static/survaiderdashboard/views/templates/leaderboard.html'"></ng-include>
-    <!-- Insights -->
-    <ng-include ng-show="insights.length != 0" src="'/static/survaiderdashboard/views/templates/insights.html'"></ng-include>
+    
+    
 
     <table>
       <colgroup>
         <col span="1" style="width:50%">
-        <col span="1" style="width:25%">
-        <col span="1" style="width:25">
+        <col span="1" style="width:15%">
+        <col span="1" style="width:15%">
+        <col span="1" style="width:30%">
       </colgroup>
       <tr>
         <td>
@@ -80,6 +79,10 @@
 
             <!-- <a href="#" class="generate-ticket-btn" ng-click="prepareTicketModal()">Generate Ticket</a> -->
           </div>
+        </td>
+        <td>
+          <!-- Leaderboard -->
+            <ng-include ng-show="leaderboard.length != 0" src="'/static/survaiderdashboard/views/templates/leaderboard.html'"></ng-include>
         </td>
       </tr>
     </table>
@@ -145,9 +148,6 @@
               </select>
           </div>
           <div class="overall-bar">
-<!--               <h3>
-                  {{hotelsRatings.name}}
-              </h3> -->
               <div class="bar-chart--hotels" style="width:{{chartResizeProp*150}}px">
                   <canvas id="unitChart{{hotelsRatings.id}}" class="chart chart-bar chart--hotels_canvas"
                       chart-data="hotelsRatings.data"
@@ -211,6 +211,9 @@
             </div>
           </div>
         </div> -->
+
+        <!-- Insights -->
+        <ng-include ng-show="(insights.length != 0) && (activeTab == overallTabLabel)" src="'/static/survaiderdashboard/views/templates/insights.html'"></ng-include>
 
         <!-- Cards -->
         <div class="sv-unit-questions">

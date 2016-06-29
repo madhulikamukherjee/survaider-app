@@ -291,11 +291,12 @@
 
       $scope.ratingGraph['abscissaSpacer'] = 60;
 
-      if ($scope.ratingPoints.length*65 < 695) {
-            $scope.ratingGraph['graphWidth']=695;
-      }else{
-            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;
-      }
+      // if ($scope.ratingPoints.length*65 < 500) {
+      //       $scope.ratingGraph['graphWidth']=500;  
+      // }else{
+      //       $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
+      // }
+      $scope.ratingGraph['graphWidth'] = 500;
 
 
 
@@ -960,11 +961,12 @@
 
       $scope.ratingGraph['abscissaSpacer'] = 60;
 
-      if ($scope.ratingPoints.length*65 < 695) {
-            $scope.ratingGraph['graphWidth']=695;  
-      }else{
-            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
-      }
+      // if ($scope.ratingPoints.length*65 < 500) {
+      //       $scope.ratingGraph['graphWidth']=500;  
+      // }else{
+      //       $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
+      // }
+      $scope.ratingGraph['graphWidth'] = 500;
 
       $scope.loading--;
 
