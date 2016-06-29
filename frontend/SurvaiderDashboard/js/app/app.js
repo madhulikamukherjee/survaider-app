@@ -238,12 +238,22 @@ app.prototype.setLeaderboard = function(leaderboardData){
       var num_of_weeks = insightsData.length;
       for (var index = 0; index < num_of_weeks; index++) {
           var news = [];
-          self.insights.push(
-              new insight(
-                  insightsData[index][0],
-                  insightsData[index][1]
-              )
-          );
+          if (index == 0){
+            self.insights.push(
+                new insight(
+                    "This week",
+                    insightsData[index][1]
+                )
+            );
+          }
+          else {
+            self.insights.push(
+                new insight(
+                    insightsData[index][0],
+                    insightsData[index][1]
+                )
+            );
+          }
       }
     }
   }
