@@ -221,7 +221,7 @@
     var _adjustBarChartDynamicWidth = function() {
       if ($scope.hotelsRatings.labels.length > 3) {
             angular.element(document.querySelector('.bar-chart--hotels')).attr('style', 'width:' +
-              $scope.hotelsRatings.labels.length * 150 + 'px;');
+              $scope.hotelsRatings.labels.length * 300 + 'px;');
             // Once page is loaded,we need to remove the style
             $timeout(function() {
               angular.element(document.querySelector('.bar-chart--hotels')).removeAttr('style');

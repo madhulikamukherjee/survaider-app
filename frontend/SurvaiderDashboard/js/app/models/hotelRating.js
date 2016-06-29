@@ -13,6 +13,7 @@
             barShowStroke : true,
             showScale: true,
             barDatasetSpacing : 10,
+            barValueSpacing : 30
         },
         this.colors = ['#B8E986', '#92C4FF', '#B86DF9', '#F4596C', '#F7CC85'];
         this.clickHandler = function (points, evt) {
