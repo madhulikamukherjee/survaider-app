@@ -837,6 +837,7 @@ svg.long-text text {
      position: relative;
      overflow-y: hidden;
      height: 400px !important;
+     cursor: pointer;
  }
  
  .bar-chart--hotels {

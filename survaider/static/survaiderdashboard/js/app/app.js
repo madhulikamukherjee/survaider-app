@@ -194,10 +194,16 @@
     var chartLabels = [];
     var chartSeries = [];
     var chartData = [];
+    var anchorLinks = [];
 
     var iter = 0;
     for (var unit in units) {
-        chartLabels.push(units[unit]['meta']['unit_name'] + ' - ' + units[unit]['responses'][0]['avg_rating']);
+        var chartLabel = units[unit]['meta']['unit_name'] + ' - ' + units[unit]['responses'][0]['avg_rating'];
+        anchorLinks.push({
+          key: chartLabel,
+          value : units[unit]['meta']['id']
+        });
+        chartLabels.push(chartLabel);
         var optionsCode = units[unit]['responses'][1]['options_code'];
         var avgRating = units[unit]['responses'][1]['avg_rating'];
         // Need to prepare this only for 1st unit
@@ -217,7 +223,8 @@
         }
         iter++;
     }
-    self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries);
+    console.log(anchorLinks);
+    self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries, anchorLinks);
   }
 
 app.prototype.setLeaderboard = function(leaderboardData){
