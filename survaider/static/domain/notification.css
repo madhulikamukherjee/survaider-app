@@ -847,7 +847,7 @@ li.notification section.main ul.units {
   display: inline-block;
 }
 li.notification section.main li {
-  max-width: 68em;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }

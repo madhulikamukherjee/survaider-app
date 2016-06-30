@@ -164,12 +164,11 @@
               }
           }
 
-          for (index_sent = 0; index_sent < sent_array.length; index_sent++ ){
+          for (index_sent = 0; index_sent < sent_array.length; index_sent++){
               questionOptions.push(sent_array[index_sent] +" :" + sentiments[vendor][sent_array[index_sent]]);
               countData.push([sentiments[vendor][sent_array[index_sent]]]);
               sumOfData += parseInt([sentiments[vendor][sent_array[index_sent]]]);
           }
-
 
           graphData={
               label: vendor,
