@@ -546,7 +546,53 @@
 
 
                   <!-- Template:: GROUP-RATINGs ##STAR RATING## -->
+                  <div ng-hide="!isBarVisible" class="group-rating-star">
 
+                    <div class="star-rating-all-group">
+
+                      <div class="star-rating-graph-wrapper">
+
+                        <div class="star-rating-options">
+                          <ul>
+                            <li ng-repeat="option in question.series track by $index" class="star-rating-label">
+                              <h1>{{toCharCode($index) + ") " + option}}</h1>
+                            </li>
+                          </ul>
+                        </div>
+
+                        <!-- ALL THE STAR DRAWINGS -->
+                        <div class="star-rating-question-graph">
+                          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="600" height="{{question.heightStarGraph}}">
+
+                            <!-- WHOLE GROUP -->
+                            <g>
+                              <!-- FOR CHOICE -->
+                              <g ng-repeat="choice in question.starRating" ng-init="$rootIndex = $index" ng-attr-transform="translate(0, {{100*$rootIndex}})">
+
+                                <!-- MARK::- may lead to anomalous  -->
+                                <!-- Stars -->
+                                <g ng-repeat="star in choice.starRatingsArray track by $index" ng-attr-transform="translate( {{80*$index}} ,0)">
+                                  <defs>
+                                      <linearGradient id="half_grad">
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#F8E71C"/>
+                                          <stop ng-attr-offset="{{100*(star)}}%" stop-color="#FFFFFF" stop-opacity="1" />
+                                      </linearGradient>
+                                  </defs>
+                                  <path transform="scale(1.5)" d="M20.388,10.918L32,12.118l-8.735,7.749L25.914,
+                                           31.4l-9.893-6.088L6.127,31.4l2.695-11.533L0,
+                                           12.118l11.547-1.2L16.026,0.6L20.388,10.918z"
+                                      fill="url(#half_grad)" stroke-width="1" stroke="#F8E71C"/>
+                                </g>
+                                <text ng-attr-transform="translate({{5 * 80 + 50}} ,0)" font-size="24px" font-weight="bold" y="35">
+                                  {{choice.ratingValue}}
+                                </text>
+                              </g>
+                            </g>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                 </div>
 
