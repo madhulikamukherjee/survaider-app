@@ -546,6 +546,7 @@ class Aspect(db.Document):
     overall=db.StringField()
     survey_id=db.StringField()
     provider=db.StringField()
+    meta = {'strict': False}
 
 
 class IrapiData(object):
@@ -725,6 +726,9 @@ class Reviews(db.Document):
     review = db.StringField()
     sentiment = db.StringField()
     review_identifier=db.StringField(unique=True)
+    date_added=db.StringField()
+    datetime=db.DateTimeField()
+    meta = {'strict': False}
 
 class DataSort(object):
     """docstring for DataSort"""
