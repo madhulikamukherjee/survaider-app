@@ -658,7 +658,7 @@ class ResponseDocumentController(Resource):
             ret = str(e) if len(str(e)) > 0 else "Invalid Hash ID"
             raise APIException(ret, 404)
 
-        return json.loads(res.to_json()), 201
+        return res.response_sm, 201
 
 
 # Zurez
@@ -740,7 +740,7 @@ class Sentiment_OverallPolarity(object):
                         overall[self.p][j]=len(result)
 
             return [overall, reviews]
-        
+
         if not self.from_child:
 
             # this call is coming from parent dashboard. Survey ID could be parent or derivative child.
@@ -763,7 +763,7 @@ class Sentiment_OverallPolarity(object):
                             result += Reviews.objects(survey_id= child, provider=self.p, sentiment= j)
                         overall[self.p][j]=len(result)
                 return overall
-            
+
             if len(self.children_list) == 0:
                 # do nothing
                 return []
@@ -818,14 +818,14 @@ class WordCloud(object):
                         for i in wc:
                             new_wc[x].update(i.wc)
             return new_wc
-            
+
             if len(self.children_list) == 0:
                 #do nothing
                 return []
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
-    
+
     def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false", jupiter_data = [], children_list=[]):
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
@@ -855,7 +855,7 @@ class DashboardAPIController(Resource):
             if leaderboard!=None:
                 result['leaderboard'] = leaderboard
 
-    
+
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
@@ -986,7 +986,7 @@ class DashboardAPIController(Resource):
             #         # avg[key]=survey_avg+float(aspect[new_key])
             #         # avg[key]=round(avg[key]/2,2)
 
-            
+
             # elif j_data['field_type']=="rating":
             if j_data['field_type']=="rating":
                 for i in temp:
@@ -1004,7 +1004,7 @@ class DashboardAPIController(Resource):
                     avg=round(ll/len(temp),2)
                 else:
                     avg=0
-                
+
 
                 for time , value in timed.items():
 
@@ -1063,7 +1063,7 @@ class DashboardAPIController(Resource):
         res[0]["avg_rating"] = aspect_data["unified"]
         # Done with both sets of inputs for dashboard - line graph and feature circles
 
-        
+
         result["responses"]=res
         result["sentiment"]=sentiment
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
@@ -1180,9 +1180,9 @@ class IRAPI(Resource):
         lol = IrapiData(survey_id,start,end,aggregate)
 
         all_responses= lol.get_data()
-    
+
         all_survey= lol.get_uuid_labels()
-        
+
         ret=[]
 
         for i in range(len(all_survey)):
@@ -1354,7 +1354,7 @@ class IRAPI(Resource):
                         else:pass
                     avg[key]= round(float(counter)/len(temp),2)
                 response['avg_rating']=avg
-            
+
 
             ret.append(response)
             # if uuid == "a957b9fe-864c-4391-8c80-ba90a19b92ea":
@@ -1549,7 +1549,7 @@ Had to rewrite again Damn you git pull and merge conflict!
 """
 class Dash(Resource):
     """docstring for Dash -marker"""
-    
+
     def get_child(self,survey_id):
         objects= Relation.objects(parent=survey_id)
         return objects
@@ -1654,7 +1654,7 @@ class Dash(Resource):
                 temp['amenities']=round(temp['amenities']/length_objects, 2)
                 # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                 response[provider]=temp
-                
+
             else:
                 response[provider] = {}
         return response
@@ -1676,7 +1676,7 @@ class Dash(Resource):
             ASPECT.append(temp1)
 
             temp2=self.get_reviews_count(survey_id,i)
- 
+
             NUMBER_OF_REVIEWS.append(temp2)
 
 
@@ -1718,7 +1718,7 @@ class Dash(Resource):
 
         uni = round(sum(channel_contribution.values()), 2)
         return uni
-    
+
     def average_for_all_channels(self, all_channel_data):
         overall = {}
 
@@ -1730,6 +1730,7 @@ class Dash(Resource):
                 else:
                     overall[aspect] += channel_data[aspect]
         return overall
+
 
     # def unified_avg_aspect(self,parent_survey_id):
     #     objects= self.get_child(parent_survey_id)
@@ -1749,7 +1750,7 @@ class Dash(Resource):
     #         ASPECTS= pr_data[0]
     #         NUMBER_OF_REVIEWS= pr_data[1]
 
-            
+
     #         num_reviews_children[survey_id] = NUMBER_OF_REVIEWS[0]
 
     #         NUMBER_OF_CHANNELS=1
@@ -1805,7 +1806,7 @@ class Dash(Resource):
     #             avg[unit]["total_resp"] = num_reviews_children[unit]
 
     #     return {"units_aspects":avg, "owner_aspects": owner_aspects}
-   
+
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)
         NUMBER_OF_CHANNELS=2

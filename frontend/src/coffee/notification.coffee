@@ -71,6 +71,21 @@ class SurveyResponseNotification extends Backbone.Model
         type: 'error'
         title: 'Server error. Please try again.'
 
+  expand: (e) ->
+    @set
+      collapse: !@get('collapse')
+
+  load_response: (e) ->
+    uri = "/api/survey/#{@get('survey').id}/response/#{@get('response')}"
+    $.getJSON uri
+      .done (data) ->
+        template = Survaider.Templates['notification.survey.response.doc']
+        swal
+          html: yes
+          title: "Responses for #{data.parent_survey.meta.name}"
+          text: template(dat: data)
+          confirmButtonText: 'Close'
+
 
 class NotificationCollection extends Backbone.Collection
   model: (attr, options) ->
@@ -98,9 +113,7 @@ class NotificationView extends Backbone.View
     return @
 
   notificationaction: (e) ->
-    console.log e
-    func = $(e.target).attr("data-action")
-    console.log func
+    func = $(e.target).data("action")
     @model[func](e)
 
 class NotificationDock extends Backbone.View
