@@ -12,23 +12,42 @@
          </md-button>
        </div>
      </md-toolbar>
-     <md-dialog-content>
-       <div class="md-dialog-content">
-         <p>
-           Survey link: <b><i>{{surveyUrl}}</i></b>
-         </p>
-         <p>
-           Copy this link and send to your unit managers or customers for a
-           super sweet survey filling experience.
-         </p>
-       </div>
-     </md-dialog-content>
-     <md-dialog-actions layout="row">
-       <span flex>
-       </span>
-       <md-button ng-click="cancel()">
-        Done
-       </md-button>
-     </md-dialog-actions>
+     <div ng-show="!isParentSurvey">
+        <md-dialog-content>
+           <div class="md-dialog-content">
+             <p>
+               Survey link: <b><i>{{surveyUrl}}</i></b>
+             </p>
+             <p>
+               Copy this link and send to your unit managers or customers for a
+               super sweet survey filling experience.
+             </p>
+           </div>
+         </md-dialog-content>
+         <md-dialog-actions layout="row">
+           <span flex>
+           </span>
+           <md-button ng-click="cancel()">
+            Done
+           </md-button>
+         </md-dialog-actions>
+     </div>
+
+     <div ng-show="isParentSurvey">
+         <md-dialog-content>
+          <div class="md-dialog-content">
+             <p>
+                Different units have different survey URLs! Check out survey links on different dashboards
+             </p>
+           </div>
+         </md-dialog-content>
+         <md-dialog-actions layout="row">
+           <span flex>
+           </span>
+           <md-button ng-click="cancel()">
+            Close
+           </md-button>
+         </md-dialog-actions>
+     </div>
    </form>
- +</md-dialog>
+</md-dialog>

@@ -39,10 +39,12 @@
     $scope.ParentId = uri_dat.s_id;
     if (uri_dat.parent) {
       $scope.isEditSurveyEnabled = true;
+      $scope.isParent = true;
 
     }
     else {
       $scope.isEditSurveyEnabled = false;
+      $scope.isParent = false;
     }
 
     
@@ -78,6 +80,7 @@
  
       function DialogController($scope, $mdDialog, $location) {
         // $scope.surveyUrl = $location.absUrl();
+        $scope.isParentSurvey = $location.search().parent;
         $scope.surveyUrl = 'http://survaider.com/survey/s:'+ uri_dat.s_id +'/simple';
         $scope.surveyName = application.companyName + ' - ' + application.unitName;
         $scope.hide = function() {
