@@ -16,38 +16,37 @@
     <% }; %>
 
     <ul>
-      <table>
       <% _.each(dat.payload, function(doc) { %>
-          <tr>
-            <td class="details">
-              A response <%= doc.res_label %> to the question <%= doc.label %> at outlet <%= dat.survey.name %>
-            </td>
-            <td class="buttons">
-              <a href=""><button>Analytics</button></a>
-              <a href=""><button>More Details</button></a>
-            </td>
-          </tr>
+        <li class="details">
+          A response <%= doc.res_label %> to the question <%= doc.label %> at outlet <%= dat.survey.name %>
+        </li>
       <% }); %>
-    </table>
     </ul>
-            <ul role="comments">
-              <% _.each(dat.comments, function(doc) { %>
-              <li data-user-id="<%= doc.user.id %>">
-                <i class="fa fa-clock-o"></i>
-                <!-- <span data-livestamp="<%= doc.added %>"><%= doc.added %></span> -->
+    <a href="">Analytics</a>
+    <a href="#" data-action="load_response">More Details</a>
+    <ul role="comments">
+      <% _.each(dat.comments, function(doc) { %>
+      <li data-user-id="<%= doc.user.id %>">
+        <i class="fa fa-clock-o"></i>
+        <!-- <span data-livestamp="<%= doc.added %>"><%= doc.added %></span> -->
 
-                <!-- <span><%= doc.user.email %></span> -->
-                <% if (dat.origin == doc.user.id) { %>
-                <span>Owner</span>
-                <% } %>
-                <p class="message"><%= doc.text %></p>
-              </li>
-              <% }); %>
-              <li>
-                <span data-action="add_comment">Add a Comment</span>
-                <input type="text" data-input="add_comment"></input>
+        <!-- <span><%= doc.user.email %></span> -->
+        <% if (dat.origin == doc.user.id) { %>
+        <span>Owner</span>
+        <% } %>
+        <p class="message"><%= doc.text %></p>
+      </li>
+      <% }); %>
+      <li>
+        <span data-action="add_comment">Add a Comment</span>
+        <input type="text" data-input="add_comment"></input>
 
-              </li>
-            </ul>
+      </li>
+    </ul>
+    <% if (dat.flagged) {%>
+      <span data-action="mark_finished" class="button">Mark Finished</span>
+    <% } else { %>
+      <span data-action="expand" class="button">Expand/Collapse</span>
+    <% } %>
   </section>
 </li>

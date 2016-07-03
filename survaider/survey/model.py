@@ -391,11 +391,21 @@ class Response(db.Document):
 
     @property
     def response_sm(self):
+        questions = dict(self.parent_survey.questions)
+        res = []
+        for k, v in self.responses.items():
+            res.append({
+                'id': k,
+                'label': questions[k],
+                'response': v['pretty']
+            })
+
+
         return {
             'id': str(self),
-            'meta': self.metadata,
-            'parent_survey': self.parent_survey,
-            'responses': self.responses
+            # 'meta': self.metadata,
+            'parent_survey': self.parent_survey.repr_sm,
+            'responses': res
         }
 
 class ResponseSession(object):
@@ -565,7 +575,7 @@ class IrapiData(object):
             child_id= HashId.decode(i)
             # print (child_id)
             raw = Response.objects(parent_survey=child_id)
-            raw_temp=[]           
+            raw_temp=[]
             for i in raw:
                 temp_j=[]
                 temp_j.append(i.responses)
@@ -586,7 +596,7 @@ class IrapiData(object):
 
         if flag==False:
             raw= Response.objects(parent_survey=self.sid)
-            raw_temp=[]           
+            raw_temp=[]
             for i in raw:
                 temp_j=[]
                 temp_j.append(i.responses)
@@ -599,7 +609,7 @@ class IrapiData(object):
                 "WIll return all the responses "
 
                 raw = Response.objects(parent_survey = self.sid)
-                raw_temp=[]           
+                raw_temp=[]
                 for i in raw:
                     temp_j=[]
                     temp_j.append(i.responses)
@@ -639,7 +649,7 @@ class IrapiData(object):
                 return a.structure['fields'][m:n]
 
         return d(raw[0].structure['fields']) # fallback
-    
+
     def survey_strct(self):
         try:
             raw=Survey.objects(id = HashId.decode(self.sid))
@@ -648,7 +658,7 @@ class IrapiData(object):
 
         js=raw[0]['structure']['fields']
         # js=raw[0]
- 
+
         return js
 
     def ret(self):
