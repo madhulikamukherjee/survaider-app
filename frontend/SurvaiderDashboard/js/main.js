@@ -39,10 +39,12 @@
     $scope.ParentId = uri_dat.s_id;
     if (uri_dat.parent) {
       $scope.isEditSurveyEnabled = true;
+      $scope.isParent = true;
 
     }
     else {
       $scope.isEditSurveyEnabled = false;
+      $scope.isParent = false;
     }
 
     
@@ -77,7 +79,9 @@
       });
  
       function DialogController($scope, $mdDialog, $location) {
-        $scope.surveyUrl = $location.absUrl();
+        // $scope.surveyUrl = $location.absUrl();
+        $scope.isParentSurvey = $location.search().parent;
+        $scope.surveyUrl = 'http://survaider.com/survey/s:'+ uri_dat.s_id +'/simple';
         $scope.surveyName = application.companyName + ' - ' + application.unitName;
         $scope.hide = function() {
           $mdDialog.hide();
@@ -128,7 +132,7 @@
 
   }]);
 
-  appModule.controller('HomeController', [ '$scope', '$http', '$location',function($scope, $http, $location){
+  appModule.controller('HomeController', [ '$scope', '$http', '$location', '$timeout',function($scope, $http, $location, $timeout){
     // This is used for Overall tab
     $scope.overallTabLabel = 'all';
 
@@ -170,16 +174,90 @@
       return new Date(date);
     }
 
+    var _getReorderIndex = function(data, aspect, mode) {
+        // This is the order in which all objects are to be reordered
+        var hotelOrder = [];
+        var sortedData = [];
+        var origArray = data[aspect];
+        var clonedArray = origArray.slice();
+        if (mode === 'asc') {
+            sortedData = clonedArray.sort(function(a, b){
+              return a - b;
+            });
+        } else {
+            sortedData = clonedArray.sort(function(a, b){
+              return b - a;
+            });
+        }
+
+        for (var index = 0; index < data[aspect].length; index++) {
+            hotelOrder.push(
+                data[aspect].indexOf(sortedData[index])
+            );
+        }
+        return hotelOrder;
+    };
+
+    var _filterData = function(hotelsRatings, aspect, mode) {
+        var hotelOrder = _getReorderIndex(hotelsRatings.data, aspect, mode);
+        // Update labels as per new hotel order
+        var sortedLabels = hotelsRatings.labels.slice();
+        var sortedData = hotelsRatings.data.slice();
+        for (var index = 0; index < hotelOrder.length; index++) {
+            sortedLabels[index] = hotelsRatings.labels[hotelOrder[index]];
+        }
+
+        // Sort data in the order
+        for (var iter = 0; iter < sortedData.length; iter++) {
+            var item = sortedData[iter].slice();
+            // Iterate through each array in data and sort by order
+            for (index = 0; index < item.length; index++) {
+                item[index] = hotelsRatings.data[iter][hotelOrder[index]];
+            }
+            sortedData[iter] = item;
+        }
+
+        hotelsRatings.labels = sortedLabels;
+        hotelsRatings.data = sortedData;
+        return hotelsRatings;
+    };
+    var _adjustBarChartDynamicWidth = function() {
+      if ($scope.hotelsRatings.labels.length > 3) {
+            angular.element(document.querySelector('.bar-chart--hotels')).attr('style', 'width:' +
+              $scope.hotelsRatings.labels.length * 300 + 'px;');
+            // Once page is loaded,we need to remove the style
+            $timeout(function() {
+              angular.element(document.querySelector('.bar-chart--hotels')).removeAttr('style');
+            }, 1000);
+        }
+    };
+ 
+
     //HTTP-MARK::- Dashboard API Call which returns top-most line graph data
     //and unit-graph data
 
     // var uri = '/static/SurvaiderDashboard/API1_parent.json';
     var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
-
+    $scope.loading = 0;
+    $scope.loading++;
     $http.get(uri).success(function(data){
-
+      
       application.init(data);
       $scope.features = application.features;
+      $scope.hotelsRatings = application.hotelsRatings;
+      // console.log("OIGINAL");
+      // console.log($scope.hotelsRatings.data);
+      $scope.filterData = function() {
+          if ($scope.filterMode && $scope.filterAspect) {
+            // Apply filter to update data
+            $scope.hotelsRatings = _filterData(application.hotelsRatings, $scope.filterAspect, $scope.filterMode);
+            // Need to reapply the dynamic styling to handle large data
+            _adjustBarChartDynamicWidth();
+          }
+      };
+      _adjustBarChartDynamicWidth();
+      $scope.leaderboard = application.leaderboard;
+      $scope.insights = application.insights;
       $scope.units = application.units;
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;
@@ -187,6 +265,7 @@
       $scope.totalRespondents = application.totalRespondents;
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
+      $scope.insights = application.insights;
       // console.log($scope.features);
       var numberOfFeatures = $scope.features.length;
 
@@ -215,12 +294,13 @@
 
       $scope.ratingGraph['abscissaSpacer'] = 60;
 
-      if ($scope.ratingPoints.length*65 < 695) {
-            $scope.ratingGraph['graphWidth']=695;  
-      }else{
-            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
-      }
-      
+      // if ($scope.ratingPoints.length*65 < 500) {
+      //       $scope.ratingGraph['graphWidth']=500;  
+      // }else{
+      //       $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
+      // }
+      $scope.ratingGraph['graphWidth'] = 500;
+
 
 
       $scope.ticketDetails = {
@@ -240,18 +320,20 @@
       }
 
       $scope.unitsGraph['addUnitX'] = $scope.units.length;
-
+      $scope.loading--;
 
     });
 
    
       // var uri2 = '/static/SurvaiderDashboard/API2_parent.json'
 
-      var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response/true';
-      /*
-      ***********************************************
-      ***********************************************
-      */
+    var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response/true';
+    /*
+    ***********************************************
+    ***********************************************
+    */
+
+    $scope.loading++;
     $http.get(uri2).success(function(data){
 
       // Setting the features name(from the key 'option_code')
@@ -826,6 +908,8 @@
       return max;
     }
 
+    $scope.loading--;
+
   }]);
 
   appModule.controller('UnitController', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
@@ -853,6 +937,10 @@
 
     var uri = '/api/dashboard/'+extracted_id+'/all/response';
     // var uri = '/static/SurvaiderDashboard/API1_'+extracted_id+'.json';
+
+    $scope.loading = 0;
+    $scope.loading++;
+
     $http.get(uri).success(function(data){
 
       application.init(data);
@@ -876,11 +964,14 @@
 
       $scope.ratingGraph['abscissaSpacer'] = 60;
 
-      if ($scope.ratingPoints.length*65 < 695) {
-            $scope.ratingGraph['graphWidth']=695;  
-      }else{
-            $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
-      }
+      // if ($scope.ratingPoints.length*65 < 500) {
+      //       $scope.ratingGraph['graphWidth']=500;  
+      // }else{
+      //       $scope.ratingGraph['graphWidth'] = $scope.ratingPoints.length*65;  
+      // }
+      $scope.ratingGraph['graphWidth'] = 500;
+
+      $scope.loading--;
 
     });
 
@@ -912,6 +1003,7 @@
       ***********************************************
       ***********************************************
       */
+    $scope.loading++;
     $http.get(uri2).success(function(data){
 
       // Setting the features name(from the key 'option_code')
@@ -959,19 +1051,16 @@
       }
 
 
-      // Setting the features name(from the key 'option_code')
-      // and the average rating(from the key 'avg_rating')
-      // in an object { 'label', 'rating' } and pushing it in an array
-      // $scope.features
-      $scope.features = [];
-      var theOptionCodeObject = groupRating['options_code'],
-          theAvgRatingObject = groupRating['avg_rating'];
+      
+      // $scope.features = [];
+      // var theOptionCodeObject = groupRating['options_code'],
+      //     theAvgRatingObject = groupRating['avg_rating'];
 
-      for (var key in theOptionCodeObject) {
-        if (theOptionCodeObject.hasOwnProperty(key)) {
-          $scope.features.push( { label: theOptionCodeObject[key], rating: theAvgRatingObject[key]  } )
-        }
-      }
+      // for (var key in theOptionCodeObject) {
+      //   if (theOptionCodeObject.hasOwnProperty(key)) {
+      //     $scope.features.push( { label: theOptionCodeObject[key], rating: theAvgRatingObject[key]  } )
+      //   }
+      // }
 
       function setShortTextQuestion() {
 
@@ -1494,6 +1583,8 @@
 
       return max;
     }
+
+    $scope.loading--;
 
   }]);
 

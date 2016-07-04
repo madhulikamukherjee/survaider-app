@@ -23117,6 +23117,27 @@ __p += '<ul class=""></ul>\n<a href="javascript:void(0)" data-backbone-call="nex
 return __p
 };
 
+this["Survaider"]["Templates"]["notification.survey.response.doc"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+__p += '<div>\n    <ul>\n      ';
+ _.each(dat.responses, function(doc) { ;
+__p += '\n        <li class="details" data-question-id="' +
+((__t = ( doc.id )) == null ? '' : __t) +
+'">\n          <h3>' +
+((__t = ( doc.label )) == null ? '' : __t) +
+'</h3>\n          <p>' +
+((__t = ( doc.response )) == null ? '' : __t) +
+'</p>\n        </li>\n      ';
+ }); ;
+__p += '\n    </ul>\n</div>\n';
+
+}
+return __p
+};
+
 this["Survaider"]["Templates"]["notification.survey.response.tile"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
@@ -23136,35 +23157,41 @@ __p += '\n    <h3>Main Survey: ' +
 ((__t = ( dat.root.name )) == null ? '' : __t) +
 '</h3>\n    ';
  }; ;
-__p += '\n\n    <ul>\n      <table>\n      ';
+__p += '\n\n    <ul>\n      ';
  _.each(dat.payload, function(doc) { ;
-__p += '\n          <tr>\n            <td class="details">\n              A response ' +
+__p += '\n        <li class="details">\n          A response ' +
 ((__t = ( doc.res_label )) == null ? '' : __t) +
 ' to the question ' +
 ((__t = ( doc.label )) == null ? '' : __t) +
 ' at outlet ' +
 ((__t = ( dat.survey.name )) == null ? '' : __t) +
-'\n            </td>\n            <td class="buttons">\n              <a href=""><button>Analytics</button></a>\n              <a href=""><button>More Details</button></a>\n            </td>\n          </tr>\n      ';
+'\n        </li>\n      ';
  }); ;
-__p += '\n    </table>\n    </ul>\n            <ul role="comments">\n              ';
+__p += '\n    </ul>\n    <a href="">Analytics</a>\n    <a href="#" data-action="load_response">More Details</a>\n    <ul role="comments">\n      ';
  _.each(dat.comments, function(doc) { ;
-__p += '\n              <li data-user-id="' +
+__p += '\n      <li data-user-id="' +
 ((__t = ( doc.user.id )) == null ? '' : __t) +
-'">\n                <i class="fa fa-clock-o"></i>\n                <!-- <span data-livestamp="' +
+'">\n        <i class="fa fa-clock-o"></i>\n        <!-- <span data-livestamp="' +
 ((__t = ( doc.added )) == null ? '' : __t) +
 '">' +
 ((__t = ( doc.added )) == null ? '' : __t) +
-'</span> -->\n\n                <!-- <span>' +
+'</span> -->\n\n        <!-- <span>' +
 ((__t = ( doc.user.email )) == null ? '' : __t) +
-'</span> -->\n                ';
+'</span> -->\n        ';
  if (dat.origin == doc.user.id) { ;
-__p += '\n                <span>Owner</span>\n                ';
+__p += '\n        <span>Owner</span>\n        ';
  } ;
-__p += '\n                <p class="message">' +
+__p += '\n        <p class="message">' +
 ((__t = ( doc.text )) == null ? '' : __t) +
-'</p>\n              </li>\n              ';
+'</p>\n      </li>\n      ';
  }); ;
-__p += '\n              <li>\n                <span data-action="add_comment">Add a Comment</span>\n                <input type="text" data-input="add_comment"></input>\n\n              </li>\n            </ul>\n  </section>\n</li>\n';
+__p += '\n      <li>\n        <span data-action="add_comment">Add a Comment</span>\n        <input type="text" data-input="add_comment"></input>\n\n      </li>\n    </ul>\n    ';
+ if (dat.flagged) {;
+__p += '\n      <span data-action="mark_finished" class="button">Mark Finished</span>\n    ';
+ } else { ;
+__p += '\n      <span data-action="expand" class="button">Expand/Collapse</span>\n    ';
+ } ;
+__p += '\n  </section>\n</li>\n';
 
 }
 return __p

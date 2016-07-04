@@ -48,22 +48,41 @@ class Survey(db.Document):
     @property
     def notification_hooks(self):
         rules = {}
+        check = []
         for field in self.structure['fields']:
             if field.get('notifications', False) is True:
-                options = enumerate(field['field_options'].get('options', []))
                 store = []
-                for i, option in options:
-                    if option.get('notify', False) is True:
-                        val = "a_{0}".format(i + 1)
+                fieldType = field.get('field_type')
+                if fieldType == 'rating':
+                    options = enumerate(field['field_options'].get('notifications', []))
+                    for i,option in options :
+                     store.append("a_"+option)
 
-                        for j in range(0, 5):
-                            if option.get("notify_{0}".format(j)):
-                                store.append("a_{0}##{1}".format(i + 1, j + 1))
-                        store.append(val)
+                if fieldType == 'yes_no' or fieldType == 'single_choice':
+                    options = enumerate(field['field_options'].get('options', []))
+                    for i, option in options:
+                        if option.get('notify', False) is True:
+                            val = "a_{0}".format(i + 1)
+                            store.append(val)
+                            for j in range(0, 5):
+                                 if option.get("notify_{0}".format(j)):
+                                     store.append("a_{0}##{1}".format(i + 1, j ))
+
+
+                if fieldType == 'group_rating':
+                    options = enumerate(field['field_options'].get('options', []))
+                    for i, option in options:
+                        if option.get('notify', False) is True:
+
+                            for j in range(0, 5):
+                                 if option.get("notify_{0}".format(j)):
+                                     store.append("a_{0}##{1}".format(i + 1, j ))
+
 
                 rules[field['cid']] = store
 
         return rules
+
 
     @property
     def questions(self):
@@ -383,7 +402,7 @@ class Response(db.Document):
                     survey_response_notify.send(self.parent_survey,
                                                 response = self,
                                                 qid = q_id,
-                                                qres = q_res)
+                                                qres = hook)
 
     @property
     def added(self):
@@ -391,11 +410,21 @@ class Response(db.Document):
 
     @property
     def response_sm(self):
+        questions = dict(self.parent_survey.questions)
+        res = []
+        for k, v in self.responses.items():
+            res.append({
+                'id': k,
+                'label': questions[k],
+                'response': v['pretty']
+            })
+
+
         return {
             'id': str(self),
-            'meta': self.metadata,
-            'parent_survey': self.parent_survey,
-            'responses': self.responses
+            # 'meta': self.metadata,
+            'parent_survey': self.parent_survey.repr_sm,
+            'responses': res
         }
 
 class ResponseSession(object):
@@ -536,12 +565,15 @@ class Aspect(db.Document):
     overall=db.StringField()
     survey_id=db.StringField()
     provider=db.StringField()
+
 class AspectData(db.Document):
     """doc string for Aspect"""
     name=db.StringField()
     provider=db.StringField()
     survey_id=db.StringField()
     value=db.StringField()
+    meta = {'strict': False}
+
 class Aspect(db.Document):
     """docstring for Aspect"""
 
@@ -557,6 +589,7 @@ class Aspect(db.Document):
     overall=db.StringField()
     survey_id=db.StringField()
     provider=db.StringField()
+    meta = {'strict': False}
 
 
 class IrapiData(object):
@@ -583,7 +616,7 @@ class IrapiData(object):
         js=[]
         for i in aList:
             child_id= HashId.decode(i)
-            print (child_id)
+            # print (child_id)
             raw = Response.objects(parent_survey=child_id)
             raw_temp=[]
             for i in raw:
@@ -625,7 +658,7 @@ class IrapiData(object):
                     temp_j.append(i.responses)
                     temp_j.append(i.metadata)
                     raw_temp.append(temp_j)
-                # return raw_temp
+
                 js = raw_temp + self.get_multi_data(flag)
                 return js
             else:
@@ -638,13 +671,7 @@ class IrapiData(object):
 
         raw = Survey.objects(id = self.sid)
         js = [_.repr_sm for _ in raw if not _.hidden]
-        # js = d(raw)[0]
 
-        # if "referenced" in js:
-        #     return js['referenced']['$oid'] #it has a parent, id of which, is this.
-        # else:
-        #     return False # It is a parent itself
-        # return js
         if 'rootid' in js[0]:
             return js[0]['rootid']
         else:
@@ -683,6 +710,47 @@ class IrapiData(object):
             return d(raw)
         except:return "Errors"
 
+class Leaderboard(db.Document):
+    survey_ID = db.StringField()
+    competitors = db.DictField()
+
+class LeaderboardAggregator(object):
+    def __init__(self, survey_id):
+        self.sid = survey_id
+
+    def getLeaderboard(self):
+        raw_data = Leaderboard.objects(survey_ID = HashId.encode(self.sid))
+        if len(raw_data) == 0:
+            return None
+        ordered_leaderboard_list = []
+        unordered_leaderboard_dict = d(raw_data[0].competitors)
+
+        ordered_scores_list = sorted(unordered_leaderboard_dict, key = unordered_leaderboard_dict.get, reverse=True)
+
+        for i in ordered_scores_list:
+            ordered_leaderboard_list.append([i, unordered_leaderboard_dict[i]])
+
+        return ordered_leaderboard_list
+
+class Insights(db.Document):
+    survey_id = db.StringField()
+    insights = db.DictField()
+
+class InsightsAggregator(object):
+    def __init__(self, survey_id):
+        self.sid = survey_id
+
+    def getInsights(self):
+        raw_data = Insights.objects(survey_id = HashId.encode(self.sid))
+        if len(raw_data) == 0:
+            return None
+        unordered_insight_dict = d(raw_data[0].insights)
+        ordered_dates_list = sorted(unordered_insight_dict, key = lambda t: datetime.datetime.strptime(t, '%d-%m-%Y'), reverse=True)
+        ordered_insights_list = []
+        for i in ordered_dates_list:
+            ordered_insights_list.append([i, list(unordered_insight_dict[i].values())])
+        return ordered_insights_list
+
 class Dashboard(IrapiData):
     """docstring for Dashboard"""
     def __init__(self,survey_id):
@@ -701,6 +769,9 @@ class Reviews(db.Document):
     review = db.StringField()
     sentiment = db.StringField()
     review_identifier=db.StringField(unique=True)
+    date_added=db.StringField()
+    datetime=db.DateTimeField()
+    meta = {'strict': False}
 
 class DataSort(object):
     """docstring for DataSort"""
@@ -710,7 +781,6 @@ class DataSort(object):
         self.uuid= uuid
         self.agg= aggregate
     def get_survey(self):
-        # survey= db.survey.find({"_id":ObjectId(self.sid)}) #Got the particular survey.
         survey=SurveyUnit.objects(referenced=self.sid)
         return d(survey)
     def get_response(self):

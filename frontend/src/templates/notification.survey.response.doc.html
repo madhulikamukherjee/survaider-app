@@ -1,0 +1,10 @@
+<div>
+    <ul>
+      <% _.each(dat.responses, function(doc) { %>
+        <li class="details" data-question-id="<%= doc.id %>">
+          <h3><%= doc.label %></h3>
+          <p><%= doc.response %></p>
+        </li>
+      <% }); %>
+    </ul>
+</div>

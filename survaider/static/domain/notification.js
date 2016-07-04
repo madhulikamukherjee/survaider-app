@@ -125,6 +125,29 @@
       });
     };
 
+    SurveyResponseNotification.prototype.expand = function(e) {
+      return this.set({
+        collapse: !this.get('collapse')
+      });
+    };
+
+    SurveyResponseNotification.prototype.load_response = function(e) {
+      var uri;
+      uri = "/api/survey/" + (this.get('survey').id) + "/response/" + (this.get('response'));
+      return $.getJSON(uri).done(function(data) {
+        var template;
+        template = Survaider.Templates['notification.survey.response.doc'];
+        return swal({
+          html: true,
+          title: "Responses for " + data.parent_survey.meta.name,
+          text: template({
+            dat: data
+          }),
+          confirmButtonText: 'Close'
+        });
+      });
+    };
+
     return SurveyResponseNotification;
 
   })(Backbone.Model);
@@ -180,9 +203,7 @@
 
     NotificationView.prototype.notificationaction = function(e) {
       var func;
-      console.log(e);
-      func = $(e.target).attr("data-action");
-      console.log(func);
+      func = $(e.target).data("action");
       return this.model[func](e);
     };
 

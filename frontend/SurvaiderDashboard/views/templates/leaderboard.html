@@ -1,0 +1,21 @@
+<div class="leaderboard">
+     <h2>Competitive Analysis</h2>
+     <table class="table table-striped">
+         <thead>
+             <tr class="info">
+                 <th  class="col-md-9">
+                     Name
+                 </th>
+                 <th  class="col-md-3">
+                     Score
+                 </th>
+             </tr>
+         </thead>
+         <tbody>
+             <tr ng-repeat="item in leaderboard | orderBy:'-score'">
+                 <td>{{item.name}}</td>
+                 <td>{{item.score}}</td>
+             </tr>
+         </tbody>
+     </table>
+ </div>

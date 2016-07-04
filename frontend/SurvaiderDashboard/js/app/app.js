@@ -3,6 +3,8 @@
   //Constructor
   function app(){
     this.features = [];
+    this.hotelsRatings = {};
+    this.leaderboard = [];
     this.units = [];
     this.ratingPoints = [];
     this.surveyQuestions = [];
@@ -16,6 +18,7 @@
 
     this.unifiedRating = [];
     this.sentimentsObject = [];
+    this.insights = [];
   }
 
   //Initializer
@@ -31,6 +34,10 @@
     self.features = [];
     self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
+    self.setFeaturesColor();
+    self.setHotelsRatings(data);
+    self.setLeaderboard(data['parent_survey']['leaderboard']);
+    self.setInsights(data['parent_survey']['insights']);
     self.setRatingData(data['parent_survey']['responses'][0]['timed_agg']);
     self.setSentimentsObjectData(data['parent_survey']['sentiment']);
     self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
@@ -39,6 +46,7 @@
     // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
+
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
 
@@ -103,7 +111,7 @@
     // var positiveKeyWords = [],
     //     negativeKeywords = [],
     //     neutralKeywords = [];
-  var sent_array = ["Negative", "Neutral", "Positive"];
+    var sent_array = ["Negative", "Neutral", "Positive"];
 
         for (var vendor in sentiments) {
           countData = [];
@@ -118,21 +126,7 @@
           for(var prop in sentiments[vendor]){
 
               if (sentiments[vendor].hasOwnProperty(prop)) {
-                  // if (prop == 'Negative') {
-                  //   questionOptions.push("Negative :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
-                  // else if (prop == 'Positive') {
-                  //   questionOptions.push("Positive :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
-                  // else if (prop == 'Neutral') {
-                  //   questionOptions.push("Neutral :" + sentiments[vendor][prop]);
-                  //   countData.push([sentiments[vendor][prop]]);
-                  //   sumOfData += parseInt([sentiments[vendor][prop]]);
-                  // }
+
                   if (prop == 'options_count'){
                     for (var key in sentiments[vendor]['options_count']) {
                       if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
@@ -143,20 +137,7 @@
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
                         KeyWords.push(key);
-                        // if (sentiments[vendor]['sentiment_segg'].hasOwnProperty(key)) {
 
-                        //     if (sentiments[vendor]['sentiment_segg'][key] == 'negative') {
-                        //       negativeKeywords.push(key);
-                        //     }
-
-                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'positive') {
-                        //       positiveKeyWords.push(key);
-                        //     }
-
-                        //     else if (sentiments[vendor]['sentiment_segg'][key] == 'neutral') {
-                        //       neutralKeywords.push(key);
-                        //     }
-                        // }
                       }
                   }
 
@@ -189,24 +170,101 @@
                        {'fillColor': barColorsForAllBars['positive']}
                       ]
           };
-          console.log(countData);
           this.sentimentsObject.push(graphData);
         }
   }
-  
+
   app.prototype.setFeaturesData = function(featuresData){
     var self = this;
     var index = 0;
 
     for (var prop in featuresData) {
       if( featuresData.hasOwnProperty( prop ) ) {
-        self.features.push({ id: (index+1), label: featuresData[prop] });
+        self.features.push(
+            new feature(index+1, featuresData[prop])
+        );
       }
       index++;
     }
   }
 
-  app.prototype.setFeaturesScore = function(featuresData){
+  app.prototype.setHotelsRatings = function(parentSurveyData){
+    var self = this;
+    var units = parentSurveyData['units'];
+    var chartLabels = [];
+    var chartSeries = [];
+    var chartData = [];
+    var anchorLinks = [];
+
+    var iter = 0;
+    for (var unit in units) {
+        var chartLabel = units[unit]['meta']['unit_name'] + ' - ' + units[unit]['responses'][0]['avg_rating'];
+        anchorLinks.push({
+          key: chartLabel,
+          value : units[unit]['meta']['id']
+        });
+        chartLabels.push(chartLabel);
+        var optionsCode = units[unit]['responses'][1]['options_code'];
+        var avgRating = units[unit]['responses'][1]['avg_rating'];
+        // Need to prepare this only for 1st unit
+        if (iter === 0) {
+            for (var unitFeature in optionsCode) {
+                chartSeries.push(optionsCode[unitFeature]);
+            }
+        }
+
+        var featureRatingIter = 0;
+        for (var featureRating in avgRating) {
+            if (!chartData[featureRatingIter]) {
+                chartData[featureRatingIter] = [];
+            }
+            chartData[featureRatingIter].push(avgRating[featureRating]);
+            featureRatingIter++;
+        }
+        iter++;
+    }
+    console.log(anchorLinks);
+    self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries, anchorLinks);
+  }
+
+app.prototype.setLeaderboard = function(leaderboardData){
+   var self = this;
+   if (typeof leaderboardData !== 'undefined'){
+     for (var index = 0; index < leaderboardData.length; index++) {
+         self.leaderboard.push(new leaderboardEntry(
+             leaderboardData[index][0],
+             leaderboardData[index][1]
+         ));
+     }
+   }
+ }
+
+  app.prototype.setInsights = function(insightsData){
+    var self = this;
+    if (typeof insightsData !== 'undefined'){
+      var num_of_weeks = insightsData.length;
+      for (var index = 0; index < num_of_weeks; index++) {
+          var news = [];
+          if (index == 0){
+            self.insights.push(
+                new insight(
+                    "This week",
+                    insightsData[index][1]
+                )
+            );
+          }
+          else {
+            self.insights.push(
+                new insight(
+                    insightsData[index][0],
+                    insightsData[index][1]
+                )
+            );
+          }
+      }
+    }
+  }
+    app.prototype.setFeaturesScore = function(featuresData){
     var self = this;
     var index = 0;
 
@@ -215,6 +273,15 @@
         self.features[index]['score'] = featuresData[prop];
       }
       index++;
+    }
+  }
+
+  app.prototype.setFeaturesColor = function() {
+    var self = this;
+    for (var index = 0; index < self.colors.length; index++ ) {
+      self.features[index]['colors'].push({
+          'fillColor': this.colors[index]
+      });
     }
   }
 
@@ -232,40 +299,6 @@
     var self = this;
     self.unitId = unit_id;
   }
-
-  // app.prototype.setUnitCity = function(unitname){
-  //   var self = this;
-  //   self.unitCity = '';
-
-  //   t = unitname;
-  //   words = t.split(' ');
-  //   num_of_words = t.split(' ').length
-  //   num_of_chars = t.split('').length
-  //   words_fit = [];
-  //   words_dont_fit = [];
-
-  //   if (num_of_chars > 18) {
-  //     if (num_of_words > 2) {
-  //       var num_of_chars_fit = 0;
-
-  //       for (var i = 0; i < num_of_words; i++){
-  //         num_of_chars_fit += words[i].split('').length;
-  //         if (num_of_chars_fit < 18){
-  //           words_fit.append(words[i]);
-  //         }
-  //         else {
-  //           words_dont_fit.append(words[i]);
-  //         }
-  //       }
-
-  //       self.unitName = words_fit.join(' ');
-  //       self.unitCity = words_dont_fit.join(' ');
-  //     }
-  //   }
-
-
-  //   // self.unitId = unit_id;
-  // }
 
   app.prototype.setCompanyName = function(company_Name){
     var self = this;
@@ -290,7 +323,28 @@
   app.prototype.setUnifiedRating = function(uni_score){
     var self = this;
     self.unifiedRating = uni_score;
-  }  
+  }
+
+  // app.prototype.setInsights = function(insights){
+  //   var self = this;
+  //   pretty_insights = [];
+  //   num_of_weeks = insights.length;
+  //   for (var i = 0; i < num_of_weeks; i++){
+  //     insights_week = {};
+  //     if (i == 0){
+  //       insights_week["date"] = "This week";
+  //       insights_week["data"] = insights[i][1];
+  //     }
+  //     else{
+  //       insights_week["date"] = insights[i][0];
+  //       insights_week["data"] = insights[i][1];
+  //     }
+  //     pretty_insights.push(insights_week);
+  //   }
+
+  //   self.insights = pretty_insights;
+
+  // }
 
   //Testing Functions
   app.RandomizeTheData = function(array, keyName){
