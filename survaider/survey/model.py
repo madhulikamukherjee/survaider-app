@@ -48,22 +48,41 @@ class Survey(db.Document):
     @property
     def notification_hooks(self):
         rules = {}
+        check = []
         for field in self.structure['fields']:
             if field.get('notifications', False) is True:
-                options = enumerate(field['field_options'].get('options', []))
                 store = []
-                for i, option in options:
-                    if option.get('notify', False) is True:
-                        val = "a_{0}".format(i + 1)
+                fieldType = field.get('field_type')
+                if fieldType == 'rating':
+                    options = enumerate(field['field_options'].get('notifications', []))
+                    for i,option in options :
+                     store.append("a_"+option)
 
-                        for j in range(0, 5):
-                            if option.get("notify_{0}".format(j)):
-                                store.append("a_{0}##{1}".format(i + 1, j + 1))
-                        store.append(val)
+                if fieldType == 'yes_no' or fieldType == 'single_choice':
+                    options = enumerate(field['field_options'].get('options', []))
+                    for i, option in options:
+                        if option.get('notify', False) is True:
+                            val = "a_{0}".format(i + 1)
+                            store.append(val)
+                            for j in range(0, 5):
+                                 if option.get("notify_{0}".format(j)):
+                                     store.append("a_{0}##{1}".format(i + 1, j ))
+                        
+
+                if fieldType == 'group_rating':
+                    options = enumerate(field['field_options'].get('options', []))
+                    for i, option in options:
+                        if option.get('notify', False) is True:
+                            
+                            for j in range(0, 5):
+                                 if option.get("notify_{0}".format(j)):
+                                     store.append("a_{0}##{1}".format(i + 1, j ))
+                        
 
                 rules[field['cid']] = store
 
-        return rules
+        return rules   
+
 
     @property
     def questions(self):
@@ -383,7 +402,7 @@ class Response(db.Document):
                     survey_response_notify.send(self.parent_survey,
                                                 response = self,
                                                 qid = q_id,
-                                                qres = q_res)
+                                                qres = hook)
 
     @property
     def added(self):
@@ -575,7 +594,7 @@ class IrapiData(object):
             child_id= HashId.decode(i)
             # print (child_id)
             raw = Response.objects(parent_survey=child_id)
-            raw_temp=[]
+            raw_temp=[]           
             for i in raw:
                 temp_j=[]
                 temp_j.append(i.responses)
@@ -596,7 +615,7 @@ class IrapiData(object):
 
         if flag==False:
             raw= Response.objects(parent_survey=self.sid)
-            raw_temp=[]
+            raw_temp=[]           
             for i in raw:
                 temp_j=[]
                 temp_j.append(i.responses)
@@ -609,7 +628,7 @@ class IrapiData(object):
                 "WIll return all the responses "
 
                 raw = Response.objects(parent_survey = self.sid)
-                raw_temp=[]
+                raw_temp=[]           
                 for i in raw:
                     temp_j=[]
                     temp_j.append(i.responses)
@@ -649,7 +668,7 @@ class IrapiData(object):
                 return a.structure['fields'][m:n]
 
         return d(raw[0].structure['fields']) # fallback
-
+    
     def survey_strct(self):
         try:
             raw=Survey.objects(id = HashId.decode(self.sid))
@@ -658,7 +677,7 @@ class IrapiData(object):
 
         js=raw[0]['structure']['fields']
         # js=raw[0]
-
+ 
         return js
 
     def ret(self):

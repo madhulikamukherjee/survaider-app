@@ -12,6 +12,7 @@ from survaider.user.model import User
 from survaider.survey.model import Survey, SurveyUnit, Response
 from survaider import db, app
 
+
 class Notification(db.Document):
     destined = db.ListField(db.ReferenceField(User))
     acquired = db.DateTimeField(default = datetime.now)
@@ -66,17 +67,47 @@ class SurveyResponseNotification(Notification):
     def resolved_payload(self):
         fields = self.survey.resolved_root.struct.get('fields', [])
         payload = []
+        
         flat_payload = [_ for _ in self.payload]
         for field in fields:
+            Fieldtype = field.get('field_type')
             "Look for matching questions, resolve options"
             "Todo: Resolve Answers "
             if field.get('cid') in flat_payload:
-                q_field = field.get('field_options', {}).get('options', [])
-                try:
-                    res = self.payload.get(field['cid'])[2:].split('###')
-                    res_label = [q_field[int(_) - 1].get('label') for _ in res]
-                except Exception:
-                    res_label = [""]
+                if Fieldtype == "rating":
+                    q_field = field.get('field_options', {}).get('notifications', [])
+                    try:
+                        res = self.payload.get(field['cid'])[2:]
+                        
+                        res_label = res
+                        # print (res_label)
+                    except Exception:
+                        res_label = [""]
+                if Fieldtype == "group_rating":
+                    q_field = field.get('field_options', {}).get('options', [])
+                    try:
+                        res = self.payload.get(field['cid']).split('###')
+                        editString = res[0]
+                        indexValue = editString.index("##") 
+                             
+                           
+                        questionRating = editString[indexValue+2:indexValue+3]
+                        questionNumber = editString[indexValue-1:indexValue]
+                        labelValue = "of  "+ questionRating + " for question " + questionNumber 
+                        res_label = labelValue
+                            # print (res_label)
+                    except Exception:
+                        res_label = [""]
+                if Fieldtype == 'yes_no' or Fieldtype == 'single_choice':
+         
+                        q_field = field.get('field_options', {}).get('options', [])
+                        try:
+                            res = self.payload.get(field['cid'])[2:].split('###')
+                            
+                            res_label = [q_field[int(_) - 1].get('label') for _ in res]
+                            # print (res_label)
+                        except Exception:
+                            res_label = [""]
                 payload.append({
                     'cid':      field.get('cid'),
                     'label':    field.get('label'),
