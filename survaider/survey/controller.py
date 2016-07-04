@@ -696,7 +696,7 @@ class AspectR(object):
                 if j.name==aspect:
                     response[aspect]+=float(j.value)
                     i=i+1
-            response[aspect]=round(float(response[aspect])/i,2)
+            response[aspect]=round(float(response[aspect])/i)
         return response
 # class AspectR(object):
 #     """docstring for AspectController"""
@@ -1931,13 +1931,12 @@ class Dash(Resource):
                     temp={}
                     for aspect in aspects:
                         temp[aspect]=0
-                        i=0
                         for obj in objects:
                             if obj.name==aspect:
-                                i+=1
                                 temp[aspect]+=float(obj.value)
-                        temp[aspect]=round(float(temp[aspect])/i,2)
                     #Average below
+                    for aspect in aspects:
+                        temp[aspect]=round(temp[aspect]/length_objects, 2)
                     # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
                     # temp['room_service']=round(temp['room_service']/length_objects, 2)
                     # temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
@@ -1948,19 +1947,18 @@ class Dash(Resource):
                     response[j]={}
 
         else :
-            objects= AspectData.objects(survey_id=survey_id, provider=provider)
+            objects = Aspect.objects(survey_id=survey_id,provider=provider)
             length_objects = len(objects)
             if length_objects!=0:
                 temp={}
                 for aspect in aspects:
                     temp[aspect]=0
-                    i=0
                     for obj in objects:
                         if obj.name==aspect:
-                            i+=1
                             temp[aspect]+=float(obj.value)
-                    temp[aspect]=round(float(temp[aspect])/i,2)
-
+                #Average below
+                for aspect in aspects:
+                    temp[aspect]=round(temp[aspect]/length_objects, 2)
                 # temp['ambience']=round(temp['ambience']/length_objects, 2)
                 # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
                 # temp['room_service']=round(temp['room_service']/length_objects, 2)
