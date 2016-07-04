@@ -70,12 +70,14 @@ class SurveyResponseNotification(Notification):
         
         flat_payload = [_ for _ in self.payload]
         for field in fields:
+            
             Fieldtype = field.get('field_type')
             "Look for matching questions, resolve options"
             "Todo: Resolve Answers "
             if field.get('cid') in flat_payload:
                 if Fieldtype == "rating":
                     q_field = field.get('field_options', {}).get('notifications', [])
+
                     try:
                         res = self.payload.get(field['cid'])[2:]
                         
@@ -85,15 +87,24 @@ class SurveyResponseNotification(Notification):
                         res_label = [""]
                 if Fieldtype == "group_rating":
                     q_field = field.get('field_options', {}).get('options', [])
+                    
+                    
+                   
                     try:
                         res = self.payload.get(field['cid']).split('###')
                         editString = res[0]
                         indexValue = editString.index("##") 
-                             
+                           
                            
                         questionRating = editString[indexValue+2:indexValue+3]
                         questionNumber = editString[indexValue-1:indexValue]
-                        labelValue = "of  "+ questionRating + " for question " + questionNumber 
+                        questionNumber = int(questionNumber)
+                        no = questionNumber -1
+                        val = q_field[no].get('label')
+                        
+
+
+                        labelValue = "of  "+ questionRating + " for  " + '"' +val + '"'
                         res_label = labelValue
                             # print (res_label)
                     except Exception:
