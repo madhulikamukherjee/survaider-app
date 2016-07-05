@@ -684,7 +684,7 @@ class AspectR(object):
             aspect_data= AspectData.objects(survey_id=self.sid,provider=self.p)
         else:
             aspect_data= AspectData.objects(survey_id=self.sid)
-        print(aspects)
+        print(aspects_data)
         return d(aspects)
         response={}
         for aspect in aspects:
@@ -821,7 +821,7 @@ class WordCloud(object):
                 for i in wc:
                     new_wc[provider].update(i.wc)
             else:
-                providers= providers.get()
+                providers= P.get()
                 for x in providers:
                     wc= WordCloudD.objects(survey_id=self.sid,provider=x)
                     new_wc[x]={}
@@ -1405,6 +1405,7 @@ class DashboardAPIController(Resource):
         if flag ==False:
             r= {}
             from_child = 1
+            print("check")
             r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate, jupiter_data)
             return r
         else:
@@ -1860,8 +1861,8 @@ class Dash(Resource):
             for j in providers:
                 objects= AspectData.objects(survey_id=survey_id, provider=j)
                 print ("FINDING ASPECTS FOR: ", survey_id)
-                # length_objects = len(objects)
-                # print ("NUMBER OF ASPECTS", length_objects)
+                length_objects = len(objects)
+                print ("NUMBER OF ASPECTS", length_objects)
                 if length_objects!=0:
                     temp={}
                     for aspect in aspects:
@@ -1883,7 +1884,9 @@ class Dash(Resource):
 
         else :
             objects = AspectData.objects(survey_id=survey_id,provider=provider)
+            print ("FINDING ASPECTS FOR: ", survey_id)
             length_objects = len(objects)
+            print("NUMBER OF ASPECTS", length_objects)
             if length_objects!=0:
                 temp={}
                 for aspect in aspects:
