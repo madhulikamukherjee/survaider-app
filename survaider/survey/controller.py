@@ -1872,7 +1872,7 @@ class Dash(Resource):
                                 temp[aspect]+=float(obj.value)
                     #Average below
                     for aspect in aspects:
-                        temp[aspect]=round((temp[aspect]/length_objects)*len(aspects), 2)
+                        temp[aspect]=round(temp[aspect]/length_objects, 2)
                     # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
                     # temp['room_service']=round(temp['room_service']/length_objects, 2)
                     # temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
@@ -1896,7 +1896,7 @@ class Dash(Resource):
                             temp[aspect]+=float(obj.value)
                 #Average below
                 for aspect in aspects:
-                    temp[aspect]=round((temp[aspect]/length_objects)*len(aspects), 2)
+                    temp[aspect]=round(temp[aspect]/length_objects, 2)
                 # temp['ambience']=round(temp['ambience']/length_objects, 2)
                 # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
                 # temp['room_service']=round(temp['room_service']/length_objects, 2)
