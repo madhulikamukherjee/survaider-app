@@ -27,8 +27,6 @@ from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
 from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort,IrapiData,Dashboard,Aspect,WordCloudD,Reviews,Relation,AspectData
-
 from survaider.survey.model import DataSort, IrapiData, Dashboard, Aspect, WordCloudD, Reviews, Relation, InsightsAggregator, LeaderboardAggregator
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
@@ -36,12 +34,9 @@ import ast
 from survaider.survey.test_models import Test
 from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
 from survaider.survey.keywordcount import KeywordCount
-from survaider.survey import data
-P=data.Providers()
-A=data.Aspects()
+
+
 task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
-
-
 #The key and the url.
 class SurveyController(Resource):
 
@@ -671,6 +666,7 @@ import pymongo
 from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
 def prettify(ugly): return ' '.join([word.title() for word in ugly.split('_')]) # Haha '_'
+
 class AspectR(object):
     """docstring for AspectController"""
     def __init__(self,survey_id,provider):
@@ -678,67 +674,38 @@ class AspectR(object):
         self.p= provider
 
     # def output(self,survey_id,provider):
-    aspects=A.get()
     def get(self):
         if self.p!="all":
-            aspect_data= AspectData.objects(survey_id=self.sid,provider=self.p)
+            aspects= Aspect.objects(survey_id=self.sid,provider=self.p)
         else:
-            aspect_data= AspectData.objects(survey_id=self.sid)
-        print(aspects_data)
+            aspects= Aspect.objects(survey_id=self.sid)
         return d(aspects)
-        response={}
-        for aspect in aspects:
-            response[aspect]=0
-        if len(aspect_data)==0:
+        if len(aspects)==0:
+            response={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0,'amenities':0,"overall":0}
             return response
-        for aspect in aspects:
-            i=0
-            for j in aspect_data:
-                if j.name==aspect:
-                    response[aspect]+=float(j.value)
-                    i=i+1
-            response[aspect]=round(float(response[aspect])/i)
+            #return json.dumps({"status":"failure","message":"No Aspect Found"})
+        div= float(len(aspects))
+        ambience=0
+        value_for_money=0
+        room_service=0
+        cleanliness=0
+        amenities=0
+        overall=0
+        for i in aspects:
+            ambience+= float(i.ambience)
+            value_for_money+=float(i.value_for_money)
+            room_service+=float(i.room_service)
+            cleanliness+= float(i.cleanliness)
+            amenities+= float(i.amenities)
+            overall+=float(i.overall)
+        ambience=round(float(ambience)/div,2)
+        value_for_money=round(float(i.value_for_money)/div,2)
+        room_service=round(float(i.room_service)/div,2)
+        cleanliness=round(float(i.cleanliness)/div,2)
+        amenities=round(float(i.amenities)/div,2)
+        overall=round(float(overall)/div,2)
+        response={"ambience":ambience,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"amenities":amenities,"overall":overall}
         return response
-# class AspectR(object):
-#     """docstring for AspectController"""
-#     def __init__(self,survey_id,provider):
-#         self.sid= HashId.encode(survey_id)
-#         self.p= provider
-#
-#     # def output(self,survey_id,provider):
-#     def get(self):
-#         if self.p!="all":
-#             aspects= Aspect.objects(survey_id=self.sid,provider=self.p)
-#         else:
-#             aspects= Aspect.objects(survey_id=self.sid)
-#         print(aspects)
-#         return d(aspects)
-#         if len(aspects)==0:
-#             response={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0,'amenities':0,"overall":0}
-#             return response
-#             #return json.dumps({"status":"failure","message":"No Aspect Found"})
-#         div= float(len(aspects))
-#         ambience=0
-#         value_for_money=0
-#         room_service=0
-#         cleanliness=0
-#         amenities=0
-#         overall=0
-#         for i in aspects:
-#             ambience+= float(i.ambience)
-#             value_for_money+=float(i.value_for_money)
-#             room_service+=float(i.room_service)
-#             cleanliness+= float(i.cleanliness)
-#             amenities+= float(i.amenities)
-#             overall+=float(i.overall)
-#         ambience=round(float(ambience)/div,2)
-#         value_for_money=round(float(i.value_for_money)/div,2)
-#         room_service=round(float(i.room_service)/div,2)
-#         cleanliness=round(float(i.cleanliness)/div,2)
-#         amenities=round(float(i.amenities)/div,2)
-#         overall=round(float(overall)/div,2)
-#         response={"ambience":ambience,"value_for_money":value_for_money,"room_service":room_service,"cleanliness":cleanliness,"amenities":amenities,"overall":overall}
-#         return response
         #return (food,service,price,overall)
 
 class Sentiment_OverallPolarity(object):
@@ -748,7 +715,7 @@ class Sentiment_OverallPolarity(object):
         self.from_child = from_child
         self.children_list = children_list
     def get(self):
-        providers=P.get()
+        providers=["tripadvisor","zomato"]
         sents=["Positive","Negative","Neutral"]
         overall = {}
         reviews = {}
@@ -821,7 +788,7 @@ class WordCloud(object):
                 for i in wc:
                     new_wc[provider].update(i.wc)
             else:
-                providers= P.get()
+                providers= ["tripadvisor","zomato"]
                 for x in providers:
                     wc= WordCloudD.objects(survey_id=self.sid,provider=x)
                     new_wc[x]={}
@@ -842,7 +809,7 @@ class WordCloud(object):
                     for i in wc:
                         new_wc[provider].update(i.wc)
                 else:
-                    providers= P.get()
+                    providers= ["tripadvisor","zomato"]
                     for x in providers:
                         wc = []
                         for child in self.children_list:
@@ -859,222 +826,7 @@ class WordCloud(object):
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
 
-    # def logic(self,survey_id,parent_survey,provider,aggregate="false"):
-    #     """
-    #     Logic : The child needs to copy their parents survey structure , pass the parent survey strc
-    #     """
-    #     # return parent_survey
-    #     lol= IrapiData(survey_id,1,1,aggregate)
-    #     csi= lol.get_child_data(survey_id)#child survey info
-
-    #     # aspect= AspectR(survey_id,provider).get()
-    #     # return aspect
-
-    #     # aspects = Dash().get(HashId.encode(survey_id))
-    #     # return aspects
-
-    #     wordcloud= d(WordCloud(survey_id,provider).get())
-    #     sentiment= Sentiment(survey_id,provider).get()
-    #     company_name=Survey.objects(id = survey_id).first().metadata['name']
-    #     # return d(company_name)
-    #     response_data= lol.get_data()
-    #     # return response_data
-
-    #     # return HashId.encode(survey_id)
-    #     # return d(parent_survey)
-    #     if parent_survey==survey_id:
-    #         # return True
-    #         survey_strct= d(lol.survey_strct())
-    #         jupiter_data = Dash().get(HashId.encode(survey_id))
-
-    #     elif parent_survey!=survey_id:
-    #         s= IrapiData(parent_survey,1,1,aggregate)
-    #         survey_strct=d(s.survey_strct())
-    #         jupiter_data = Dash().get(HashId.encode(parent_survey))
-
-    #     # return jupiter_data
-    #     try:
-    #         survey_name= csi[0].unit_name
-    #         created_by= d(csi[0].created_by[0].id)["$oid"]
-
-    #     except:
-    #         survey_name="Parent Survey"
-    #         created_by="Not Applicable"
-
-    #     """ALT"""
-    #     cids= []
-    #     # return d(survey_strct)
-    #     for i in survey_strct:
-    #         # return d(i)
-    #         x= i['field_options']
-    #         if "deletable" in x:
-    #             cids.append(i['cid'])
-
-    #     """ END"""
-    #     res=[]
-    #     r= {}
-    #     for cid in cids:
-    #         alol = DataSort(parent_survey,cid,aggregate)
-    #         survey_data= alol.get_uuid_label()#?So wrong
-    #         # return survey_data
-
-    #         j_data= d(survey_data)
-
-    #         if "options" in survey_data['field_options']:
-    #             try:
-    #                 # options=[]
-    #                 option_code={}
-
-    #                 for i in range(len(j_data['field_options']['options'])):
-    #                     # options.append(j_data['field_options']['options'][i]['label'])
-    #                     option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
-    #             except :
-    #                 pass
-
-    #         else:pass
-
-    #         temp= []
-    #         timed={}
-    #         import time
-    #         # return d(response_data)
-    #         for i in response_data:
-    #             if cid in i[0]:
-    #                 # return cid
-    #                 temp.append(i[0][cid]['raw'])
-    #                 timestamp= d(i[1]['modified'])['$date']/1000
-    #                 timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-    #                 timed[timestamp]=i[0][cid]
-
-    #         options_count={}
-
-    #         timed_agg={}
-    #         timed_agg_counter={}
-
-
-    #         if j_data['field_type']=="group_rating":
-    #             # return temp
-    #             for i in temp:
-    #                 # return i
-    #                 aTempList= i.split("###")
-    #                 for j in aTempList:
-    #                     bTempList= j.split("##")
-
-    #                     l= bTempList[0]
-    #                     k= bTempList[1]
-    #                     if l in options_count:
-    #                         if k in options_count[l]:
-    #                             options_count[l][k]+=1
-    #                         else:
-    #                             options_count[l][k]=1
-    #                     else:
-    #                         options_count[l]={}
-    #                         options_count[l][k]=1
-    #             avg={}
-    #             # return options_count
-    #             for key in options_count:
-    #                 # return key
-    #                 counter=0
-
-    #                 for bkey in options_count[key]:
-    #                     if int(bkey)!=0:
-    #                         counter+= float(bkey) * options_count[key][bkey]
-    #                     else:pass
-
-    #                 avg[key]= round(float(counter)/len(temp),2)
-
-    #                 new_key= option_code[key]
-    #                 survey_avg = avg[key]
-
-    #                 #############################################################
-    #                 # WE NEED THE FOLLOWING TWO LINES BEFORE QIKSTAY DEPLOYMENT #
-    #                 #############################################################
-
-    #                 ## CURRENTLY THIS GIVES KEYERROR 'FOOD'
-    #                 # return "hello   "
-    #                 # avg[key]=survey_avg+float(aspect[new_key])
-    #                 # avg[key]=round(avg[key]/2,2)
-
-    #         elif j_data['field_type']=="rating":
-    #             # return temp
-    #             for i in temp:
-    #                 # return i
-    #                 if str(i[2:]) in options_count:
-    #                     options_count[str(i[2:])]+=1
-    #                 else:
-    #                     options_count[str(i[2:])]=1
-
-    #             ll= 0
-    #             for j in temp:
-    #                 ll= float(ll)+float(j[2:])
-
-    #             if len(temp) != 0:
-    #                 avg=round(ll/len(temp),2)
-    #             else:
-    #                 avg=0
-
-
-    #             for time , value in timed.items():
-
-    #                 if time[:10] not in timed_agg_counter:
-    #                     timed_agg_counter[time[:10]]=0
-    #                 if time[:10] in timed_agg:
-    #                     timed_agg[time[:10]]+=int(value['raw'][2:])
-    #                     timed_agg_counter[time[:10]]+=1
-
-    #                 else:
-    #                     timed_agg[time[:10]]=int(value['raw'][2:])
-    #                     timed_agg_counter[time[:10]]=1
-    #             timed_final={}
-    #             for time,value in timed_agg.items():
-    #                 avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
-    #                 timed_final[time]=avg
-
-    #             # TAKING AVERAGE FROM EXTERNAL APP DATA
-
-    #             # avg+=aspect['overall']*2
-    #             # avg=round(avg/2,2)
-
-    #         response={}
-    #         response['cid']= cid
-
-    #         aspects=Aspect(survey_id)
-    #         try:
-    #             response['avg_rating']=avg
-
-    #         except:pass
-    #         if j_data['field_type']=='rating':
-    #             response['timed_agg']=timed_final
-    #             response['timed']=timed
-    #         if j_data['field_type']=="group_rating":
-    #             response['options_code']=option_code
-    #         else:pass
-    #         # response['survey_id']=survey_id
-    #         response['options_count']=options_count
-    #         response['label']=survey_data['label']
-    #         # try:
-    #         #     response['unit_name']=survey_name
-    #         #     response['created_by']=created_by
-    #         # except:pass
-    #         response['total_resp']=len(response_data)
-    #         # response['aspects']=aspect
-    #         res.append(response)
-    #     result= {}
-    #     result["responses"]=res
-    #     result["wordcloud"]=wordcloud
-    #     result["sentiment"]=sentiment
-    #     result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
-    #     return result
-    #     if len(wordcloud)!=0:
-    #         res.append({"wordcloud":wordcloud})
-    #     res.append({"sentiment":sentiment})
-    #     res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
-    #     # res.append({"company":company_name})
-    #     # res.append({'id':HashId.encode(survey_id)})
-    #     # res.append ({})
-    #     return res
-
     def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false", jupiter_data = [], children_list=[]):
-
         """
         Logic : The child needs to copy their parents survey structure , pass the parent survey strc
         """
@@ -1316,66 +1068,33 @@ class DashboardAPIController(Resource):
         result["sentiment"]=sentiment
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
         return result
-        # if len(wordcloud)!=0:
-        #     res.append({"wordcloud":wordcloud})
-        # res.append({"sentiment":sentiment})
-        # res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
 
     def com(self,pwc):
-        pwc_keys=P.get()
+        pwc_keys= ["zomato","tripadvisor"]
         npwc={}
         wc={}
         for i in pwc_keys:
             npwc[i]={}
         for x in pwc :
-            # npwc["zomato"].update(x["zomato"])
-            # npwc["tripadvisor"].update(x['tripadvisor'])
-            for i in pwc_keys:
-                print(i)
-                try:
-                    npwc[i].update(x[i])
-                except:
-                    print(i+'update fail')
-        for i in pwc_keys:
-            try:
-                print("\n\n\n\n\ncom"+i)
-                com = list(npwc[i].values())
-                if len(com)!=0:
-                    t= sorted(com,reverse= True)[0:10]
-                    for keyword,value in npwc[i].items():
-                        for v in t:
-                            if v == value:
-                                wc[keyword]=value
-            except:
-                print("fail to add keyword for"+i)
-        return wc
+            npwc["zomato"].update(x["zomato"])
+            npwc["tripadvisor"].update(x['tripadvisor'])
 
-    # def com(self,pwc):
-    #     pwc_keys= P.get()
-    #     npwc={}
-    #     wc={}
-    #     for i in pwc_keys:
-    #         npwc[i]={}
-    #     for x in pwc :
-    #         npwc["zomato"].update(x["zomato"])
-    #         npwc["tripadvisor"].update(x['tripadvisor'])
-    #
-    #     trip = list(npwc["tripadvisor"].values())
-    #     if len(trip)!=0:
-    #         t= sorted(trip,reverse= True)[0:10]
-    #         for keyword,value in npwc["tripadvisor"].items():
-    #             for v in t:
-    #                 if v == value:
-    #                     wc[keyword]=value
-    #     zoma= list(npwc["zomato"].values())
-    #     if len(zoma)!=0:
-    #         z=sorted(zoma,reverse= True)[0:10]
-    #         for keyword,value in npwc["zomato"].items():
-    #             for v in z:
-    #                 if v == value:
-    #                     # return v
-    #                     wc[keyword]=value
-    #     return wc
+        trip = list(npwc["tripadvisor"].values())
+        if len(trip)!=0:
+            t= sorted(trip,reverse= True)[0:10]
+            for keyword,value in npwc["tripadvisor"].items():
+                for v in t:
+                    if v == value:
+                        wc[keyword]=value
+        zoma= list(npwc["zomato"].values())
+        if len(zoma)!=0:
+            z=sorted(zoma,reverse= True)[0:10]
+            for keyword,value in npwc["zomato"].items():
+                for v in z:
+                    if v == value:
+                        # return v
+                        wc[keyword]=value
+        return wc
 
 
     def get(self,survey_id,provider,aggregate="false"):
@@ -1405,7 +1124,6 @@ class DashboardAPIController(Resource):
         if flag ==False:
             r= {}
             from_child = 1
-            print("check")
             r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate, jupiter_data)
             return r
         else:
@@ -1453,6 +1171,7 @@ class IRAPI(Resource):
         return adict
 
     def get(self,survey_id,start=None,end=None,aggregate="false"):
+        # print ("CALLED IRAPI", survey_id)
         try:
             survey_id=HashId.decode(survey_id)
 
@@ -1840,7 +1559,7 @@ class Dash(Resource):
     def get_reviews_count(self,survey_id,provider="all"):
         result = {}
         if provider=="all":
-            providers = P.get()
+            providers = ["tripadvisor", "zomato"]
             for j in providers:
                 reviews = Reviews.objects(survey_id= survey_id, provider = j)
                 result[j] = len(reviews)
@@ -1853,55 +1572,52 @@ class Dash(Resource):
 
     def get_avg_aspect(self,survey_id,provider="all"):
 
-        aspects=A.get()
-        providers=P.get()
+        aspects=["ambience","value_for_money","room_service","cleanliness","amenities"]
+        providers=["tripadvisor","zomato"]
         # providers=["tripadvisor"]
         response= {}
         if provider=="all":
             for j in providers:
-                objects= AspectData.objects(survey_id=survey_id, provider=j)
                 print ("FINDING ASPECTS FOR: ", survey_id)
+                objects= Aspect.objects(survey_id=survey_id, provider=j)
                 length_objects = len(objects)
                 print ("NUMBER OF ASPECTS", length_objects)
                 if length_objects!=0:
-                    temp={}
-                    for aspect in aspects:
-                        temp[aspect]=0
-                        for obj in objects:
-                            if obj.name==aspect:
-                                temp[aspect]+=float(obj.value)
+                    temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
+                    for obj in objects:
+                        temp['ambience']+=float(obj.ambience)
+                        temp['value_for_money']+=float(obj.value_for_money)
+                        temp['room_service']+=float(obj.room_service)
+                        temp['cleanliness']+=float(obj.cleanliness)
+                        temp['amenities']+=float(obj.amenities)
                     #Average below
-                    for aspect in aspects:
-                        temp[aspect]=round(temp[aspect]/length_objects, 2)
-                    # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
-                    # temp['room_service']=round(temp['room_service']/length_objects, 2)
-                    # temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
-                    # temp['amenities']=round(temp['amenities']/length_objects, 2)
+                    temp['ambience']=round(temp['ambience']/length_objects, 2)
+                    temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
+                    temp['room_service']=round(temp['room_service']/length_objects, 2)
+                    temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
+                    temp['amenities']=round(temp['amenities']/length_objects, 2)
                     # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                     response[j]=temp
                 else:
                     response[j]={}
 
         else :
-            objects = AspectData.objects(survey_id=survey_id,provider=provider)
-            print ("FINDING ASPECTS FOR: ", survey_id)
+            objects = Aspect.objects(survey_id=survey_id,provider=provider)
             length_objects = len(objects)
-            print("NUMBER OF ASPECTS", length_objects)
             if length_objects!=0:
-                temp={}
-                for aspect in aspects:
-                    temp[aspect]=0
-                    for obj in objects:
-                        if obj.name==aspect:
-                            temp[aspect]+=float(obj.value)
+                temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
+                for obj in objects:
+                    temp['ambience']+=float(obj.ambience)
+                    temp['value_for_money']+=float(obj.value_for_money)
+                    temp['room_service']+=float(obj.room_service)
+                    temp['cleanliness']+=float(obj.cleanliness)
+                    temp['amenities']+=float(obj.amenities)
                 #Average below
-                for aspect in aspects:
-                    temp[aspect]=round(temp[aspect]/length_objects, 2)
-                # temp['ambience']=round(temp['ambience']/length_objects, 2)
-                # temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
-                # temp['room_service']=round(temp['room_service']/length_objects, 2)
-                # temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
-                # temp['amenities']=round(temp['amenities']/length_objects, 2)
+                temp['ambience']=round(temp['ambience']/length_objects, 2)
+                temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
+                temp['room_service']=round(temp['room_service']/length_objects, 2)
+                temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
+                temp['amenities']=round(temp['amenities']/length_objects, 2)
                 # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
                 response[provider]=temp
 
@@ -1911,65 +1627,11 @@ class Dash(Resource):
 
         # Will return {"zomato":{"food":3,""}}
 
-    # def get_avg_aspect(self,survey_id,provider="all"):
-    #
-    #     aspects=["ambience","value_for_money","room_service","cleanliness","amenities"]
-    #     providers=P.get()
-    #     # providers=["tripadvisor"]
-    #     response= {}
-    #     if provider=="all":
-    #         for j in providers:
-    #             objects= Aspect.objects(survey_id=survey_id, provider=j)
-    #             length_objects = len(objects)
-    #             if length_objects!=0:
-    #                 temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
-    #                 for obj in objects:
-    #                     temp['ambience']+=float(obj.ambience)
-    #                     temp['value_for_money']+=float(obj.value_for_money)
-    #                     temp['room_service']+=float(obj.room_service)
-    #                     temp['cleanliness']+=float(obj.cleanliness)
-    #                     temp['amenities']+=float(obj.amenities)
-    #                 #Average below
-    #                 temp['ambience']=round(temp['ambience']/length_objects, 2)
-    #                 temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
-    #                 temp['room_service']=round(temp['room_service']/length_objects, 2)
-    #                 temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
-    #                 temp['amenities']=round(temp['amenities']/length_objects, 2)
-    #                 # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
-    #                 response[j]=temp
-    #             else:
-    #                 response[j]={}
-    #
-    #     else :
-    #         objects = Aspect.objects(survey_id=survey_id,provider=provider)
-    #         length_objects = len(objects)
-    #         if length_objects!=0:
-    #             temp={"ambience":0,'value_for_money':0,'room_service':0,'cleanliness':0, 'amenities':0}
-    #             for obj in objects:
-    #                 temp['ambience']+=float(obj.ambience)
-    #                 temp['value_for_money']+=float(obj.value_for_money)
-    #                 temp['room_service']+=float(obj.room_service)
-    #                 temp['cleanliness']+=float(obj.cleanliness)
-    #                 temp['amenities']+=float(obj.amenities)
-    #             #Average below
-    #             temp['ambience']=round(temp['ambience']/length_objects, 2)
-    #             temp['value_for_money']=round(temp['value_for_money']/length_objects, 2)
-    #             temp['room_service']=round(temp['room_service']/length_objects, 2)
-    #             temp['cleanliness']=round(temp['cleanliness']/length_objects, 2)
-    #             temp['amenities']=round(temp['amenities']/length_objects, 2)
-    #             # temp['overall'] = round(sum(temp.values())/len(aspects), 2)
-    #             response[provider]=temp
-    #
-    #         else:
-    #             response[provider] = {}
-    #     return response
-
-        # Will return {"zomato":{"food":3,""}}
 
     def data_form(self,survey_id,raw_data):
         # Convert Data to fit in unified rating
-        providers=P.get()
-        aspects=A.get()
+        providers=["tripadvisor"]
+        aspects=['ambience',"value_for_money",'room_service','cleanliness','amenities']
         ASPECT=[]
         NUMBER_OF_REVIEWS=[]
         for i in providers:
@@ -1985,26 +1647,6 @@ class Dash(Resource):
 
 
         return [ASPECT,NUMBER_OF_REVIEWS]
-
-    # def data_form(self,survey_id,raw_data):
-    #     # Convert Data to fit in unified rating
-    #     providers=P.get()
-    #     aspects=['ambience',"value_for_money",'room_service','cleanliness','amenities']
-    #     ASPECT=[]
-    #     NUMBER_OF_REVIEWS=[]
-    #     for i in providers:
-    #         temp1=[]
-    #         for x in aspects:
-    #             temp1.append(raw_data[i][x])
-    #
-    #         ASPECT.append(temp1)
-    #
-    #         temp2=self.get_reviews_count(survey_id,i)
-    #
-    #         NUMBER_OF_REVIEWS.append(temp2)
-    #
-    #
-    #     return [ASPECT,NUMBER_OF_REVIEWS]
 
     # def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, num_reviews_children, ASPECTS):
     #     avg_of_aspects = []
@@ -2023,7 +1665,7 @@ class Dash(Resource):
     def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
         avg_of_aspects = {}
         # print (ASPECTS)
-        providers = P.get()
+        providers = ["tripadvisor", "zomato"]
         channel_contribution = {}
 
         for provider in providers:
@@ -2055,81 +1697,6 @@ class Dash(Resource):
                     overall[aspect] += channel_data[aspect]
         return overall
 
-    # def unified_avg_aspect(self,parent_survey_id):
-    #     objects= self.get_child(parent_survey_id)
-    #     response={}
-    #     resp= {}
-    #     avg={}
-    #     owner_aspects = {}
-    #     owner_unified = 0
-    #     providers=["tripadvisor","zomato"]
-    #     num_reviews_children = {}
-
-    #     for obj in objects:
-    #         survey_id=obj.survey_id
-    #         raw_data=self.get_avg_aspect(obj.survey_id)
-    #         avg[obj.survey_id]=raw_data
-    #         pr_data=self.data_form(survey_id,raw_data)
-    #         ASPECTS= pr_data[0]
-    #         NUMBER_OF_REVIEWS= pr_data[1]
-
-
-    #         num_reviews_children[survey_id] = NUMBER_OF_REVIEWS[0]
-
-    #         NUMBER_OF_CHANNELS=1
-    #         response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,NUMBER_OF_REVIEWS,ASPECTS)
-
-    #     # return num_reviews_children
-
-    #     # Averaging unified scores of units
-    #     if len(response) == 0:
-    #         owner_unified = 0
-    #     else:
-    #         owner_unified = round(sum(response.values())/len(response), 2)
-
-    #     # Averaging aspect scores of units
-    #     for provider in providers:
-    #         owner_aspects[provider] = {}
-    #         for child in avg:
-    #             provider_data = avg[child][provider]
-    #             # adding for all aspects
-    #             # return owner_aspects[provider]
-    #             for aspect in provider_data:
-    #                 if aspect not in owner_aspects[provider]:
-    #                     owner_aspects[provider][aspect] =  provider_data[aspect]
-    #                 else:
-    #                     owner_aspects[provider][aspect] += provider_data[aspect]
-
-    #         # dividing for all aspects with number of units
-    #         calculated_provider_data = owner_aspects[provider]
-    #         for key in calculated_provider_data:
-    #             calculated_provider_data[key] =  round(calculated_provider_data[key]/len(response), 2)
-
-
-    #     # Averaging computed aspects for all channels, for the owner
-
-    #     overall_owner = self.average_for_all_channels(owner_aspects)
-    #     owner_aspects["overall_aspects"] = overall_owner
-
-    #     # Averaging computed aspects for all channels, for all units
-
-    #     for unit in avg:
-    #         overall_unit = self.average_for_all_channels(avg[unit])
-    #         avg[unit]["overall_aspects"] = overall_unit
-
-    #     # Appending unified score for owner, and total channel responses for owner, in the final structure
-    #     owner_aspects["unified"] = owner_unified
-    #     owner_aspects["total_resp"] = sum(num_reviews_children.values())
-
-    #     # Appending unified score for units, and total channel responses for units, in the final structure
-    #     for unit in avg:
-    #         if unit in response:
-    #             avg[unit]["unified"] = response[unit]
-    #         if unit in num_reviews_children:
-    #             avg[unit]["total_resp"] = num_reviews_children[unit]
-
-    #     return {"units_aspects":avg, "owner_aspects": owner_aspects}
-
     def unified_avg_aspect(self,parent_survey_id):
         objects= self.get_child(parent_survey_id)
         print ("NUMBER OF CHILDREN", len(objects))
@@ -2139,7 +1706,7 @@ class Dash(Resource):
         avg={}
         owner_aspects = {}
         owner_unified = 0
-        providers=P.get()
+        providers=["tripadvisor","zomato"]
         num_reviews_channel = {}
         num_reviews_children = {}
         ASPECTS = {}
