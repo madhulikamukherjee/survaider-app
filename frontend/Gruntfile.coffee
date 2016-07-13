@@ -17,6 +17,8 @@ ALL_TASKS = [
   'copy:new_contact_template'
   'copy:survaiderdashboard'
   'copy:survaiderdashboardtemplate'
+  'copy:Notifications'
+
 ]
 
 FRONTEND_DEV = [
@@ -52,6 +54,8 @@ module.exports = (grunt) ->
     pkg: '<json:package.json>'
     build: '../survaider/static'
     templates: '../survaider/templates'
+    note : '../survaider/notification/templates'
+
 
     coffee:
       all:
@@ -297,7 +301,14 @@ module.exports = (grunt) ->
         cwd: 'SurvaiderDashboard/'
         src: 'index.analysis.html'
         dest: '<%= templates %>/survaiderdashboard'
-        
+      
+      Notifications:
+        expand: true
+        cwd: 'Notifications/'
+        src: '**/*'
+        dest: '../survaider/notification/templates'
+ 
+
       new_homepage:
         expand: true
         cwd: 'homepage_pages'

@@ -105,7 +105,8 @@ class SurveyResponseNotification(Notification):
 
 
                         labelValue = "of  "+ questionRating + " for  " + '"' +val + '"'
-                        res_label = labelValue
+                        print (str(labelValue))
+                        res_label = [labelValue]
                             # print (res_label)
                     except Exception:
                         res_label = [""]
