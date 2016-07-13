@@ -859,6 +859,20 @@ class Relation(db.Document):
     survey_id = db.StringField()
     provider = db.StringField()
     parent = db.StringField()
+
+class AspectQ(db.Document):
+    base_url = db.URLField(required=True)
+    survey_id = db.StringField(required=True)
+    unique_identifier = db.StringField(required=True,unique=True)
+    parent = db.StringField() #Value , 'true'
+    parent_id = db.StringField()
+    status = db.StringField(default="false")
+    last_update = db.DateTimeField()
+    aspects = db.ListField(required=False)
+    time_review = db.DateTimeField()
+    meta = {'allow_inheritance': True, 'strict': False}
+    aspect_notation = db.ListField()
+
 class TimedDash(db.Document):
     dash_value= db.StringField()
     time= db.DateTimeField(default = datetime.datetime.now)
