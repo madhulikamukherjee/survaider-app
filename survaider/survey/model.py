@@ -831,6 +831,9 @@ class ClientAspects(db.Document):
     parent_id = db.StringField(required = True)
     aspects = db.ListField()
 
+class ClientProviders(db.Document):
+    parent_id = db.StringField(required = True)
+    providers = db.ListField()
 
 class TimedDash(db.Document):
     dash_value= db.StringField()

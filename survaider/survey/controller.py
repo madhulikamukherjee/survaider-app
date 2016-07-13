@@ -676,9 +676,9 @@ class Sentiment_OverallPolarity(object):
         self.p= provider
         self.from_child = from_child
         self.children_list = children_list
-    def get(self):
+    def get(self, parent_survey):
         P = Providers()
-        providers=P.get()
+        providers=P.get(parent_survey)
         sents=["Positive","Negative","Neutral"]
         overall = {}
         reviews = {}
@@ -740,7 +740,7 @@ class WordCloud(object):
         self.from_child = from_child
         self.children_list = children_list
 
-    def get(self):
+    def get(self, parent_survey):
         new_wc={}
         if self.from_child:
             # API call coming directly from child. Calculate wordcloud.
@@ -752,7 +752,7 @@ class WordCloud(object):
                     new_wc[provider].update(i.wc)
             else:
                 P = Providers()
-                providers= P.get()
+                providers= P.get(parent_survey)
                 for x in providers:
                     wc= WordCloudD.objects(survey_id=self.sid,provider=x)
                     new_wc[x]={}
@@ -774,7 +774,7 @@ class WordCloud(object):
                         new_wc[provider].update(i.wc)
                 else:
                     P = Providers()
-                    providers= P.get()
+                    providers= P.get(parent_survey)
                     for x in providers:
                         wc = []
                         for child in self.children_list:
@@ -1016,7 +1016,11 @@ class DashboardAPIController(Resource):
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)#child survey info
 
-        wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get())
+        try:
+            wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(HashId.encode(parent_survey)))
+        except:
+            wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(parent_survey))
+
 
         company_name=Survey.objects(id = survey_id).first().metadata['name']
 
@@ -1046,7 +1050,11 @@ class DashboardAPIController(Resource):
 
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
 
-        returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get()
+        try:
+            returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get(HashId.encode(parent_survey))
+        except:
+            returned_sentiment= Sentiment_OverallPolarity(survey_id,from_child,provider,children_list).get(parent_survey)
+
 
         if from_child:
             overall_sentiments = returned_sentiment[0]
@@ -1253,35 +1261,35 @@ class DashboardAPIController(Resource):
         # res.append({"sentiment":sentiment})
         # res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
 
-    def com(self,pwc):
-        P = Providers()
-        pwc_keys=P.get()
-        npwc={}
-        wc={}
-        for i in pwc_keys:
-            npwc[i]={}
-        for x in pwc :
-            # npwc["zomato"].update(x["zomato"])
-            # npwc["tripadvisor"].update(x['tripadvisor'])
-            for i in pwc_keys:
-                print(i)
-                try:
-                    npwc[i].update(x[i])
-                except:
-                    print(i+'update fail')
-        for i in pwc_keys:
-            try:
-                print("\n\n\n\n\ncom"+i)
-                com = list(npwc[i].values())
-                if len(com)!=0:
-                    t= sorted(com,reverse= True)[0:10]
-                    for keyword,value in npwc[i].items():
-                        for v in t:
-                            if v == value:
-                                wc[keyword]=value
-            except:
-                print("fail to add keyword for"+i)
-        return wc
+    # def com(self,pwc):
+    #     P = Providers()
+    #     pwc_keys=P.get()
+    #     npwc={}
+    #     wc={}
+    #     for i in pwc_keys:
+    #         npwc[i]={}
+    #     for x in pwc :
+    #         # npwc["zomato"].update(x["zomato"])
+    #         # npwc["tripadvisor"].update(x['tripadvisor'])
+    #         for i in pwc_keys:
+    #             print(i)
+    #             try:
+    #                 npwc[i].update(x[i])
+    #             except:
+    #                 print(i+'update fail')
+    #     for i in pwc_keys:
+    #         try:
+    #             print("\n\n\n\n\ncom"+i)
+    #             com = list(npwc[i].values())
+    #             if len(com)!=0:
+    #                 t= sorted(com,reverse= True)[0:10]
+    #                 for keyword,value in npwc[i].items():
+    #                     for v in t:
+    #                         if v == value:
+    #                             wc[keyword]=value
+    #         except:
+    #             print("fail to add keyword for"+i)
+    #     return wc
 
     # def com(self,pwc):
     #     pwc_keys= P.get()
@@ -1769,11 +1777,11 @@ class Dash(Resource):
         objects= Relation.objects(parent=survey_id)
         return objects
 
-    def get_reviews_count(self,survey_id,provider="all"):
+    def get_reviews_count(self,survey_id,parent_survey_id,provider="all"):
         result = {}
         if provider=="all":
             P = Providers()
-            providers = P.get()
+            providers = P.get(parent_survey_id)
             for j in providers:
                 reviews = Reviews.objects(survey_id= survey_id, provider = j)
                 result[j] = len(reviews)
@@ -1789,7 +1797,7 @@ class Dash(Resource):
         P = Providers()
 
         aspects=A.get(parent_survey_id)
-        providers=P.get()
+        providers=P.get(parent_survey_id)
         response= {}
         if provider=="all":
             for j in providers:
@@ -1843,11 +1851,11 @@ class Dash(Resource):
                 response[provider] = {}
         return response
 
-    def unified_rating(self,survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
+    def unified_rating(self,survey_id,parent_survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
         avg_of_aspects = {}
         # print (ASPECTS)
         P = Providers()
-        providers = P.get()
+        providers = P.get(parent_survey_id)
         channel_contribution = {}
 
         for provider in providers:
@@ -1900,7 +1908,7 @@ class Dash(Resource):
         owner_aspects = {}
         owner_unified = 0
         P = Providers()
-        providers=P.get()
+        providers=P.get(parent_survey_id)
         NUMBER_OF_CHANNELS = len(providers)
         num_reviews_channel = {}
         num_reviews_children = {}
@@ -1916,7 +1924,7 @@ class Dash(Resource):
             if verbose: print ("RAW DATA", raw_data, "\n")
 
             avg[obj.survey_id]=raw_data
-            review_count_channels = self.get_reviews_count(survey_id)
+            review_count_channels = self.get_reviews_count(survey_id, parent_survey_id)
             if verbose: print ("REVIEW COUNT CHANNELS", review_count_channels, "\n")
 
             # List of providers for a particular child
@@ -1934,7 +1942,7 @@ class Dash(Resource):
         for obj in objects:
             survey_id = obj.survey_id
             num_reviews_children[survey_id] = sum(num_reviews_channel[survey_id].values())
-            response[survey_id] = self.unified_rating(survey_id,NUMBER_OF_CHANNELS,num_reviews_channel,ASPECTS)
+            response[survey_id] = self.unified_rating(survey_id,parent_survey_id,NUMBER_OF_CHANNELS,num_reviews_channel,ASPECTS)
         if verbose: print ("UNIFIED RATING:", response, "\n")
 
         # Averaging unified scores of units

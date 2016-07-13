@@ -1,8 +1,11 @@
 from survaider.survey.model import ClientAspects
+from survaider.survey.model import ClientProviders
 
 class Providers():
-    providers=["tripadvisor", "zomato", "HolidayIQ"]
-    def get(self):
+    providers=[]
+    def get(self, parent_id):
+        obj = ClientProviders.objects(parent_id = parent_id)
+        self.providers = obj[0].providers
         return self.providers
     def add(self,element):
         self.providers.append(element)
@@ -10,7 +13,7 @@ class Providers():
 class Aspects():
     aspects=[]
     def get(self, parent_id):
-        obj = ClientAspects.objects()
+        obj = ClientAspects.objects(parent_id = parent_id)
         self.aspects = obj[0].aspects
         return self.aspects
     def add(self,element):
