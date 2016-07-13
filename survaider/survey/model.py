@@ -550,21 +550,6 @@ class ResponseAggregation(object):
 from bson.json_util import dumps
 
 def d(data):return json.loads(dumps(data))
-class Aspect(db.Document):
-    """docstring for Aspect"""
-
-    sector=db.StringField()
-    # food=db.StringField()
-    # service=db.StringField()
-    # price=db.StringField()
-    ambience=db.StringField()
-    value_for_money=db.StringField()
-    room_service=db.StringField()
-    cleanliness=db.StringField()
-    amenities=db.StringField()
-    overall=db.StringField()
-    survey_id=db.StringField()
-    provider=db.StringField()
 
 class AspectData(db.Document):
     """doc string for Aspect"""
@@ -573,24 +558,6 @@ class AspectData(db.Document):
     survey_id=db.StringField()
     value=db.StringField()
     meta = {'strict': False}
-
-class Aspect(db.Document):
-    """docstring for Aspect"""
-
-    sector=db.StringField()
-    # food=db.StringField()
-    # service=db.StringField()
-    # price=db.StringField()
-    ambience=db.StringField()
-    value_for_money=db.StringField()
-    room_service=db.StringField()
-    cleanliness=db.StringField()
-    amenities=db.StringField()
-    overall=db.StringField()
-    survey_id=db.StringField()
-    provider=db.StringField()
-    meta = {'strict': False}
-
 
 class IrapiData(object):
     """docstring for IrapiData"""
@@ -860,18 +827,10 @@ class Relation(db.Document):
     provider = db.StringField()
     parent = db.StringField()
 
-class AspectQ(db.Document):
-    base_url = db.URLField(required=True)
-    survey_id = db.StringField(required=True)
-    unique_identifier = db.StringField(required=True,unique=True)
-    parent = db.StringField() #Value , 'true'
-    parent_id = db.StringField()
-    status = db.StringField(default="false")
-    last_update = db.DateTimeField()
-    aspects = db.ListField(required=False)
-    time_review = db.DateTimeField()
-    meta = {'allow_inheritance': True, 'strict': False}
-    aspect_notation = db.ListField()
+class ClientAspects(db.Document):
+    parent_id = db.StringField(required = True)
+    aspects = db.ListField()
+
 
 class TimedDash(db.Document):
     dash_value= db.StringField()

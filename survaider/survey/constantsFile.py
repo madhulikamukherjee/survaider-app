@@ -1,4 +1,4 @@
-from survaider.survey.model import AspectQ
+from survaider.survey.model import ClientAspects
 
 class Providers():
     providers=["tripadvisor", "zomato", "HolidayIQ"]
@@ -10,12 +10,8 @@ class Providers():
 class Aspects():
     aspects=[]
     def get(self, parent_id):
-        # obj = AspectQ.objects(parent_id = parent_id)
-        # print ("hello")
-        # print (len(obj))
-        # print ("bye")
-        # self.aspects = obj[0].aspect_notation
-        self.aspects = ["amenities", "ambience", "value_for_money", "room_service", "cleanliness"]
+        obj = ClientAspects.objects()
+        self.aspects = obj[0].aspects
         return self.aspects
     def add(self,element):
         self.aspects.append(element)
