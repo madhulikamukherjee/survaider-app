@@ -199,4 +199,4 @@ class NotificationAggregation(Resource):
 
 @notification.route('/')
 def notification_home():
-    return render_template("index.html", title = "Notification")
+    return render_template("notificationspage.html", title = "Notification")

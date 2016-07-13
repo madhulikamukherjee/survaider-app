@@ -1587,6 +1587,93 @@
     $scope.loading--;
 
   }]);
+  
+  appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia' ,function($scope,$mdDialog,$http, $mdMedia){
+        $scope.status = '  ';
+        $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+        $http.get('/api/notifications').success(function(res){
+          $scope.Notifications = res.data;
+        });
+        var s_id = '';
+        var r_id = '';
+        var root_id = '';
+        var ar = '';
+        $scope.onMoreDetails = function(ev,sid,rid,rootid){
+          var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+          s_id = sid;
+          r_id = rid ;
+          root_id = rootid; 
+          $mdDialog.show({
+            controller: DialogController,
+            templateUrl: '/static/survaiderdashboard/dialogs/dialog1.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:true,
+            fullscreen: useFullScreen
+          })
+          .then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+          $scope.$watch(function() {
+            return $mdMedia('xs') || $mdMedia('sm');
+          }, function(wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+          });
+        }
+        function DialogController($scope, $mdDialog) {
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+          $scope.answer = function(answer) {
+            $mdDialog.hide(answer);
+          };
+
+          $http.get('/api/survey/' + s_id + '/response/'+ r_id).success(function(res){
+            $http.get('/api/survey/'+ root_id +'/deepjson' ).success(function(val){
+              
+              $scope.values = [];
+              angular.forEach(res.responses,function(value,keys){
+              var p = val.fields;
+              console.log(value);
+              
+              
+              try{
+              var a = value.response;
+              var b = a.replace("##",":");
+              var b = b.replace("###","   ");
+              var b = b.replace("##",":");
+              var resp = b;
+            }
+            catch(err) {
+              resp = value.response ;
+            }
+            $scope.temp = {
+              label : value.label,
+              response : resp
+            }
+                    
+            $scope.values.push($scope.temp);
+               
+
+              });
+              
+            
+         
+                
+                
+              });
+        });
+          
+          
+          
+        }
+    
+  }]);
 
   appModule.controller('OverallAnalyticsController', [ '$scope', function($scope){
 

@@ -736,24 +736,6 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
 }
 
-.sv-header-nav {
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translate(0, -50%);
-  -moz-transform: translate(0, -50%);
-  -ms-transform: translate(0, -50%);
-  -o-transform: translate(0, -50%);
-  transform: translate(0, -50%);
-  right: 2em;
-}
-.sv-header-nav a {
-  display: block;
-  border: 1px solid #8e8e8e;
-  padding: 0.5em 1em;
-  background-color: #7EFFE2;
-  color: #9B9B9B;
-}
-
 /*--------------------------------------------------- */
 /*--------------------------------------------------- */
 .sv-sidebar {
@@ -854,7 +836,7 @@ li.notification section.main li {
 li.notification section.main li::after {
   clear: both;
   content: "";
-  display: table;
+  display: block;
 }
 li.notification section.main li div.question {
   float: left;
