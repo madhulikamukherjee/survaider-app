@@ -1767,7 +1767,7 @@ class ResponseAPIController(Resource):
 
         return d(response)
 
-verbose = False
+verbose = True
 
 class Dash(Resource):
     """docstring for Dash -marker"""
