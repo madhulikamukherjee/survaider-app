@@ -266,6 +266,14 @@
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
       $scope.insights = application.insights;
+      var wordcloudData = application.wordcloud;
+      
+      setTimeout(function() {
+        //   for (var wordcloud_index = 0; wordcloud_index < wordcloudData.length; wordcloud_index++) {
+        for (var sentiment in wordcloudData) {
+           drawWordCloud(wordcloudData[sentiment], sentiment);
+        }
+      }, 0, wordcloudData);
       // console.log($scope.features);
       var numberOfFeatures = $scope.features.length;
 

@@ -252,14 +252,14 @@
                                   </ul>
                                 </div> -->
 
-                            <div class="long-text-keywords">
+                            <!-- <div class="long-text-keywords">
                               <h3>Keywords:</h3>
                                 <ul>
                                   <li ng-repeat="key in sentiment.KeyWords">
                                     <span ng-bind="key"></span>
                                   </li>
                                 </ul>
-                            </div>
+                            </div> -->
                           <!-- </div>
                       </div> -->
                       <div class="unit-question-graph">
@@ -267,6 +267,9 @@
                               chart-data="sentiment.data" chart-labels="sentiment.options" chart-series="sentiment.series" chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
                             </canvas>
                       </div>
+                      <!-- Template: Word Cloud -->
+                     <div class="{{sentiment.label}}_wordcloud">
+                     </div>
                     </div>
                     <div ng-hide="!isFirstChannelVisible">
                       <div class="short-text-graph" style="width: 1000px;">
