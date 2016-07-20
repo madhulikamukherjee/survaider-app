@@ -41605,6 +41605,7 @@ ShortTextQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
     q_res: this.response,
+    q_unit_id : null,
     q_res_plain : this.response
   }
 }
@@ -41663,6 +41664,7 @@ YesNoQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
     q_res: 'a_' + this.response,
+    q_unit_id : null,
     q_res_plain: this.options[this.response-1].label
   }
 }
@@ -41673,10 +41675,11 @@ function SingleChoiceQuestion(label, required, cid, field_type, next, descriptio
   this.options = [];
 }
 
-function Option(label, image, isChecked){
+function Option(label, image, isChecked , unit_id){
   this.label = label;
   this.image = image;
   this.checked = isChecked;
+  this.unit_id = unit_id;
 }
 
 SingleChoiceQuestion.prototype = Object.create(Question.prototype);
@@ -41684,10 +41687,11 @@ SingleChoiceQuestion.prototype.constructor = SingleChoiceQuestion;
 
 SingleChoiceQuestion.prototype.insertOption = function(option){
   if (option.img) {
-    this.options.push(new Option(option.label, option.img, option.checked));
+    this.options.push(new Option(option.label, option.img, option.checked,option.unit_id));
   }
   else{
-    this.options.push(new Option(option.label, null, option.checked));
+    
+    this.options.push(new Option(option.label, null, option.checked,option.unit_id));
   }
 };
 
@@ -41718,11 +41722,22 @@ SingleChoiceQuestion.prototype.resetResponse = function(){
 
 SingleChoiceQuestion.prototype.generateResponse = function(){
   // console.log(this.options[this.response-1].label);
+  if (this.options[this.response-1].unit_id){
   return {
     q_id: this.id,
     q_res: 'a_' + this.response,
+    q_unit_id : this.options[this.response-1].unit_id,
     q_res_plain: this.options[this.response-1].label
   }
+}
+else {
+  return {
+    q_id: this.id,
+    q_res: 'a_' + this.response,
+    q_unit_id : null,
+    q_res_plain: this.options[this.response-1].label
+  }
+}
 }
 ;
 function GroupRatingQuestion(label, required, cid, field_type, next, description){
@@ -41781,6 +41796,7 @@ GroupRatingQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
     q_res: [],
+    q_unit_id : null,
     q_res_plain : []
   }
 
@@ -41852,6 +41868,7 @@ RankingQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
     q_res: [],
+    q_unit_id : null,
     q_res_plain : []
   }
 
@@ -41910,6 +41927,7 @@ RatingQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
     q_res: 'a_'+this.response,
+    q_unit_id : null,
     q_res_plain : this.response
   }
 }
@@ -41979,6 +41997,7 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
     q_res: "",
+    q_unit_id : null,
     q_res_plain : ""
   }
 
@@ -42039,6 +42058,7 @@ LongTextQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
     q_res: this.response,
+    q_unit_id : null,
     q_res_plain : this.response
   }
 }
@@ -42271,12 +42291,14 @@ LongTextQuestion.prototype.generateResponse = function(){
         return false;
       }
 
-      // console.log(question);
+       // console.log(question);
 
       checkTheNumberOfRemainingQuestions();
 
 
       //Post a request to server for every question that is answered
+       console.log("000000000000");
+      
       $http.post(payload_update_uri, JSON.stringify(question.generateResponse()));
 
       var index = -1;
@@ -42545,10 +42567,13 @@ LongTextQuestion.prototype.generateResponse = function(){
 
                  break;
                case "single_choice":
+
                  var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
                  for (var i = 0; i < question.field_options.options.length; i++) {
+                  // console.log(question.field_options.options[i]);
                    tempQuestion.insertOption(question.field_options.options[i]);
+                    
                  }
 
                  $scope.questions.push(tempQuestion);
@@ -42692,7 +42717,7 @@ LongTextQuestion.prototype.generateResponse = function(){
           // $http.get('survey/' + s_id + '/response/finish'); <--- THIS IS NOT CORRECT.
            $http.get(payload_update_uri + '?new=false')
               .success(function(data, status, header, config){
-
+                 
                   // console.log(data);
 
               }

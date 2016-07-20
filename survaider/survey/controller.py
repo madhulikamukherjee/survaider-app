@@ -71,6 +71,8 @@ class SurveyController(Resource):
         #This portion of the code does the magic after onboarding
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
+        us = User.objects()
+        childid=[]
         svey.created_by.append(usr)
         ret = {}
 
@@ -102,6 +104,8 @@ class SurveyController(Resource):
                 usvey.created_by.append(usr)
                 usvey.save()
                 child= HashId.encode(usvey.id)
+                childid.append(child)
+                unit['id']=child
                 Test(init=HashId.encode(usvey.id)).save()
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
@@ -175,8 +179,12 @@ class SurveyController(Resource):
                 })
 
             unit_details = []
+            print(unit['id'])
+            
+             
             for unit in payload['units']:
-                unit_details.append([unit['unit_name'], unit["id"]])
+                
+                unit_details.append([unit['unit_name'],unit['id']])
 
             units_opt = []
             for unit_detail in unit_details:
@@ -353,7 +361,9 @@ class SurveyMetaController(Resource):
         elif action == 'survey_name':
             args = self.post_args()
             dat = args['swag']
+            print (len(dat))
             if len(dat) > 0:
+                print (len(dat))
                 svey.metadata['name'] = dat
                 svey.save()
 
@@ -493,17 +503,26 @@ class ResponseController(Resource):
     """
     REST Api Endpoint Controller for Response Collections.
     """
-
+    def __init__(self):
+        self.r_unit_id = None
+        
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('q_id',  type = str, required = True)
         parser.add_argument('q_res', type = str, required = True)
+       
+        parser.add_argument('q_unit_id', type = str, required = True)
+
         parser.add_argument('q_res_plain', type = str, required = True)
+        
         return parser.parse_args()
 
     def get_args(self):
         parser = reqparse.RequestParser()
+        
+        
         parser.add_argument('new',  type = bool)
+        
         return parser.parse_args()
 
     def get(self, survey_id):
@@ -524,7 +543,8 @@ class ResponseController(Resource):
         try:
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
-
+            sv = Survey.objects(id = s_id)
+            print (sv)
             if svey is None:
                 raise TypeError
 
@@ -535,6 +555,7 @@ class ResponseController(Resource):
             raise APIException("Invalid Survey ID", 404)
 
         args = self.get_args()
+
         is_running = ResponseSession.is_running(s_id)
 
         ret = {
@@ -548,11 +569,40 @@ class ResponseController(Resource):
         }
 
         if is_running:
+            
             "End The Existing Survey."
             if args['new']:
+                resp_id = ResponseSession.get_running_id(s_id)
+                resp = Response.objects(id = resp_id).first()
                 ResponseSession.finish_running(s_id)
+                res  =resp['responses']
+                for key in res:
+                    a=res[key]
+                    for val in a :
+                        if val == "unit_id":
+                            if a[val] != None :
+                                
+                                self.r_unit_id = a[val]
+                                
+                                R_id=HashId.decode(self.r_unit_id)
+                                svey1 = Survey.objects(id = R_id).first()
+                                
+               
+                print("is running end")
+                print (self.r_unit_id)
+                if self.r_unit_id != None :
+                   
+                    new_resp = Response()
+                    new_resp = resp
+                   
+                    new_resp.parent_survey = svey1
+                    new_resp.save()
+                    
+
                 ret['will_accept_response'] = False
                 ret['will_end_session'] = True
+                
+                
 
         return ret, 201
 
@@ -577,9 +627,11 @@ class ResponseController(Resource):
             svey = Survey.objects(id = s_id).first()
 
             if svey is None:
+                
                 raise TypeError
 
             if svey.hidden:
+              
                 raise APIException("This Survey has been deleted", 404)
 
         except TypeError:
@@ -589,6 +641,7 @@ class ResponseController(Resource):
             raise APIException("This Survey is Inactive or is not accepting responses anymore.", 403)
 
         resp = None
+       
 
         ret = {
             "existing_response_session": False,
@@ -597,24 +650,32 @@ class ResponseController(Resource):
         }
 
         if ResponseSession.is_running(svey.id):
+            
             "Uses existing Response Session."
             ret['existing_response_session'] = True
             resp_id = ResponseSession.get_running_id(s_id)
             resp = Response.objects(id = resp_id).first()
+            
+            
         else:
             "Creates a New Response Session."
             ret['new_response_session'] = True
+            
             resp = Response(parent_survey = svey)
+            
             resp.metadata['started'] = datetime.datetime.now()
             resp.save()
             ResponseSession.start(s_id, resp.id)
 
         args = self.post_args()
+        
 
         try:
             resp.add(**args)
+            
             ret['will_add_id'] = args['q_id']
         except TypeError as te:
+            print("error")
             raise APIException(str(te), 400)
 
         return ret, 200

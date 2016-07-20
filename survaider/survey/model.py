@@ -178,7 +178,7 @@ class Survey(db.Document):
     def repr(self):
         return {
             'id': str(self),
-            'name': self.metadata['name'],
+            # 'name': self.metadata['name'],
             'ext': self.metadata.get('external', []),
             'is_gamified': self.gamified_enabled,
             'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
@@ -302,7 +302,7 @@ class SurveyUnit(Survey):
         return {
             'id': str(self),
             'unit_name': self.unit_name,
-            'name': self.metadata['name'],
+            # 'name': self.metadata['name'],
             'is_gamified': self.gamified_enabled,
             'uri_simple': '/survey/s:{0}/simple'.format(str(self)),
             'uri_game': '/survey/s:{0}/gamified'.format(str(self)),
@@ -369,9 +369,9 @@ class Response(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
-    def add(self, q_id, q_res, q_res_plain):
+    def add(self, q_id, q_res, q_res_plain,q_unit_id = None):
         if q_id in self.parent_survey.cols:
-            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain}
+            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain , 'unit_id' : q_unit_id}
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
@@ -384,6 +384,8 @@ class Response(db.Document):
                                                 response = self,
                                                 qid = q_id,
                                                 qres = q_res)
+
+    
 
     @property
     def added(self):

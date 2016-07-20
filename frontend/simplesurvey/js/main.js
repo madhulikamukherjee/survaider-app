@@ -226,12 +226,14 @@
         return false;
       }
 
-      // console.log(question);
+       // console.log(question);
 
       checkTheNumberOfRemainingQuestions();
 
 
       //Post a request to server for every question that is answered
+       console.log("000000000000");
+      
       $http.post(payload_update_uri, JSON.stringify(question.generateResponse()));
 
       var index = -1;
@@ -500,10 +502,13 @@
 
                  break;
                case "single_choice":
+
                  var tempQuestion = new SingleChoiceQuestion(question.label, question.required, question.cid, question.field_type, question.next, question.field_options.description);
 
                  for (var i = 0; i < question.field_options.options.length; i++) {
+                  // console.log(question.field_options.options[i]);
                    tempQuestion.insertOption(question.field_options.options[i]);
+                    
                  }
 
                  $scope.questions.push(tempQuestion);
@@ -647,7 +652,7 @@
           // $http.get('survey/' + s_id + '/response/finish'); <--- THIS IS NOT CORRECT.
            $http.get(payload_update_uri + '?new=false')
               .success(function(data, status, header, config){
-
+                 
                   // console.log(data);
 
               }
