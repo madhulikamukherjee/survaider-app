@@ -15,10 +15,12 @@
     this.companyName = [];
     this.unitName = [];
     this.unitId = '';
+    this.wordcloud = [];
 
     this.unifiedRating = [];
     this.sentimentsObject = [];
     this.insights = [];
+    this.qualityRating = {};
   }
 
   //Initializer
@@ -44,8 +46,10 @@
     self.setCompanyName(data['parent_survey']['meta']['company']);
     self.setUnitName(data['parent_survey']['meta']['unit_name']);
     // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
+    self.setWordCloud(data['parent_survey']['sentiment']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
+    self.setQualityRating(data['parent_survey']['responses'][0]['time_unified']);
 
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
@@ -188,6 +192,21 @@
     }
   }
 
+  app.prototype.setQualityRating = function(qualityData){
+     var self = this;
+     // Fill data for rating hotel quality data
+     var data = [];
+     var seriesData = [];
+     var labels = Object.keys(qualityData);
+ 
+     for (var key in qualityData) {
+         seriesData.push(qualityData[key]);
+     }
+ 
+     data.push(seriesData);
+     self.qualityRating = new qualityRating(data, labels);
+   }
+
   app.prototype.setHotelsRatings = function(parentSurveyData){
     var self = this;
     var units = parentSurveyData['units'];
@@ -223,7 +242,7 @@
         }
         iter++;
     }
-    console.log(anchorLinks);
+    // console.log(anchorLinks);
     self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries, anchorLinks);
   }
 
@@ -293,6 +312,30 @@ app.prototype.setLeaderboard = function(leaderboardData){
   app.prototype.setUnitName = function(unit_Name){
     var self = this;
     self.unitName = unit_Name;
+  }
+
+  app.prototype.setWordCloud = function(wordcloud){
+    var self = this;
+    p = wordcloud;
+    
+    final = {};
+
+    for (var key in p) {
+      if (p.hasOwnProperty(key)) {
+        temp = [];
+        q = p[key];
+        z = key;
+          for (var key1 in q) {
+            if (q.hasOwnProperty(key1)) {
+                  temp = q[key1];
+              }
+          }
+          final[z] = temp;
+          console.log(final);
+  }
+} 
+    wordcloud = final;
+    self.wordcloud = wordcloud;
   }
 
   app.prototype.setUnitId = function(unit_id){
