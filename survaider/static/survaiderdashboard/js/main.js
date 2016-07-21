@@ -256,6 +256,7 @@
           }
       };
       _adjustBarChartDynamicWidth();
+      $scope.qualityRating = application.qualityRating;
       $scope.leaderboard = application.leaderboard;
       $scope.insights = application.insights;
       $scope.units = application.units;

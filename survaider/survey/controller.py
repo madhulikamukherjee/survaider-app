@@ -26,7 +26,7 @@ from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
-from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit , JupiterData
 from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData
 
 from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, InsightsAggregator, LeaderboardAggregator
@@ -1057,6 +1057,16 @@ class DashboardAPIController(Resource):
                 response['avg_rating']=avg
 
             except:pass
+
+            time_unified = jupiter_data['owner_aspects']['time_unified']
+            fianl_val = {}
+            for i in time_unified:
+                for key in i :
+                    fianl_val[key] = i[key]
+
+            response['time_unified'] = fianl_val      
+
+
             if j_data['field_type']=='rating':
                 response['timed_agg']=timed_final
                 response['timed']=timed
@@ -1113,15 +1123,56 @@ class DashboardAPIController(Resource):
 
         from_child = 0
 
-        try:
-            jupiter_data = Dash().get(HashId.encode(parent_survey))
-        except:
-            jupiter_data = Dash().get(parent_survey)
+        # get the latest object from the collection
+        ju_obj_temp = JupiterData.objects(survey_id = str(survey_id))
+
+        # check if it is a new entry
+        if len(ju_obj_temp)-1 < 0 :
+            try:
+                jupiter_data1 = Dash().get(HashId.encode(parent_survey))
+            except:
+                jupiter_data1 = Dash().get(parent_survey)
+            jobj = JupiterData()
+            jobj.add(jupiter_data1,survey_id) 
+
+        ju_obj_temp = JupiterData.objects(survey_id = str(survey_id))
+        ju_obj = ju_obj_temp[len(ju_obj_temp)-1]
+            
+        # find the time difference 
+        a =ju_obj['last_updated']
+        print (a)
+        b= datetime.datetime.now()
+        c = b-a
+        datetime.timedelta(0, 8, 562000)
+        d = divmod(c.days * 86400 + c.seconds, 60)
+        
+        # if the diff is more than 24hrs then update the DB value
+        if d[0] > 1140 :
+            try:
+                jupiter_data1 = Dash().get(HashId.encode(parent_survey))
+            except:
+                jupiter_data1 = Dash().get(parent_survey)
+            jobj = JupiterData()
+            jobj.add(jupiter_data1,survey_id)    
+
+        # get the latest updated jupiter data
+        ju_obj_temp1 = JupiterData.objects(survey_id = str(survey_id))
+        ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-1]
+
+        # serialize
+        data1 = {}
+        for i in ju_obj1:
+            data1[i] = ju_obj1[i]
+
+        
+        # assign the latest value of the data
+        jupiter_data = data1
+        
 
         if flag ==False:
             r= {}
             from_child = 1
-            print("check")
+            
             r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate, jupiter_data)
             return r
         else:
@@ -1688,6 +1739,8 @@ class Dash(Resource):
         avg={}
         owner_aspects = {}
         owner_unified = 0
+        owner_time_unified = [80.5 , 47,79,76]
+        
         P = Providers()
         providers=P.get(parent_survey_id)
         NUMBER_OF_CHANNELS = len(providers)
@@ -1729,8 +1782,10 @@ class Dash(Resource):
         # Averaging unified scores of units
         if len(response) == 0:
             owner_unified = 0
+            owner_time_unified.append(owner_unified)
         else:
             owner_unified = round(sum(response.values())/len(response), 2)
+            owner_time_unified.append(owner_unified)
 
         # Averaging aspect scores of units
         for provider in providers:
@@ -1776,23 +1831,24 @@ class Dash(Resource):
 
         # Appending unified score for owner, and total channel responses for owner, in the final structure
         owner_aspects["unified"] = owner_unified
+        owner_aspects["time_unified"] = owner_time_unified
         owner_aspects["total_resp"] = sum(num_reviews_children.values())
 
         # Appending unified score for units, and total channel responses for units, in the final structure
+        
         for unit in avg:
+            
             if unit in response:
                 avg[unit]["unified"] = response[unit]
+                temp = [60,76,89]    
+                temp.append(avg[unit]["unified"]) 
+                avg[unit]["time_unified"] = temp
             if unit in num_reviews_children:
                 avg[unit]["total_resp"] = num_reviews_children[unit]
 
         return {"units_aspects":avg, "owner_aspects": owner_aspects}
 
     def get(self,parent_survey_id):
-        # print ("CALLED DASH", parent_survey_id)
-
-        # return HashId.encode(parent_survey_id)
-
-        # print ("ASPECTQ", len(AspectQ.objects))
         return self.unified_avg_aspect(parent_survey_id)
 
 # //Zurez

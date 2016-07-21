@@ -7,7 +7,7 @@
     <h1>Welcome, {{companyName}}!</h1>
   </div>
 
-  <div class="sv-overall-rating">
+    <div class="sv-overall-rating">
     <table>
       <colgroup>
         <col span="1" style="width:50%">
@@ -22,42 +22,8 @@
             <div class="rating-header">
               <h1>Overall Qualitative Survaider Rating - QSR</h1>
             </div>
-			
-            <div class="rating-graph">
-              <svg ng-attr-width="{{ratingGraph.graphWidth}}" ng-attr-height="{{ratingGraph.graphHeight}}">
-                <g>
-                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{0}} ng-attr-y2="{{0}}" stroke="#DED8D8" stroke-width="2"  />
-                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)/2}} ng-attr-y2="{{(ratingGraph.graphHeight-25)/2}}" stroke="#DED8D8" stroke-width="2"  />
-                  <line opacity="0.75" ng-attr-x1="{{0}}" ng-attr-x2="{{ratingGraph.graphWidth}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} ng-attr-y2="{{(ratingGraph.graphHeight-25)}}" stroke="#DED8D8" stroke-width="2"  />
-                </g>
-                <g transform="translate(20, 0)">
-                  <g ng-repeat="date in dates track by $index" transform="translate(5, 0)">
-                    <g>
-                      <line ng-attr-y1="{{ratingGraph.graphHeight - 20}}" ng-attr-x1="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-x2="{{$index*ratingGraph.abscissaSpacer}}" ng-attr-y2="{{(ratingGraph.graphHeight - 20) - 7}}" stroke="#333333" stroke-width="2"/>
-                    </g>
-                    <g>
-                      <text fill="#000000" font-size="16px" font-weight="bold" text-anchor="middle" ng-attr-y="{{ratingGraph.graphHeight - 5}}" ng-attr-x="{{$index*ratingGraph.abscissaSpacer}}">
-                        <tspan>{{(formatDate(date)).getDate() + "-"}}</tspan>
-                        <tspan>{{formatNumber((formatDate(date)).getMonth() + 1)}}</tspan>
-                      </text>
-                    </g>
-                  </g>
-                  <g>
-                    <line ng-repeat="point in ratingPoints track by $index" ng-attr-x1="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + ($index+1)*ratingGraph.abscissaSpacer)}}" ng-attr-y1="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" ng-attr-y2="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (ratingPoints[$index+1].y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" stroke="#91A2F7" stroke-width="5" ng-if="$index != (ratingPoints.length - 1)" />
-                  </g>
-
-                  <g>
-                    <line ng-repeat="ticket in tickets" ng-attr-x1="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-x2="{{(ratingGraph.pointRadius + (ticket.x)*ratingGraph.abscissaSpacer)}}" ng-attr-y1={{(ratingGraph.graphHeight-25)}} y2="0" stroke="#FFE491" stroke-width="5" />
-                  </g>
-
-                  <g>
-                    <circle ng-repeat="point in ratingPoints track by $index" ng-attr-r="{{ratingGraph.pointRadius}}" ng-attr-cx="{{(ratingGraph.pointRadius + $index*ratingGraph.abscissaSpacer)}}" ng-attr-cy="{{ (ratingGraph.graphHeight - ratingGraph.borderWidth*2 + ratingGraph.pointRadius) - ( (point.y) * ((ratingGraph.graphHeight-ratingGraph.borderWidth*2)/ratingGraph.maxOrdinate) )}}" fill="#4D6AFF" />
-                  </g>
-                </g>
-              </svg>
-            </div>
-
-          </div>
+      
+            <ng-include src="'/static/survaiderdashboard/views/templates/rating-graph.html'"></ng-include>
         </td>
         <td>
           <div class="unified-rating">
@@ -84,7 +50,6 @@
       </tr>
     </table>
   </div>
-
   <div class="tabs" id="tabs">
 
     <nav>
