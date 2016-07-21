@@ -867,7 +867,8 @@ class JupiterData(db.Document):
         self.owner_aspects['providers'] = data['tripadvisor']
         self.owner_aspects['unified'] = data['unified']
         time = str(datetime.datetime.now().date())
-        ownerTime_temp[time] = data['unified']
+        time1 = str(datetime.datetime.now()).split(".")
+        ownerTime_temp[time1[0]] = data['unified']
 
         ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
         if len(ju_obj_temp1)-1 <0 :
@@ -891,7 +892,10 @@ class JupiterData(db.Document):
         unitTemp['providers'] = data['tripadvisor'] 
         unitTemp['unified'] = data['unified']
         time = str(datetime.datetime.now().date())
-        unitTime_temp[time] = data['unified'] 
+        time1 = str(datetime.datetime.now()).split(".")
+
+
+        unitTime_temp[time1[0]] = data['unified'] 
 
         ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
         if len(ju_obj_temp1)-2 <0 :
