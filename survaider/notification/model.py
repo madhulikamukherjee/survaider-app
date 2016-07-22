@@ -16,7 +16,7 @@ from survaider import db, app
 class Notification(db.Document):
     destined = db.ListField(db.ReferenceField(User))
     acquired = db.DateTimeField(default = datetime.now)
-    released = db.DateTimeField(default = datetime.max)
+    released = db.DateTimeField(default = datetime(9999,12,31))
     payload  = db.DictField()
 
     #: Enables Inheritance.
@@ -32,7 +32,7 @@ class Notification(db.Document):
     @flagged.setter
     def flagged(self, value):
         if value is True:
-            self.released = datetime.max
+            self.released = datetime(9999,12,31)
         else:
             #: Sets time two seconds behind, to eliminate ANY possibility of
             #  race conditions and prevents other bugs, in general.
@@ -105,9 +105,9 @@ class SurveyResponseNotification(Notification):
 
 
                         labelValue = "of  "+ questionRating + " for  " + '"' +val + '"'
-                        print (str(labelValue))
+                        
                         res_label = [labelValue]
-                            # print (res_label)
+                            
                     except Exception:
                         res_label = [""]
                 if Fieldtype == 'yes_no' or Fieldtype == 'single_choice':
@@ -117,7 +117,7 @@ class SurveyResponseNotification(Notification):
                             res = self.payload.get(field['cid'])[2:].split('###')
                             
                             res_label = [q_field[int(_) - 1].get('label') for _ in res]
-                            # print (res_label)
+                            
                         except Exception:
                             res_label = [""]
                 payload.append({
@@ -132,6 +132,7 @@ class SurveyResponseNotification(Notification):
     def comments(self):
         comments = []
         for comment in self.payload.get('comments', []):
+
             comments.append({
                 'user': comment['user'].repr,
                 'text': comment['text'],

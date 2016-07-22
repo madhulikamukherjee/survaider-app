@@ -195,7 +195,9 @@ class NotificationAggregation(Resource):
 
     @api_login_required
     def post(self):
-        pass
+        print ("working")
+
+    
 
 @notification.route('/')
 def notification_home():

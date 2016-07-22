@@ -1,6 +1,8 @@
 (function(window){
 
   var appModule = angular.module('SurvaiderDashboard', ['ngRoute', 'chart.js', 'ngMaterial']);
+  
+
   Chart.defaults.global['responsive'] = true;
   Chart.defaults.global['maintainAspectRatio'] = false;
 
@@ -1598,15 +1600,21 @@
   }]);
   
   appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia' ,function($scope,$mdDialog,$http, $mdMedia){
+        
         $scope.status = '  ';
+        
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+        $scope.noti_id = '';
         $http.get('/api/notifications').success(function(res){
           $scope.Notifications = res.data;
+         
         });
+
         var s_id = '';
         var r_id = '';
         var root_id = '';
         var ar = '';
+      
         $scope.onMoreDetails = function(ev,sid,rid,rootid){
           var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
           s_id = sid;
@@ -1631,6 +1639,45 @@
             $scope.customFullscreen = (wantsFullScreen === true);
           });
         }
+        
+        $scope.onResolved = function(ev,n_id){
+          $scope.flagged = false ; 
+          $("#notes").hide();
+          $("#comm").hide();
+          
+             
+             $http.post('/api/notification/'+n_id+'/resolve')
+             .success(function(dat){
+              
+             });
+             
+          
+
+        }
+
+        $scope.onSubmit = function(ev,n_id){
+          
+       
+          
+          
+            var data = $("#comment_val").val();
+            
+             
+             $http.post('/api/notification/'+n_id+'/add_comment',{msg : data})
+             .success(function(dat){
+              
+             });
+             
+          
+           
+ 
+        }
+
+
+                  
+
+        
+
         function DialogController($scope, $mdDialog) {
           $scope.hide = function() {
             $mdDialog.hide();
@@ -1652,35 +1699,31 @@
               
               
               try{
-              var a = value.response;
-              var b = a.replace("##",":");
-              var b = b.replace("###","   ");
-              var b = b.replace("##",":");
-              var resp = b;
-            }
-            catch(err) {
-              resp = value.response ;
-            }
-            $scope.temp = {
-              label : value.label,
-              response : resp
-            }
-                    
-            $scope.values.push($scope.temp);
-               
-
-              });
               
-            
-         
-                
-                
-              });
-        });
-          
-          
-          
+              var a = value.response;
+              
+              while (a.indexOf("#")>-1){
+                a = a.replace("##",":");
+                a = a.replace("###","   ");
+              }
+              var resp = a;
+              
+              }
+              catch(err) {
+                resp = value.response ;
+              }
+              $scope.temp = {
+                label : value.label,
+                response : resp
+              }
+              $scope.values.push($scope.temp);
+            });     
+           });
+          });
         }
+
+        
+
     
   }]);
 

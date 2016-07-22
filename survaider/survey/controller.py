@@ -1140,7 +1140,7 @@ class DashboardAPIController(Resource):
             
         # find the time difference 
         a =ju_obj['last_updated']
-        print (a)
+       
         b= datetime.datetime.now()
         c = b-a
         datetime.timedelta(0, 8, 562000)

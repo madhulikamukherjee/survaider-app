@@ -49,6 +49,7 @@
     self.setWordCloud(data['parent_survey']['sentiment']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
+    
     self.setQualityRating(data['parent_survey']['responses'][0]['time_unified']);
 
     // self.unitName = data['parent_survey']['meta'].unit_name;

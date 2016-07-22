@@ -73,81 +73,56 @@
 
 		
 		
-		<div ng-controller="NotificationsController" class="sv-main-content-wrapper" >
-	          
-	          	<h1 class="hr" style="padding : 10px"><span>Notifications</span></h1>
-	    		<br>
+	   <div ng-controller="NotificationsController" class="sv-main-content-wrapper" >
+	       <h1 class="hr" style="padding : 10px"><span>Notifications</span></h1>
+	       <br>
+            <div class="deck" >
+	    		<ul>
+                    <li ng-repeat="noti in Notifications" class="notification survey-response"  >
+	    			    <section class="title">
+                            <i class="fa fa-exclamation-triangle icon"></i>
+                            <p>Subscribed Notification</p>
+                            <p>
+                            <i class="fa fa-clock-o"></i>
+                            <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
+                            </p>
+                            
+                            <button style="margin-right : 220px">Send ticket |</button>
+                            <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
+                            
+                            <button ng-click = "onResolved($event,noti.id)">Resolved ?</button></section>
 
-	    		<div class="deck" >
-	    		<ul >
-	    		<li ng-repeat="noti in Notifications" class="notification survey-response" >
-	    			 <section class="title">
-    <i class="fa fa-exclamation-triangle icon"></i>
-    <p>Subscribed Notification</p>
-    <p>
-      <i class="fa fa-clock-o"></i>
-      <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
-    </p>
-    <button style="margin-right : 400px">Send ticket |</button>
-    <button style="margin-right : 220px">Reply to unit manager |</button>
-    <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
-    
-    <button data-action="mark_finished">Resolved ?</button>
-   
-  </section>
-
-  <section class="main" style="padding : 5px">
-    <h2>Response at <strong>{{ '{{' }} noti.survey.name {{ '}}' }}</strong>.</h2>
-    
-
-    <ul>
-      <table>
-     	
-          <tr ng-repeat="pay in noti.payload">
-            <td class="details"  style="padding :8px">
-              A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question {{ '{{' }} pay.label {{ '}}' }} at outlet {{ '{{' }} noti.survey.name {{ '}}' }}
-            </td>
-            
-          </tr>
-     
-    </table>
-    
-    </ul><!-- 
-
-
-<ng-show="checkIfgroup">pay.res_label <ng-show="!checkIfgroup">pay.res_label[0]
-
-
-            <ul role="comments">
-              <% _.each(dat.comments, function(doc) { %>
-              <li data-user-id="<%= doc.user.id %>">
-                <i class="fa fa-clock-o"></i>
-                <span data-livestamp="<%= doc.added %>"><%= doc.added %></span>   
-
-                 <span><%= doc.user.email %></span> 
-                 <% if (dat.origin == doc.user.id) { %>
-                <span>Owner</span>
-                <% } %>
-                <p class="message"><%= doc.text %></p>
-              </li>
-              <% }); %>
-              <li>
-                <span data-action="add_comment">Add a Comment</span><br/>
-                <input type="text" data-input="add_comment"></input>
-
-              </li>
-            </ul>  -->
-            
-  </section>
-	    		</li>
-
-	    		</ul>
-				<a href="javascript:void(0)" data-backbone-call="next">Load older notifications</a>
-	    		</div>
-	            
-
-	          
-	    </div>
+                        <section class="main" style="padding : 5px">
+                            <h2>Response at <strong>{{ '{{' }} noti.survey.name {{ '}}' }}</strong>.</h2>
+                            <ul ng-show = "noti.flagged" id="notes" style="padding : 2px 0px 1px 10px;">
+                              <table >
+                     	
+                                <tr ng-repeat="pay in noti.payload">
+                                  <td class="details"  >
+                                    <h6  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question {{ '{{' }} pay.label {{ '}}' }} at outlet {{ '{{' }} noti.survey.name {{ '}}' }}</h6>
+                                  </td>
+                                  
+                                </tr> 
+                     
+                              </table></ul><br/>
+                            <ul>
+                
+                            <div class="comment" ng-show="noti.flagged" id= "comm">
+                                <div ng-repeat= "com in noti.comments"  class="comments">
+                                    <h6> {{ '{{' }} com.user['email'] {{ '}}' }}  :  " {{ '{{' }} com.text {{ '}}' }} " </h6>
+                                </div>
+                                
+                            <div class = "notiText">
+                                <form ng-submit = "onSubmit(event,noti.id)">
+                                  <input id="comment_val" type="text" class = "text" />
+                                </form>
+                            </div></ul>
+                           
+                    </li>
+                </ul>
+                 <a href="javascript:void(0)" style="color: black;" data-backbone-call="next">Load older notifications</a></section>
+	        </div>
+	   </div>
 
 
 
@@ -155,6 +130,7 @@
         <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
         <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
         <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
         <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-aria.min.js" charset="utf-8"></script>
         <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-messages.min.js" charset="utf-8"></script>

@@ -847,18 +847,19 @@ class JupiterData(db.Document):
     temp={}
     unit = {}
     def add(self,j_data,s_id):
-        
+        print (j_data)
         self.survey_id = str(s_id)
         temp = j_data['owner_aspects']
         self.updateOwner(temp,s_id)
       
         unit  = j_data['units_aspects']
-       
+        print ("calling child")
         for key in unit :
+            print (key)
             self.updateUnits(key,unit[key],s_id)
 
     def updateOwner(self,data,s_id):
-        
+        print ("owner")
         ownerfinal = []
         ownerTime_temp = {}
         self.owner_aspects['overall_aspects'] = data['overall_aspects']
@@ -883,7 +884,7 @@ class JupiterData(db.Document):
         self.owner_aspects['time_unified'] = ownerfinal
         self.save()
     def updateUnits(self,u_id,data,s_id):
-        
+        print ("children")
         unitTemp = {}
         unitfinal = []
         unitTime_temp = {}
