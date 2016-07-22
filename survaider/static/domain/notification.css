@@ -829,14 +829,14 @@ li.notification section.main ul.units {
   display: inline-block;
 }
 li.notification section.main li {
-  max-width: 1200px;
+  max-width: 68em;
   margin-left: auto;
   margin-right: auto;
 }
 li.notification section.main li::after {
   clear: both;
   content: "";
-  display: block;
+  display: table;
 }
 li.notification section.main li div.question {
   float: left;
