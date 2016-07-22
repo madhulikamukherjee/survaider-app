@@ -74,6 +74,7 @@ class SurveyController(Resource):
         #This portion of the code does the magic after onboarding
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
+        # us = User.objects()
         svey.created_by.append(usr)
         ret = {}
         #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
@@ -107,6 +108,7 @@ class SurveyController(Resource):
                 usvey.created_by.append(usr)
                 usvey.save()
                 child= HashId.encode(usvey.id)
+                # unit['id']=child
                 Test(init=HashId.encode(usvey.id)).save()
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
@@ -172,14 +174,31 @@ class SurveyController(Resource):
             svey.metadata['name'] = name
 
             struct_dict = starter_template
-            opt = []
+            aspects_opt = []
             for option in tags:
-                opt.append({
+                aspects_opt.append({
                     'checked': False,
                     'label': option
                 })
 
-            struct_dict['fields'][0]['field_options']['options'] = opt
+            # struct_dict['fields'][0]['field_options']['options'] = opt
+            unit_names = []
+            for unit in payload['units']:
+                unit_names.append(unit['unit_name'])
+
+            units_opt = []
+            for unit_name in unit_names:
+                units_opt.append({
+                    'checked': False,
+                    'label': unit_name
+                    })
+
+            # Populating single_choice question
+            struct_dict['fields'][0]['field_options']['options'] = units_opt
+
+            # Populating group_rating question
+            struct_dict['fields'][1]['field_options']['options'] = aspects_opt
+
             svey.struct = struct_dict
             svey.save()
             ret['pl'] = payload
@@ -856,7 +875,6 @@ class DashboardAPIController(Resource):
             wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(HashId.encode(parent_survey)))
         except:
             wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(parent_survey))
-
 
         company_name=Survey.objects(id = survey_id).first().metadata['name']
 
