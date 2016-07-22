@@ -74,7 +74,7 @@ class SurveyController(Resource):
         #This portion of the code does the magic after onboarding
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
-        # us = User.objects()
+        us = User.objects()
         svey.created_by.append(usr)
         ret = {}
         #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
@@ -108,7 +108,7 @@ class SurveyController(Resource):
                 usvey.created_by.append(usr)
                 usvey.save()
                 child= HashId.encode(usvey.id)
-                # unit['id']=child
+                unit['id']=child
                 Test(init=HashId.encode(usvey.id)).save()
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
@@ -182,15 +182,16 @@ class SurveyController(Resource):
                 })
 
             # struct_dict['fields'][0]['field_options']['options'] = opt
-            unit_names = []
+            unit_details = []
             for unit in payload['units']:
-                unit_names.append(unit['unit_name'])
+                unit_details.append([unit['unit_name'], unit["id"]])
 
             units_opt = []
-            for unit_name in unit_names:
+            for unit_details in unit_details:
                 units_opt.append({
                     'checked': False,
-                    'label': unit_name
+                    'label': unit_detail[0],
+                    'unit_id': unit_detail[1]
                     })
 
             # Populating single_choice question
