@@ -184,10 +184,10 @@ class SurveyController(Resource):
             # struct_dict['fields'][0]['field_options']['options'] = opt
             unit_details = []
             for unit in payload['units']:
-                unit_details.append([unit['unit_name'], unit["id"]])
+                unit_details.append([unit['unit_name'], unit['id']])
 
             units_opt = []
-            for unit_details in unit_details:
+            for unit_detail in unit_details:
                 units_opt.append({
                     'checked': False,
                     'label': unit_detail[0],
@@ -502,11 +502,14 @@ class ResponseController(Resource):
     """
     REST Api Endpoint Controller for Response Collections.
     """
+    def __init__(self):
+        self.r_unit_id = None
 
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('q_id',  type = str, required = True)
         parser.add_argument('q_res', type = str, required = True)
+        parser.add_argument('q_unit_id', type = str, required = True)
         parser.add_argument('q_res_plain', type = str, required = True)
         return parser.parse_args()
 
@@ -534,6 +537,8 @@ class ResponseController(Resource):
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
 
+            sv = Survey.objects(id = s_id)
+
             if svey is None:
                 raise TypeError
 
@@ -559,9 +564,27 @@ class ResponseController(Resource):
         if is_running:
             "End The Existing Survey."
             if args['new']:
+                resp_id = ResponseSession.get_running_id(s_id)
+                resp = Response.objects(id = resp_id).first()
                 ResponseSession.finish_running(s_id)
                 ret['will_accept_response'] = False
                 ret['will_end_session'] = True
+
+                res  =resp['responses']
+                for key in res:
+                    a=res[key]
+                    for val in a :
+                        if val == "unit_id":
+                            if a[val] != None :
+                                self.r_unit_id = a[val]
+                                R_id=HashId.decode(self.r_unit_id)
+                                svey1 = Survey.objects(id = R_id).first()
+
+                    if self.r_unit_id != None :
+                        new_resp = Response()
+                        new_resp = resp
+                        new_resp.parent_survey = svey1
+                        new_resp.save()
 
         return ret, 201
 

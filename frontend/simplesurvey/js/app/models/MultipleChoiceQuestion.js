@@ -63,6 +63,7 @@ MultipleChoiceQuestion.prototype.generateResponse = function(){
   var response = {
     q_id: this.id,
     q_res: "",
+    q_unit_id : null,
     q_res_plain : ""
   }
 

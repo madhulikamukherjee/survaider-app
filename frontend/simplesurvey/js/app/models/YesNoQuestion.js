@@ -52,6 +52,7 @@ YesNoQuestion.prototype.generateResponse = function(){
   return {
     q_id: this.id,
     q_res: 'a_' + this.response,
+    q_unit_id : null,
     q_res_plain: this.options[this.response-1].label
   }
 }
