@@ -29,7 +29,7 @@
       <header id="header" class="sv-header">
        <div class="sv-logo">
          <h2>
-           <a href="/">Survaider</a>
+           <a href="/" onclick="window.location.reload(true);">Survaider</a>
          </h2>
        </div>
 
@@ -95,7 +95,7 @@
 
                             <tr ng-repeat="pay in noti.payload">
                               <td class="details"  >
-                                <h4  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question "{{ '{{' }} pay.label {{ '}}' }}" at outlet {{ '{{' }} noti.survey.name {{ '}}' }}</h6>
+                                <h4  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question "{{ '{{' }} pay.label {{ '}}' }}"</h4>
                               </td>
 
                             </tr> 
@@ -105,7 +105,7 @@
 
                             <div class="comment" ng-show="noti.flagged" id= "comm">
                               <div ng-repeat= "com in noti.comments"  class="comments">
-                                <h6> {{ '{{' }} com.user['email'] {{ '}}' }}  :  " {{ '{{' }} com.text {{ '}}' }} " </h6>
+                                <h5> {{ '{{' }} com.user['email'] {{ '}}' }}  :  " {{ '{{' }} com.text {{ '}}' }} " </h5>
                               </div>
 
                               <div class = "notiText">
