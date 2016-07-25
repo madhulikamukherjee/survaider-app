@@ -312,8 +312,18 @@ app.prototype.setLeaderboard = function(leaderboardData){
                 temp = q["sentiment_segg"];
                }
            }
-           final[z] = temp;
-           // console.log(final);
+           
+           temp.sort(function(a, b){
+            return b.size-a.size
+          })
+           if (temp.length < 20){
+            final[z] = temp;
+           }
+           else {
+            final[z] = temp.slice(1,20);
+           }
+           console.log(final[z]);
+
         }
     } 
      wordcloud = final;
