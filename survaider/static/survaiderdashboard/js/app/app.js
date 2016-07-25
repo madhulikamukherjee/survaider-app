@@ -309,7 +309,7 @@ app.prototype.setLeaderboard = function(leaderboardData){
          z = key;
            for (var key1 in q) {
              if (q.hasOwnProperty(key1)) {
-                   temp = q[key1];
+                temp = q["sentiment_segg"];
                }
            }
            final[z] = temp;
