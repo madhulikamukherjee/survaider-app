@@ -316,11 +316,11 @@ app.prototype.setLeaderboard = function(leaderboardData){
            temp.sort(function(a, b){
             return b.size-a.size
           })
-           if (temp.length < 20){
+           if (temp.length < 15){
             final[z] = temp;
            }
            else {
-            final[z] = temp.slice(1,20);
+            final[z] = temp.slice(1,15);
            }
            console.log(final[z]);
 
