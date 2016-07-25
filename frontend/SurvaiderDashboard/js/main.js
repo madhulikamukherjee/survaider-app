@@ -1599,7 +1599,7 @@
 
   }]);
   
-  appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia' ,function($scope,$mdDialog,$http, $mdMedia){
+  appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia','$interval' ,function($scope,$mdDialog,$http, $mdMedia , $interval){
         
         $scope.status = '  ';
         
@@ -1609,7 +1609,14 @@
           $scope.Notifications = res.data;
          
         });
+        $scope.getdata =function(){
+          $http.get('/api/notifications').success(function(res){
+          $scope.Notifications = res.data;
+         
+        });
+        }
 
+        
         var s_id = '';
         var r_id = '';
         var root_id = '';
@@ -1653,7 +1660,7 @@
           var data = $("#comment_val").val();
            $http.post('/api/notification/'+n_id+'/add_comment',{msg : data})
              .success(function(dat){
-                 
+                 $scope.getdata();
              });
            }
          function DialogController($scope, $mdDialog) {
