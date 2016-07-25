@@ -388,9 +388,9 @@ class Response(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
-    def add(self, q_id, q_res, q_res_plain):
+    def add(self, q_id, q_res, q_res_plain, q_unit_id = None):
         if q_id in self.parent_survey.cols:
-            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain}
+            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain, 'unit_id' : q_unit_id}
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
