@@ -238,8 +238,8 @@
     //HTTP-MARK::- Dashboard API Call which returns top-most line graph data
     //and unit-graph data
 
-    // var uri = '/static/SurvaiderDashboard/API1_parent.json';
-    var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
+    //var uri = '/static/survaiderdashboard/API1_parent.json';
+     var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
     $scope.loading = 0;
     $scope.loading++;
     $http.get(uri).success(function(data){
@@ -1644,41 +1644,19 @@
           $scope.flagged = false ; 
           $("#notes").hide();
           $("#comm").hide();
-          
-             
-             $http.post('/api/notification/'+n_id+'/resolve')
+          $http.post('/api/notification/'+n_id+'/resolve')
              .success(function(dat){
               
-             });
-             
-          
-
-        }
+             });        }
 
         $scope.onSubmit = function(ev,n_id){
-          
-       
-          
-          
-            var data = $("#comment_val").val();
-            
-             
-             $http.post('/api/notification/'+n_id+'/add_comment',{msg : data})
+          var data = $("#comment_val").val();
+           $http.post('/api/notification/'+n_id+'/add_comment',{msg : data})
              .success(function(dat){
-              
+                 
              });
-             
-          
-           
- 
-        }
-
-
-                  
-
-        
-
-        function DialogController($scope, $mdDialog) {
+           }
+         function DialogController($scope, $mdDialog) {
           $scope.hide = function() {
             $mdDialog.hide();
           };
