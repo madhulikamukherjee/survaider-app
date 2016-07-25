@@ -570,12 +570,12 @@ class ResponseController(Resource):
                 ret['will_accept_response'] = False
                 ret['will_end_session'] = True
 
-                res  =resp['responses']
+                res = resp['responses']
                 for key in res:
                     a=res[key]
-                    for val in a :
+                    for val in a:
                         if val == "unit_id":
-                            if a[val] != None :
+                            if a[val] != None:
                                 self.r_unit_id = a[val]
                                 R_id=HashId.decode(self.r_unit_id)
                                 svey1 = Survey.objects(id = R_id).first()

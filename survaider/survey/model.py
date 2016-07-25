@@ -419,7 +419,6 @@ class Response(db.Document):
                 'response': v['pretty']
             })
 
-
         return {
             'id': str(self),
             # 'meta': self.metadata,
