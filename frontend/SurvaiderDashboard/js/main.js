@@ -40,6 +40,7 @@
     if (uri_dat.parent) {
       $scope.isEditSurveyEnabled = true;
       $scope.isParent = true;
+      $scope.ParentId = uri_dat.s_id;
 
     }
     else {
