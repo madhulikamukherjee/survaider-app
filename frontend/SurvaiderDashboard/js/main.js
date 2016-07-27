@@ -239,7 +239,7 @@
     //and unit-graph data
 
     //var uri = '/static/survaiderdashboard/API1_parent.json';
-     var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
+    var uri = '/api/dashboard/'+uri_dat.s_id+'/all/response/true';
     $scope.loading = 0;
     $scope.loading++;
     $http.get(uri).success(function(data){
@@ -946,8 +946,8 @@
     ***********************************************
     */
 
-    var uri = '/api/dashboard/'+extracted_id+'/all/response';
-    // var uri = '/static/SurvaiderDashboard/API1_'+extracted_id+'.json';
+    //var uri = '/api/dashboard/'+extracted_id+'/all/response';
+    var uri = '/static/survaiderdashboard/API1_parent.json';
 
     $scope.loading = 0;
     $scope.loading++;
@@ -1602,7 +1602,7 @@
   appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia','$interval' ,function($scope,$mdDialog,$http, $mdMedia , $interval){
         
         $scope.status = '  ';
-        
+        $scope.time = new Date();
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
         $scope.noti_id = '';
         $http.get('/api/notifications').success(function(res){
@@ -1616,7 +1616,7 @@
         });
         }
 
-        
+        $scope.get
         var s_id = '';
         var r_id = '';
         var root_id = '';
