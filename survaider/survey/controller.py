@@ -1621,6 +1621,8 @@ class Dash(Resource):
         if provider!="all":
             reviews=Reviews.objects(survey_id=survey_id,provider=provider)
             result[provider] = len(reviews)
+        print ("---------------------------reviews ")
+        print (result)
 
         return result
 
@@ -1681,6 +1683,8 @@ class Dash(Resource):
 
             else:
                 response[provider] = {}
+        print ("----------------------------avg aspect")
+        print (response)
         return response
 
     def unified_rating(self,survey_id,parent_survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
@@ -1705,6 +1709,8 @@ class Dash(Resource):
                 channel_contribution[p] = 0
 
         uni = round(sum(channel_contribution.values()), 2)
+        print ("----------------------------unified rating")
+        print (uni)
         return uni
 
     def sum_for_all_channels(self, all_channel_data):
@@ -1717,6 +1723,8 @@ class Dash(Resource):
                     overall[aspect] = channel_data[aspect]
                 else:
                     overall[aspect] += channel_data[aspect]
+        print ("----------------------------sum for al cha")
+        print (overall)
         return overall
 
     def sum_for_all_units(self, units_averaged):
@@ -1729,6 +1737,8 @@ class Dash(Resource):
                     overall[aspect] = unit_overall[aspect]
                 else:
                     overall[aspect] += unit_overall[aspect]
+        print ("----------------------------sum all units")
+        print (overall)
         return overall
 
     def unified_avg_aspect(self,parent_survey_id):
@@ -1845,7 +1855,9 @@ class Dash(Resource):
                 avg[unit]["time_unified"] = temp
             if unit in num_reviews_children:
                 avg[unit]["total_resp"] = num_reviews_children[unit]
-
+        print ("----------------------------unified avg aspect")
+        print (avg)
+        print (owner_aspects)
         return {"units_aspects":avg, "owner_aspects": owner_aspects}
 
     def get(self,parent_survey_id):

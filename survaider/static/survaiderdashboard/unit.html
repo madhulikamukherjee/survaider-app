@@ -194,8 +194,9 @@
                                 <div class="st-words-list-wrapper">
                                   <ul style="height: 300px; overflow: scroll;">
                                     <li ng-repeat="review in sentiment.reviews"
-                                    ng-style="review[1] === 'Negative' && {'background-color': '#d7aa9a'}">
-                                      <h3 ng-bind="review[0]"></h3>
+                                    ng-style="review.sentiment === 'Negative' && {'background-color': '#d7aa9a'}">
+                                      <a ng-href="{{review.link}}" ><h3 ng-bind="review.text"></h3></a>
+                                      
                                     </li>
                                   </ul>
                                 </div>

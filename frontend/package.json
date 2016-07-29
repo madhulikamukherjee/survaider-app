@@ -19,8 +19,10 @@
   "author": "Prashant Sinha",
   "license": "MIT",
   "dependencies": {
+    "angular-moment": "^1.0.0-beta.6",
     "grunt-contrib-coffee": "^0.13.0",
     "grunt-contrib-jst": "^0.6.0",
-    "grunt-underscore-jst": "^0.3.0"
+    "grunt-underscore-jst": "^0.3.0",
+    "moment": "^2.14.1"
   }
 }

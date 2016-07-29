@@ -20,7 +20,9 @@
     application = new myapp();
 
     $scope.colors = application.colors;
-
+    $scope.myDate = new Date();
+      $scope.myDate1 = new Date();
+   
 
     $scope.formatNumber = function(number){
       if (number < 10 && number > 0) {
@@ -35,6 +37,39 @@
       return new Date(date);
     }
     
+    $scope.ondate = function(ev){
+      console.log("111");
+      var d1 = $scope.myDate;
+      
+      var d2 = $scope.myDate1;
+      var temp = $scope.reviewData;
+      var tempObj = {};
+      var options = [];
+      if (d2>d1){
+        $scope.reviewData = [];
+        for (var k = 0 ; k < temp.length ; k++){
+          console.log(temp[k]);
+          for(var i=0;i< temp[k]['reviews'].length ; i++){
+
+          if(new Date(temp[k]['reviews'][i].original_date) > new Date(d1) && new Date(temp[k]['reviews'][i].original_date) < new Date(d2)){
+              options.push(temp[k]['reviews'][i]);
+
+          }
+          
+        }
+        tempObj = {
+          provider : temp[k]['provider'],
+          reviews : options,
+          name : temp[k]['name']
+        };
+        $scope.reviewData.push(tempObj);
+        console.log($scope.reviewData);
+
+      }
+    }
+    }
+
+
     // Flag to show/hide the edit survey link
     var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search + window.location.hash);
@@ -56,6 +91,101 @@
         temp[i] = i+1;
       }
       return temp;
+    }
+
+    $scope.OnreviewClick = function(ev,path){
+      $location.path(path);
+      if ($scope.isParent){
+
+        $scope.onParentReview(true , uri_dat.s_id);
+      }
+      else {
+        $scope.onChildReview(false , uri_dat.s_id);
+      }
+    }
+
+    $scope.onChildReview = function (parent , _id){
+      $scope.parent = parent ;
+      var uri = '/static/survaiderdashboard/API1_parent.json';
+      //var uri = '/api/dashboard/'+_id+'/all/response';
+      $scope.reviewData = [];
+      $http.get(uri).success(function(data){
+
+          var val = data['parent_survey']['sentiment'];
+          for (var key in val) {
+            if (val.hasOwnProperty(key)) {
+              var provider  = key;
+              var options = val[key]['options_count'];
+              var temp = {
+                provider : provider,
+                reviews : options
+              };
+              $scope.reviewData.push(temp);
+              
+            }
+          }
+      });
+    }
+
+    $scope.Onprovider = function(ev){
+
+    }
+
+    $scope.onParentReview = function (parent , _id){
+      
+      $scope.units_id = [];
+      $scope.reviewData = [];
+      $scope.parent = parent ; 
+      $scope.unit = [];
+      var uri_parent = '/api/dashboard/'+_id+'/all/response/true';
+      $http.get(uri_parent).success(function(data){
+        var dat = data['units'];
+        for ( var i = 0 ; i < dat.length ; i++){
+
+          for (var key in dat[i]['meta']) {
+            if (dat[i]['meta'].hasOwnProperty(key)) {
+              if (key == "id"){
+                $scope.units_id.push(dat[i]['meta'][key]);
+              }
+            }
+          }
+
+        }
+        for (var i =0 ; i < $scope.units_id.length ; i++){
+        //var uri = '/api/dashboard/'+$scope.units_id[i]+'/all/response';
+        if (i==1){
+          var uri = '/static/survaiderdashboard/API1_parent1.json';
+        }else{
+        var uri = '/static/survaiderdashboard/API1_parent.json';
+        }
+          $http.get(uri).success(function(data){
+          
+          var val = data['parent_survey']['sentiment'];
+          var unit_name = data['parent_survey']['meta']['unit_name'];
+          var temp = {
+            name: unit_name
+          };
+          $scope.unit.push(temp);
+          for (var key in val) {
+            if (val.hasOwnProperty(key)) {
+              var provider  = key;
+              var options = val[key]['options_count'];
+              var temp = {
+                provider : provider,
+                reviews : options,
+                name : unit_name
+              };
+          
+              $scope.reviewData.push(temp);
+              
+            }
+          }
+      });
+          
+      }
+      });
+
+      
     }
 
     $scope.showModal = function(ev, modal) {
@@ -1616,12 +1746,64 @@
         });
         }
 
-        $scope.get
+        
         var s_id = '';
         var r_id = '';
         var root_id = '';
         var ar = '';
+        var no_id = '';
+        var tick_noti = '';
+        $scope.onSendTicket = function(ev,sid,rid,rootid,not_id){
+          no_id = not_id;
       
+          var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+          
+         
+          $mdDialog.show({
+            controller: DialogController1,
+            templateUrl: '/static/survaiderdashboard/dialogs/dialog2.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:true,
+            fullscreen: useFullScreen
+          })
+          .then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+          $scope.$watch(function() {
+            return $mdMedia('xs') || $mdMedia('sm');
+          }, function(wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+          });
+        }
+
+        
+        $scope.onAssigned  = function(ev,sid,rid,rootid,noti_id){
+          var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+          tick_noti = noti_id;
+          $mdDialog.show({
+            controller: DialogController2,
+            templateUrl: '/static/survaiderdashboard/dialogs/dialog3.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:true,
+            fullscreen: useFullScreen
+          })
+          .then(function(answer) {
+            $scope.status = 'You said the information was "' + answer + '".';
+          }, function() {
+            $scope.status = 'You cancelled the dialog.';
+          });
+          $scope.$watch(function() {
+            return $mdMedia('xs') || $mdMedia('sm');
+          }, function(wantsFullScreen) {
+            $scope.customFullscreen = (wantsFullScreen === true);
+          });
+        }
+
+
         $scope.onMoreDetails = function(ev,sid,rid,rootid){
           var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
           s_id = sid;
@@ -1663,6 +1845,60 @@
                  $scope.getdata();
              });
            }
+
+         function DialogController1($scope, $mdDialog) {
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+          $scope.answer = function(answer) {
+            $mdDialog.hide(answer);
+          };
+          var uri = '/api/notification/'+no_id;
+          $http.get(uri).success(function(data){
+            $scope.re_name = data.survey['name'];
+            $scope.ress = data.payload;
+          
+          });
+
+
+
+          $scope.onSend = function(ev){
+          var etext = $("#email").text();
+          var toval = $("#to").val();
+          var sub = $("#subject").val();
+          var data = {
+            text : etext,
+            notifyid : no_id,
+            toID : toval,
+            subject : sub,
+            from : "ticket@Survaider.com"
+          };
+          var ticketuri = '/api/notification/'+no_id+'/ticket';
+          $http.post(ticketuri,{msg:data}).success(function(dat){});
+        }
+
+          }
+        function DialogController2($scope, $mdDialog) {
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+          $scope.answer = function(answer) {
+            $mdDialog.hide(answer);
+          };
+          
+          var uri = '/api/notification/'+tick_noti;
+          $http.get(uri).success(function(data){
+            $scope.tickets_val = data.tickets;
+          });
+          
+           }
+
          function DialogController($scope, $mdDialog) {
           $scope.hide = function() {
             $mdDialog.hide();
@@ -1680,7 +1916,7 @@
               $scope.values = [];
               angular.forEach(res.responses,function(value,keys){
               var p = val.fields;
-              console.log(value);
+              
               
               
               try{
@@ -1697,6 +1933,7 @@
               catch(err) {
                 resp = value.response ;
               }
+
               $scope.temp = {
                 label : value.label,
                 response : resp
@@ -1752,6 +1989,17 @@
            return '/static/survaiderdashboard/unit.html';
        }
      })
+
+    .when('/reviews', {
+      
+      templateUrl: function(params){
+           
+               return '/static/survaiderdashboard/reviews.html';
+          
+           
+       }
+     })
+
 
     // .otherwise({
     //   controller: 'HomeController',

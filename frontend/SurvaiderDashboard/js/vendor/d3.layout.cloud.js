@@ -23,6 +23,7 @@
                 n = words.length,
                 i = -1,
                 tags = [],
+                
                 data = words.map(function(d, i) {
                     d.text = text.call(this, d, i);
                     d.font = font.call(this, d, i);

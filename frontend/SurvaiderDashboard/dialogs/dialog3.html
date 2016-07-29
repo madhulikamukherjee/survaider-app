@@ -1,0 +1,24 @@
+<md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Assigned To :</h2>
+        <span flex></span>
+        
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+       
+        <table>
+          <tr ng-repeat="val in tickets_val">
+            <th ><h5>{{val.user}}</h5></th>
+            <th><h5 style="padding : 10px">{{val.id}}</h5></th>
+            <th><h5 style="padding : 10px">{{val.date}}</h5></th>
+          </tr>
+        </table>
+      </div>
+    </md-dialog-content>
+  
+  </form>
+</md-dialog>  

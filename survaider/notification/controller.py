@@ -4,6 +4,7 @@
 
 import datetime
 import dateutil.parser
+import requests
 
 from blinker import signal
 from functools import reduce
@@ -19,7 +20,8 @@ from survaider.user.model import User
 from survaider.survey.model import Survey, SurveyUnit
 from survaider.notification.model import (SurveyResponseNotification,
                                           Notification,
-                                          SurveyTicket)
+                                          SurveyTicket,
+                                          Tickets)
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
 
@@ -137,6 +139,32 @@ class NotificationController(Resource):
         parser.add_argument('msg', type=str, required=True)
         return parser.parse_args()
 
+    def getmsg(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('msg', type=dict, required=True)
+        return parser.parse_args()
+
+    def sendTicket (self,data):
+        dataval = data['msg']
+        toval = "User < "+dataval['toID']+">"
+        try : 
+            r = requests.post(
+                "https://api.mailgun.net/v3/sandbox5d4604e611c54873b7eb557e1393ef79.mailgun.org/messages",
+                auth = ("api", "key-3e1ac26b280f0006fcefb105256342d1"),
+                data = {
+                    "from": "Survaider <ticket@Survaider.com>",
+                    "to": toval,
+                    "subject": dataval['subject'],
+                    "text": dataval['text']
+                }
+            )
+            return r.json()
+        except Exception as e:
+            print ("this ", e)
+            
+    
+
+
     @api_login_required
     def post(self, notification_id, action):
         notf = api_get_object(Notification.objects, notification_id)
@@ -152,6 +180,17 @@ class NotificationController(Resource):
             notf.flagged = False
             notf.save()
             return notf.repr
+        elif action == "ticket":
+            text = self.getmsg()
+            val = self.sendTicket(text)
+            try:
+                val['id']
+                notf.add_ticket(text,val['id'])
+
+            except Exception as e:
+                print ("this --", e)
+
+
 
         raise APIException("Must specify valid option", 400)
 

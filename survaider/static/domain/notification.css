@@ -649,6 +649,10 @@ div.deck ul {
   padding: 0;
 }
 
+td {
+  padding: 3px;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -765,6 +769,23 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #F6F2F2;
   padding-top: 60px;
   padding-left: 170px;
+}
+
+div.edit {
+  width: 300px;
+  height: 200px;
+  border: 1px solid;
+  padding: 5px;
+}
+
+input.in {
+  border: 2px solid;
+  border-radius: 5px;
+}
+
+textarea {
+  border: 2px solid;
+  border-radius: 5px;
 }
 
 li.notification {

@@ -50,12 +50,12 @@
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
     
-    self.setQualityRating(data['parent_survey']['responses'][0]['time_unified']);
+    self.setQualityRating(data['parent_survey']['responses'][0]['timed_agg']);
 
     // self.unitName = data['parent_survey']['meta'].unit_name;
     // alert(self.unitName);
 
-    self.TIMEDAGGR = data['parent_survey']['responses'][0]['timed_agg'];
+    self.TIMEDAGGR = data['parent_survey']['responses'][0]['time_unified'];
     self.TIMEDAGGR = Object.keys(self.TIMEDAGGR);
 
     var l = self.TIMEDAGGR[0],
@@ -133,11 +133,15 @@
               if (sentiments[vendor].hasOwnProperty(prop)) {
 
                   if (prop == 'options_count'){
-                    for (var key in sentiments[vendor]['options_count']) {
-                      if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
-                        reviews.push([key,sentiments[vendor]['options_count'][key]]);
-                      }
-                    }
+                    var x = sentiments[vendor]['options_count'];
+                  
+                    reviews = x;
+                    // for (var key in sentiments[vendor]['options_count']) {
+                    //   // if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
+                    //   //   reviews.push([key,sentiments[vendor]['options_count'][key]]);
+                    //   // }
+
+                    // }
                   }
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
@@ -328,10 +332,19 @@ app.prototype.setLeaderboard = function(leaderboardData){
         z = key;
           for (var key1 in q) {
             if (q.hasOwnProperty(key1)) {
-                  temp = q[key1];
+                  temp = q["sentiment_segg"];
               }
           }
-          final[z] = temp;
+          var finished = [];
+          temp.sort(function(a, b) {
+    return (a.size) - (b.size);
+});
+         var len = temp.length;
+         var i = 0;
+          for (var k=len; k >20 ; k--){
+            finished[i++] = temp[k];
+          }
+          final[z] = finished;
           console.log(final);
   }
 } 

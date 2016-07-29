@@ -84,10 +84,11 @@
                             <p>Subscribed Notification</p>
                             <p>
                             <i class="fa fa-clock-o"></i>
-                            <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
+                            <span am-time-ago= "noti.acquired"></span>
                             </p>
                             
-                            <button style="margin-right : 220px">Send ticket |</button>
+                            <button ng-click="onSendTicket($event,noti.survey.id,noti.response,noti.root.id,noti.id)"style="margin-right : 300px">Send ticket |</button>
+                            <button ng-click="onAssigned($event,noti.survey.id,noti.response,noti.root.id,noti.id)" style="margin-right : 200px">Assigned |</button>
                             <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
                             
                             <button ng-click = "onResolved($event,noti.id)">Resolved ?</button></section>
@@ -99,7 +100,7 @@
                      	
                                 <tr ng-repeat="pay in noti.payload">
                                   <td class="details"  >
-                                    <h6  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question {{ '{{' }} pay.label {{ '}}' }} at outlet {{ '{{' }} noti.survey.name {{ '}}' }}</h6>
+                                    <h6  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question {{ '{{' }} pay.label {{ '}}' }} at outlet {{ '{{' }} re_name {{ '}}' }}</h6>
                                   </td>
                                   
                                 </tr> 
@@ -138,7 +139,7 @@
  
         <script src="../static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
         <script src="../static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script> 
-
+        <script src="../static/survaiderdashboard/js/app/app.js" charset="utf-8"></script> 
         <!-- home.html -->
         <!-- <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script> -->

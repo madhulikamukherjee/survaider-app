@@ -61,7 +61,8 @@
     "rivets": "~0.8.1",
     "select2": "~4.0.1",
     "jquery.steps": "^1.1.0",
-    "uri-template.js": "^0.1.2"
+    "uri-template.js": "^0.1.2",
+    "angular-moment": "^0.10.3"
   },
   "resolutions": {
     "jquery": "~2.0.3",
