@@ -37,6 +37,7 @@ from survaider.survey.test_models import Test
 from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
 from survaider.survey.keywordcount import KeywordCount
 from survaider.survey.constantsFile import Providers, Aspects
+from datetime import datetime as dt
 
 task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 
@@ -713,6 +714,13 @@ from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
 def prettify(ugly): return ' '.join([word.title() for word in ugly.split('_')]) # Haha '_'
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, dt):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
 class Sentiment_OverallPolarity(object):
     def __init__(self,survey_id, from_child, provider="all", children_list=[]):
         self.sid=HashId.encode(survey_id)
@@ -730,11 +738,17 @@ class Sentiment_OverallPolarity(object):
             if self.p=="all":
                 for i in providers:
                     overall[i] = {}
-                    reviews[i] = {}
+                    reviews[i] = []
                     for j in sents:
                         result= Reviews.objects(survey_id = self.sid, provider=i, sentiment= j)
                         for obj in result:
-                            reviews[i][obj.review] = obj.sentiment
+                            review_obj = {}
+                            review_obj["text"] = obj.review
+                            review_obj["rating"] = obj.rating
+                            review_obj["link"] = obj.review_link
+                            review_obj["original_date"] = json.dumps(obj.date_added, cls=DateTimeEncoder)
+                            review_obj["sentiment"] = obj.sentiment
+                            reviews[i].append(review_obj)
                         overall[i][j]=len(result)
             else:
                 overall[self.p]={}
@@ -742,7 +756,13 @@ class Sentiment_OverallPolarity(object):
                         result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
                         if isparent:
                             for obj in result:
-                                reviews[self.p][obj.review] = obj.sentiment
+                                review_obj = {}
+                                review_obj["text"] = obj.review
+                                review_obj["rating"] = obj.rating
+                                review_obj["link"] = obj.review_link
+                                review_obj["original_date"] = json.dumps(obj.date_added, cls=DateTimeEncoder)
+                                review_obj["sentiment"] = obj.sentiment
+                                reviews[self.p].append(review_obj)
                         overall[self.p][j]=len(result)
 
             return [overall, reviews]

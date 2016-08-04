@@ -129,11 +129,13 @@
               if (sentiments[vendor].hasOwnProperty(prop)) {
 
                   if (prop == 'options_count'){
-                    for (var key in sentiments[vendor]['options_count']) {
-                      if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
-                        reviews.push([key,sentiments[vendor]['options_count'][key]]);
-                      }
-                    }
+                    // for (var key in sentiments[vendor]['options_count']) {
+                    //   if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
+                    //     reviews.push([key,sentiments[vendor]['options_count'][key]]);
+                    //   }
+                    // }
+                    var x = sentiments[vendor]['options_count'];
+                    reviews = x;
                   }
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
