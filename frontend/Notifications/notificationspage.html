@@ -83,7 +83,10 @@
                         <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
                       </p>
 
-                      <button style="margin-right : 220px">Send ticket |</button>
+                      <button ng-click="onSendTicket($event,noti.survey.id,noti.response,noti.root.id,noti.id)"style="margin-right : 300px">Send ticket |</button>
+
+                      <button ng-click="onAssigned($event,noti.survey.id,noti.response,noti.root.id,noti.id)" style="margin-right : 200px">Assigned |</button>
+                              
                       <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
 
                       <button ng-click = "onResolved($event,noti.id)">Resolved ?</button></section>

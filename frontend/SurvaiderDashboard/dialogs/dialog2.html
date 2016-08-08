@@ -1,0 +1,49 @@
+<md-dialog  ng-controller="NotificationsController" ng-cloak>
+   <form >
+    <md-toolbar>
+       <div class="md-toolbar-tools">
+         <h2>Send E-Mail</h2>
+         <span flex></span>
+         
+       </div>
+     </md-toolbar>
+     <md-dialog-content style = "padding : 10px;">
+     <table>
+     <tr>
+     <td>To  </td> 
+     <td><md-input-container>
+        
+         <input id="to">
+       </md-input-container></td>
+     </tr>
+     <tr>
+     <td>Subject  </td> 
+     <td><md-input-container>
+        
+         <input id="subject">
+       </md-input-container><br/></td>
+     </tr>
+     <tr>
+     <td>Content  </td> 
+     <td>
+       <md-input-container >
+           
+           <div id="email"  class="edit" contenteditable="true">
+             <table >
+               <tr ng-repeat="pay in ress">
+                <td class="details" >
+                <h6  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ pay.res_label[0] }}</strong> to the question {{  pay.label }} at outlet {{  re_name  }}</h6>
+              </td>
+               </tr> 
+               </table>
+           </div>
+         </md-input-container>
+     </td>
+     </tr>
+     </table>
+     <md-button ng-click = "onSend($event)">
+         Send
+       </md-button>
+     </md-dialog-content>
+   </form>
+ </md-dialog>

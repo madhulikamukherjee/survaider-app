@@ -960,7 +960,7 @@ class JupiterData(db.Document):
         time = str(datetime.datetime.now().date())
         unitTime_temp[time] = data['unified'] 
 
-        ju_obj_temp1 = JupiterData.objects(survey_id = s_id)
+        ju_obj_temp1 = JupiterData.objects(survey_id = u_id)
         
         if len(ju_obj_temp1)-2 <0 :
             unitfinal.append(unitTime_temp)

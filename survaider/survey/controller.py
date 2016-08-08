@@ -1126,21 +1126,25 @@ class DashboardAPIController(Resource):
 
 
         # get the latest object from the collection
+        print ("survey id", survey_id)
+        print ("parent id", parent_survey)
         ju_obj_temp = JupiterData.objects(survey_id = HashId.encode(survey_id))
 
         # check if it is a new entry
         if len(ju_obj_temp) == 0 :
             print("\nNEW ENTRY")
-            # try:
-            jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
-            # except:
-            #     jupiter_data1 = Dash(parent_survey).get(parent_survey)
+            # jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
+            try:
+                jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
+            except:
+                jupiter_data1 = Dash(parent_survey).get(parent_survey)
             jobj = JupiterData()
             print ("\n\nJUPITER_DATA1", jupiter_data1)
-            jobj.add(jupiter_data1,survey_id)
+            jobj.update(jupiter_data1,survey_id)
             jobj.save()
 
         else:
+            print("\nOLD ENTRY EXISTS")
             print ("JupiterData for survey_id", HashId.encode(survey_id))
             print ("ju_obj_temp", len(ju_obj_temp))
 
@@ -1162,7 +1166,7 @@ class DashboardAPIController(Resource):
                 jobj = JupiterData()
                 jobj = ju_obj_temp[0]
                 jobj.update(jupiter_data1,survey_id)
-                # jobj.add(jupiter_data1,survey_id)
+                jobj['last_updated'] = datetime.datetime.now()
                 jobj.save()
 
         # get the latest updated jupiter data
