@@ -158,58 +158,6 @@
           </div>
         </div>
 
-
-        <!-- Bubble graph -->
-        <!-- <div class="sv-units" ng-show="activeTab == overallTabLabel">
-          <div class="units-graph" style="padding: 2em">
-            <svg ng-attr-width="{{125*units.length}}" ng-attr-height="{{unitsGraph.outerWidth - 100}}">
-              <g ng-repeat="counter in makeANumberArray(6)" transform="translate(0,75)">
-                <line x1="30" ng-attr-y1="{{5 + 100*$index}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{5 + 100*$index}}" stroke="#DDDDDD" stroke-width="2" ></line>
-                <text x="10" ng-attr-y="{{5 + 100*$index}}" text-anchor="middle">{{6-counter}}</text>
-              </g>
-              <line x1="30" y1="20" x2="30" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
-              <line x1="30" ng-attr-y1="{{unitsGraph.height - 20}}" ng-attr-x2="{{125*units.length}}" ng-attr-y2="{{unitsGraph.height - 20}}" stroke="#979797" stroke-width="2" ></line>
-              <g ng-repeat="unit in units" ng-init="$rootIndex = $index">
-                <g transform="translate({{$index*20}},75)">
-                
-                  <circle ng-repeat="feature in unit.features" ng-attr-cx="{{100 + 100*$rootIndex}}" ng-attr-cy="{{504 - 100*(feature.score)}}" r="10" ng-attr-fill="{{colors[$index%colors.length]}}">
-                      <title>{{features[$index].label}} - {{feature.score}}</title>
-                  </circle>
-                </g>
-                <a xlink:href="{{'/survey/s:' + unit.id + '/analysis'}}" onclick="window.location.reload(true);">
-                <line ng-attr-x1="{{100 + 120*$rootIndex}}" ng-attr-x2="{{100 + 120*$rootIndex}}" ng-attr-y1="{{unitsGraph.height + 40 - 65}}" ng-attr-y2="{{unitsGraph.height + 40 - 55}}" stroke="#999" stroke-width="2"></line>
-                <circle ng-attr-cx="{{100 + 120*$rootIndex}}" ng-attr-cy="{{unitsGraph.height + 40}}" r="50" fill="#eee"></circle>
-                <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 40}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.name}}</text>
-                <text ng-show="unit.city !== 0" ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 55}}" fill="#333" font-size="12px" text-anchor="middle">{{unit.city}}</text>
-                <text ng-attr-x="{{100 + 120*$rootIndex}}" ng-attr-y="{{unitsGraph.height + 70}}" fill="#111" font-size="14px" text-anchor="middle">{{unit.overallScore}}</text>
-                </a>
-              </g>
-            </svg>
-          </div>
-        </div> -->
-
-        <!-- Insights -->
-        <!-- <div class="sv-insights">
-          <div class="channel-graph">
-            <div ng-repeat="week in insights">
-              <li class="sv-unit-question-block ng-scope">
-                <div class="unit-question-header">
-                  <h1 ng-bind="week.date" class="ng-binding"></h1>
-                </div>
-                <div class="insights-block" style="width: 1000px;">
-                  <div class="st-words-list-wrapper">
-                    <ul style="height: 300px; overflow: scroll;">
-                      <li ng-repeat="insight in week.data">
-                        <h3 ng-bind="insight"></h3>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </li>
-            </div>
-          </div>
-        </div> -->
-
         <!-- Insights -->
         <ng-include ng-show="(insights.length != 0) && (activeTab == overallTabLabel)" src="'/static/survaiderdashboard/views/templates/insights.html'"></ng-include>
 
@@ -225,47 +173,20 @@
                       <h1 ng-bind="sentiment.label" class="ng-binding"></h1>
                     </div>
                     <div ng-hide="isFirstChannelVisible">
-                      <!-- <div style="width: 33.333%; float: left">
-                          <div class="unit-question-body"> -->
-                                <!-- <div class="long-text-keywords">
-                                  <h3>Positive Keywords:</h3>
-                                  <ul>
-                                    <li ng-repeat="keyword in sentiment.positiveKeyWords">
-                                      <span ng-bind="keyword"></span>
-                                    </li>
-                                  </ul>
-                                </div>
-                                <div class="long-text-keywords">
-                                  <h3>Negative Keywords:</h3>
-                                  <ul>
-                                    <li ng-repeat="keyword in sentiment.negativeKeywords">
-                                      <span ng-bind="keyword"></span>
-                                    </li>
-                                  </ul>
-                                </div>
-                                <div class="long-text-keywords">
-                                  <h3>Neutral Keywords:</h3>
-                                  <ul>
-                                    <li ng-repeat="keyword in sentiment.neutralKeywords">
-                                      <span ng-bind="keyword"></span>
-                                    </li>
-                                  </ul>
-                                </div> -->
-
-                            <div class="long-text-keywords">
+                            <!-- <div class="long-text-keywords">
                               <h3>Keywords:</h3>
                                 <ul>
                                   <li ng-repeat="key in sentiment.KeyWords">
                                     <span ng-bind="key"></span>
                                   </li>
                                 </ul>
-                            </div>
-                          <!-- </div>
-                      </div> -->
+                            </div> -->
                       <div class="unit-question-graph">
                             <canvas id="bar" class="chart chart-bar"
                               chart-data="sentiment.data" chart-labels="sentiment.options" chart-series="sentiment.series" chart-options="sentiment.graphOptions" chart-colours="sentiment.colors">
                             </canvas>
+                      </div>
+                      <div class="{{sentiment.label}}_wordcloud">
                       </div>
                     </div>
                     <div ng-hide="!isFirstChannelVisible">
@@ -275,10 +196,6 @@
                               <li>
                                 <h3>Check for individual negative reviews in unit dashboards!</h3>
                               </li>
-                              <!-- <li ng-repeat="review in sentiment.reviews"
-                              ng-style="review[1] === 'negative' && {'background-color': '#d7aa9a'}">
-                                <h3 ng-bind="review[0]"></h3>
-                              </li> -->
                             </ul>
                           </div>
                         </div>

@@ -40,6 +40,7 @@
     if (uri_dat.parent) {
       $scope.isEditSurveyEnabled = true;
       $scope.isParent = true;
+      $scope.ParentId = uri_dat.s_id;
 
     }
     else {
@@ -266,7 +267,15 @@
       $scope.unifiedRating = application.unifiedRating;
       $scope.companyName = application.companyName;
       $scope.insights = application.insights;
-      // console.log($scope.features);
+      var wordcloudData = application.wordcloud;
+      
+      setTimeout(function() {
+      //   for (var wordcloud_index = 0; wordcloud_index < wordcloudData.length; wordcloud_index++) {
+        for (var sentiment in wordcloudData) {
+          drawWordCloud(wordcloudData[sentiment], sentiment);
+        }
+      }, 0, wordcloudData);
+
       var numberOfFeatures = $scope.features.length;
 
       $scope.theGraph = {
@@ -954,6 +963,15 @@
       $scope.unifiedRating = application.unifiedRating;
       // alert("Unitcontroller, API1 call");
 
+      var wordcloudData = application.wordcloud;
+      
+      setTimeout(function() {
+      //   for (var wordcloud_index = 0; wordcloud_index < wordcloudData.length; wordcloud_index++) {
+        for (var sentiment in wordcloudData) {
+          drawWordCloud(wordcloudData[sentiment], sentiment);
+        }
+      }, 0, wordcloudData);
+
       $scope.ratingGraph = {
         graphHeight: 200,
         pointRadius: 7,
@@ -1588,12 +1606,18 @@
 
   }]);
   
-  appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia' ,function($scope,$mdDialog,$http, $mdMedia){
+  appModule.controller('NotificationsController',[ '$scope','$mdDialog','$http', '$mdMedia','$interval', function($scope,$mdDialog,$http, $mdMedia , $interval){
         $scope.status = '  ';
         $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+        $scope.noti_id = '';
         $http.get('/api/notifications').success(function(res){
           $scope.Notifications = res.data;
         });
+        $scope.getdata =function(){
+          $http.get('/api/notifications').success(function(res){
+            $scope.Notifications = res.data;
+          });
+        }
         var s_id = '';
         var r_id = '';
         var root_id = '';
@@ -1622,6 +1646,24 @@
             $scope.customFullscreen = (wantsFullScreen === true);
           });
         }
+
+        $scope.onResolved = function(ev,n_id){
+          $scope.flagged = false ; 
+          $("#notes").hide();
+          $("#comm").hide();
+             $http.post('/api/notification/'+n_id+'/resolve')
+             .success(function(dat){
+             });
+        }
+
+        $scope.onSubmit = function(ev,n_id){
+            var data = $("#comment_val").val();
+            $http.post('/api/notification/'+n_id+'/add_comment',{msg : data})
+             .success(function(dat){
+              $scope.getdata();
+            });
+        }
+
         function DialogController($scope, $mdDialog) {
           $scope.hide = function() {
             $mdDialog.hide();
@@ -1638,37 +1680,32 @@
               
               $scope.values = [];
               angular.forEach(res.responses,function(value,keys){
-              var p = val.fields;
-              console.log(value);
-              
-              
-              try{
-              var a = value.response;
-              var b = a.replace("##",":");
-              var b = b.replace("###","   ");
-              var b = b.replace("##",":");
-              var resp = b;
-            }
-            catch(err) {
-              resp = value.response ;
-            }
-            $scope.temp = {
-              label : value.label,
-              response : resp
-            }
-                    
-            $scope.values.push($scope.temp);
-               
+                  var p = val.fields;
+                  console.log(value);
+                  
+                  
+                  try{
+                    var a = value.response;
+                    while (a.indexOf("#")>-1){
+                     a = a.replace("##",":");
+                     a = a.replace("###","   ");
+                    }
+                    var resp = a;
+                   
+                  }
 
-              });
+                  catch(err) {
+                    resp = value.response ;
+                  }
+                  $scope.temp = {
+                    label : value.label,
+                    response : resp
+                  }
+                  $scope.values.push($scope.temp);
               
-            
-         
-                
-                
-              });
-        });
-          
+             });     
+            });
+           });
           
           
         }

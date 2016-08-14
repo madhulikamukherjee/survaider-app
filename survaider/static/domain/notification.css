@@ -19,22 +19,22 @@ body {
   min-height: 100vh;
   margin-bottom: 100px;
 }
-@media (min-width: 1366px) {
-  body {
-    width: 1366px;
-    margin: 0 auto;
-  }
+body div.notiText {
+  padding: 4px 0px 2px 5px;
 }
-@media (max-width: 1365px) {
-  body {
-    width: 1024px;
-    margin: 0 auto;
-  }
+body div.comments {
+  padding: 2px 0px 1px 8px;
 }
-@media (max-width: 1023px) {
-  body {
-    padding: 0 10%;
-  }
+body input.text {
+  border: 1px solid grey;
+  border-radius: 6px;
+  width: 400px;
+}
+body div.comment {
+  background-color: #EDE5E3;
+  border: 1px solid grey;
+  border-radius: 4px;
+  max-width: 50%;
 }
 
 header {
@@ -638,7 +638,7 @@ button.create {
   }
 }
 div.deck {
-  padding-left: 20px;
+  padding: 20px;
 }
 div.deck ul {
   list-style: none;
@@ -829,14 +829,14 @@ li.notification section.main ul.units {
   display: inline-block;
 }
 li.notification section.main li {
-  max-width: 1200px;
+  max-width: 68em;
   margin-left: auto;
   margin-right: auto;
 }
 li.notification section.main li::after {
   clear: both;
   content: "";
-  display: block;
+  display: table;
 }
 li.notification section.main li div.question {
   float: left;

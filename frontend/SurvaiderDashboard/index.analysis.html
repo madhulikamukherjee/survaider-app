@@ -28,7 +28,7 @@
           <header id="header" class="sv-header">
             <div class="sv-logo">
               <h2>
-                <a href="/">Survaider</a>
+                <a href="/" onclick="window.location.reload(true);">Survaider</a>
               </h2>
             </div>
 
@@ -48,7 +48,7 @@
             <div class="sv-sidebar-nav">
               <ul>
                 <li>
-                  <a href="#/survey/GMzwApkX24lQnvLNwBO/analysis">Data</a>
+                  <a ng-click="showModal($event, 'data')">Data</a>
                 </li>
 
                 <!-- <li ng-show="isEditSurveyEnabled">
@@ -101,6 +101,9 @@
         <script src="/static/survaiderdashboard/js/app/models/hotelRating.js" charset="utf-8"></script>
         <script src="/static/survaiderdashboard/js/app/models/leaderboardEntry.js" charset="utf-8"></script>
         <script src="/static/survaiderdashboard/js/app/models/insight.js" charset="utf-8"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <script src="/static/survaiderdashboard/js/vendor/d3.layout.cloud.js"></script>
+        <script src="/static/survaiderdashboard/js/app/wordcloud/d3.wordcloud.js"></script>
 
         <!-- App::Application -->
         <script src="/static/survaiderdashboard/js/app/app.js" charset="utf-8"></script>
