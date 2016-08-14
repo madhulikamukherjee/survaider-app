@@ -37,7 +37,6 @@ from survaider.survey.test_models import Test
 from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
 from survaider.survey.keywordcount import KeywordCount
 from survaider.survey.constantsFile import Providers, Aspects
-from datetime import datetime as dt
 
 task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 
@@ -75,7 +74,6 @@ class SurveyController(Resource):
         #This portion of the code does the magic after onboarding
         svey = Survey()
         usr  = User.objects(id = current_user.id).first()
-        us = User.objects()
         svey.created_by.append(usr)
         ret = {}
         #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
@@ -109,7 +107,6 @@ class SurveyController(Resource):
                 usvey.created_by.append(usr)
                 usvey.save()
                 child= HashId.encode(usvey.id)
-                unit['id']=child
                 Test(init=HashId.encode(usvey.id)).save()
                 try:
                     shuser = User.objects.get(email = unit['owner_mail'])
@@ -175,32 +172,14 @@ class SurveyController(Resource):
             svey.metadata['name'] = name
 
             struct_dict = starter_template
-            aspects_opt = []
+            opt = []
             for option in tags:
-                aspects_opt.append({
+                opt.append({
                     'checked': False,
                     'label': option
                 })
 
-            # struct_dict['fields'][0]['field_options']['options'] = opt
-            unit_details = []
-            for unit in payload['units']:
-                unit_details.append([unit['unit_name'], unit['id']])
-
-            units_opt = []
-            for unit_detail in unit_details:
-                units_opt.append({
-                    'checked': False,
-                    'label': unit_detail[0],
-                    'unit_id': unit_detail[1]
-                    })
-
-            # Populating single_choice question
-            struct_dict['fields'][0]['field_options']['options'] = units_opt
-
-            # Populating group_rating question
-            struct_dict['fields'][1]['field_options']['options'] = aspects_opt
-
+            struct_dict['fields'][0]['field_options']['options'] = opt
             svey.struct = struct_dict
             svey.save()
             ret['pl'] = payload
@@ -503,14 +482,11 @@ class ResponseController(Resource):
     """
     REST Api Endpoint Controller for Response Collections.
     """
-    def __init__(self):
-        self.r_unit_id = None
 
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('q_id',  type = str, required = True)
         parser.add_argument('q_res', type = str, required = True)
-        parser.add_argument('q_unit_id', type = str, required = True)
         parser.add_argument('q_res_plain', type = str, required = True)
         return parser.parse_args()
 
@@ -538,8 +514,6 @@ class ResponseController(Resource):
             s_id = HashId.decode(survey_id)
             svey = Survey.objects(id = s_id).first()
 
-            sv = Survey.objects(id = s_id)
-
             if svey is None:
                 raise TypeError
 
@@ -565,27 +539,9 @@ class ResponseController(Resource):
         if is_running:
             "End The Existing Survey."
             if args['new']:
-                resp_id = ResponseSession.get_running_id(s_id)
-                resp = Response.objects(id = resp_id).first()
                 ResponseSession.finish_running(s_id)
                 ret['will_accept_response'] = False
                 ret['will_end_session'] = True
-
-                res = resp['responses']
-                for key in res:
-                    a=res[key]
-                    for val in a:
-                        if val == "unit_id":
-                            if a[val] != None:
-                                self.r_unit_id = a[val]
-                                R_id=HashId.decode(self.r_unit_id)
-                                svey1 = Survey.objects(id = R_id).first()
-
-                    if self.r_unit_id != None :
-                        new_resp = Response()
-                        new_resp = resp
-                        new_resp.parent_survey = svey1
-                        new_resp.save()
 
         return ret, 201
 
@@ -714,13 +670,6 @@ from bson.json_util import dumps
 def d(data):return json.loads(dumps(data))
 def prettify(ugly): return ' '.join([word.title() for word in ugly.split('_')]) # Haha '_'
 
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, dt):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
-
 class Sentiment_OverallPolarity(object):
     def __init__(self,survey_id, from_child, provider="all", children_list=[]):
         self.sid=HashId.encode(survey_id)
@@ -738,17 +687,11 @@ class Sentiment_OverallPolarity(object):
             if self.p=="all":
                 for i in providers:
                     overall[i] = {}
-                    reviews[i] = []
+                    reviews[i] = {}
                     for j in sents:
                         result= Reviews.objects(survey_id = self.sid, provider=i, sentiment= j)
                         for obj in result:
-                            review_obj = {}
-                            review_obj["text"] = obj.review
-                            review_obj["rating"] = obj.rating
-                            review_obj["link"] = obj.review_link
-                            review_obj["original_date"] = json.dumps(obj.date_added, cls=DateTimeEncoder)
-                            review_obj["sentiment"] = obj.sentiment
-                            reviews[i].append(review_obj)
+                            reviews[i][obj.review] = obj.sentiment
                         overall[i][j]=len(result)
             else:
                 overall[self.p]={}
@@ -756,13 +699,7 @@ class Sentiment_OverallPolarity(object):
                         result= Reviews.objects(survey_id= self.sid,provider=self.p,sentiment= j)
                         if isparent:
                             for obj in result:
-                                review_obj = {}
-                                review_obj["text"] = obj.review
-                                review_obj["rating"] = obj.rating
-                                review_obj["link"] = obj.review_link
-                                review_obj["original_date"] = json.dumps(obj.date_added, cls=DateTimeEncoder)
-                                review_obj["sentiment"] = obj.sentiment
-                                reviews[self.p].append(review_obj)
+                                reviews[self.p][obj.review] = obj.sentiment
                         overall[self.p][j]=len(result)
 
             return [overall, reviews]
@@ -806,8 +743,6 @@ class WordCloud(object):
     def get(self, parent_survey):
         new_wc={}
         if self.from_child:
-            temp2 = {}
-            final = {}
             # API call coming directly from child. Calculate wordcloud.
             if self.p!="all":
                 provider=self.p
@@ -815,17 +750,6 @@ class WordCloud(object):
                 new_wc[provider]={}
                 for i in wc:
                     new_wc[provider].update(i.wc)
-                temp2 = { str(provider) : []}
-                y = str(provider)
-                for key, val in new_wc.items():
-                    for key1, val1 in val.items():
-                        temp = {
-                            "text": str(key1),
-                            "size": float(val1)
-                        }
-                        temp2[y].append(temp)
-                final.update(temp2)
-
             else:
                 P = Providers()
                 providers= P.get(parent_survey)
@@ -834,24 +758,9 @@ class WordCloud(object):
                     new_wc[x]={}
                     for i in wc:
                         new_wc[x].update(i.wc)
-
-                    temp2 = { str(x) : []}
-                    y = str(x)
-                    for key, val in new_wc.items():
-                        for key1, val1 in val.items():
-                            temp = {
-                                "text": str(key1),
-                                "size": float(val1)
-                            }
-                            temp2[y].append(temp)
-                    final.update(temp2)
-            # return new_wc
-            return final
+            return new_wc
 
         if not self.from_child:
-            temp2 = {}
-            final = {}
-
             #API call could be coming from parent or child. If parent, then children list is provided, otherwise its empty.
             if len(self.children_list) != 0:
                 #Then its obviously parent. Calculate wordcloud for all children combined.
@@ -863,17 +772,6 @@ class WordCloud(object):
                     new_wc[provider]={}
                     for i in wc:
                         new_wc[provider].update(i.wc)
-                    temp2 = { str(provider) : []}
-                    y = str(provider)
-                    for key, val in new_wc.items():
-                        for key1, val1 in val.items():
-                            temp = {
-                                "text": str(key1),
-                                "size": float(val1)
-                            }
-                            temp2[y].append(temp)
-                    final.update(temp2)
-
                 else:
                     P = Providers()
                     providers= P.get(parent_survey)
@@ -884,18 +782,7 @@ class WordCloud(object):
                         new_wc[x]={}
                         for i in wc:
                             new_wc[x].update(i.wc)
-                        temp2 = { str(x) : []}
-                        y = str(x)
-                        for key, val in new_wc.items():
-                            for key1, val1 in val.items():
-                                temp = {
-                                    "text": str(key1),
-                                    "size": float(val1)
-                                }
-                                temp2[y].append(temp)
-                        final.update(temp2)
-            # return new_wc
-            return final
+            return new_wc
 
             if len(self.children_list) == 0:
                 #do nothing
@@ -903,6 +790,220 @@ class WordCloud(object):
 
 class DashboardAPIController(Resource):
     """docstring for DashboardAPIController"""
+
+    # def logic(self,survey_id,parent_survey,provider,aggregate="false"):
+    #     """
+    #     Logic : The child needs to copy their parents survey structure , pass the parent survey strc
+    #     """
+    #     # return parent_survey
+    #     lol= IrapiData(survey_id,1,1,aggregate)
+    #     csi= lol.get_child_data(survey_id)#child survey info
+
+    #     # aspect= AspectR(survey_id,provider).get()
+    #     # return aspect
+
+    #     # aspects = Dash().get(HashId.encode(survey_id))
+    #     # return aspects
+
+    #     wordcloud= d(WordCloud(survey_id,provider).get())
+    #     sentiment= Sentiment(survey_id,provider).get()
+    #     company_name=Survey.objects(id = survey_id).first().metadata['name']
+    #     # return d(company_name)
+    #     response_data= lol.get_data()
+    #     # return response_data
+
+    #     # return HashId.encode(survey_id)
+    #     # return d(parent_survey)
+    #     if parent_survey==survey_id:
+    #         # return True
+    #         survey_strct= d(lol.survey_strct())
+    #         jupiter_data = Dash().get(HashId.encode(survey_id))
+
+    #     elif parent_survey!=survey_id:
+    #         s= IrapiData(parent_survey,1,1,aggregate)
+    #         survey_strct=d(s.survey_strct())
+    #         jupiter_data = Dash().get(HashId.encode(parent_survey))
+
+    #     # return jupiter_data
+    #     try:
+    #         survey_name= csi[0].unit_name
+    #         created_by= d(csi[0].created_by[0].id)["$oid"]
+
+    #     except:
+    #         survey_name="Parent Survey"
+    #         created_by="Not Applicable"
+
+    #     """ALT"""
+    #     cids= []
+    #     # return d(survey_strct)
+    #     for i in survey_strct:
+    #         # return d(i)
+    #         x= i['field_options']
+    #         if "deletable" in x:
+    #             cids.append(i['cid'])
+
+    #     """ END"""
+    #     res=[]
+    #     r= {}
+    #     for cid in cids:
+    #         alol = DataSort(parent_survey,cid,aggregate)
+    #         survey_data= alol.get_uuid_label()#?So wrong
+    #         # return survey_data
+
+    #         j_data= d(survey_data)
+
+    #         if "options" in survey_data['field_options']:
+    #             try:
+    #                 # options=[]
+    #                 option_code={}
+
+    #                 for i in range(len(j_data['field_options']['options'])):
+    #                     # options.append(j_data['field_options']['options'][i]['label'])
+    #                     option_code["a_"+str(i+1)]=j_data['field_options']['options'][i]['label']
+    #             except :
+    #                 pass
+
+    #         else:pass
+
+    #         temp= []
+    #         timed={}
+    #         import time
+    #         # return d(response_data)
+    #         for i in response_data:
+    #             if cid in i[0]:
+    #                 # return cid
+    #                 temp.append(i[0][cid]['raw'])
+    #                 timestamp= d(i[1]['modified'])['$date']/1000
+    #                 timestamp=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+    #                 timed[timestamp]=i[0][cid]
+
+    #         options_count={}
+
+    #         timed_agg={}
+    #         timed_agg_counter={}
+
+
+    #         if j_data['field_type']=="group_rating":
+    #             # return temp
+    #             for i in temp:
+    #                 # return i
+    #                 aTempList= i.split("###")
+    #                 for j in aTempList:
+    #                     bTempList= j.split("##")
+
+    #                     l= bTempList[0]
+    #                     k= bTempList[1]
+    #                     if l in options_count:
+    #                         if k in options_count[l]:
+    #                             options_count[l][k]+=1
+    #                         else:
+    #                             options_count[l][k]=1
+    #                     else:
+    #                         options_count[l]={}
+    #                         options_count[l][k]=1
+    #             avg={}
+    #             # return options_count
+    #             for key in options_count:
+    #                 # return key
+    #                 counter=0
+
+    #                 for bkey in options_count[key]:
+    #                     if int(bkey)!=0:
+    #                         counter+= float(bkey) * options_count[key][bkey]
+    #                     else:pass
+
+    #                 avg[key]= round(float(counter)/len(temp),2)
+
+    #                 new_key= option_code[key]
+    #                 survey_avg = avg[key]
+
+    #                 #############################################################
+    #                 # WE NEED THE FOLLOWING TWO LINES BEFORE QIKSTAY DEPLOYMENT #
+    #                 #############################################################
+
+    #                 ## CURRENTLY THIS GIVES KEYERROR 'FOOD'
+    #                 # return "hello   "
+    #                 # avg[key]=survey_avg+float(aspect[new_key])
+    #                 # avg[key]=round(avg[key]/2,2)
+
+    #         elif j_data['field_type']=="rating":
+    #             # return temp
+    #             for i in temp:
+    #                 # return i
+    #                 if str(i[2:]) in options_count:
+    #                     options_count[str(i[2:])]+=1
+    #                 else:
+    #                     options_count[str(i[2:])]=1
+
+    #             ll= 0
+    #             for j in temp:
+    #                 ll= float(ll)+float(j[2:])
+
+    #             if len(temp) != 0:
+    #                 avg=round(ll/len(temp),2)
+    #             else:
+    #                 avg=0
+
+
+    #             for time , value in timed.items():
+
+    #                 if time[:10] not in timed_agg_counter:
+    #                     timed_agg_counter[time[:10]]=0
+    #                 if time[:10] in timed_agg:
+    #                     timed_agg[time[:10]]+=int(value['raw'][2:])
+    #                     timed_agg_counter[time[:10]]+=1
+
+    #                 else:
+    #                     timed_agg[time[:10]]=int(value['raw'][2:])
+    #                     timed_agg_counter[time[:10]]=1
+    #             timed_final={}
+    #             for time,value in timed_agg.items():
+    #                 avg = round(float(timed_agg[time])/float(timed_agg_counter[time]),2)
+    #                 timed_final[time]=avg
+
+    #             # TAKING AVERAGE FROM EXTERNAL APP DATA
+
+    #             # avg+=aspect['overall']*2
+    #             # avg=round(avg/2,2)
+
+    #         response={}
+    #         response['cid']= cid
+
+    #         aspects=Aspect(survey_id)
+    #         try:
+    #             response['avg_rating']=avg
+
+    #         except:pass
+    #         if j_data['field_type']=='rating':
+    #             response['timed_agg']=timed_final
+    #             response['timed']=timed
+    #         if j_data['field_type']=="group_rating":
+    #             response['options_code']=option_code
+    #         else:pass
+    #         # response['survey_id']=survey_id
+    #         response['options_count']=options_count
+    #         response['label']=survey_data['label']
+    #         # try:
+    #         #     response['unit_name']=survey_name
+    #         #     response['created_by']=created_by
+    #         # except:pass
+    #         response['total_resp']=len(response_data)
+    #         # response['aspects']=aspect
+    #         res.append(response)
+    #     result= {}
+    #     result["responses"]=res
+    #     result["wordcloud"]=wordcloud
+    #     result["sentiment"]=sentiment
+    #     result["meta"]={"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
+    #     return result
+    #     if len(wordcloud)!=0:
+    #         res.append({"wordcloud":wordcloud})
+    #     res.append({"sentiment":sentiment})
+    #     res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
+    #     # res.append({"company":company_name})
+    #     # res.append({'id':HashId.encode(survey_id)})
+    #     # res.append ({})
+    #     return res
 
     def logic(self,survey_id,parent_survey, from_child, provider,aggregate="false", jupiter_data = [], children_list=[]):
 
@@ -919,6 +1020,7 @@ class DashboardAPIController(Resource):
             wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(HashId.encode(parent_survey)))
         except:
             wordcloud= d(WordCloud(survey_id,provider,from_child,children_list).get(parent_survey))
+
 
         company_name=Survey.objects(id = survey_id).first().metadata['name']
 
@@ -1154,6 +1256,68 @@ class DashboardAPIController(Resource):
         result["sentiment"]=sentiment
         result["meta"]={"total_resp": aspect_data['total_resp'],"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}
         return result
+        # if len(wordcloud)!=0:
+        #     res.append({"wordcloud":wordcloud})
+        # res.append({"sentiment":sentiment})
+        # res.append({"meta":{"created_by":created_by,"unit_name":survey_name,"company":company_name,"id":HashId.encode(survey_id)}})
+
+    # def com(self,pwc):
+    #     P = Providers()
+    #     pwc_keys=P.get()
+    #     npwc={}
+    #     wc={}
+    #     for i in pwc_keys:
+    #         npwc[i]={}
+    #     for x in pwc :
+    #         # npwc["zomato"].update(x["zomato"])
+    #         # npwc["tripadvisor"].update(x['tripadvisor'])
+    #         for i in pwc_keys:
+    #             print(i)
+    #             try:
+    #                 npwc[i].update(x[i])
+    #             except:
+    #                 print(i+'update fail')
+    #     for i in pwc_keys:
+    #         try:
+    #             print("\n\n\n\n\ncom"+i)
+    #             com = list(npwc[i].values())
+    #             if len(com)!=0:
+    #                 t= sorted(com,reverse= True)[0:10]
+    #                 for keyword,value in npwc[i].items():
+    #                     for v in t:
+    #                         if v == value:
+    #                             wc[keyword]=value
+    #         except:
+    #             print("fail to add keyword for"+i)
+    #     return wc
+
+    # def com(self,pwc):
+    #     pwc_keys= P.get()
+    #     npwc={}
+    #     wc={}
+    #     for i in pwc_keys:
+    #         npwc[i]={}
+    #     for x in pwc :
+    #         npwc["zomato"].update(x["zomato"])
+    #         npwc["tripadvisor"].update(x['tripadvisor'])
+    #
+    #     trip = list(npwc["tripadvisor"].values())
+    #     if len(trip)!=0:
+    #         t= sorted(trip,reverse= True)[0:10]
+    #         for keyword,value in npwc["tripadvisor"].items():
+    #             for v in t:
+    #                 if v == value:
+    #                     wc[keyword]=value
+    #     zoma= list(npwc["zomato"].values())
+    #     if len(zoma)!=0:
+    #         z=sorted(zoma,reverse= True)[0:10]
+    #         for keyword,value in npwc["zomato"].items():
+    #             for v in z:
+    #                 if v == value:
+    #                     # return v
+    #                     wc[keyword]=value
+    #     return wc
+
 
     def get(self,survey_id,provider,aggregate="false"):
         print ("CALLED DASHBOARD", survey_id)
@@ -1418,6 +1582,40 @@ class IRAPI(Resource):
             # if uuid == "a957b9fe-864c-4391-8c80-ba90a19b92ea":
             #     return options_count
         return ret
+
+
+
+    #       response= {}
+    #       if j_data['field_type']=="rating":
+    #           avg= 0
+    #           for i in temp: avg= avg + int(i)
+    #           response['avg_rating']= float(avg)/float(len(temp))
+    #       if j_data['field_type']=="group_rating":
+    #           avg={}
+    #           for key in options_count:
+    #               counter=0
+    #               for bkey in options_count[key]:
+    #                   if int(bkey)!=0:
+    #                       counter+= float(bkey) * options_count[key][bkey]
+    #                   else:
+    #                       pass
+    #               avg[key]= float(counter)/len(temp)
+
+    #               # avg[key]=float(sum(options_count[key].values()))/float(len(temp))
+    #           response['avg_rating']=avg
+
+    #       response['cid']= uuid
+    #       # survey_id= j_data['survey_id']
+    #       response['survey_id']=survey_id
+    #       response['label']=j_data['label']
+    #       response['type']=j_data['field_type']
+    #       response['option_code']=option_code
+    #       response['option_count']=options_count
+    #       response['total_resp']=len(temp)
+    #       response['garbage']= temp
+
+    #       ret.append(response)
+    # #return ret
 
 class ResponseAPIController(Resource):
     """docstring for RAPI"""
