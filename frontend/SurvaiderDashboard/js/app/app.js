@@ -15,7 +15,6 @@
     this.companyName = [];
     this.unitName = [];
     this.unitId = '';
-    this.wordcloud = [];
 
     this.unifiedRating = [];
     this.sentimentsObject = [];
@@ -44,7 +43,7 @@
     self.setTotalRespondents(data['parent_survey']['meta']['total_resp']);
     self.setCompanyName(data['parent_survey']['meta']['company']);
     self.setUnitName(data['parent_survey']['meta']['unit_name']);
-    self.setWordCloud(data['parent_survey']['sentiment']);
+    // self.setUnitCity(data['parent_survey']['meta']['unit_name']);
     self.setUnitId(data['parent_survey']['meta']['id']);
     self.setUnifiedRating(data['parent_survey']['responses'][0]['avg_rating']);
 
@@ -129,13 +128,11 @@
               if (sentiments[vendor].hasOwnProperty(prop)) {
 
                   if (prop == 'options_count'){
-                    // for (var key in sentiments[vendor]['options_count']) {
-                    //   if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
-                    //     reviews.push([key,sentiments[vendor]['options_count'][key]]);
-                    //   }
-                    // }
-                    var x = sentiments[vendor]['options_count'];
-                    reviews = x;
+                    for (var key in sentiments[vendor]['options_count']) {
+                      if (sentiments[vendor]['options_count'].hasOwnProperty(key)) {
+                        reviews.push([key,sentiments[vendor]['options_count'][key]]);
+                      }
+                    }
                   }
                   else if (prop == 'sentiment_segg'){
                       for (var key in sentiments[vendor]['sentiment_segg']) {
@@ -297,41 +294,6 @@ app.prototype.setLeaderboard = function(leaderboardData){
     var self = this;
     self.unitName = unit_Name;
   }
-
-  app.prototype.setWordCloud = function(wordcloud){
-     var self = this;
-     p = wordcloud;
-     
-     final = {};
- 
-     for (var key in p) {
-       if (p.hasOwnProperty(key)) {
-         temp = [];
-         q = p[key];
-         z = key;
-           for (var key1 in q) {
-             if (q.hasOwnProperty(key1)) {
-                temp = q["sentiment_segg"];
-               }
-           }
-           
-           temp.sort(function(a, b){
-            return b.size-a.size
-          })
-           if (temp.length < 15){
-            final[z] = temp;
-           }
-           else {
-            final[z] = temp.slice(1,15);
-           }
-           console.log(final[z]);
-
-        }
-    } 
-     wordcloud = final;
-     self.wordcloud = wordcloud;
-  }
- 
 
   app.prototype.setUnitId = function(unit_id){
     var self = this;

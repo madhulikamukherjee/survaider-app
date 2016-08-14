@@ -388,9 +388,9 @@ class Response(db.Document):
     def __unicode__(self):
         return HashId.encode(self.id)
 
-    def add(self, q_id, q_res, q_res_plain, q_unit_id = None):
+    def add(self, q_id, q_res, q_res_plain):
         if q_id in self.parent_survey.cols:
-            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain, 'unit_id' : q_unit_id}
+            self.responses[q_id] = {'raw': q_res, 'pretty': q_res_plain}
             self.metadata['modified'] = datetime.datetime.now()
             self.save()
         else:
@@ -418,6 +418,7 @@ class Response(db.Document):
                 'label': questions[k],
                 'response': v['pretty']
             })
+
 
         return {
             'id': str(self),
@@ -735,8 +736,7 @@ class Reviews(db.Document):
     review = db.StringField()
     sentiment = db.StringField()
     review_identifier=db.StringField(unique=True)
-    date_added=db.DateTimeField()
-    review_link=db.StringField()
+    date_added=db.StringField()
     datetime=db.DateTimeField()
     meta = {'strict': False}
 

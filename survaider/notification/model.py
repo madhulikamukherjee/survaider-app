@@ -142,15 +142,11 @@ class SurveyResponseNotification(Notification):
 
     @property
     def repr(self):
-        survey_details = {
-            "id": self.response.response_sm['parent_survey']['id'],
-            "name": self.response.response_sm['parent_survey']['meta']['name']
-        }
         doc = {
             'id':       str(self),
             'acquired': str(self.acquired),
             'flagged':  self.flagged,
-            'survey':   survey_details,
+            'survey':   self.survey.tiny_repr,
             'root':     self.survey.resolved_root.tiny_repr,
             'response': str(self.response),
             'payload':  self.resolved_payload,

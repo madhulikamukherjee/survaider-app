@@ -1,161 +1,189 @@
-    <!DOCTYPE html>
-    <html ng-app ="SurvaiderDashboard">
-    <head>
-     <meta charset="utf-8">
-     <meta http-equiv="x-ua-compatible" content="ie=edge">
-     <title>Notifications</title>
-     <meta name="description" content="">
-     <meta name="viewport" content="width=device-width, user-scalable=no">
+<!DOCTYPE html>
+<html ng-app ="SurvaiderDashboard">
+<head>
+	        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>notificartions</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
 
-     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-     <!-- Place favicon.ico in the root directory -->
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
 
-     <link rel="stylesheet" href="../static/survaiderdashboard/css/style.css" media="screen" title="no title" charset="utf-8">
-     <link rel="stylesheet" href="../static/survaiderdashboard/css/angular-chart.css" media="screen" title="no title" charset="utf-8">
-     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+        <link rel="stylesheet" href="../static/survaiderdashboard/css/style.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../static/survaiderdashboard/css/angular-chart.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
 
-     <link rel="stylesheet" href="../static/survaiderdashboard/css/bootstrap-table-only.css">
-     <link rel="stylesheet" href="../static/domain/notification.css"> 
-     <link rel="stylesheet" href="../static/domain/notification.vendor.css">
-
-
-
-   </head>
-   <body >
-
-    <main ng-controller="MainController">
-
-      <!-- Application::Header -->
-      <header id="header" class="sv-header">
-       <div class="sv-logo">
-         <h2>
-           <a href="/" onclick="window.location.reload(true);">Survaider</a>
-         </h2>
-       </div>
-
-       <div class="sv-header-nav">
-         <a href="/notification/" onclick="window.location.reload(true);" class="notification" style="padding-right: ">
-           <img src="../static/survaiderdashboard/images/globe.png" alt="Notifications" />
-         </a>
-
-         <h3>
-           <a href="/logout" onclick="window.location.reload(true);">Logout</a>
-         </h3>
-       </div>
-
-     </header>
-
-     <!-- Application::Sidebar -->
-     <section id="sidebar" class="sv-sidebar">
-       <div class="sv-sidebar-nav">
-         <ul>
-           <li>
-             <a href="">Data</a>
-           </li>
-
-    	                <!-- <li ng-show="isEditSurveyEnabled">
-    	                  <a ng-href="/survey/s:{{ParentId}}/edit">Edit Survey</a>
-    	                </li> -->
-    	                <li>
-                       <a ng-click="showModal($event, 'shareSurvey')">Share</a>
-                     </li>
-                     <li>
-                       <a ng-click="showModal($event, 'settings')">Settings</a>
-                     </li>
-                   </ul>
-                 </div>
-
-               </section>
-    </main>
-
-
-             <div ng-controller="NotificationsController" class="sv-main-content-wrapper" >
-               <h1 class="hr" style="padding : 10px"><span>Notifications</span></h1>
-               <br>
-               <div class="deck">
-                <ul>
-                  <li ng-repeat="noti in Notifications" class="notification survey-response"  >
-                    <section class="title">
-                      <i class="fa fa-exclamation-triangle icon"></i>
-                      <p>Subscribed Notification</p>
-                      <p>
-                        <i class="fa fa-clock-o"></i>
-                        <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
-                      </p>
-
-                      <button style="margin-right : 220px">Send ticket |</button>
-                      <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
-
-                      <button ng-click = "onResolved($event,noti.id)">Resolved ?</button></section>
-
-                      <section class="main" style="padding : 5px">
-                        <h2>Response at <strong>{{ '{{' }} noti.survey.name {{ '}}' }}</strong>.</h2>
-                        <ul ng-show = "noti.flagged" id="notes" style="padding : 2px 0px 1px 10px;">
-                          <table >
-
-                            <tr ng-repeat="pay in noti.payload">
-                              <td class="details"  >
-                                <h4  style="padding : 3px 0px 0.7px 6px">A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question "{{ '{{' }} pay.label {{ '}}' }}"</h4>
-                              </td>
-
-                            </tr> 
-
-                          </table></ul><br/>
-                          <ul>
-
-                            <div class="comment" ng-show="noti.flagged" id= "comm">
-                              <div ng-repeat= "com in noti.comments"  class="comments">
-                                <h5> {{ '{{' }} com.user['email'] {{ '}}' }}  :  " {{ '{{' }} com.text {{ '}}' }} " </h5>
-                              </div>
-
-                              <div class = "notiText">
-                                <form ng-submit = "onSubmit(event,noti.id)">
-                                  <input id="comment_val" type="text" class = "text" />
-                                </form>
-                              </div></ul>
-
-                            </li>
-                          </ul>
-                          <a href="javascript:void(0)" style="color: black;" data-backbone-call="next">Load older notifications</a></section>
-                        </div>
-                      </div>
+        <link rel="stylesheet" href="../static/survaiderdashboard/css/bootstrap-table-only.css">
+       <link rel="stylesheet" href="../static/domain/notification.css"> 
+        <link rel="stylesheet" href="../static/domain/notification.vendor.css">
 
 
 
-                      <script src="../static/survaiderdashboard/js/vendor/uritemplat.js" charset="utf-8"></script>
-                      <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
-                      <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
-                      <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
-                      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body >
+		
+		<main ng-controller="MainController">
 
-                      <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-aria.min.js" charset="utf-8"></script>
-                      <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-messages.min.js" charset="utf-8"></script>
-                      <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+          <!-- Application::Header -->
+	          <header id="header" class="sv-header">
+	            <div class="sv-logo">
+	              <h2>
+	                <a href="/">Survaider</a>
+	              </h2>
+	            </div>
 
-                      <script src="../static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
-                      <script src="../static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script> 
+	            <div class="sv-header-nav">
+	              <a href="/notification/" onclick="window.location.reload(true);" class="notification" style="padding-right: ">
+	                <img src="../static/survaiderdashboard/images/globe.png" alt="Notifications" />
+	              </a>
 
-                      <!-- home.html -->
-            <!-- <script src="https://code.highcharts.com/highcharts.js"></script>
-            <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
+	              <h3>
+	                <a href="/logout" onclick="window.location.reload(true);">Logout</a>
+	              </h3>
+	            </div>
 
-            <!-- App::Models -->
-            <!-- <script src="../static/survaiderdashboard/js/app/models/question.js" charset="utf-8"></script>
-            <script src="../static/survaiderdashboard/js/app/models/feature.js" charset="utf-8"></script>
-            <script src="../static/survaiderdashboard/js/app/models/unit.js" charset="utf-8"></script>
-            <script src="../static/survaiderdashboard/js/app/models/hotelRating.js" charset="utf-8"></script>
-            <script src="../static/survaiderdashboard/js/app/models/leaderboardEntry.js" charset="utf-8"></script>
-            <script src="../static/survaiderdashboard/js/app/models/insight.js" charset="utf-8"></script> -->
+	          </header>
 
-            <!-- App::Application -->
-            <script src="../static/survaiderdashboard/js/app/app.js" charset="utf-8"></script> 
+	          <!-- Application::Sidebar -->
+	          <section id="sidebar" class="sv-sidebar">
+	            <div class="sv-sidebar-nav">
+	              <ul>
+	                <li>
+	                  <a href="#/survey/GMzwApkX24lQnvLNwBO/analysis">Data</a>
+	                </li>
 
-            <!-- App::Angular_Setup -->
-            <script src="/static/survaiderdashboard/js/main.js" charset="utf-8"></script>
-           <!--  <script src="../static/domain/notification.vendor.js" charset="utf-8"></script>
-           <script src="../static/domain/notification.js" charset="utf-8"></script> -->
+	                <!-- <li ng-show="isEditSurveyEnabled">
+	                  <a ng-href="/survey/s:{{ParentId}}/edit">Edit Survey</a>
+	                </li> -->
+	                <li>
+	                  <a ng-click="showModal($event, 'shareSurvey')">Share</a>
+	                </li>
+	                <li>
+	                  <a ng-click="showModal($event, 'settings')">Settings</a>
+	                </li>
+	              </ul>
+	            </div>
+
+	          </section>
+	    </main>
+	       
 
 
 
-         </body>
-         </html>
+		
+		
+		<div ng-controller="NotificationsController" class="sv-main-content-wrapper" >
+	          
+	          	<h1 class="hr" style="padding : 10px"><span>Notifications</span></h1>
+	    		<br>
+
+	    		<div class="deck" >
+	    		<ul >
+	    		<li ng-repeat="noti in Notifications" class="notification survey-response" >
+	    			 <section class="title">
+    <i class="fa fa-exclamation-triangle icon"></i>
+    <p>Subscribed Notification</p>
+    <p>
+      <i class="fa fa-clock-o"></i>
+      <span>{{ '{{' }} noti.acquired {{ '}}' }}</span>
+    </p>
+    <button style="margin-right : 400px">Send ticket |</button>
+    <button style="margin-right : 220px">Reply to unit manager |</button>
+    <button ng-click="onMoreDetails($event,noti.survey.id,noti.response,noti.root.id)" style="margin-right : 100px">More details |</button>
+    
+    <button data-action="mark_finished">Resolved ?</button>
+   
+  </section>
+
+  <section class="main" style="padding : 5px">
+    <h2>Response at <strong>{{ '{{' }} noti.survey.name {{ '}}' }}</strong>.</h2>
+    
+
+    <ul>
+      <table>
+     	
+          <tr ng-repeat="pay in noti.payload">
+            <td class="details"  style="padding :8px">
+              A response <strong>{{ '{{' }} pay.res_label[0] {{ '}}' }}</strong> to the question {{ '{{' }} pay.label {{ '}}' }} at outlet {{ '{{' }} noti.survey.name {{ '}}' }}
+            </td>
+            
+          </tr>
+     
+    </table>
+    
+    </ul><!-- 
+
+
+<ng-show="checkIfgroup">pay.res_label <ng-show="!checkIfgroup">pay.res_label[0]
+
+
+            <ul role="comments">
+              <% _.each(dat.comments, function(doc) { %>
+              <li data-user-id="<%= doc.user.id %>">
+                <i class="fa fa-clock-o"></i>
+                <span data-livestamp="<%= doc.added %>"><%= doc.added %></span>   
+
+                 <span><%= doc.user.email %></span> 
+                 <% if (dat.origin == doc.user.id) { %>
+                <span>Owner</span>
+                <% } %>
+                <p class="message"><%= doc.text %></p>
+              </li>
+              <% }); %>
+              <li>
+                <span data-action="add_comment">Add a Comment</span><br/>
+                <input type="text" data-input="add_comment"></input>
+
+              </li>
+            </ul>  -->
+            
+  </section>
+	    		</li>
+
+	    		</ul>
+				<a href="javascript:void(0)" data-backbone-call="next">Load older notifications</a>
+	    		</div>
+	            
+
+	          
+	    </div>
+
+
+
+	    <script src="../static/survaiderdashboard/js/vendor/uritemplat.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+
+        <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-aria.min.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-messages.min.js" charset="utf-8"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+ 
+        <script src="../static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script> 
+
+        <!-- home.html -->
+        <!-- <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
+
+        <!-- App::Models -->
+        <!-- <script src="../static/survaiderdashboard/js/app/models/question.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/app/models/feature.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/app/models/unit.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/app/models/hotelRating.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/app/models/leaderboardEntry.js" charset="utf-8"></script>
+        <script src="../static/survaiderdashboard/js/app/models/insight.js" charset="utf-8"></script> -->
+
+        <!-- App::Application -->
+        <script src="../static/survaiderdashboard/js/app/app.js" charset="utf-8"></script> 
+
+        <!-- App::Angular_Setup -->
+        <script src="/static/survaiderdashboard/js/main.js" charset="utf-8"></script>
+       <!--  <script src="../static/domain/notification.vendor.js" charset="utf-8"></script>
+        <script src="../static/domain/notification.js" charset="utf-8"></script> -->
+
+
+
+</body>
+</html>
