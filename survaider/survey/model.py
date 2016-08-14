@@ -838,3 +838,139 @@ class ClientProviders(db.Document):
 class TimedDash(db.Document):
     dash_value= db.StringField()
     time= db.DateTimeField(default = datetime.datetime.now)
+
+# class JupiterData(db.Document):
+#     owner_aspects = db.DictField()
+#     units_aspects = db.DictField()
+#     last_updated = db.DateTimeField(default=datetime.datetime.now)
+#     survey_id = db.StringField()
+#     temp={}
+#     unit = {}
+#     def add(self,j_data,s_id):
+        
+#         self.survey_id = HashId.encode(s_id)
+#         temp = j_data['owner_aspects']
+#         self.updateOwner(temp,self.survey_id)
+      
+#         unit  = j_data['units_aspects']
+       
+#         for key in unit :
+#             self.updateUnits(key,unit[key],self.survey_id)
+
+#     def updateOwner(self,data,s_id):
+        
+#         ownerfinal = []
+#         ownerTime_temp = {}
+#         self.owner_aspects['overall_aspects'] = data['overall_aspects']
+        
+#         self.owner_aspects['total_resp'] = data['total_resp']
+#         self.owner_aspects['providers'] = data['providers']
+#         self.owner_aspects['unified'] = data['unified']
+#         time = str(datetime.datetime.now().date())
+#         ownerTime_temp[time] = data['unified']
+
+#         ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
+#         if len(ju_obj_temp1)-1 <0 :
+#             ownerfinal.append(ownerTime_temp)
+#         else :
+#             ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
+#             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-1]
+#             t=ju_obj1['owner_aspects']
+#             p = t['time_unified']
+#             ownerfinal = p
+#             ownerfinal.append(ownerTime_temp)
+#         self.owner_aspects['time_unified'] = ownerfinal
+
+#     def updateUnits(self,u_id,data,s_id):
+        
+#         unitTemp = {}
+#         unitfinal = []
+#         unitTime_temp = {}
+#         unitTemp['overall_aspects'] = data['overall_aspects']
+#         unitTemp['total_resp'] = data['total_resp'] 
+#         unitTemp['providers'] = data['providers'] 
+#         unitTemp['unified'] = data['unified']
+#         time = str(datetime.datetime.now().date())
+#         unitTime_temp[time] = data['unified'] 
+
+#         ju_obj_temp1 = JupiterData.objects(survey_id = s_id)
+        
+#         if len(ju_obj_temp1)-2 <0 :
+#             unitfinal.append(unitTime_temp)
+#         else :
+#             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-2]
+#             t=ju_obj1['units_aspects']
+#             p = t[u_id]
+#             k = p['time_unified']
+#             unitfinal = k
+#             unitfinal.append(unitTime_temp)
+#         unitTemp['time_unified'] = unitfinal
+#         self.units_aspects[u_id] = unitTemp
+
+class JupiterData(db.Document):
+    owner_aspects = db.DictField()
+    units_aspects = db.DictField()
+    last_updated = db.DateTimeField(default=datetime.datetime.now)
+    survey_id = db.StringField()
+    temp={}
+    unit = {}
+    def update(self,j_data,s_id):
+        
+        self.survey_id = HashId.encode(s_id)
+        temp = j_data['owner_aspects']
+        self.updateOwner(temp,self.survey_id)
+      
+        unit  = j_data['units_aspects']
+       
+        for key in unit :
+            self.updateUnits(key,unit[key],self.survey_id)
+
+    def updateOwner(self,data,s_id):
+        
+        ownerfinal = []
+        ownerTime_temp = {}
+        self.owner_aspects['overall_aspects'] = data['overall_aspects']
+        
+        self.owner_aspects['total_resp'] = data['total_resp']
+        self.owner_aspects['providers'] = data['providers']
+        self.owner_aspects['unified'] = data['unified']
+        time = str(datetime.datetime.now().date())
+        ownerTime_temp[time] = data['unified']
+
+        ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
+        if len(ju_obj_temp1)-1 <0 :
+            ownerfinal.append(ownerTime_temp)
+        else :
+            ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
+            ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-1]
+            t=ju_obj1['owner_aspects']
+            p = t['time_unified']
+            ownerfinal = p
+            ownerfinal.append(ownerTime_temp)
+        self.owner_aspects['time_unified'] = ownerfinal
+
+    def updateUnits(self,u_id,data,s_id):
+        
+        unitTemp = {}
+        unitfinal = []
+        unitTime_temp = {}
+        unitTemp['overall_aspects'] = data['overall_aspects']
+        unitTemp['total_resp'] = data['total_resp'] 
+        unitTemp['providers'] = data['providers'] 
+        unitTemp['unified'] = data['unified']
+        time = str(datetime.datetime.now().date())
+        unitTime_temp[time] = data['unified'] 
+
+        ju_obj_temp1 = JupiterData.objects(survey_id = u_id)
+        
+        if len(ju_obj_temp1)-2 <0 :
+            unitfinal.append(unitTime_temp)
+        else :
+            ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-2]
+            t=ju_obj1['units_aspects']
+            p = t[u_id]
+            k = p['time_unified']
+            unitfinal = k
+            unitfinal.append(unitTime_temp)
+        unitTemp['time_unified'] = unitfinal
+        self.units_aspects[u_id] = unitTemp

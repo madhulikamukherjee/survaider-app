@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
+import uuid
 from datetime import datetime, timedelta
 from mongoengine.queryset import queryset_manager
 
@@ -57,6 +58,16 @@ class Notification(db.Document):
         }
         self.payload['comments'].append(comment_doc)
         return comment_doc['id']
+
+    def add_ticket(self,text,_id):
+        if 'tickets' not in self.payload:
+            self.payload['tickets'] = []
+        ticket_doc = {
+            'id' :  uuid.uuid4(),
+            'user' : text['msg']['toID']
+        }
+        self.payload['tickets'].append(ticket_doc)
+        self.save()
 
 class SurveyResponseNotification(Notification):
     survey   = db.ReferenceField(Survey, required = True)
@@ -141,6 +152,17 @@ class SurveyResponseNotification(Notification):
         return comments
 
     @property
+    def tickets(self):
+        tickets = []
+        for ticket in self.payload.get('tickets', []):
+            tickets.append({
+                'user': ticket['user'],
+                'date' : str(datetime.now()),
+                'id': str(ticket['id']),
+            })
+        return tickets
+
+    @property
     def repr(self):
         survey_details = {
             "id": self.response.response_sm['parent_survey']['id'],
@@ -155,6 +177,7 @@ class SurveyResponseNotification(Notification):
             'response': str(self.response),
             'payload':  self.resolved_payload,
             'comments': self.comments,
+            'tickets':  self.tickets,
             'type':     self.__class__.__name__,
         }
         return doc
@@ -196,3 +219,20 @@ class SurveyTicket(Notification):
             'type':         self.__class__.__name__,
         }
         return doc
+
+class Tickets(db.Document):
+    notif_id = db.StringField()
+    to = db.StringField()
+    fromid = db.StringField()
+    subject = db.StringField()
+    content = db.StringField()
+    idval = db.StringField()
+    def add(self,text):
+        textval = text['msg']
+        self.notif_id = textval['notifyid']
+        self.to  = textval['toID']
+        self.fromid = textval['from']
+        self.subject = textval['subject']
+        self.content = textval['text']
+        self.idval =str(datetime.now().timestamp())
+        self.save() 
