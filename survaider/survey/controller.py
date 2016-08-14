@@ -1178,7 +1178,7 @@ class DashboardAPIController(Resource):
             # print ("D: ", d)
 
             # if the diff is more than 24hrs then update the DB value
-            if d[0] > 2 :
+            if d[0] > 1200 :
                 print ("\nTIME D", d)
                 try:
                     jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
