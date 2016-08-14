@@ -735,7 +735,8 @@ class Reviews(db.Document):
     review = db.StringField()
     sentiment = db.StringField()
     review_identifier=db.StringField(unique=True)
-    date_added=db.StringField()
+    date_added=db.DateTimeField()
+    review_link=db.StringField()
     datetime=db.DateTimeField()
     meta = {'strict': False}
 

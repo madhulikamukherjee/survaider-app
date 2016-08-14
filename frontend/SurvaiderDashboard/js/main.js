@@ -18,8 +18,8 @@
     application = new myapp();
 
     $scope.colors = application.colors;
-    $scope.myDate = new Date();
-    $scope.myDate1 = new Date();
+    // $scope.myDate = new Date();
+    // $scope.myDate1 = new Date();
 
 
     $scope.formatNumber = function(number){
@@ -37,32 +37,30 @@
 
 
     $scope.ondate = function(ev){
-          var d1 = $scope.myDate;
-
-          var d2 = $scope.myDate1;
-          var temp = $scope.reviewData;
-          var tempObj = {};
-          var options = [];
-          if (d2>d1){
-            $scope.reviewData = [];
-            for (var k = 0 ; k < temp.length ; k++){
-              console.log(temp[k]);
-              for(var i=0;i< temp[k]['reviews'].length ; i++){
-              if(new Date(temp[k]['reviews'][i].original_date) > new Date(d1) && new Date(temp[k]['reviews'][i].original_date) < new Date(d2)){
-                  options.push(temp[k]['reviews'][i]);
-              }
-
+      var d1 = $scope.myDate;
+      var d2 = $scope.myDate1;
+      var temp = $scope.reviewData;
+      var tempObj = {};
+      var options = [];
+      if (d2>d1){
+        $scope.reviewData = [];
+        for (var k = 0 ; k < temp.length ; k++){
+          // console.log(temp[k]);
+          for(var i=0;i< temp[k]['reviews'].length ; i++){
+            if(new Date(temp[k]['reviews'][i].original_date) > new Date(d1) && new Date(temp[k]['reviews'][i].original_date) < new Date(d2)){
+                options.push(temp[k]['reviews'][i]);
             }
-            tempObj = {
-              provider : temp[k]['provider'],
-              reviews : options,
-              name : temp[k]['name']
-            };
-            $scope.reviewData.push(tempObj);
-            console.log($scope.reviewData);
           }
+          tempObj = {
+            provider : temp[k]['provider'],
+            reviews : options,
+            name : temp[k]['name']
+          };
+          $scope.reviewData.push(tempObj);
+          console.log($scope.reviewData);
         }
-        }
+      }
+    }
     
     // Flag to show/hide the edit survey link
     var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
@@ -88,7 +86,7 @@
       return temp;
     }
 
-        $scope.OnreviewClick = function(ev,path){
+    $scope.OnreviewClick = function(ev,path){
        $location.path(path);
        if ($scope.isParent){
  
@@ -97,9 +95,9 @@
        else {
          $scope.onChildReview(false , uri_dat.s_id);
        }
-     }
+    }
  
-     $scope.onChildReview = function (parent , _id){
+    $scope.onChildReview = function (parent , _id){
        $scope.parent = parent ;
        // var uri = '/static/survaiderdashboard/API1_parent.json';
        var uri = '/api/dashboard/'+_id+'/all/response';
@@ -120,68 +118,81 @@
              }
            }
        });
-     }
+    }
  
-     $scope.Onprovider = function(ev){
+    $scope.Onprovider = function(ev){
  
-     }
+    }
  
-     $scope.onParentReview = function (parent , _id){
+    $scope.onParentReview = function (parent , _id){
        
-       $scope.units_id = [];
-       $scope.reviewData = [];
+       units_id = [];
+       reviewData = [];
        $scope.parent = parent ; 
        $scope.unit = [];
+       $scope.providers = [];
+       sents = ["Positive", "Negative", "Neutral"];
+       sentiments = [];
+       // $scope.sentiments = [{name: "Positive"}, {name: "Negative"}, {name: "Neutral"}];
+       for (var l=0; l<sents.length; l++){
+        var temp = {
+          name : sents[l]
+        }
+        sentiments.push(temp);
+       }
+
+       $scope.sentiments = sentiments;
+       console.log("sentiments");
+       console.log($scope.sentiments);
+
        var uri_parent = '/api/dashboard/'+_id+'/all/response/true';
        $http.get(uri_parent).success(function(data){
          var dat = data['units'];
          for ( var i = 0 ; i < dat.length ; i++){
- 
-           for (var key in dat[i]['meta']) {
-             if (dat[i]['meta'].hasOwnProperty(key)) {
-               if (key == "id"){
-                 $scope.units_id.push(dat[i]['meta'][key]);
-               }
-             }
-           }
- 
+          units_id.push(dat[i]['meta']["id"]);
          }
-         for (var i =0 ; i < $scope.units_id.length ; i++){
-            var uri = '/api/dashboard/'+$scope.units_id[i]+'/all/response';
-         // if (i==1){
-         //   var uri = '/static/survaiderdashboard/API1_parent1.json';
-         // }else{
-         // var uri = '/static/survaiderdashboard/API1_parent.json';
-         // }
-           $http.get(uri).success(function(data){
-           
-           var val = data['parent_survey']['sentiment'];
-           var unit_name = data['parent_survey']['meta']['unit_name'];
-           var temp = {
-             name: unit_name
+         var sentiments = data['parent_survey']['sentiment'];
+         for (var k in sentiments){
+          var temp = {
+            name: k
           };
-           $scope.unit.push(temp);
-           for (var key in val) {
-             if (val.hasOwnProperty(key)) {
-               var provider  = key;
-               var options = val[key]['options_count'];
-               var temp = {
-                 provider : provider,
-                 reviews : options,
-                 name : unit_name
-               };
-           
-               $scope.reviewData.push(temp);
-               
-             }
-           }
-       });
-           
-       }
-       });
- 
-       
-     }
+          $scope.providers.push(temp);
+         }
+          $scope.units_id = units_id;
+
+          for (var i =0 ; i < $scope.units_id.length ; i++){
+            var uri = '/api/dashboard/'+$scope.units_id[i]+'/all/response';
+            $http.get(uri).success(function(data){
+                var val = data['parent_survey']['sentiment'];
+                var unit_name = data['parent_survey']['meta']['unit_name'];
+                var temp = {
+                   name: unit_name
+                };
+                $scope.unit.push(temp);
+                for (var key in val) {
+                    if (val.hasOwnProperty(key)) {
+                        // var provider  = key;
+                        var options = val[key]['options_count'];
+                        for (var rev_id=0; rev_id< options.length; rev_id++){
+                          // console.log("rev");
+                          // console.log(options[rev_id]);
+                          var temp = {
+                             provider : key,
+                             reviewtext : options[rev_id]['text'],
+                             reviewsentiment : options[rev_id]['sentiment'],
+                             reviewlink: options[rev_id]['link'],
+                             name : unit_name,
+                             original_date : options[rev_id]['original_date']
+                          };
+                          reviewData.push(temp);
+                        }
+                    }
+                }
+            }); 
+          }
+          $scope.reviewData = reviewData;
+        });
+    }
 
     $scope.showModal = function(ev, modal) {
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
@@ -256,7 +267,6 @@
       }
     };
  
-
   }]);
 
   appModule.controller('HomeController', [ '$scope', '$http', '$location', '$timeout',function($scope, $http, $location, $timeout){
@@ -1776,7 +1786,7 @@
           });
         }
 
-      $scope.onAssigned  = function(ev,sid,rid,rootid,noti_id){
+        $scope.onAssigned  = function(ev,sid,rid,rootid,noti_id){
           var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
           tick_noti = noti_id;
           $mdDialog.show({

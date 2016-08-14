@@ -1,21 +1,23 @@
 <div  style="padding : 20px " class="review" ng-controller = "MainController">
  	<div>
- 		<select name="show-filter" ng-show= "parent"  ng-model = "myChoice" ng-options="uni as uni.name for uni in unit"></select>
- 	   	<select name="show-filter"  ng-model = "mypro" ng-options="rev as rev.provider for rev in reviewData"></select>
- 	   	 <md-datepicker   ng-model="myDate" md-placeholder="Enter date"></md-datepicker>
- 	   	 <md-datepicker   ng-change="ondate($event)" ng-model="myDate1" md-placeholder="Enter date"></md-datepicker>
+ 		<select name="show-filter" ng-show= "parent"  ng-model = "searchname" ng-options="uni.name for uni in unit"></select>
+ 	   	<select name="show-filter"  ng-model = "searchprovider" ng-options="pro.name for pro in providers"></select>
+ 	   	<select name="show-filter"  ng-model = "searchreviewsentiment" ng-options="sent.name for sent in sentiments"></select>
+ 	   	 <!-- <md-datepicker   ng-model="myDate" md-placeholder="Enter date"></md-datepicker>
+ 	   	 <md-datepicker   ng-change="ondate($event)" ng-model="myDate1" md-placeholder="Enter date"></md-datepicker> -->
  		<br/>
  		<br/>
  	</div>
  	<div>
- 		<div  ng-repeat="dat in reviewData | filter : {name : myChoice.name , provider : mypro.provider } : true" >
- 			<div ng-repeat="rev in dat.reviews " style="border: 2px solid; border-radius: 8px; padding : 10px; margin : 10px;">
- 		       	<ul style="padding : 20px " >
+ 		<div  ng-repeat="dat in reviewData | filter : {name : searchname.name , provider : searchprovider.name , reviewsentiment : searchreviewsentiment.name } : true" style="border: 2px solid; border-radius: 8px; padding : 10px; margin : 10px;">
+ 			<!-- <div ng-repeat="rev in dat " style="border: 2px solid; border-radius: 8px; padding : 10px; margin : 10px;"> -->
+ 		       	<ul style="padding : 20px;">
  		            <li ><h4 style="padding : 10px" ng-show="parent">{{dat.name}} :</h4>   <p > {{dat.provider}}</p></li>
- 		            <li><h4 style="padding : 10px">{{rev.text}}</h4></li>
- 		            <li><p>{{rev.original_date}}</p></li>
+ 		            <li><h4 style="padding : 10px">{{dat.reviewsentiment}}</h4></li>
+ 		            <li><h4 style="padding : 10px">{{dat.reviewtext}}</h4></li>
+ 		            <li><p>{{dat.original_date}}</p></li>
  		        </ul>
- 		    </div>
+ 		    <!-- </div> -->
      	</div>
  	</div>
  </div> 
