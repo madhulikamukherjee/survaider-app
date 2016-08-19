@@ -88,8 +88,8 @@
 
     $scope.OnreviewClick = function(ev,path){
        $location.path(path);
+       
        if ($scope.isParent){
- 
          $scope.onParentReview(true , uri_dat.s_id);
        }
        else {
@@ -1090,6 +1090,7 @@
     $http.get(uri).success(function(data){
 
       application.init(data);
+      $scope.qualityRating = application.qualityRating;
       $scope.features = application.features;
       $scope.ratingPoints = application.ratingPoints;
       $scope.dates = application.dates;

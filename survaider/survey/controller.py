@@ -1093,13 +1093,23 @@ class DashboardAPIController(Resource):
 
             res.append(response)
 
-        time_unified = jupiter_data['owner_aspects']['time_unified']
-        final_val = {}
-        for i in time_unified:
-            for key in i :
-                final_val[key] = i[key]
+        if parent_survey==survey_id:
+            time_unified = jupiter_data['owner_aspects']['time_unified']
+            final_val = {}
+            for i in time_unified:
+                for key in i :
+                    final_val[key] = i[key]
 
-        result['time_unified'] = final_val 
+            result['time_unified'] = final_val
+        elif parent_survey!=survey_id:
+            time_unified = jupiter_data['units_aspects'][HashId.encode(survey_id)]['time_unified']
+            final_val = {}
+            for i in time_unified:
+                for key in i :
+                    final_val[key] = i[key]
+
+            result['time_unified'] = final_val
+
 
         # Preparing feature_circles variable
         res.append({})
@@ -1139,13 +1149,6 @@ class DashboardAPIController(Resource):
 
         from_child = 0
 
-        # try:
-        #     jupiter_data = Dash().get(HashId.encode(parent_survey))
-        # except:
-        #     jupiter_data = Dash().get(parent_survey)
-
-
-
         # get the latest object from the collection
         print ("survey id", survey_id)
         print ("parent id", parent_survey)
@@ -1167,7 +1170,6 @@ class DashboardAPIController(Resource):
         else:
             print("\nOLD ENTRY EXISTS")
             print ("JupiterData for survey_id", HashId.encode(survey_id))
-            print ("ju_obj_temp", len(ju_obj_temp))
 
             # find the time difference
             a =ju_obj_temp[0]['last_updated']
@@ -1175,11 +1177,9 @@ class DashboardAPIController(Resource):
             c = b-a
             datetime.timedelta(0, 8, 562000)
             d = divmod(c.days * 86400 + c.seconds, 60)
-            # print ("D: ", d)
 
             # if the diff is more than 24hrs then update the DB value
             if d[0] > 1200 :
-                print ("\nTIME D", d)
                 try:
                     jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
                 except:
@@ -1214,12 +1214,7 @@ class DashboardAPIController(Resource):
                 npwc={}
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey, from_child, provider,aggregate, jupiter_data))
-                    # wc= WordCloud(HashId.decode(i),provider, from_child, children_list).get()
-                    # pwc.append(wc)
 
-                # wc= self.com(pwc)
-
-                # response['wordcloud']=wc
                 response['units']=units
 
                 return response

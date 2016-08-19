@@ -10,7 +10,6 @@
  	</div>
  	<div>
  		<div  ng-repeat="dat in reviewData | filter : {name : searchname.name , provider : searchprovider.name , reviewsentiment : searchreviewsentiment.name } : true" style="border: 2px solid; border-radius: 8px; padding : 10px; margin : 10px;">
- 			<!-- <div ng-repeat="rev in dat " style="border: 2px solid; border-radius: 8px; padding : 10px; margin : 10px;"> -->
  		       	<ul style="padding : 20px;">
  		            <li ><h4 style="padding : 10px" ng-show="parent">{{dat.name}} :</h4>   <p > {{dat.provider}}</p></li>
  		            <li><h4 style="padding : 10px">{{dat.reviewsentiment}}</h4></li>
