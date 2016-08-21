@@ -26,10 +26,9 @@ from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
-from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit
-from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit, JupiterData
 
-from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, InsightsAggregator, LeaderboardAggregator
+from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData, InsightsAggregator, LeaderboardAggregator
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
@@ -727,6 +726,7 @@ class Sentiment_OverallPolarity(object):
         self.p= provider
         self.from_child = from_child
         self.children_list = children_list
+
     def get(self, parent_survey):
         P = Providers()
         providers=P.get(parent_survey)
@@ -911,6 +911,7 @@ class DashboardAPIController(Resource):
         """
         # print (jupiter_data)
         print ("CALLED DASHBOARD LOGIC", HashId.encode(survey_id))
+        # print ("\n\n",jupiter_data["owner_aspects"])
 
         lol= IrapiData(survey_id,1,1,aggregate)
         csi= lol.get_child_data(survey_id)#child survey info
@@ -1026,52 +1027,7 @@ class DashboardAPIController(Resource):
             options_count={}
 
             timed_agg={}
-            timed_agg_counter={}
-
-
-            # if j_data['field_type']=="group_rating":
-            #     # return temp
-            #     for i in temp:
-            #         # return i
-            #         aTempList= i.split("###")
-            #         for j in aTempList:
-            #             bTempList= j.split("##")
-
-            #             l= bTempList[0]
-            #             k= bTempList[1]
-            #             if l in options_count:
-            #                 if k in options_count[l]:
-            #                     options_count[l][k]+=1
-            #                 else:
-            #                     options_count[l][k]=1
-            #             else:
-            #                 options_count[l]={}
-            #                 options_count[l][k]=1
-            #     avg={}
-            #     # return options_count
-            #     for key in options_count:
-            #         # return key
-            #         counter=0
-
-            #         for bkey in options_count[key]:
-            #             if int(bkey)!=0:
-            #                 counter+= float(bkey) * options_count[key][bkey]
-            #             else:pass
-
-            #         avg[key]= round(float(counter)/len(temp),2)
-
-            #         new_key= option_code[key]
-            #         survey_avg = avg[key]
-
-            #         #############################################################
-            #         # WE NEED THE FOLLOWING TWO LINES BEFORE QIKSTAY DEPLOYMENT #
-            #         #############################################################
-
-            #         ## CURRENTLY THIS GIVES KEYERROR 'FOOD'
-            #         # return "hello   "
-            #         # avg[key]=survey_avg+float(aspect[new_key])
-            #         # avg[key]=round(avg[key]/2,2)
-
+            timed_agg_counter={} 
 
             # elif j_data['field_type']=="rating":
             if j_data['field_type']=="rating":
@@ -1120,6 +1076,9 @@ class DashboardAPIController(Resource):
                 response['avg_rating']=avg
 
             except:pass
+
+
+
             if j_data['field_type']=='rating':
                 response['timed_agg']=timed_final
                 response['timed']=timed
@@ -1133,6 +1092,24 @@ class DashboardAPIController(Resource):
             # response['total_resp']=aspect_data['total_resp']
 
             res.append(response)
+
+        if parent_survey==survey_id:
+            time_unified = jupiter_data['owner_aspects']['time_unified']
+            final_val = {}
+            for i in time_unified:
+                for key in i :
+                    final_val[key] = i[key]
+
+            result['time_unified'] = final_val
+        elif parent_survey!=survey_id:
+            time_unified = jupiter_data['units_aspects'][HashId.encode(survey_id)]['time_unified']
+            final_val = {}
+            for i in time_unified:
+                for key in i :
+                    final_val[key] = i[key]
+
+            result['time_unified'] = final_val
+
 
         # Preparing feature_circles variable
         res.append({})
@@ -1172,15 +1149,56 @@ class DashboardAPIController(Resource):
 
         from_child = 0
 
-        try:
-            jupiter_data = Dash().get(HashId.encode(parent_survey))
-        except:
-            jupiter_data = Dash().get(parent_survey)
+        # get the latest object from the collection
+        print ("survey id", survey_id)
+        print ("parent id", parent_survey)
+        ju_obj_temp = JupiterData.objects(survey_id = HashId.encode(survey_id))
+
+        # check if it is a new entry
+        if len(ju_obj_temp) == 0 :
+            print("\nNEW ENTRY")
+            # jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
+            try:
+                jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
+            except:
+                jupiter_data1 = Dash(parent_survey).get(parent_survey)
+            jobj = JupiterData()
+            print ("\n\nJUPITER_DATA1", jupiter_data1)
+            jobj.update(jupiter_data1,survey_id)
+            jobj.save()
+
+        else:
+            print("\nOLD ENTRY EXISTS")
+            print ("JupiterData for survey_id", HashId.encode(survey_id))
+
+            # find the time difference
+            a =ju_obj_temp[0]['last_updated']
+            b= datetime.datetime.now()
+            c = b-a
+            datetime.timedelta(0, 8, 562000)
+            d = divmod(c.days * 86400 + c.seconds, 60)
+
+            # if the diff is more than 24hrs then update the DB value
+            if d[0] > 1200 :
+                try:
+                    jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
+                except:
+                    jupiter_data1 = Dash(parent_survey).get(parent_survey)
+                jobj = JupiterData()
+                jobj = ju_obj_temp[0]
+                jobj.update(jupiter_data1,survey_id)
+                jobj['last_updated'] = datetime.datetime.now()
+                jobj.save()
+
+        # get the latest updated jupiter data
+        ju_obj_temp1 = JupiterData.objects(survey_id = HashId.encode(survey_id))
+
+        jupiter_data = ju_obj_temp1[0]
+        print ("\nJUPITER DATA: ", jupiter_data)
 
         if flag ==False:
             r= {}
             from_child = 1
-            print("check")
             r['parent_survey']= self.logic(survey_id, parent_survey, from_child, provider, aggregate, jupiter_data)
             return r
         else:
@@ -1196,12 +1214,7 @@ class DashboardAPIController(Resource):
                 npwc={}
                 for i in flag:
                     units.append(self.logic(HashId.decode(i),parent_survey, from_child, provider,aggregate, jupiter_data))
-                    # wc= WordCloud(HashId.decode(i),provider, from_child, children_list).get()
-                    # pwc.append(wc)
 
-                # wc= self.com(pwc)
-
-                # response['wordcloud']=wc
                 response['units']=units
 
                 return response
@@ -1569,10 +1582,16 @@ class ResponseAPIController(Resource):
 
         return d(response)
 
-verbose = True
+verbose = False
 
 class Dash(Resource):
     """docstring for Dash -marker"""
+    def __init__(self, parent_survey_id):
+        self.parent_survey_id = parent_survey_id
+        P = Providers()
+        self.providers = P.get(self.parent_survey_id)
+        A = Aspects()
+        self.aspects = A.get(self.parent_survey_id)
 
     def get_child(self,survey_id):
         # print ("GETTING CHILDREN FOR", survey_id)
@@ -1582,8 +1601,10 @@ class Dash(Resource):
     def get_reviews_count(self,survey_id,parent_survey_id,provider="all"):
         result = {}
         if provider=="all":
-            P = Providers()
-            providers = P.get(parent_survey_id)
+            # P = Providers()
+            # providers = P.get(parent_survey_id)
+            providers = self.providers
+
             for j in providers:
                 reviews = Reviews.objects(survey_id= survey_id, provider = j)
                 result[j] = len(reviews)
@@ -1595,11 +1616,14 @@ class Dash(Resource):
         return result
 
     def get_avg_aspect(self,survey_id,parent_survey_id,provider="all"):
-        A = Aspects()
-        P = Providers()
+        # A = Aspects()
+        # P = Providers()
 
-        aspects=A.get(parent_survey_id)
-        providers=P.get(parent_survey_id)
+        # aspects=A.get(parent_survey_id)
+        # providers=P.get(parent_survey_id)
+        aspects = self.aspects
+        providers = self.providers
+
         response= {}
         if provider=="all":
             for j in providers:
@@ -1655,9 +1679,10 @@ class Dash(Resource):
 
     def unified_rating(self,survey_id,parent_survey_id,NUMBER_OF_CHANNELS, num_reviews_channel, ASPECTS):
         avg_of_aspects = {}
-        # print (ASPECTS)
-        P = Providers()
-        providers = P.get(parent_survey_id)
+        # P = Providers()
+        # providers = P.get(parent_survey_id)
+        providers = self.providers
+
         channel_contribution = {}
 
         for provider in providers:
@@ -1680,6 +1705,7 @@ class Dash(Resource):
     def sum_for_all_channels(self, all_channel_data):
         overall = {}
         if verbose: print ("all_channel_data", all_channel_data, "\n")
+        all_channel_data = all_channel_data["providers"]
         for channel in all_channel_data:
             channel_data = all_channel_data[channel]
             for aspect in channel_data:
@@ -1709,8 +1735,13 @@ class Dash(Resource):
         avg={}
         owner_aspects = {}
         owner_unified = 0
-        P = Providers()
-        providers=P.get(parent_survey_id)
+        owner_time_unified = []
+        # P = Providers()
+        # print("\nP for ", parent_survey_id)
+        # providers=P.get(parent_survey_id)
+        # print ("Providers fetched : ", providers)
+        providers = self.providers
+
         NUMBER_OF_CHANNELS = len(providers)
         num_reviews_channel = {}
         num_reviews_children = {}
@@ -1719,13 +1750,14 @@ class Dash(Resource):
         child_vs_provider = {}
 
         for obj in objects:
-            # print ("INSIDE OBJECTS")
-
             survey_id=obj.survey_id
             raw_data=self.get_avg_aspect(obj.survey_id, parent_survey_id) # all aspects, for this survey, for all channels
             if verbose: print ("RAW DATA", raw_data, "\n")
 
-            avg[obj.survey_id]=raw_data
+            avg[obj.survey_id] = {}
+
+            avg[obj.survey_id]["providers"]=raw_data
+
             review_count_channels = self.get_reviews_count(survey_id, parent_survey_id)
             if verbose: print ("REVIEW COUNT CHANNELS", review_count_channels, "\n")
 
@@ -1750,33 +1782,38 @@ class Dash(Resource):
         # Averaging unified scores of units
         if len(response) == 0:
             owner_unified = 0
+            owner_time_unified.append(owner_unified)
         else:
             owner_unified = round(sum(response.values())/len(response), 2)
+            owner_time_unified.append(owner_unified)
 
         # Averaging aspect scores of units
+        owner_aspects["providers"] = {}
+        
         for provider in providers:
-            owner_aspects[provider] = {}
+            owner_aspects["providers"][provider] = {}
             for child in avg:
-                provider_data = avg[child][provider]
+                if verbose: print ("child: ", child)
+                provider_data = avg[child]["providers"][provider]
                 # adding for all aspects
                 for aspect in provider_data:
-                    if aspect not in owner_aspects[provider]:
-                        owner_aspects[provider][aspect] =  provider_data[aspect]
+                    if aspect not in owner_aspects["providers"][provider]:
+                        owner_aspects["providers"][provider][aspect] =  provider_data[aspect]
                     else:
-                        owner_aspects[provider][aspect] += provider_data[aspect]
+                        owner_aspects["providers"][provider][aspect] += provider_data[aspect]
 
             provider_count = 0
             for key in child_vs_provider:
                 if provider in child_vs_provider[key]:
                     provider_count = provider_count + 1
 
-            for key in owner_aspects[provider]:
-                owner_aspects[provider][key] = round(owner_aspects[provider][key]/provider_count, 2)
+            for key in owner_aspects["providers"][provider]:
+                owner_aspects["providers"][provider][key] = round(owner_aspects["providers"][provider][key]/provider_count, 2)
 
-            if verbose: print ("owner_aspects[provider]", provider, owner_aspects[provider], "\n")
+            if verbose: print ("owner_aspects[provider]", provider, owner_aspects["providers"][provider], "\n")
 
             # dividing for all aspects with number of units
-            # calculated_provider_data = owner_aspects[provider]
+            # calculated_provider_data = owner_aspects["provider_data"][provider]
             # for key in calculated_provider_data:
             #     calculated_provider_data[key] =  round(calculated_provider_data[key]/len(response), 2)
 
@@ -1797,12 +1834,16 @@ class Dash(Resource):
 
         # Appending unified score for owner, and total channel responses for owner, in the final structure
         owner_aspects["unified"] = owner_unified
+        owner_aspects["time_unified"] = owner_time_unified
         owner_aspects["total_resp"] = sum(num_reviews_children.values())
 
         # Appending unified score for units, and total channel responses for units, in the final structure
         for unit in avg:
             if unit in response:
                 avg[unit]["unified"] = response[unit]
+                temp = []
+                temp.append(avg[unit]["unified"])
+                avg[unit]["time_unified"] = temp
             if unit in num_reviews_children:
                 avg[unit]["total_resp"] = num_reviews_children[unit]
 

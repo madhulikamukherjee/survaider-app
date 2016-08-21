@@ -651,6 +651,10 @@ body {
   font-family: "Raleway-Regular", sans-serif;
 }
 
+td {
+  padding: 3px;
+}
+
 a {
   text-decoration: none;
   color: inherit;

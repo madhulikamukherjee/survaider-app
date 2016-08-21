@@ -4,7 +4,9 @@ from survaider.survey.model import ClientProviders
 class Providers():
     providers=[]
     def get(self, parent_id):
+        print ("calling P for ", parent_id)
         obj = ClientProviders.objects(parent_id = parent_id)
+        print ("providers",obj)
         self.providers = obj[0].providers
         return self.providers
     def add(self,element):
