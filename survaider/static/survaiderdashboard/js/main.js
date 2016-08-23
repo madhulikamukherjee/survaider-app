@@ -1060,6 +1060,26 @@
 
   appModule.controller('UnitController', [ '$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
 
+    // This is used for Overall tab
+    $scope.overallTabLabel = 'all';
+
+    // Active tab
+    $scope.activeTab = $scope.overallTabLabel;
+
+    $scope.switchTab = function(item) {
+         if (!item.label) {
+             $scope.activeTab = $scope.overallTabLabel;
+            return;
+         }
+         $scope.activeTab = item.label;
+    }
+ 
+    $scope.isTabSelected = function(item) {
+
+         return $scope.activeTab == item.label;
+    }
+
+
     /**/
     
     /*
