@@ -561,10 +561,10 @@ class AspectData(db.Document):
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
-        self.sid= survey_id
-        self.start=start
-        self.end=end
-        self.agg= aggregate
+        self.sid = survey_id
+        self.start = start
+        self.end = end
+        self.agg = aggregate
 
     def flag(self):
         dat = SurveyUnit.objects(referenced = self.sid)
@@ -930,7 +930,6 @@ class JupiterData(db.Document):
         ownerfinal = []
         ownerTime_temp = {}
         self.owner_aspects['overall_aspects'] = data['overall_aspects']
-        
         self.owner_aspects['total_resp'] = data['total_resp']
         self.owner_aspects['providers'] = data['providers']
         self.owner_aspects['unified'] = data['unified']
@@ -938,12 +937,12 @@ class JupiterData(db.Document):
         ownerTime_temp[time] = data['unified']
 
         ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
-        if len(ju_obj_temp1)-1 <0 :
+        if len(ju_obj_temp1)-1 < 0 :
             ownerfinal.append(ownerTime_temp)
         else :
             ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-1]
-            t=ju_obj1['owner_aspects']
+            t = ju_obj1['owner_aspects']
             p = t['time_unified']
             ownerfinal = p
             ownerfinal.append(ownerTime_temp)
@@ -959,11 +958,11 @@ class JupiterData(db.Document):
         unitTemp['providers'] = data['providers'] 
         unitTemp['unified'] = data['unified']
         time = str(datetime.datetime.now().date())
-        unitTime_temp[time] = data['unified'] 
+        unitTime_temp[time] = data['unified']
 
         ju_obj_temp1 = JupiterData.objects(survey_id = u_id)
         
-        if len(ju_obj_temp1)-2 <0 :
+        if len(ju_obj_temp1)-2 < 0 :
             unitfinal.append(unitTime_temp)
         else :
             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-2]

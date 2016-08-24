@@ -10,6 +10,7 @@
   var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search + window.location.hash);
 
+
   var SURVEY_ID = uri_dat.s_id;
   var PATHNAME = window.location.pathname;
 
@@ -1976,6 +1977,15 @@
     
   }]);
 
+  appModule.controller('ReviewsTabController', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
+    console.log("inside reviews tab");
+    $scope.dat = "madhulika";
+    $http.get('/api/reviews').success(function(res){
+      console.log(res);
+          $scope.reviews = res;
+        });
+  }]);
+
   appModule.controller('OverallAnalyticsController', [ '$scope', function($scope){
 
     $scope.surveyQuestions = application.surveyQuestions;
@@ -2017,16 +2027,8 @@
        }
      })
 
-     .when('/reviews', {
-
-      templateUrl: function(params){
-        return '/static/survaiderdashboard/reviews.html';
-      }
-    })
-
-    // .otherwise({
-    //   controller: 'HomeController',
-    //   templateUrl: '/static/survaiderdashboard/home.html'
+    //  .when('/review', {
+    //   templateUrl: '/review/templates/reviewspage.html'
     // })
   }]);
 

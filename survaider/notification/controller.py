@@ -24,6 +24,7 @@ from survaider.notification.model import (SurveyResponseNotification,
                                           Tickets)
 from survaider.notification.signals import survey_response_notify
 from survaider.notification.signals import survey_response_transmit
+# from survaider.minions.helpers import HashId
 
 notification = Blueprint('notify', __name__, template_folder = 'templates')
 
@@ -196,6 +197,8 @@ class NotificationAggregation(Resource):
 
     @api_login_required
     def get(self, time_offset = None):
+        # print("current user: ", current_user.id)
+        # print ("encoded: ", HashId.encode(current_user.id))
         if time_offset is None:
             time_offset = str(datetime.datetime.now())
 
