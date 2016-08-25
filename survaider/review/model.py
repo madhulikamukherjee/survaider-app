@@ -28,21 +28,20 @@ class ReviewsAggregator(object):
         self.sid = survey_id
 
     def get(self):
-        print ("who the hell is current user: ",self.sid)
+        
         survey = Survey.objects(created_by=self.sid).first()
-        print ("survey class ", survey._cls)
 
         if survey._cls == 'Survey.SurveyUnit':
             raw_data = Reviews.objects(survey_id = self.sid)
 
         elif survey._cls == 'Survey':
             raw_data = []
-            print ("parent : ", HashId.encode(self.sid))
+            
             dat = SurveyUnit.objects(referenced = survey)
             js = [_.repr for _ in dat if not _.hidden]
             if len(js) != 0:
                 for i in js:
-                    print ("searching for", i['id'])
+                    
                     raw_data += Reviews.objects(survey_id = i['id'])
 
         return raw_data

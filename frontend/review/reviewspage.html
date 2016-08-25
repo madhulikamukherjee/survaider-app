@@ -80,17 +80,20 @@
 
     
     <div ng-controller="ReviewsTabController" class="sv-main-content-wrapper" >
-      <!-- <h1>Reviews</h1> -->
-
-      <div>
-        <select name="show-filter" ng-model = "searchname" ng-options="uni.name for uni in units"></select>
-          <select name="show-filter"  ng-model = "searchprovider" ng-options="pro for pro in providers"></select>
-          <select name="show-filter"  ng-model = "searchreviewsentiment" ng-options="sent for sent in sentiments"></select>
-        <br/>
-        <br/>
-      </div>
-
       <div class="col-sm-10 col-sm-offset-1" style="position:relative">
+        <h4 style="margin-top: 2em; margin-bottom: 1em;">Slice and dice your customer feedback</h4>
+            <div id = "mainselection">
+              <select name="show-filter" ng-model = "searchname" ng-options="uni.name for uni in units"></select>
+            </div>
+            <div id = "mainselection">
+              <select name="show-filter"  ng-model = "searchprovider" ng-options="pro for pro in providers"></select>
+            </div>
+            <div id = "mainselection">
+              <select name="show-filter"  ng-model = "searchreviewsentiment" ng-options="sent for sent in sentiments"></select>
+            </div>
+            <br/>
+            <br/>
+
             <table class="table table-responsive table-striped">
               <thead>
                 <th>Rating</th>
