@@ -79,25 +79,34 @@
     </main>
 
     
-        <div ng-controller="ReviewsTabController" class="sv-main-content-wrapper" >
-          <!-- <h1>Reviews</h1> -->
-          <div class="col-sm-10 col-sm-offset-1" style="position:relative">
-                <table class="table table-responsive table-striped">
-                  <thead>
-                    <th>Rating</th>
-                    <th>Review</th>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="rev in reviewList">
-                      <td style="padding:15px"><strong>{{ '{{' }} rev.rating | number:0 {{ '}}' }} Stars</strong></td>
-                      <td style="padding:15px"><a href="{{ '{{' }} rev.review_link {{ '}}' }}" target="_blank" style="color: black;">{{ '{{' }} rev.review | limitTo:300 {{ '}}' }} ...</a></td>
-                      <br>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+    <div ng-controller="ReviewsTabController" class="sv-main-content-wrapper" >
+      <!-- <h1>Reviews</h1> -->
+
+      <div>
+        <select name="show-filter" ng-model = "searchname" ng-options="uni.name for uni in units"></select>
+          <select name="show-filter"  ng-model = "searchprovider" ng-options="pro for pro in providers"></select>
+          <select name="show-filter"  ng-model = "searchreviewsentiment" ng-options="sent for sent in sentiments"></select>
+        <br/>
+        <br/>
+      </div>
+
+      <div class="col-sm-10 col-sm-offset-1" style="position:relative">
+            <table class="table table-responsive table-striped">
+              <thead>
+                <th>Rating</th>
+                <th>Review</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="rev in reviewList | filter : {survey_id : searchname.id , provider : searchprovider , sentiment : searchreviewsentiment } : true" >
+                  <td style="padding:15px"><strong>{{ '{{' }} rev.rating | number:2 {{ '}}' }} Stars</strong></td>
+                  <td style="padding:15px"><a href="{{ '{{' }} rev.review_link {{ '}}' }}" target="_blank" style="color: black;">{{ '{{' }} rev.review | limitTo:300 {{ '}}' }} ...</a></td>
+                  <br>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </div>
+      </div>
+    </div>
 
           <script src="../static/survaiderdashboard/js/vendor/uritemplat.js" charset="utf-8"></script>
           <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>

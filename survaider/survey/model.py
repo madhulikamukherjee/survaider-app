@@ -192,6 +192,12 @@ class Survey(db.Document):
     def root(doc_cls, queryset):
         return queryset.filter(_cls = 'Survey')
 
+    @property
+    def providers(self):
+        dat = ClientProviders.objects(parent_id = str(self.resolved_root))
+        providers = dat[0].providers
+        return providers
+
     #: DEPRECATION WARNING: WILL BE CHANGED.
     @property
     def repr(self):
@@ -214,6 +220,7 @@ class Survey(db.Document):
             'expires': str(self.expires),
             'created_on': str(self.added),
             'last_modified': str(self.modified),
+            'providers': self.providers
         }
 
     @property
@@ -241,7 +248,8 @@ class Survey(db.Document):
                 'expires': str(self.expires),
                 'added': str(self.added),
                 'modified': str(self.modified),
-            }
+            },
+            'providers': self.providers
         }
 
     @property

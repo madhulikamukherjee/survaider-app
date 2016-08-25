@@ -31,21 +31,19 @@ class ReviewAggregation(Resource):
 
     @api_login_required
     def get(self):
-    	# print ("current user: ", current_user.id)
     	reviews = ReviewsAggregator(current_user.id).get()
     	return_reviews = []
     	obj = {}
-    	# print (reviews[0])
     	for review in reviews:
-    		obj = {}
-    		# print (review.rating)
-    		obj['survey_id'] = review.survey_id
-    		obj['rating'] = review.rating
-    		obj['review'] = review.review
-    		obj['sentiment'] = review.sentiment
-    		obj['date_added'] = json.dumps(review.date_added, cls=DateTimeEncoder)
-    		obj['review_link'] = review.review_link
-    		return_reviews.append(obj)
+            obj = {}
+            obj['survey_id'] = review.survey_id
+            obj['rating'] = review.rating
+            obj['review'] = review.review
+            obj['provider'] = review.provider
+            obj['sentiment'] = review.sentiment
+            obj['date_added'] = json.dumps(review.date_added, cls=DateTimeEncoder)
+            obj['review_link'] = review.review_link
+            return_reviews.append(obj)
     	return return_reviews
 
     @api_login_required

@@ -1978,12 +1978,31 @@
   }]);
 
   appModule.controller('ReviewsTabController', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
-    console.log("inside reviews tab");
-    $scope.dat = "madhulika";
+    $scope.units = [];
+    var units = [];
     $http.get('/api/reviews').success(function(res){
-      // console.log(res);
-          $scope.reviewList = res;
-        });
+      $scope.reviewList = res;
+    });
+    
+    $http.get('/api/survey').success(function(dat){
+      data = dat.data;
+      var found_provider = 0;
+      for (var i = 0; i< data.length; i++){
+        if(data[i].hasOwnProperty("providers") && found_provider==0){
+          $scope.providers = data[i]["providers"];
+          found_provider = 1;
+        }
+        else {
+          var unit = [];
+          unit['name'] = data[i]["meta"]["name"];
+          unit['id'] = data[i]["id"];
+          units.push(unit);
+        }
+
+      }
+    });
+    $scope.units = units;
+    $scope.sentiments = ["Positive", "Negative", "Neutral"];
   }]);
 
   appModule.controller('OverallAnalyticsController', [ '$scope', function($scope){
