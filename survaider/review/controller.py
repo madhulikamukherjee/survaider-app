@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 
-import datetime
+from datetime import datetime
 import dateutil.parser
 import requests
 
@@ -15,8 +15,17 @@ from flask.ext.security import current_user, login_required
 from survaider import app
 from survaider.minions.decorators import api_login_required
 from survaider.review.model import ReviewsAggregator
+import json
 
 review = Blueprint('review', __name__, template_folder = 'templates')
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
 
 class ReviewAggregation(Resource):
 
@@ -24,7 +33,20 @@ class ReviewAggregation(Resource):
     def get(self):
     	# print ("current user: ", current_user.id)
     	reviews = ReviewsAggregator(current_user.id).get()
-    	return len(reviews)
+    	return_reviews = []
+    	obj = {}
+    	# print (reviews[0])
+    	for review in reviews:
+    		obj = {}
+    		# print (review.rating)
+    		obj['survey_id'] = review.survey_id
+    		obj['rating'] = review.rating
+    		obj['review'] = review.review
+    		obj['sentiment'] = review.sentiment
+    		obj['date_added'] = json.dumps(review.date_added, cls=DateTimeEncoder)
+    		obj['review_link'] = review.review_link
+    		return_reviews.append(obj)
+    	return return_reviews
 
     @api_login_required
     def post(self):

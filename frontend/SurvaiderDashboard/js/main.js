@@ -1981,8 +1981,8 @@
     console.log("inside reviews tab");
     $scope.dat = "madhulika";
     $http.get('/api/reviews').success(function(res){
-      console.log(res);
-          $scope.reviews = res;
+      // console.log(res);
+          $scope.reviewList = res;
         });
   }]);
 
