@@ -929,7 +929,6 @@ class DashboardAPIController(Resource):
         if parent_survey==survey_id:
 
             survey_strct= d(lol.survey_strct())
-            # jupiter_data = Dash().get(HashId.encode(survey_id))
             aspect_data = jupiter_data["owner_aspects"]
             insight_data = InsightsAggregator(survey_id).getInsights()
             if insight_data!= None:
@@ -942,10 +941,6 @@ class DashboardAPIController(Resource):
         elif parent_survey!=survey_id:
             s= IrapiData(parent_survey,1,1,aggregate)
             survey_strct=d(s.survey_strct())
-            # try:
-            #     jupiter_data = Dash().get(HashId.encode(parent_survey))
-            # except:
-            #     jupiter_data = Dash().get(parent_survey)
 
             aspect_data = jupiter_data["units_aspects"][HashId.encode(survey_id)]
 
@@ -1145,7 +1140,7 @@ class DashboardAPIController(Resource):
             """There is a parent"""
             parent_survey= flag0
 
-        flag= l.flag()
+        flag = l.flag()
 
         from_child = 0
 
@@ -1154,8 +1149,17 @@ class DashboardAPIController(Resource):
         print ("parent id", parent_survey)
         ju_obj_temp = JupiterData.objects(survey_id = HashId.encode(survey_id))
 
+        # safety net for Lilac group
+        lilac = False
+        try :
+            if HashId.encode(parent_survey) == "7jBazdjgwjjepnjypk9":
+                lilac = True
+        except :
+            if parent_survey == "7jBazdjgwjjepnjypk9":
+                lilac = True
+
         # check if it is a new entry
-        if len(ju_obj_temp) == 0 :
+        if len(ju_obj_temp) == 0:
             print("\nNEW ENTRY")
             # jupiter_data1 = Dash(HashId.encode(parent_survey)).get(HashId.encode(parent_survey))
             try:
@@ -1164,16 +1168,17 @@ class DashboardAPIController(Resource):
                 jupiter_data1 = Dash(parent_survey).get(parent_survey)
             jobj = JupiterData()
             print ("\n\nJUPITER_DATA1", jupiter_data1)
-            jobj.update(jupiter_data1,survey_id)
+            jobj.update(jupiter_data1, survey_id)
             jobj.save()
 
-        else:
+        elif lilac == False: # safety net for Lilac group
             print("\nOLD ENTRY EXISTS")
             print ("JupiterData for survey_id", HashId.encode(survey_id))
 
             # find the time difference
-            a =ju_obj_temp[0]['last_updated']
-            b= datetime.datetime.now()
+            a = ju_obj_temp[0]['last_updated']
+            print ("last updated - ", a)
+            b = datetime.datetime.now()
             c = b-a
             datetime.timedelta(0, 8, 562000)
             d = divmod(c.days * 86400 + c.seconds, 60)
@@ -1194,7 +1199,7 @@ class DashboardAPIController(Resource):
         ju_obj_temp1 = JupiterData.objects(survey_id = HashId.encode(survey_id))
 
         jupiter_data = ju_obj_temp1[0]
-        print ("\nJUPITER DATA: ", jupiter_data)
+        # print ("\nJUPITER DATA: ", jupiter_data)
 
         if flag ==False:
             r= {}
