@@ -76,6 +76,7 @@
       $scope.isEditSurveyEnabled = false;
       $scope.isParent = false;
     }
+
     
     $scope.makeANumberArray = function(size){
       var temp = new Array(size);
@@ -192,9 +193,7 @@
           $scope.reviewData = reviewData;
         });
     }
-    $scope.OnFacebookClick=function(ev){
-        $location.url("/dashboard/auth/facebook");
-    }
+
     $scope.showModal = function(ev, modal) {
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
       $mdDialog.show({
@@ -2004,7 +2003,11 @@
         return '/static/survaiderdashboard/reviews.html';
       }
     })
-
+    .when('/configfacebook',{
+        templateUrl: function(params){
+                return 'static/survaiderdashboard/configFacebook.html';
+            }
+        })
     // .otherwise({
     //   controller: 'HomeController',
     //   templateUrl: '/static/survaiderdashboard/home.html'
