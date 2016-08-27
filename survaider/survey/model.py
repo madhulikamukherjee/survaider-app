@@ -824,7 +824,7 @@ class DataSort(object):
 class Relation(db.Document):
     """docstring for Relation"""
     survey_id = db.StringField()
-    provider = db.ListField()
+    providers = db.ListField()
     parent = db.StringField()
 
 class ClientAspects(db.Document):
