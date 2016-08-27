@@ -1,0 +1,137 @@
+    <!DOCTYPE html>
+    <html ng-app ="SurvaiderDashboard">
+    <head>
+     <meta charset="utf-8">
+     <meta http-equiv="x-ua-compatible" content="ie=edge">
+     <title>Reviews</title>
+     <meta name="description" content="">
+     <meta name="viewport" content="width=device-width, user-scalable=no">
+
+     <link rel="apple-touch-icon" href="apple-touch-icon.png">
+     <!-- Place favicon.ico in the root directory -->
+
+     <link rel="stylesheet" href="../static/survaiderdashboard/css/style.css" media="screen" title="no title" charset="utf-8">
+     <link rel="stylesheet" href="../static/survaiderdashboard/css/angular-chart.css" media="screen" title="no title" charset="utf-8">
+     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+
+     <link rel="stylesheet" href="../static/survaiderdashboard/css/bootstrap-table-only.css">
+     <link rel="stylesheet" href="../static/survaiderdashboard/css/bootstrap.css">
+     <link rel="stylesheet" href="../static/domain/notification.css"> 
+     <link rel="stylesheet" href="../static/domain/notification.vendor.css">
+
+
+
+   </head>
+   <body >
+
+    <main ng-controller="MainController">
+
+          <!-- Application::Header -->
+          <header id="header" class="sv-header">
+            <div class="sv-logo">
+              <h2>
+                <a href="/" onclick="window.location.reload(true);">Survaider</a>
+              </h2>
+            </div>
+
+            <div class="sv-header-nav">
+              <a href="/notification/" onclick="window.location.reload(true);" class="notification">
+                <img src="/static/survaiderdashboard/images/globe.png" alt="Notifications" />
+              </a>
+
+              <h3>
+                <a href="/logout" onclick="window.location.reload(true);">Logout</a>
+              </h3>
+            </div>
+          </header>
+
+          <!-- Application::Sidebar -->
+          <section id="sidebar" class="sv-sidebar">
+            <div class="sv-sidebar-nav">
+              <ul>
+                <li>
+                  <a ng-click="showModal($event, 'data')">Data</a>
+                </li>
+
+                <!-- <li ng-show="isEditSurveyEnabled">
+                  <a ng-href="/survey/s:{{ParentId}}/edit">Edit Survey</a>
+                </li> -->
+                <li>
+                  <a ng-click="showModal($event, 'shareSurvey')">Share</a>
+                </li>
+                <li>
+                  <a ng-click="showModal($event, 'settings')">Settings</a>
+                </li>
+                <li>
+                   <a href="/review" onclick="window.location.reload(true);">Reviews</a>
+                 </li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- Application::Main Content -->
+          <!-- <section class="sv-main-content-wrapper">
+
+            <div ng-view></div>
+
+          </section> -->
+
+    </main>
+
+    
+    <div ng-controller="ReviewsTabController" class="sv-main-content-wrapper" >
+      <div class="col-sm-10 col-sm-offset-1" style="position:relative">
+        <h4 style="margin-top: 2em; margin-bottom: 1em;">Slice and dice your customer feedback</h4>
+            <div id = "mainselection">
+              <select name="show-filter" ng-model = "searchname" ng-options="uni.name for uni in units"></select>
+            </div>
+            <div id = "mainselection">
+              <select name="show-filter"  ng-model = "searchprovider" ng-options="pro for pro in providers"></select>
+            </div>
+            <div id = "mainselection">
+              <select name="show-filter"  ng-model = "searchreviewsentiment" ng-options="sent for sent in sentiments"></select>
+            </div>
+            <br/>
+            <br/>
+
+            <table class="table table-responsive table-striped">
+              <thead>
+                <th>Rating</th>
+                <th>Review</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="rev in reviewList | filter : {survey_id : searchname.id , provider : searchprovider , sentiment : searchreviewsentiment } : true" >
+                  <td style="padding:15px"><strong>{{ '{{' }} rev.rating | number:2 {{ '}}' }} Stars</strong></td>
+                  <td style="padding:15px"><a href="{{ '{{' }} rev.review_link {{ '}}' }}" target="_blank" style="color: black;">{{ '{{' }} rev.review | limitTo:300 {{ '}}' }} ...</a></td>
+                  <br>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+
+          <script src="../static/survaiderdashboard/js/vendor/uritemplat.js" charset="utf-8"></script>
+          <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular.min.js" charset="utf-8"></script>
+          <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-route.min.js" charset="utf-8"></script>
+          <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-animate.min.js" charset="utf-8"></script>
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+          <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-aria.min.js" charset="utf-8"></script>
+          <script src="../static/survaiderdashboard/js/vendor/angular-1.4.7/angular-messages.min.js" charset="utf-8"></script>
+          <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+          <script src="../static/survaiderdashboard/js/vendor/chart.js" charset="utf-8"></script>
+          <script src="../static/survaiderdashboard/js/vendor/angular-chart.js" charset="utf-8"></script> 
+
+          <!-- home.html -->
+
+
+            <!-- App::Application -->
+            <script src="../static/survaiderdashboard/js/app/app.js" charset="utf-8"></script> 
+
+            <!-- App::Angular_Setup -->
+            <script src="../static/survaiderdashboard/js/main.js" charset="utf-8"></script>
+
+</body>
+</html>
