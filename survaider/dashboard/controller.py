@@ -12,7 +12,9 @@ dashboard = Blueprint('dashboard', __name__, template_folder = 'templates')
 @dashboard.route('/')
 def dashboard_home():
     try:
+        # print (current_user())
         survey = Survey.objects(created_by=current_user()).first()
+        # print (survey.repr)
         if survey is None:
             raise ValueError
         url = "/survey/s:{0}/analysis".format(str(survey))

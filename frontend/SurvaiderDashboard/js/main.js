@@ -383,8 +383,6 @@
       application.init(data);
       $scope.features = application.features;
       $scope.hotelsRatings = application.hotelsRatings;
-      // console.log("OIGINAL");
-      // console.log($scope.hotelsRatings.data);
       $scope.filterData = function() {
           if ($scope.filterMode && $scope.filterAspect) {
             // Apply filter to update data
@@ -1998,7 +1996,6 @@
           unit['id'] = data[i]["id"];
           units.push(unit);
         }
-
       }
     });
     $scope.units = units;
@@ -2045,10 +2042,6 @@
            return '/static/survaiderdashboard/unit.html';
        }
      })
-
-    //  .when('/review', {
-    //   templateUrl: '/review/templates/reviewspage.html'
-    // })
   }]);
 
   appModule.filter('getTheMonthName', function(){
