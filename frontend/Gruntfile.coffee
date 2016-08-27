@@ -18,6 +18,7 @@ ALL_TASKS = [
   'copy:survaiderdashboard'
   'copy:survaiderdashboardtemplate'
   'copy:Notifications'
+  'copy:review'
 
 ]
 
@@ -307,6 +308,12 @@ module.exports = (grunt) ->
         cwd: 'Notifications/'
         src: '**/*'
         dest: '../survaider/notification/templates'
+
+      review:
+        expand: true
+        cwd: 'review/'
+        src: '**/*'
+        dest: '../survaider/review/templates'
  
 
       new_homepage:

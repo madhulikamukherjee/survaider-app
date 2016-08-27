@@ -26,11 +26,13 @@ def create_app():
     from .minions.helpers import Routines
     from .notification.controller import (notification,
                                           register as register_notifications)
+    from .review.controller import review
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')
     app.register_blueprint(srvy, url_prefix = '/survey')
     app.register_blueprint(notification, url_prefix = '/notification')
+    app.register_blueprint(review, url_prefix = '/review')
 
     register_notifications()
 

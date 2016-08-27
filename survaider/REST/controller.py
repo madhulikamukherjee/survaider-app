@@ -18,6 +18,7 @@ from survaider.notification.controller import (NotificationController,
 
 from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI,Dash
 from survaider.minions.future import SurveySharePromiseController
+from survaider.review.controller import ReviewAggregation
 
 api = Api(app, prefix = '/api')
 
@@ -51,6 +52,9 @@ api.add_resource(SurveyTicketController,
 api.add_resource(NotificationAggregation,
                  '/notifications',
                  '/notifications/<string:time_offset>')
+
+api.add_resource(ReviewAggregation,
+                 '/reviews')
 
 api.add_resource(SurveySharePromiseController, '/promise/<string:f_id>')
 

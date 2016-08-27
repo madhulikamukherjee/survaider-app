@@ -10,6 +10,7 @@
   var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
     window.location.pathname + window.location.search + window.location.hash);
 
+
   var SURVEY_ID = uri_dat.s_id;
   var PATHNAME = window.location.pathname;
 
@@ -1976,6 +1977,34 @@
     
   }]);
 
+  appModule.controller('ReviewsTabController', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
+    $scope.units = [];
+    var units = [];
+    $http.get('/api/reviews').success(function(res){
+      $scope.reviewList = res;
+    });
+    
+    $http.get('/api/survey').success(function(dat){
+      data = dat.data;
+      var found_provider = 0;
+      for (var i = 0; i< data.length; i++){
+        if(data[i].hasOwnProperty("providers") && found_provider==0){
+          $scope.providers = data[i]["providers"];
+          found_provider = 1;
+        }
+        else {
+          var unit = [];
+          unit['name'] = data[i]["meta"]["name"];
+          unit['id'] = data[i]["id"];
+          units.push(unit);
+        }
+
+      }
+    });
+    $scope.units = units;
+    $scope.sentiments = ["Positive", "Negative", "Neutral"];
+  }]);
+
   appModule.controller('OverallAnalyticsController', [ '$scope', function($scope){
 
     $scope.surveyQuestions = application.surveyQuestions;
@@ -2017,16 +2046,8 @@
        }
      })
 
-     .when('/reviews', {
-
-      templateUrl: function(params){
-        return '/static/survaiderdashboard/reviews.html';
-      }
-    })
-
-    // .otherwise({
-    //   controller: 'HomeController',
-    //   templateUrl: '/static/survaiderdashboard/home.html'
+    //  .when('/review', {
+    //   templateUrl: '/review/templates/reviewspage.html'
     // })
   }]);
 

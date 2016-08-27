@@ -192,6 +192,12 @@ class Survey(db.Document):
     def root(doc_cls, queryset):
         return queryset.filter(_cls = 'Survey')
 
+    @property
+    def providers(self):
+        dat = ClientProviders.objects(parent_id = str(self.resolved_root))
+        providers = dat[0].providers
+        return providers
+
     #: DEPRECATION WARNING: WILL BE CHANGED.
     @property
     def repr(self):
@@ -214,6 +220,7 @@ class Survey(db.Document):
             'expires': str(self.expires),
             'created_on': str(self.added),
             'last_modified': str(self.modified),
+            'providers': self.providers
         }
 
     @property
@@ -241,7 +248,8 @@ class Survey(db.Document):
                 'expires': str(self.expires),
                 'added': str(self.added),
                 'modified': str(self.modified),
-            }
+            },
+            'providers': self.providers
         }
 
     @property
@@ -561,10 +569,10 @@ class AspectData(db.Document):
 class IrapiData(object):
     """docstring for IrapiData"""
     def __init__(self, survey_id,start,end,aggregate):
-        self.sid= survey_id
-        self.start=start
-        self.end=end
-        self.agg= aggregate
+        self.sid = survey_id
+        self.start = start
+        self.end = end
+        self.agg = aggregate
 
     def flag(self):
         dat = SurveyUnit.objects(referenced = self.sid)
@@ -938,12 +946,12 @@ class JupiterData(db.Document):
         ownerTime_temp[time] = data['unified']
 
         ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
-        if len(ju_obj_temp1)-1 <0 :
+        if len(ju_obj_temp1)-1 < 0 :
             ownerfinal.append(ownerTime_temp)
         else :
             ju_obj_temp1 = JupiterData.objects(survey_id = str(s_id))
             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-1]
-            t=ju_obj1['owner_aspects']
+            t = ju_obj1['owner_aspects']
             p = t['time_unified']
             ownerfinal = p
             ownerfinal.append(ownerTime_temp)
@@ -962,8 +970,7 @@ class JupiterData(db.Document):
         unitTime_temp[time] = data['unified']
 
         ju_obj_temp1 = JupiterData.objects(survey_id = u_id)
-
-        if len(ju_obj_temp1)-2 <0 :
+        if len(ju_obj_temp1)-2 < 0 :
             unitfinal.append(unitTime_temp)
         else :
             ju_obj1 = ju_obj_temp1[len(ju_obj_temp1)-2]

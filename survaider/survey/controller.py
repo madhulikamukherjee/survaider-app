@@ -1286,7 +1286,7 @@ class DashboardAPIController(Resource):
                 jupiter_data1 = Dash(parent_survey).get(parent_survey)
             jobj = JupiterData()
             print ("\n\nJUPITER_DATA1", jupiter_data1)
-            jobj.update(jupiter_data1,survey_id)
+            jobj.update(jupiter_data1, survey_id)
             jobj.save()
 
         elif lilac == False: # safety net for Lilac group
