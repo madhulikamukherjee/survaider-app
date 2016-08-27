@@ -938,10 +938,6 @@ class JupiterData(db.Document):
         ownerfinal = []
         ownerTime_temp = {}
         self.owner_aspects['overall_aspects'] = data['overall_aspects']
-<<<<<<< HEAD
-
-=======
->>>>>>> master
         self.owner_aspects['total_resp'] = data['total_resp']
         self.owner_aspects['providers'] = data['providers']
         self.owner_aspects['unified'] = data['unified']
