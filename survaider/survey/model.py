@@ -24,6 +24,7 @@ from survaider.survey.structuretemplate import survey_struct_schema
 from survaider.survey.structuretemplate import starter_template
 from survaider import db, app
 
+
 class Survey(db.Document):
 	added	   = db.DateTimeField(default = datetime.datetime.now)
 
