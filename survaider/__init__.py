@@ -88,7 +88,6 @@ def create_app():
 
     @app.route('/')
     def home():
-        print(current_user.is_authenticated)
         if current_user.is_authenticated:
             "Load the dashboard"
             return dashboard_home()

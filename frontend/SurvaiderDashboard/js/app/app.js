@@ -245,17 +245,17 @@
     self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries, anchorLinks);
   }
 
-app.prototype.setLeaderboard = function(leaderboardData){
-   var self = this;
-   if (typeof leaderboardData !== 'undefined'){
-     for (var index = 0; index < leaderboardData.length; index++) {
-         self.leaderboard.push(new leaderboardEntry(
-             leaderboardData[index][0],
-             leaderboardData[index][1]
-         ));
+  app.prototype.setLeaderboard = function(leaderboardData){
+     var self = this;
+     if (typeof leaderboardData !== 'undefined'){
+       for (var index = 0; index < leaderboardData.length; index++) {
+           self.leaderboard.push(new leaderboardEntry(
+               leaderboardData[index][0],
+               leaderboardData[index][1]
+           ));
+       }
      }
    }
- }
 
   app.prototype.setInsights = function(insightsData){
     var self = this;
@@ -282,7 +282,7 @@ app.prototype.setLeaderboard = function(leaderboardData){
       }
     }
   }
-    app.prototype.setFeaturesScore = function(featuresData){
+  app.prototype.setFeaturesScore = function(featuresData){
     var self = this;
     var index = 0;
 
@@ -316,9 +316,9 @@ app.prototype.setLeaderboard = function(leaderboardData){
   app.prototype.setWordCloud = function(wordcloud){
      var self = this;
      p = wordcloud;
-     
+
      final = {};
- 
+
      for (var key in p) {
        if (p.hasOwnProperty(key)) {
          temp = [];
@@ -329,7 +329,7 @@ app.prototype.setLeaderboard = function(leaderboardData){
                 temp = q["sentiment_segg"];
                }
            }
-           
+
            temp.sort(function(a, b){
             return b.size-a.size
           })
@@ -342,11 +342,11 @@ app.prototype.setLeaderboard = function(leaderboardData){
            console.log(final[z]);
 
         }
-    } 
+    }
      wordcloud = final;
      self.wordcloud = wordcloud;
   }
- 
+
 
   app.prototype.setUnitId = function(unit_id){
     var self = this;
