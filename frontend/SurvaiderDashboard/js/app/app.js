@@ -10,6 +10,7 @@
     this.surveyQuestions = [];
     this.meta = {};
     this.colors = ['#B8E986', '#92C4FF', '#B86DF9', '#F4596C', '#F7CC85'];
+    // console.log("Colours: ", this.colors);
     this.sentiments = [];
     this.totalRespondents = [];
     this.companyName = [];
@@ -34,6 +35,8 @@
     */
 
     self.features = [];
+    // console.log("data['parent_survey']['responses'][1]['options_code']", data['parent_survey']['responses'][1]['options_code']);
+    // console.log("data['parent_survey']['responses'][1]['avg_rating']", data['parent_survey']['responses'][1]['avg_rating']);
     self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
     self.setFeaturesColor();
@@ -296,7 +299,9 @@
 
   app.prototype.setFeaturesColor = function() {
     var self = this;
-    for (var index = 0; index < self.colors.length; index++ ) {
+    // console.log("Features: ", self.features);
+    // console.log("self.features[index]['colors']", self.features[0]['colors']);
+    for (var index = 0; index < self.features.length; index++ ) {
       self.features[index]['colors'].push({
           'fillColor': this.colors[index]
       });
