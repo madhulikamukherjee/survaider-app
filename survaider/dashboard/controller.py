@@ -15,7 +15,9 @@ all_user_pages={}
 def dashboard_home():
     facebook=request.args.get("facebook")
     try:
+        # print (current_user())
         survey = Survey.objects(created_by=current_user()).first()
+        # print (survey.repr)
         if survey is None:
             raise ValueError
         url = "/survey/s:{0}/analysis".format(str(survey))

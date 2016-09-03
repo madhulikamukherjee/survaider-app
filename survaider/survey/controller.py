@@ -26,7 +26,7 @@ from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
-from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit, JupiterData
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit, JupiterData, ClientAspects
 
 from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData, InsightsAggregator, LeaderboardAggregator
 from survaider.minions.future import SurveySharePromise
@@ -42,7 +42,6 @@ task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 
 #The key and the url.
 class SurveyController(Resource):
-
     def post_args_bulk(self):
         parser = reqparse.RequestParser()
         parser.add_argument('bulk', type = bool, required = True)
@@ -52,134 +51,108 @@ class SurveyController(Resource):
     def post_args(self):
         parser = reqparse.RequestParser()
         parser.add_argument('s_name', type = str, required = True)
-        parser.add_argument('s_tags', type = str, required = True,
-                            action = 'append')
+        parser.add_argument('s_tags', type = str, required = True, action = 'append')
         return parser.parse_args()
 
     @api_login_required
     def get(self):
         svey = Survey.objects(created_by = current_user.id)
-
         survey_list = [_.repr_sm for _ in svey if not _.hidden]
-
         ret = {
             "data": survey_list,
             "survey_count": len(survey_list),
         }
-
         return ret, 200
 
     @api_login_required
     def post(self):
-        #This portion of the code does the magic after onboarding
-        svey = Survey()
-        usr  = User.objects(id = current_user.id).first()
-        us = User.objects()
-        svey.created_by.append(usr)
+        """Saves onboarding data to database."""
+        # TODO: Add additional info about collections used in docstring for this function.
+
+        # Collections' initializations.
+        survey = Survey()
+        client_aspects = ClientAspects()
+
+        parent_user  = User.objects(id = current_user.id).first()
+        survey.created_by.append(parent_user)
+
         ret = {}
-        #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
-        #And among the try except else. any one will run.
-        #So I added a put request where Prashy had asked me to
+
         try:
             args = self.post_args()
-            Test(init="1").save() # the value init is the identifier.
         except Exception as e:
             args = self.post_args_bulk()
 
             payload = json.loads(args['payload'])
             name = payload['create']['survey_name']
-            tags = payload['create']['key_aspects']
+            aspects = payload['create']['key_aspects']
 
-            #: Do whatever we want with metadata here.
-            svey.metadata['social'] = payload['social']
-            svey.save()
+            survey.metadata['social'] = payload['social']
+            survey.save()
             ret['partial'] = False
 
-            #: Create units.
+            # Create units.
             for unit in payload['units']:
-                Test(init="2").save()  #this ran
-                usvey = SurveyUnit()
-                usvey.unit_name = unit['unit_name']
-                usvey.referenced = svey
-
+                survey_unit = SurveyUnit()
+                survey_unit.unit_name = unit['unit_name']
+                survey_unit.referenced = survey
                 if unit['unit_name'] in payload['services']:
-                    usvey.metadata['services'] = payload['services'][unit['unit_name']]
+                    survey_unit.metadata['services'] = payload['services'][unit['unit_name']]
+                survey_unit.created_by.append(parent_user)
+                survey_unit.save()
 
-                usvey.created_by.append(usr)
-                usvey.save()
-                child= HashId.encode(usvey.id)
-                unit['id']=child
-                Test(init=HashId.encode(usvey.id)).save()
-                try:
-                    shuser = User.objects.get(email = unit['owner_mail'])
-                    Test(init="7").save()
-                except DoesNotExist:
-                    upswd = HashId.hashids.encode(
+                unit_survey_id = HashId.encode(survey_unit.id)
+                unit['id'] = unit_survey_id
+
+                try:    # Check if unit manager has an account.
+                    child_user = User.objects.get(email = unit['owner_mail'])
+                except DoesNotExist:    # If unit manager's account doesn't exist,
+                    unit_pswd = HashId.hashids.encode(
                         int(datetime.datetime.now().timestamp())
                     )
+                    # create unit manager's account and
                     user_datastore.create_user(
                         email=unit['owner_mail'],
-                        password=upswd
+                        password=unit_pswd
                     )
-                    # ftract = SurveySharePromise()
-                    # ftract.future_email = unit['owner_mail']
-                    # ftract.future_survey = usvey
-                    # ftract.save()
-                    # Send email here.
-                    # ret['partial'] = True
-                    #Here the TASK + webhookLOGIC WOULD BE ADDED !
-                    #Prashant told me here to put the code for task.
-                    try:
-                        for prov in payload['services'][unit["unit_name"]]:
-                            data={"survey_id":HashId.encode(svey.id),"access_url":payload["services"][unit["unit_name"]][prov],"provider":prov,"children":child}
-                            r= requests.put(task_url,data=data,headers=task_header)
-                            Relation(parent=HashId.encode(svey.id),survey_id=child,provider=prov).save()
-                            Test(init=str(r.content)).save()
-                    except Exception as e:
-                        print (e)
-                        Test(init=str(e)).save()
-                    Test(init="6").save()
+                    child_user = User.objects.get(email = unit['owner_mail'])
+
+                    # send mail to unit manager.
                     requests.post(MG_URL, auth=MG_API, data={
                         'from': MG_VIA,
                         'to': unit['owner_mail'],
                         'subject': 'Survaider | Unit Credential',
                         'text': (
                             "Hello,\n\r"
-                            "You have been given access to {0} of {1}. You may"
+                            "You have been given access to {0} of {1}. You may "
                             "login to Survaider using the following credentials:\n\r"
                             "Username: {2}\n\r"
                             "password: {3}\n\r"
                             "Thanks,\n\r"
                             "Survaider"
-                        ).format(unit['unit_name'], name, unit['owner_mail'],upswd)
+                        ).format(unit['unit_name'], name, unit['owner_mail'], unit_pswd)
                     })
-                    shuser = User.objects.get(email = unit['owner_mail'])
                 finally:
-                    Test(init="3").save() #this too
-                    usvey.created_by.append(shuser)
-                    usvey.save()
+                    relation = Relation(
+                        survey_id=unit_survey_id,
+                        parent=HashId.encode(survey.id)
+                    )
+                    relation.provider = []
+                    for provider in payload['services'][unit['unit_name']]:
+                        relation.provider.append(provider)
+                    relation.save()
+                    survey_unit.created_by.append(child_user)
+                    survey_unit.save()
         else:
-            Test(init="4").save()
             name = args['s_name']
-            tags = args['s_tags']
+            aspects = args['s_tags']
         finally:
-            #Will always , run . I meant Finally
-            """
-            Anything written under the finally clause will run for sure. It sends back the success status.
-            Now you may ask , how I am so sure that none of the other blocks are running.
-            I created a document in database and saved some values if a particular block ran well/ let me show you
-            So by referring to the number I would have an idea of which block of code ran successfully.
-            """
-            Test(init="5").save()
-            svey.metadata['name'] = name
+            survey.metadata['name'] = name
 
             struct_dict = starter_template
             aspects_opt = []
-            for option in tags:
-                aspects_opt.append({
-                    'checked': False,
-                    'label': option
-                })
+            for aspect in aspects:
+                aspects_opt.append({'checked': False, 'label': aspect})
 
             # struct_dict['fields'][0]['field_options']['options'] = opt
             unit_details = []
@@ -192,7 +165,7 @@ class SurveyController(Resource):
                     'checked': False,
                     'label': unit_detail[0],
                     'unit_id': unit_detail[1]
-                    })
+                })
 
             # Populating single_choice question
             struct_dict['fields'][0]['field_options']['options'] = units_opt
@@ -200,12 +173,157 @@ class SurveyController(Resource):
             # Populating group_rating question
             struct_dict['fields'][1]['field_options']['options'] = aspects_opt
 
-            svey.struct = struct_dict
-            svey.save()
+            survey.struct = struct_dict
+            survey.save()
+
+            # `survey.save()` should be called before saving client_aspects because
+            # it needs survey.id.
+            client_aspects.parent_id = HashId.encode(survey.id)
+            client_aspects.aspects = aspects
+            client_aspects.save()
+
             ret['pl'] = payload
-            ret.update(svey.repr)
+            ret.update(survey.repr)
 
             return ret, 200 + int(ret.get('partial', 0))
+
+    # @api_login_required
+    # def post(self):
+    #     # This portion of the code does the magic after onboarding
+    #     svey = Survey()
+    #     usr  = User.objects(id = current_user.id).first()
+    #     us = User.objects()
+    #     svey.created_by.append(usr)
+    #     ret = {}
+    #     #This whole piece of code is in try catch else finally block. Where everything written under the final clause will run
+    #     #And among the try except else. any one will run.
+    #     #So I added a put request where Prashy had asked me to
+    #     try:
+    #         args = self.post_args()
+    #         Test(init="1").save() # the value init is the identifier.
+    #     except Exception as e:
+    #         args = self.post_args_bulk()
+    #
+    #         payload = json.loads(args['payload'])
+    #         name = payload['create']['survey_name']
+    #         tags = payload['create']['key_aspects']
+    #
+    #         #: Do whatever we want with metadata here.
+    #         svey.metadata['social'] = payload['social']
+    #         svey.save()
+    #         ret['partial'] = False
+    #
+    #         #: Create units.
+    #         for unit in payload['units']:
+    #             Test(init="2").save()  #this ran
+    #             usvey = SurveyUnit()
+    #             usvey.unit_name = unit['unit_name']
+    #             usvey.referenced = svey
+    #
+    #             if unit['unit_name'] in payload['services']:
+    #                 usvey.metadata['services'] = payload['services'][unit['unit_name']]
+    #
+    #             usvey.created_by.append(usr)
+    #             usvey.save()
+    #             child= HashId.encode(usvey.id)
+    #             unit['id']=child
+    #             Test(init=HashId.encode(usvey.id)).save()
+    #             try:
+    #                 shuser = User.objects.get(email = unit['owner_mail'])
+    #                 Test(init="7").save()
+    #             except DoesNotExist:
+    #                 upswd = HashId.hashids.encode(
+    #                     int(datetime.datetime.now().timestamp())
+    #                 )
+    #                 user_datastore.create_user(
+    #                     email=unit['owner_mail'],
+    #                     password=upswd
+    #                 )
+    #                 # ftract = SurveySharePromise()
+    #                 # ftract.future_email = unit['owner_mail']
+    #                 # ftract.future_survey = usvey
+    #                 # ftract.save()
+    #                 # Send email here.
+    #                 # ret['partial'] = True
+    #                 #Here the TASK + webhookLOGIC WOULD BE ADDED !
+    #                 #Prashant told me here to put the code for task.
+    #                 try:
+    #                     for prov in payload['services'][unit["unit_name"]]:
+    #                         data={"survey_id":HashId.encode(svey.id),"access_url":payload["services"][unit["unit_name"]][prov],"provider":prov,"children":child}
+    #                         r= requests.put(task_url,data=data,headers=task_header)
+    #                         Relation(parent=HashId.encode(svey.id),survey_id=child,provider=prov).save()
+    #                         Test(init=str(r.content)).save()
+    #                 except Exception as e:
+    #                     print (e)
+    #                     Test(init=str(e)).save()
+    #                 Test(init="6").save()
+    #                 requests.post(MG_URL, auth=MG_API, data={
+    #                     'from': MG_VIA,
+    #                     'to': unit['owner_mail'],
+    #                     'subject': 'Survaider | Unit Credential',
+    #                     'text': (
+    #                         "Hello,\n\r"
+    #                         "You have been given access to {0} of {1}. You may"
+    #                         "login to Survaider using the following credentials:\n\r"
+    #                         "Username: {2}\n\r"
+    #                         "password: {3}\n\r"
+    #                         "Thanks,\n\r"
+    #                         "Survaider"
+    #                     ).format(unit['unit_name'], name, unit['owner_mail'],upswd)
+    #                 })
+    #                 shuser = User.objects.get(email = unit['owner_mail'])
+    #             finally:
+    #                 Test(init="3").save() #this too
+    #                 usvey.created_by.append(shuser)
+    #                 usvey.save()
+    #     else:
+    #         Test(init="4").save()
+    #         name = args['s_name']
+    #         tags = args['s_tags']
+    #     finally:
+    #         #Will always , run . I meant Finally
+    #         """
+    #         Anything written under the finally clause will run for sure. It sends back the success status.
+    #         Now you may ask , how I am so sure that none of the other blocks are running.
+    #         I created a document in database and saved some values if a particular block ran well/ let me show you
+    #         So by referring to the number I would have an idea of which block of code ran successfully.
+    #         """
+    #         Test(init="5").save()
+    #         svey.metadata['name'] = name
+    #
+    #         struct_dict = starter_template
+    #         aspects_opt = []
+    #         for option in tags:
+    #             aspects_opt.append({
+    #                 'checked': False,
+    #                 'label': option
+    #             })
+    #
+    #         # struct_dict['fields'][0]['field_options']['options'] = opt
+    #         unit_details = []
+    #         for unit in payload['units']:
+    #             unit_details.append([unit['unit_name'], unit['id']])
+    #
+    #         units_opt = []
+    #         for unit_detail in unit_details:
+    #             units_opt.append({
+    #                 'checked': False,
+    #                 'label': unit_detail[0],
+    #                 'unit_id': unit_detail[1]
+    #                 })
+    #
+    #         # Populating single_choice question
+    #         struct_dict['fields'][0]['field_options']['options'] = units_opt
+    #
+    #         # Populating group_rating question
+    #         struct_dict['fields'][1]['field_options']['options'] = aspects_opt
+    #
+    #         svey.struct = struct_dict
+    #         svey.save()
+    #         ret['pl'] = payload
+    #         ret.update(svey.repr)
+    #
+    #         return ret, 200 + int(ret.get('partial', 0))
 
 class SurveyMetaController(Resource):
 
@@ -1022,7 +1140,7 @@ class DashboardAPIController(Resource):
             options_count={}
 
             timed_agg={}
-            timed_agg_counter={} 
+            timed_agg_counter={}
 
             # elif j_data['field_type']=="rating":
             if j_data['field_type']=="rating":
@@ -1794,7 +1912,7 @@ class Dash(Resource):
 
         # Averaging aspect scores of units
         owner_aspects["providers"] = {}
-        
+
         for provider in providers:
             owner_aspects["providers"][provider] = {}
             for child in avg:
