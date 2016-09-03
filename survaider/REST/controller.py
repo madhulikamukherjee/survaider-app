@@ -19,7 +19,7 @@ from survaider.notification.controller import (NotificationController,
 from survaider.survey.controller import ResponseAPIController,DashboardAPIController,IRAPI,Dash
 from survaider.minions.future import SurveySharePromiseController
 from survaider.review.controller import ReviewAggregation
-
+from survaider.facebook.controller  import SaveFacebookController,FacebookPagesController
 api = Api(app, prefix = '/api')
 
 api.add_resource(SurveyController,
@@ -73,7 +73,10 @@ api.add_resource(IRAPI,
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response",
                 "/irapi/<string:survey_id>/<string:start>/<string:end>/response/<string:aggregate>")
 api.add_resource(Dash,"/dashboard/parent/<string:parent_survey_id>")
-
+###############################
+####facebook config
+api.add_resource(SaveFacebookController, "/facebook/save/")
+api.add_resource(FacebookPagesController, "/facebook/pages/")
 ###############################
 
 class TemporaryEmailHandler(Resource):

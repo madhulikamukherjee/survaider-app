@@ -27,13 +27,14 @@ def create_app():
     from .notification.controller import (notification,
                                           register as register_notifications)
     from .review.controller import review
+    from .facebook.controller import facebook
 
     app.register_blueprint(usr, url_prefix = '/usr')
     app.register_blueprint(dashboard, url_prefix = '/dashboard')
     app.register_blueprint(srvy, url_prefix = '/survey')
     app.register_blueprint(notification, url_prefix = '/notification')
     app.register_blueprint(review, url_prefix = '/review')
-
+    app.register_blueprint(facebook, url_prefix = '/facebook')
     register_notifications()
 
     @app.before_request
