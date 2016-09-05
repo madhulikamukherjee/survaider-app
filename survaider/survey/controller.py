@@ -33,12 +33,12 @@ from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
 from survaider.survey.test_models import Test
-from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
+from survaider.config import MG_URL, MG_API, MG_VIA, authorization_key, task_url, hook_url
 from survaider.survey.keywordcount import KeywordCount
 from survaider.survey.constantsFile import Providers, Aspects
 from datetime import datetime as dt
 
-task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
+# task_header= {"Authorization": "c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 
 #The key and the url.
 class SurveyController(Resource):
@@ -157,6 +157,9 @@ class SurveyController(Resource):
                     relation.providers.append(provider)
                 relation.save()
 
+                # Create a task list for jupiter to download data corresponding
+                # to each newly created object in aspect_q collection.
+                aspect_q_ids = []
                 if unit['unit_name'] in payload['services']:
                     for provider in payload['services'][unit['unit_name']]:
                         obj = self.get_aspect_q_obj(provider)
@@ -164,6 +167,7 @@ class SurveyController(Resource):
                         obj.base_url = payload['services'][unit['unit_name']][provider]
                         obj.unique_identifier = obj.survey_id + provider
                         obj.save()
+                        aspect_q_ids.append(obj.id)
 
             non_social_providers = set()
             for unit_name in payload['services']:
@@ -219,6 +223,20 @@ class SurveyController(Resource):
             client_providers.parent_id = client_aspects.parent_id
             client_aspects.save()
             client_providers.save()
+
+            # Register tasks for initial data download in jupiter.
+            for obj_id in aspect_q_ids:
+                requests.put(
+                    task_url,
+                    data={
+                        # The id's are ObjectID() instances.
+                        # We need to convert them to string.
+                        'obj_id': str(obj_id)
+                    },
+                    headers={
+                        'Authorization': authorization_key
+                    }
+                )
 
             ret['pl'] = payload
             ret.update(survey.repr)

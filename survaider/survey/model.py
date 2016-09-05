@@ -645,7 +645,6 @@ class IrapiData(object):
 				return js
 
 	def get_parent(self):
-
 		raw = Survey.objects(id = self.sid)
 		js = [_.repr_sm for _ in raw if not _.hidden]
 
