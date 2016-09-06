@@ -10,6 +10,7 @@
     this.surveyQuestions = [];
     this.meta = {};
     this.colors = ['#B8E986', '#92C4FF', '#B86DF9', '#F4596C', '#F7CC85'];
+    // console.log("Colours: ", this.colors);
     this.sentiments = [];
     this.totalRespondents = [];
     this.companyName = [];
@@ -34,6 +35,8 @@
     */
 
     self.features = [];
+    // console.log("data['parent_survey']['responses'][1]['options_code']", data['parent_survey']['responses'][1]['options_code']);
+    // console.log("data['parent_survey']['responses'][1]['avg_rating']", data['parent_survey']['responses'][1]['avg_rating']);
     self.setFeaturesData(data['parent_survey']['responses'][1]['options_code']);
     self.setFeaturesScore(data['parent_survey']['responses'][1]['avg_rating']);
     self.setFeaturesColor();
@@ -245,17 +248,17 @@
     self.hotelsRatings = new hotelRating('hotelsRatings', 'hotelsRatings', chartData, chartLabels, chartSeries, anchorLinks);
   }
 
-app.prototype.setLeaderboard = function(leaderboardData){
-   var self = this;
-   if (typeof leaderboardData !== 'undefined'){
-     for (var index = 0; index < leaderboardData.length; index++) {
-         self.leaderboard.push(new leaderboardEntry(
-             leaderboardData[index][0],
-             leaderboardData[index][1]
-         ));
+  app.prototype.setLeaderboard = function(leaderboardData){
+     var self = this;
+     if (typeof leaderboardData !== 'undefined'){
+       for (var index = 0; index < leaderboardData.length; index++) {
+           self.leaderboard.push(new leaderboardEntry(
+               leaderboardData[index][0],
+               leaderboardData[index][1]
+           ));
+       }
      }
    }
- }
 
   app.prototype.setInsights = function(insightsData){
     var self = this;
@@ -282,7 +285,7 @@ app.prototype.setLeaderboard = function(leaderboardData){
       }
     }
   }
-    app.prototype.setFeaturesScore = function(featuresData){
+  app.prototype.setFeaturesScore = function(featuresData){
     var self = this;
     var index = 0;
 
@@ -296,7 +299,9 @@ app.prototype.setLeaderboard = function(leaderboardData){
 
   app.prototype.setFeaturesColor = function() {
     var self = this;
-    for (var index = 0; index < self.colors.length; index++ ) {
+    // console.log("Features: ", self.features);
+    // console.log("self.features[index]['colors']", self.features[0]['colors']);
+    for (var index = 0; index < self.features.length; index++ ) {
       self.features[index]['colors'].push({
           'fillColor': this.colors[index]
       });
@@ -316,9 +321,9 @@ app.prototype.setLeaderboard = function(leaderboardData){
   app.prototype.setWordCloud = function(wordcloud){
      var self = this;
      p = wordcloud;
-     
+
      final = {};
- 
+
      for (var key in p) {
        if (p.hasOwnProperty(key)) {
          temp = [];
@@ -329,7 +334,7 @@ app.prototype.setLeaderboard = function(leaderboardData){
                 temp = q["sentiment_segg"];
                }
            }
-           
+
            temp.sort(function(a, b){
             return b.size-a.size
           })
@@ -342,11 +347,11 @@ app.prototype.setLeaderboard = function(leaderboardData){
            console.log(final[z]);
 
         }
-    } 
+    }
      wordcloud = final;
      self.wordcloud = wordcloud;
   }
- 
+
 
   app.prototype.setUnitId = function(unit_id){
     var self = this;
