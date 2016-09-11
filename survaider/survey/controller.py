@@ -13,7 +13,7 @@ import json
 
 from bson.objectid import ObjectId
 from uuid import uuid4
-from flask import request, Blueprint, render_template, g,jsonify, make_response
+from flask import request, Blueprint, render_template, g, jsonify, make_response
 from flask_restful import Resource, reqparse
 from flask.ext.security import current_user, login_required
 from mongoengine.queryset import DoesNotExist, MultipleObjectsReturned
@@ -26,19 +26,19 @@ from survaider.minions.helpers import api_get_object
 from survaider.minions.helpers import HashId, Uploads
 from survaider.user.model import User
 from survaider.survey.structuretemplate import starter_template
-from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit, JupiterData, ClientAspects
+from survaider.survey.model import Survey, Response, ResponseSession, ResponseAggregation, SurveyUnit, JupiterData, ClientAspects, ClientProviders
 
-from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData, InsightsAggregator, LeaderboardAggregator
+from survaider.survey.model import DataSort, IrapiData, Dashboard, WordCloudD, Reviews, Relation, AspectData, InsightsAggregator, LeaderboardAggregator, AspectQ, ZomatoQ, TripAdvisorQ, HolidayIQQ, BookingQ
 from survaider.minions.future import SurveySharePromise
 from survaider.security.controller import user_datastore
 import ast
 from survaider.survey.test_models import Test
-from survaider.config import MG_URL, MG_API, MG_VIA,authorization_key,task_url
+from survaider.config import MG_URL, MG_API, MG_VIA, authorization_key, task_url, hook_url
 from survaider.survey.keywordcount import KeywordCount
 from survaider.survey.constantsFile import Providers, Aspects
 from datetime import datetime as dt
 
-task_header= {"Authorization":"c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
+# task_header= {"Authorization": "c6b6ab1e-cab4-43e4-9a33-52df602340cc"}
 
 #The key and the url.
 class SurveyController(Resource):
@@ -53,6 +53,14 @@ class SurveyController(Resource):
         parser.add_argument('s_name', type = str, required = True)
         parser.add_argument('s_tags', type = str, required = True, action = 'append')
         return parser.parse_args()
+
+    def get_aspect_q_obj(self, provider):
+        return {
+            'tripadvisor': TripAdvisorQ(),
+            'zomato': ZomatoQ(),
+            'HolidayIQ': HolidayIQQ(),
+            'booking': BookingQ(),
+        }.get(provider, None)   # None is default if provider not among the dict keys.
 
     @api_login_required
     def get(self):
@@ -72,6 +80,7 @@ class SurveyController(Resource):
         # Collections' initializations.
         survey = Survey()
         client_aspects = ClientAspects()
+        client_providers = ClientProviders()
 
         parent_user  = User.objects(id = current_user.id).first()
         survey.created_by.append(parent_user)
@@ -91,6 +100,8 @@ class SurveyController(Resource):
             survey.save()
             ret['partial'] = False
 
+            g.units = []
+
             # Create units.
             for unit in payload['units']:
                 survey_unit = SurveyUnit()
@@ -102,7 +113,8 @@ class SurveyController(Resource):
                 survey_unit.save()
 
                 unit_survey_id = HashId.encode(survey_unit.id)
-                unit['id'] = unit_survey_id
+                # unit['id'] = unit_survey_id
+                g.units.append([unit['unit_name'], unit_survey_id])
 
                 try:    # Check if unit manager has an account.
                     child_user = User.objects.get(email = unit['owner_mail'])
@@ -133,16 +145,41 @@ class SurveyController(Resource):
                         ).format(unit['unit_name'], name, unit['owner_mail'], unit_pswd)
                     })
                 finally:
-                    relation = Relation(
-                        survey_id=unit_survey_id,
-                        parent=HashId.encode(survey.id)
-                    )
-                    relation.provider = []
-                    for provider in payload['services'][unit['unit_name']]:
-                        relation.provider.append(provider)
-                    relation.save()
                     survey_unit.created_by.append(child_user)
                     survey_unit.save()
+
+                relation = Relation(
+                    survey_id=unit_survey_id,
+                    parent_id=HashId.encode(survey.id)
+                )
+                relation.providers = []
+                for provider in payload['services'][unit['unit_name']]:
+                    relation.providers.append(provider)
+                relation.save()
+
+                # Create a task list for jupiter to download data corresponding
+                # to each newly created object in aspect_q collection.
+                aspect_q_ids = []
+                if unit['unit_name'] in payload['services']:
+                    for provider in payload['services'][unit['unit_name']]:
+                        obj = self.get_aspect_q_obj(provider)
+                        obj.survey_id = unit_survey_id
+                        obj.base_url = payload['services'][unit['unit_name']][provider]
+                        obj.unique_identifier = obj.survey_id + provider
+                        obj.save()
+                        aspect_q_ids.append(obj.id)
+
+            non_social_providers = set()
+            for unit_name in payload['services']:
+                for provider in payload['services'][unit_name]:
+                    non_social_providers.add(provider)
+            social_providers = set()
+            for social_channel in payload['social']:
+                if len(payload['social'][social_channel]) > 0:
+                    social_providers.add(social_channel)
+            # Union
+            client_providers.providers = list(non_social_providers | social_providers)
+            client_providers.save()
         else:
             name = args['s_name']
             aspects = args['s_tags']
@@ -156,8 +193,10 @@ class SurveyController(Resource):
 
             # struct_dict['fields'][0]['field_options']['options'] = opt
             unit_details = []
-            for unit in payload['units']:
-                unit_details.append([unit['unit_name'], unit['id']])
+            # for unit in payload['units']:
+            #     unit_details.append([unit['unit_name'], unit['id']])
+            for unit in g.units:
+                unit_details.append(unit)
 
             units_opt = []
             for unit_detail in unit_details:
@@ -176,11 +215,28 @@ class SurveyController(Resource):
             survey.struct = struct_dict
             survey.save()
 
-            # `survey.save()` should be called before saving client_aspects because
-            # it needs survey.id.
+            # `survey.save()` should be called before saving `client_aspects` and
+            # `client_providers` because they need the survey.id which is generated
+            # only after calling the `save()` method of the `survey` model.
             client_aspects.parent_id = HashId.encode(survey.id)
             client_aspects.aspects = aspects
+            client_providers.parent_id = client_aspects.parent_id
             client_aspects.save()
+            client_providers.save()
+
+            # Register tasks for initial data download in jupiter.
+            for obj_id in aspect_q_ids:
+                requests.put(
+                    task_url,
+                    data={
+                        # The id's are ObjectID() instances.
+                        # We need to convert them to string.
+                        'obj_id': str(obj_id)
+                    },
+                    headers={
+                        'Authorization': authorization_key
+                    }
+                )
 
             ret['pl'] = payload
             ret.update(survey.repr)
@@ -1705,7 +1761,7 @@ class ResponseAPIController(Resource):
 
         return d(response)
 
-verbose = False
+verbose = True
 
 class Dash(Resource):
     """docstring for Dash -marker"""
@@ -1714,11 +1770,12 @@ class Dash(Resource):
         P = Providers()
         self.providers = P.get(self.parent_survey_id)
         A = Aspects()
+        # self.aspects = ['_'.join(aspect.lower().split()) for aspect in A.get(self.parent_survey_id)]
         self.aspects = A.get(self.parent_survey_id)
 
     def get_child(self,survey_id):
         # print ("GETTING CHILDREN FOR", survey_id)
-        objects= Relation.objects(parent=survey_id)
+        objects= Relation.objects(parent_id=survey_id)
         return objects
 
     def get_reviews_count(self,survey_id,parent_survey_id,provider="all"):
@@ -1753,13 +1810,16 @@ class Dash(Resource):
                 objects= AspectData.objects(survey_id=survey_id, provider=j)
                 # print ("FINDING ASPECTS FOR: ", survey_id)
                 length_objects = len(objects)
-                # print ("NUMBER OF ASPECTS", length_objects)
+                print ("NUMBER OF ASPECTS OBJECTS", length_objects)
                 if length_objects!=0:
                     temp={}
                     for aspect in aspects:
+                        print ("aspect: ", aspect)
                         temp[aspect]=0
                         for obj in objects:
+                            # print ("name of aspect found in <aspect_data>: ", obj.name)
                             if obj.name==aspect:
+                                # print ("calculated value of aspect: ", obj.value)
                                 temp[aspect]+=float(obj.value)
                     #Average below
                     for aspect in aspects:
@@ -1970,14 +2030,11 @@ class Dash(Resource):
             if unit in num_reviews_children:
                 avg[unit]["total_resp"] = num_reviews_children[unit]
 
+        print ("UNITS : ", avg, "\nOWNER: ", owner_aspects)
+
         return {"units_aspects":avg, "owner_aspects": owner_aspects}
 
     def get(self,parent_survey_id):
-        # print ("CALLED DASH", parent_survey_id)
-
-        # return HashId.encode(parent_survey_id)
-
-        # print ("ASPECTQ", len(AspectQ.objects))
         return self.unified_avg_aspect(parent_survey_id)
 
 # //Zurez
