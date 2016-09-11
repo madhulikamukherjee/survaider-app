@@ -194,7 +194,11 @@
           $scope.reviewData = reviewData;
         });
     }
-
+    $scope.facebookCall=function(ev){
+         var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
+    window.location.pathname + window.location.search + window.location.hash);
+         window.location.href="/facebook/s:"+uri_dat.s_id;
+    }
     $scope.showModal = function(ev, modal) {
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
       $mdDialog.show({
@@ -1089,7 +1093,7 @@
 
     // var uri = '/static/SurvaiderDashboard/API1';
     
-    var uri_dat = UriTemplate.extract('/survey/s:{unitid}/analysis',
+    var uri_dat = UriTemplate.extract('/survey/s:{unitid}/',
     window.location.pathname + window.location.search + window.location.hash);
 
     var extracted_id = $routeParams.unitid.replace(/s:/g,'');
@@ -1163,75 +1167,75 @@
       */
 
     // var uri2 = '/static/SurvaiderDashboard/API2';
-    var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
-    window.location.pathname + window.location.search + window.location.hash);
-    // if (!uri_dat.parent) {
-    //   uri2 += ("_"+uri_dat.s_id);
-    // }
-    // uri2 += '.json';
+        var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
+        window.location.pathname + window.location.search + window.location.hash);
+        // if (!uri_dat.parent) {
+        //   uri2 += ("_"+uri_dat.s_id);
+        // }
+        // uri2 += '.json';
 
 
 
-    var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response';
-    // var uri2 = '/static/SurvaiderDashboard/API2_'+extracted_id+'.json';
-      /*
-      ***********************************************
-      ***********************************************
-      */
-    $scope.loading++;
-    $http.get(uri2).success(function(data){
+        var uri2 = '/api/irapi/'+uri_dat.s_id+'/0/0/response';
+        // var uri2 = '/static/SurvaiderDashboard/API2_'+extracted_id+'.json';
+          /*
+          ***********************************************
+          ***********************************************
+          */
+        $scope.loading++;
+        $http.get(uri2).success(function(data){
 
-      // Setting the features name(from the key 'option_code')
-      // and the average rating(from the key 'avg_rating')
-      // in an object { 'label', 'rating' } and pushing it in an array
-      // $scope.features
-      $scope.questions = [];
-      // alert("Unitcontroller, API2 call");
-      for (var i = 0; i < data.length; i++) {
-        switch (data[i].type) {
-          case 'group_rating':
-            var groupRating = data[i];
-            setGroupRatingQuestion();
-            break;
-          case 'rating':
-            var ratingQuestion = data[i];
-            setRatingQuestion();
-            break;
-          case 'short_text':
-            var shortText = data[i];
-            setShortTextQuestion();
-            break;
-          case 'long_text':
-            var longText = data[i];
-            setLongTextQuestion();
-            break;
-          case 'yes_no':
-            var yesNo = data[i];
-            setYesOrNoQuestion();
-            break;
-          case 'single_choice':
-            var singleChoice = data[i];
-            setSingleQuestion();
-            break;
-          case 'multiple_choice':
-            var multipleChoice = data[i];
-            setMultipleChoiceQuestion();
-            break;
-          case 'ranking':
-            var rankingQuestion = data[i];
-            setRankingQuestionQuestion();
-            break;
+          // Setting the features name(from the key 'option_code')
+          // and the average rating(from the key 'avg_rating')
+          // in an object { 'label', 'rating' } and pushing it in an array
+          // $scope.features
+          $scope.questions = [];
+          // alert("Unitcontroller, API2 call");
+          for (var i = 0; i < data.length; i++) {
+            switch (data[i].type) {
+              case 'group_rating':
+                var groupRating = data[i];
+                setGroupRatingQuestion();
+                break;
+              case 'rating':
+                var ratingQuestion = data[i];
+                setRatingQuestion();
+                break;
+              case 'short_text':
+                var shortText = data[i];
+                setShortTextQuestion();
+                break;
+              case 'long_text':
+                var longText = data[i];
+                setLongTextQuestion();
+                break;
+              case 'yes_no':
+                var yesNo = data[i];
+                setYesOrNoQuestion();
+                break;
+              case 'single_choice':
+                var singleChoice = data[i];
+                setSingleQuestion();
+                break;
+              case 'multiple_choice':
+                var multipleChoice = data[i];
+                setMultipleChoiceQuestion();
+                break;
+              case 'ranking':
+                var rankingQuestion = data[i];
+                setRankingQuestionQuestion();
+                break;
 
-        }
-      }
+            }
+          }
 
 
-      
-      // $scope.features = [];
-      // var theOptionCodeObject = groupRating['options_code'],
-      //     theAvgRatingObject = groupRating['avg_rating'];
+          
+          // $scope.features = [];
+          // var theOptionCodeObject = groupRating['options_code'],
+          //     theAvgRatingObject = groupRating['avg_rating'];
 
-      // for (var key in theOptionCodeObject) {
+          // for (var key in theOptionCodeObject) {
       //   if (theOptionCodeObject.hasOwnProperty(key)) {
       //     $scope.features.push( { label: theOptionCodeObject[key], rating: theAvgRatingObject[key]  } )
       //   }
@@ -1974,7 +1978,28 @@
         }
     
   }]);
-
+  appModule.controller('FacebookTabController', ['$scope', '$routeParams','$location', '$http', function($scope, $routeParams, $location,$http){
+   var selectedPage={}
+   var params={}
+   $http.get('/api/facebook/pages').success(function(res){
+        $scope.facebookPages=res['data']; 
+    });
+     $scope.selectPage=function(dat){
+       selectedPage=dat;    
+        var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}&facebook={facebook}',
+        window.location.pathname + window.location.search + window.location.hash);
+       params={
+           "accesstoken":selectedPage['access_token'],
+           "id":selectedPage['id'],
+           "userid":uri_dat.s_id
+       };
+       $http.post("/api/facebook/save/", params=params).success(function(res){
+           var message=res['msg'];
+           window.location.href="/dashboard/old";
+        });
+    };
+    
+  }]);
   appModule.controller('ReviewsTabController', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http){
     $scope.units = [];
     var units = [];
@@ -2037,11 +2062,35 @@
       // },
       templateUrl: function(params){
            if(params.parent) {
+             if(params.facebook ){
+               console.log("facebook");
+               return '/static/survaiderdashboard/configFacebook.html';
+           }    
+                
                return '/static/survaiderdashboard/home.html';
            }
+           if(params.facebook ){
+               console.log("facebook")
+               return '/static/survaiderdashboard/configFacebook.html';
+           }    
            return '/static/survaiderdashboard/unit.html';
        }
      })
+
+     .when('/reviews', {
+
+      templateUrl: function(params){
+        return '/static/survaiderdashboard/reviews.html';
+      }
+    })
+    
+     
+    
+    // .otherwise({
+    //   controller: 'HomeController',
+    //   templateUrl: '/static/survaiderdashboard/home.html'
+    //   templateUrl: '/review/templates/reviewspage.html'
+    // })
   }]);
 
   appModule.filter('getTheMonthName', function(){
