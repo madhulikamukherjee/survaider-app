@@ -194,7 +194,11 @@
           $scope.reviewData = reviewData;
         });
     }
-
+    $scope.facebookCall=function(ev){
+         var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
+    window.location.pathname + window.location.search + window.location.hash);
+         window.location.href="/facebook/s:"+uri_dat.s_id;
+    }
     $scope.showModal = function(ev, modal) {
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
       $mdDialog.show({
@@ -1991,8 +1995,7 @@
        };
        $http.post("/api/facebook/save/", params=params).success(function(res){
            var message=res['msg'];
-           location.href="/survey/s:"+uri_dat.s_id+"/";
-           window.location.reload();
+           window.location.href="/dashboard/old";
         });
     };
     

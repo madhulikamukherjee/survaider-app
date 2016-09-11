@@ -2,26 +2,37 @@
 # -*- coding: utf-8 -*-
 #.--. .-. ... .... -. - ... .-.-.- .. -.
 from flask import Flask, Blueprint, render_template, request, jsonify, redirect, url_for, send_from_directory
+from survaider.config import FACEBOOK_APP_ID as APP_ID
 import requests
 import json
 from flask_restful import Resource
 from survaider.facebook.model import facebookDetails
 import os
+from survaider.minions.contextresolver import current_user
 facebook = Blueprint('facebook', __name__, template_folder = 'templates')
-@facebook.route('/')
-def facebook_auth():
-    APP_ID="176485242755051"
-    REDIRECT_URL="http://localhost:5000/facebook/config"
+@facebook.route('/s:<survey_id>')
+def facebook_auth(survey_id):
+   # parent=request.args.get('parent')
+   # print(survey_id,current_user())
+   # if survey_id==str(current_user()):
+    REDIRECT_URL="http://localhost:5000/facebook/config?s="+survey_id
     user_access_token_url="https://www.facebook.com/dialog/oauth?client_id="+APP_ID+"&redirect_uri="+REDIRECT_URL+"&scope=manage_pages"
     return redirect(user_access_token_url)
+   # else if parent=:
+   #         print("else parent /////////")
+   #         REDIRECT_URL="http://localhost:5000/facebook/config?s="+survey_id
+   #         user_access_token_url="https://www.facebook.com/dialog/oauth?client_id="+APP_ID+"&redirect_uri="+REDIRECT_URL+"&scope=manage_pages"
+   #         return redirect(user_access_token_url)
+   # else:
+   #     return redirect("/")
 @facebook.route('/config')
 def auth_config():
 
     APP_ID="176485242755051"
     CLIENT_SECRET="13488380ae4ec837cde82e66f4956d6d"
     code=request.args.get('code')
-
-    REDIRECT_URL="http://localhost:5000/facebook/config"
+    survey_id=request.args.get('s')
+    REDIRECT_URL="http://localhost:5000/facebook/config?s="+survey_id
     params = {
         'client_id': APP_ID,
         'redirect_uri': REDIRECT_URL,
@@ -68,11 +79,11 @@ def auth_config():
         print("following error occur will making request",e)
     all_user_pages=page_token.json()
     print(all_user_pages)
-
     path=os.path.abspath(os.path.dirname(__file__))
     with open(path+"/json/pages.json","w") as outfile:
         json.dump(dict(all_user_pages),outfile)
-    return redirect("/?facebook=True")
+    final_url="/survey/s:"+survey_id+"/analysis?facebook=true"
+    return redirect(final_url)
 @facebook.route('/pages')
 class FacebookPagesController(Resource):
     def get(self):

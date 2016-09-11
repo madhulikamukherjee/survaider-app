@@ -194,7 +194,11 @@
           $scope.reviewData = reviewData;
         });
     }
-
+    $scope.facebookCall=function(ev){
+         var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}',
+    window.location.pathname + window.location.search + window.location.hash);
+         window.location.href="/facebook/s:"+uri_dat.s_id;
+    }
     $scope.showModal = function(ev, modal) {
       var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
       $mdDialog.show({
@@ -383,8 +387,6 @@
       application.init(data);
       $scope.features = application.features;
       $scope.hotelsRatings = application.hotelsRatings;
-      // console.log("OIGINAL");
-      // console.log($scope.hotelsRatings.data);
       $scope.filterData = function() {
           if ($scope.filterMode && $scope.filterAspect) {
             // Apply filter to update data
@@ -1981,46 +1983,11 @@
    var params={}
    $http.get('/api/facebook/pages').success(function(res){
         $scope.facebookPages=res['data']; 
-        $scope.facebookPage=[
-        {
-            'name':"page1",
-            'category':"cat 1",
-            'access_token':"access_token 1",
-            'page_id':'id1'
-        },
-         {
-            'name':"page2",
-            'category':"cat 2",
-            'access_token':"access_token 2",
-            'page_id':'id2'
-        },
-        {
-            'name':"page3",
-            'category':"cat 3",
-            'access_token':"access_token 3",
-            'page_id':'id3'
-        },
-        {
-            'name':"page4",
-            'category':"cat 4",
-            'access_token':"access_token 4",
-            'page_id':'id4'
-        },
-        {
-            'name':"page5",
-            'category':"cat 5",
-            'access_token':"access_token 5",
-            'page_id':'id5'
-        }
-
-        ]
- });
+    });
      $scope.selectPage=function(dat){
        selectedPage=dat;    
-       console.log(selectedPage);
         var uri_dat = UriTemplate.extract('/survey/s:{s_id}/analysis?parent={parent}&facebook={facebook}',
         window.location.pathname + window.location.search + window.location.hash);
-       console.log(uri_dat.s_id)
        params={
            "accesstoken":selectedPage['access_token'],
            "id":selectedPage['id'],
@@ -2028,8 +1995,7 @@
        };
        $http.post("/api/facebook/save/", params=params).success(function(res){
            var message=res['msg'];
-           location.href="/survey/s:"+uri_dat.s_id+"/";
-           window.location.reload();
+           window.location.href="/dashboard/old";
         });
     };
     
@@ -2055,7 +2021,6 @@
           unit['id'] = data[i]["id"];
           units.push(unit);
         }
-
       }
     });
     $scope.units = units;
